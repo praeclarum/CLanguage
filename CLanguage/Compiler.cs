@@ -40,10 +40,33 @@ namespace CLanguage
             Add(parser.ParseTranslationUnit(lexer));
         }
 
-        void IntegrateRootBlock(CompiledBlock block)
+        void IntegrateTranslationUnit(CompiledBlock block)
         {
             _rootBlock = block;
         }
+
+		class SymbolTable
+		{
+			List<KeyValuePair<string,object>> _syms = new List<KeyValuePair<string, object>>();
+			
+			Dictionary<string,object> _index = new Dictionary<string, object>();
+			public void Add (string name, object val)
+			{
+				_syms.Add (new KeyValuePair<string,object>(name, val));
+				_index [name] = val;
+			}
+			public bool Contains (string name) {
+				return _index.ContainsKey (name);
+			}
+			public object this[string name] { get { return _index[name]; } }
+		}
+
+		class Symbols
+		{
+			SymbolTable Globals;
+			SymbolTable Params;
+			SymbolTable Locals;
+		}
 
         class CompiledFunction : CompiledBlock, IFunction
         {
@@ -85,9 +108,6 @@ namespace CLanguage
                 Parent = parent;
                 Functions = new Dictionary<string, IFunction>();
                 Variables = new Dictionary<string, VariableDeclaration>();
-
-                var b = new System.Reflection.Emit.DynamicMethod("Foo", typeof(int), null);
-                var g = b.GetILGenerator();
             }
 
             public void AddFunction(IFunction fun)
@@ -291,7 +311,7 @@ namespace CLanguage
             {
                 if (_currentBlock.Parent == null)
                 {
-                    _i.IntegrateRootBlock(_currentBlock);
+                    _i.IntegrateTranslationUnit(_currentBlock);
                 }
                 _currentBlock = _currentBlock.Parent;
             }
