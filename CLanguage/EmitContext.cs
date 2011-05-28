@@ -22,8 +22,8 @@ namespace CLanguage
             }
         }
 
-        public EmitContext(CompilerContext c, MachineInfo m) 
-            : base(c, m)
+        public EmitContext(CompilerContext c)
+            : base(c)
         {
         }
 

@@ -7,15 +7,13 @@ namespace CLanguage
 {
     public class ResolveContext
     {
-        public ResolveContext(CompilerContext c, MachineInfo m)
+        public ResolveContext(CompilerContext c)
         {
             Compiler = c;
-            MachineInfo = m;
         }
 
-        public MachineInfo MachineInfo { get; private set; }
-
         public CompilerContext Compiler { get; private set; }
+		public MachineInfo MachineInfo { get { return Compiler.MachineInfo; } }
 
         public Report Report
         {

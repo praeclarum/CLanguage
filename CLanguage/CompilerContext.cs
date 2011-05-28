@@ -9,9 +9,12 @@ namespace CLanguage
     {
         public Report Report { get; private set; }
 
-        public CompilerContext(Report report)
+		public MachineInfo MachineInfo { get; private set; }
+
+        public CompilerContext(Report report, MachineInfo machineInfo)
         {
             Report = report;
+			MachineInfo = machineInfo;
         }
     }
 }

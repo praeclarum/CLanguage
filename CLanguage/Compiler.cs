@@ -8,32 +8,30 @@ namespace CLanguage
     public class Compiler
     {
         CompiledBlock _rootBlock;
-        CompilerContext _c;
-        MachineInfo _m;
+        CompilerContext _compilerCtx;
 
-        public Compiler(CompilerContext c, MachineInfo m)
+        public Compiler(Report report, MachineInfo m)
         {
-            _c = c;
-            _m = m;
+            _compilerCtx = new CompilerContext (report, m);
         }
 
         public void Add(IFunction func)
         {
             if (_rootBlock == null)
             {
-                _rootBlock = new CompiledBlock(null, null, _c, _m);
+                _rootBlock = new CompiledBlock(null, null, _compilerCtx);
             }
 
             _rootBlock.AddFunction(func);
         }
 
-        public void Add(TranslationUnit tu)
+        public void Add(TranslationUnit translationUnit)
         {
-            var compiler = new CompilerEntry(this, _c, _m);
-            tu.Emit(compiler);
+            var ctx = new TranslationUnitContext(this, _compilerCtx);
+            translationUnit.Emit(ctx);
         }
 
-        public void Add(string code)
+        public void AddCode(string code)
         {
             var pp = new Preprocessor(new Config());
             pp.AddCode("stdin", code);
@@ -52,8 +50,8 @@ namespace CLanguage
             public string Name { get; private set; }
             public CFunctionType FunctionType { get; private set; }
 
-            public CompiledFunction(FunctionDeclaration fdecl, CompiledBlock parent, CompilerContext c, MachineInfo m)
-                : base(fdecl.Body, parent, c, m)
+            public CompiledFunction(FunctionDeclaration fdecl, CompiledBlock parent, CompilerContext c)
+                : base(fdecl.Body, parent, c)
             {
                 Name = fdecl.Name;
                 FunctionType = fdecl.FunctionType;
@@ -81,8 +79,8 @@ namespace CLanguage
                 public CType VariableType;
             }*/
 
-            public CompiledBlock(Block block, CompiledBlock parent, CompilerContext c, MachineInfo m)
-                : base(c, m)
+            public CompiledBlock(Block block, CompiledBlock parent, CompilerContext c)
+                : base(c)
             {
                 Parent = parent;
                 Functions = new Dictionary<string, IFunction>();
@@ -99,7 +97,7 @@ namespace CLanguage
 
             public override void DeclareFunction(FunctionDeclaration f)
             {
-                var fun = new CompiledFunction(f, this, Compiler, MachineInfo);
+                var fun = new CompiledFunction(f, this, Compiler);
                 if (f.Body != null)
                 {
                     f.Body.Emit(fun);
@@ -211,6 +209,8 @@ namespace CLanguage
                 }
             }
 
+			List<Op> _body = new List<Op>();
+
             public override void EmitBranchIfFalse(EmitContext.Label l)
             {
                 Console.WriteLine("  BRFALSE " + l);
@@ -258,23 +258,24 @@ namespace CLanguage
 
             public override void EmitAssign(Expression left)
             {
-                Console.WriteLine("  =" + left);
+                Console.WriteLine("  => " + left);
+				//_body.Add (Ops.Assign ());
             }
 
             public override void EmitPop()
             {
-                Console.WriteLine("  POP");
+                _body.Add (new PopOp ());
             }
         }
 
-        class CompilerEntry : EmitContext
+        class TranslationUnitContext : EmitContext
         {
             Compiler _i;
 
             CompiledBlock _currentBlock;
 
-            public CompilerEntry(Compiler i, CompilerContext c, MachineInfo m)
-                : base(c, m)
+            public TranslationUnitContext(Compiler i, CompilerContext c)
+                : base(c)
             {
                 _i = i;
                 _currentBlock = null;
@@ -282,7 +283,7 @@ namespace CLanguage
 
             public override void BeginBlock(Block block)
             {
-                var b = new CompiledBlock(block, _currentBlock, Compiler, MachineInfo);
+                var b = new CompiledBlock(block, _currentBlock, Compiler);
                 _currentBlock = b;
             }
 
