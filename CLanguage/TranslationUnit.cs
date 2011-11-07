@@ -10,6 +10,18 @@ namespace CLanguage
         public TranslationUnit()
             : base(null, Location.Null)
         {
+			LocalSymbolName = "_";
         }
+		
+		public ObjectFile Compile (ReportPrinter printer)
+		{
+			var o = new ObjectFile ();
+			
+			var ec = new EmitContext (printer, o);
+			
+			Emit (ec);
+			
+			return o;
+		}
     }
 }

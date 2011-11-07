@@ -23,19 +23,30 @@ namespace CLanguage
             //debug = new yydebug.yyDebugSimple();
         }
 		
-		public TranslationUnit ParseTranslationUnit(string code)
+		public TranslationUnit ParseTranslationUnit(string code, Report report)
         {
+			if (report == null) throw new ArgumentNullException ("report");
+			
 			var pp = new Preprocessor ();
 			pp.AddCode ("stdin", code);
 			var lex = new Lexer (pp);
-			return ParseTranslationUnit (lex);
+			return ParseTranslationUnit (lex, report);
 		}
 
-        public TranslationUnit ParseTranslationUnit(Lexer lexer)
+        public TranslationUnit ParseTranslationUnit(Lexer lexer, Report report)
         {
+			if (report == null) throw new ArgumentNullException ("report");
+			
             _tu = new TranslationUnit();
             lexer.IsTypedef = _tu.Typedefs.ContainsKey;
-            var v = (TranslationUnit)yyparse(lexer);
+			
+			try {
+	            yyparse(lexer);
+			}
+			catch (Exception err) {
+				report.Error (0, err.Message);
+			}
+			
             lexer.IsTypedef = null;
             return _tu;
         }

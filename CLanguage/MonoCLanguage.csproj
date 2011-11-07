@@ -71,6 +71,7 @@
     <Compile Include="WhileStatement.cs" />
     <Compile Include="EmitContext.cs" />
     <Compile Include="MachineInfo.cs" />
+    <Compile Include="ObjectFile.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="CParser.jay" />

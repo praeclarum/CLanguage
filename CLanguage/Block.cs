@@ -7,6 +7,8 @@ namespace CLanguage
 {
     public class Block : Statement
     {
+		public string LocalSymbolName { get; set; }
+		
         public Block Parent { get; set; }
         public Location StartLocation { get; private set; }
         public Location EndLocation { get; set; }

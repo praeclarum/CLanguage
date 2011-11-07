@@ -13,6 +13,8 @@ namespace MonoCLanguageTest
 			
 			Console.WriteLine (tu);
 			
+			var cu = tu.Compile (new TextWriterReportPrinter (Console.Out));
+			
 		}
 		
 		const string CODE = @"
@@ -27,14 +29,14 @@ int sensorValue = 0;         // the sensor value
 int sensorMin = 1023;        // minimum sensor value
 int sensorMax = 0;           // maximum sensor value
 
-const int TABLE[256] = {
+/*const int TABLE[256] = {
  1, 2, 3
-};
+};*/
 
 void setup() {
 
   int i = 0;
-
+  
   // turn on LED to signal the start of the calibration period:
   pinMode(13, OUTPUT);
   digitalWrite(13, HIGH);
@@ -49,7 +51,7 @@ void setup() {
     }
 
 	for (i =0; i < 256; i++) {
-		sensorMax += TABLE[i];
+	//	sensorMax += TABLE[i];
 
 		int j = i + 9;
 	}
@@ -65,6 +67,9 @@ void setup() {
 }
 
 void loop() {
+
+	static int counter = 42;
+
   // read the sensor:
   sensorValue = analogRead(sensorPin);
 
@@ -76,6 +81,8 @@ void loop() {
 
   // fade the LED using the calibrated value:
   analogWrite(ledPin, sensorValue);
+
+	counter++;
 }
 
 
