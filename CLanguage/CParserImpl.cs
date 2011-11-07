@@ -22,6 +22,14 @@ namespace CLanguage
             _lbag = new LocationsBag();
             //debug = new yydebug.yyDebugSimple();
         }
+		
+		public TranslationUnit ParseTranslationUnit(string code)
+        {
+			var pp = new Preprocessor ();
+			pp.AddCode ("stdin", code);
+			var lex = new Lexer (pp);
+			return ParseTranslationUnit (lex);
+		}
 
         public TranslationUnit ParseTranslationUnit(Lexer lexer)
         {

@@ -38,22 +38,6 @@ namespace CLanguage
             }
         }
 
-        protected override Expression DoResolve(ResolveContext rc)
-        {
-            var f = Function.Resolve(rc);
-
-            if (f.HasError)
-            {
-                //
-                f = new ConstantExpression("FUN " + f);
-            }
-
-            return new FuncallExpression(
-                f,
-                from a in Arguments select a.Resolve(rc));
-
-        }
-
         protected override void DoEmit(EmitContext ec)
         {
             var type = Function.ExpressionType as CFunctionType;

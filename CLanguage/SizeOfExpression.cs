@@ -20,11 +20,6 @@ namespace CLanguage
             get { return CBasicType.SignedInt; }
         }
 
-        protected override Expression DoResolve(ResolveContext rc)
-        {
-            return this;
-        }
-
         protected override void DoEmit(EmitContext ec)
         {
             throw new NotImplementedException();

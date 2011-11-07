@@ -26,11 +26,6 @@ namespace CLanguage
             get { return CType.Void; }
         }
 
-        protected override Expression DoResolve(ResolveContext rc)
-        {
-            throw new NotImplementedException();
-        }
-
         protected override void DoEmit(EmitContext ec)
         {
             throw new NotImplementedException();

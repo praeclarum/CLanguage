@@ -236,7 +236,7 @@ namespace CLanguage
                 c.Report.Error(2133, Location, "unknown size");
                 return 0;
             }
-            var lexp = LengthExpression.Resolve(c);
+            var lexp = LengthExpression;
             if (lexp is ConstantExpression)
             {
                 var cexp = (ConstantExpression)lexp;

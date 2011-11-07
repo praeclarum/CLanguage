@@ -28,20 +28,6 @@ namespace CLanguage
             Right = right;
         }
 
-        protected override Expression DoResolve(ResolveContext rc)
-        {
-            var r = Right.Resolve(rc);
-
-            if (r is ConstantExpression)
-            {
-                throw new NotImplementedException();
-            }
-            else
-            {
-                return new UnaryExpression(Op, r);
-            }
-        }
-
         public override CType ExpressionType
         {
             get

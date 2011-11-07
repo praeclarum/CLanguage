@@ -9,17 +9,15 @@ namespace CLanguage
     public class Preprocessor
     {
         //Log _log;
-        Config _config;
         List<File> _files;
         List<Chunk> _chunks;
         Position _pos;
 
-        public Preprocessor(Config config/*, Log log*/)
+        public Preprocessor()
         {
             _files = new List<File>();
             _chunks = new List<Chunk>();
             //_log = log;
-            _config = config;
             _pos = new Position();
         }
 
@@ -87,12 +85,6 @@ namespace CLanguage
                     i--;
                 }
                 return false;
-            };
-
-            Func<char, bool> PreviousIs = (sentinel) =>
-            {
-                var i = p - 1;
-                return (i >= 0) && file.Content[i] == sentinel;
             };
 
             NewChunk();

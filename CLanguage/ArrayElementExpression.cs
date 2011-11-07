@@ -31,11 +31,6 @@ namespace CLanguage
             }
         }
 
-        protected override Expression DoResolve(ResolveContext rc)
-        {
-            return new ArrayElementExpression(Array.Resolve(rc), ElementIndex.Resolve(rc));
-        }
-
         protected override void DoEmit(EmitContext ec)
         {
             throw new NotImplementedException();

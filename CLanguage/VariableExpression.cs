@@ -19,11 +19,6 @@ namespace CLanguage
             get { return CType.Void; }
         }
 
-        protected override Expression DoResolve(ResolveContext rc)
-        {
-            return rc.ResolveVariable(VariableName, this);
-        }
-
         protected override void DoEmit(EmitContext ec)
         {
             //

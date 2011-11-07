@@ -73,11 +73,6 @@ namespace CLanguage
             get { return ConstantType; }
         }
 
-        protected override Expression DoResolve(ResolveContext rc)
-        {
-            return this;
-        }
-
         protected override void DoEmit(EmitContext ec)
         {
             ec.EmitConstant(Value, ConstantType);

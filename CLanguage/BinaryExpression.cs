@@ -41,21 +41,6 @@ namespace CLanguage
             Right = right;
         }
 
-        protected override Expression DoResolve(ResolveContext rc)
-        {
-            var l = Left.Resolve(rc);
-            var r = Right.Resolve(rc);
-
-            if (l is ConstantExpression && r is ConstantExpression)
-            {
-                throw new NotImplementedException();
-            }
-            else
-            {
-                return new BinaryExpression(l, Op, r);
-            }
-        }
-
         protected override void DoEmit(EmitContext ec)
         {
             Left.Emit(ec);

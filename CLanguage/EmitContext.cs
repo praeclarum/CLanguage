@@ -5,7 +5,7 @@ using System.Text;
 
 namespace CLanguage
 {
-    public class EmitContext : ResolveContext
+    public class EmitContext
     {
         int _labelId = 1;
 
@@ -21,10 +21,15 @@ namespace CLanguage
                 return Id.ToString();
             }
         }
+		
+		public MachineInfo MachineInfo { get; private set; }
+		
+		public Report Report { get; private set; }
 
-        public EmitContext(CompilerContext c)
-            : base(c)
+        public EmitContext (ReportPrinter printer)
         {
+			MachineInfo = MachineInfo.WindowsX86;
+			Report = new Report (printer);
         }
 
         public virtual void DeclareVariable(VariableDeclaration v) { }

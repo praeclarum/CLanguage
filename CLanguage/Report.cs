@@ -14,55 +14,10 @@ namespace CLanguage
 
         ReportPrinter _printer = null;
 
-        public Report(ReportPrinter p)
+        public Report(ReportPrinter printer)
         {
-            _printer = p;
-        }
-
-        public abstract class AbstractMessage
-        {
-            public string MessageType { get; protected set; }
-            public Location Location { get; protected set; }
-            public bool IsWarning { get; protected set; }
-            public int Code { get; protected set; }
-            public string Text { get; protected set; }
-            public List<string> RelatedSymbols { get; protected set; }
-
-            public AbstractMessage()
-            {
-            }
-
-            public override bool Equals(object obj)
-            {
-                var o = obj as AbstractMessage;
-                return (o != null) &&
-                    (o.Code == Code) &&
-                    (o.Location == Location) &&
-                    (o.IsWarning == IsWarning) &&
-                    (o.Text == Text);                    
-            }
-
-            public override int GetHashCode()
-            {
-                return Code.GetHashCode() + Location.GetHashCode();
-            }
-        }
-
-        public class ErrorMessage : AbstractMessage
-        {
-            public ErrorMessage(int code, Location loc, string error, List<string> extraInformation)
-            {
-                MessageType = "Error";
-                Code = code;
-                Text = error;
-                Location = loc;
-                IsWarning = false;
-                if (extraInformation != null)
-                {
-                    RelatedSymbols = new List<string>();
-                    RelatedSymbols.AddRange(extraInformation);
-                }
-            }
+			if (printer == null) throw new ArgumentNullException ("printer");
+            _printer = printer;
         }
 
         Dictionary<AbstractMessage, bool> _previousErrors = new Dictionary<AbstractMessage, bool>();
@@ -96,71 +51,101 @@ namespace CLanguage
         {
             Error(code, Location.Null, String.Format(format, args));
         }
+    }
+	
+    public abstract class AbstractMessage
+    {
+        public string MessageType { get; protected set; }
+        public Location Location { get; protected set; }
+        public bool IsWarning { get; protected set; }
+        public int Code { get; protected set; }
+        public string Text { get; protected set; }
+        public List<string> RelatedSymbols { get; protected set; }
 
-        //
-        // Generic base for any message writer
-        //
-        public abstract class ReportPrinter
+        public AbstractMessage()
         {
-            /// <summary>  
-            ///   Whether to dump a stack trace on errors. 
-            /// </summary>
-            public bool Stacktrace;
+        }
 
-            int warnings, errors;
+        public override bool Equals(object obj)
+        {
+            var o = obj as AbstractMessage;
+            return (o != null) &&
+                (o.Code == Code) &&
+                (o.Location == Location) &&
+                (o.IsWarning == IsWarning) &&
+                (o.Text == Text);                    
+        }
 
-            public int WarningsCount
+        public override int GetHashCode()
+        {
+            return Code.GetHashCode() + Location.GetHashCode();
+        }
+    }
+
+    public class ErrorMessage : AbstractMessage
+    {
+        public ErrorMessage(int code, Location loc, string error, List<string> extraInformation)
+        {
+            MessageType = "Error";
+            Code = code;
+            Text = error;
+            Location = loc;
+            IsWarning = false;
+            if (extraInformation != null)
             {
-                get { return warnings; }
+                RelatedSymbols = new List<string>();
+                RelatedSymbols.AddRange(extraInformation);
+            }
+        }
+    }
+
+	public class ReportPrinter
+    {
+        int warnings, errors;
+
+        public int WarningsCount
+        {
+            get { return warnings; }
+        }
+
+        public int ErrorsCount
+        {
+            get { return errors; }
+        }
+
+		public virtual void Print (AbstractMessage msg)
+		{
+	        if (msg.IsWarning)
+                ++warnings;
+            else
+                ++errors;
+		}
+	}
+	
+    public class TextWriterReportPrinter : ReportPrinter
+    {
+		TextWriter output;
+		
+		public TextWriterReportPrinter (TextWriter output)
+		{
+			this.output = output;
+		}
+		
+        public override void Print(AbstractMessage msg)
+        {
+			base.Print(msg);
+
+			if (!msg.Location.IsNull) {
+                output.Write (msg.Location.ToString());
+                output.Write (" ");
             }
 
-            public int ErrorsCount
-            {
-                get { return errors; }
-            }
-
-            protected virtual string FormatText(string txt)
-            {
-                return txt;
-            }
-
-            //
-            // When (symbols related to previous ...) can be used
-            //
-            public virtual bool HasRelatedSymbolSupport
-            {
-                get { return true; }
-            }
-
-            public virtual void Print(AbstractMessage msg)
-            {
-                if (msg.IsWarning)
-                    ++warnings;
-                else
-                    ++errors;
-            }
-
-            protected void Print(AbstractMessage msg, TextWriter output)
-            {
-                StringBuilder txt = new StringBuilder();
-                if (!msg.Location.IsNull)
-                {
-                    txt.Append(msg.Location.ToString());
-                    txt.Append(" ");
-                }
-
-                txt.AppendFormat("{0} C{1:0000}: {2}", msg.MessageType, msg.Code, msg.Text);
-
-                if (!msg.IsWarning)
-                    output.WriteLine(FormatText(txt.ToString()));
-                else
-                    output.WriteLine(txt.ToString());
-
-                if (msg.RelatedSymbols != null)
-                {
-                    foreach (string s in msg.RelatedSymbols)
-                        output.WriteLine(s + msg.MessageType + ")");
-                }
+            output.WriteLine ("{0} C{1:0000}: {2}", msg.MessageType, msg.Code, msg.Text);
+			
+            if (msg.RelatedSymbols != null) {
+                foreach (string s in msg.RelatedSymbols) {
+                    output.WriteLine("  " + s);
+				}
             }
         }
     }

@@ -238,22 +238,29 @@ assignment_expression
 	: conditional_expression
 	| unary_expression assignment_operator assignment_expression
 	{
-		$$ = new AssignExpression((Expression)$1, (Binop)$2, (Expression)$3);
+		var op = (Binop)$2;
+		if (op == Binop.Equals) {
+			$$ = new AssignExpression((Expression)$1, (Expression)$3);
+		}
+		else {
+			var left = (Expression)$1; 
+			$$ = new AssignExpression(left, new BinaryExpression (left, op, (Expression)$3));
+		}
 	}
 	;
 
 assignment_operator
 	: '='				{ $$ = Binop.Equals; }
-	| MUL_ASSIGN
-	| DIV_ASSIGN
-	| MOD_ASSIGN
-	| ADD_ASSIGN
-	| SUB_ASSIGN
-	| LEFT_ASSIGN
-	| RIGHT_ASSIGN
-	| AND_ASSIGN
-	| XOR_ASSIGN
-	| OR_ASSIGN
+	| MUL_ASSIGN		{ $$ = Binop.Multiply; }
+	| DIV_ASSIGN		{ $$ = Binop.Divide; }
+	| MOD_ASSIGN		{ $$ = Binop.Mod; }
+	| ADD_ASSIGN		{ $$ = Binop.Add; }
+	| SUB_ASSIGN		{ $$ = Binop.Subtract; }
+	| LEFT_ASSIGN		{ $$ = Binop.ShiftLeft; }
+	| RIGHT_ASSIGN		{ $$ = Binop.ShiftRight; }
+	| AND_ASSIGN		{ $$ = Binop.BinaryAnd; }
+	| XOR_ASSIGN		{ $$ = Binop.BinaryXor; }
+	| OR_ASSIGN			{ $$ = Binop.BinaryOr; }
 	;
 
 expression
@@ -625,18 +632,70 @@ abstract_declarator
 
 direct_abstract_declarator
 	: '(' abstract_declarator ')'
+	{
+		var d = (Declarator)$2;
+		var f = FixPointerAndArrayPrecedence(d);
+		if (f != null) {
+			$$ = f;
+		}
+		else {
+			d.StrongBinding = true;
+			$$ = d;
+		}		
+	}
 	| '[' ']'
+	{
+		$$ = MakeArrayDeclarator(null, TypeQualifiers.None, null, false);
+	}
 	| '[' assignment_expression ']'
+	{
+		$$ = MakeArrayDeclarator(null, TypeQualifiers.None, (Expression)$2, false);
+	}
 	| direct_abstract_declarator '[' ']'
+	{
+		$$ = MakeArrayDeclarator((Declarator)$1, TypeQualifiers.None, null, false);
+	}
 	| direct_abstract_declarator '[' assignment_expression ']'
+	{
+		$$ = MakeArrayDeclarator((Declarator)$1, TypeQualifiers.None, (Expression)$3, false);
+	}
 	| '[' '*' ']'
+	{
+		$$ = MakeArrayDeclarator(null, TypeQualifiers.None, null, false);
+	}
 	| direct_abstract_declarator '[' '*' ']'
+	{
+		$$ = MakeArrayDeclarator((Declarator)$1, TypeQualifiers.None, null, false);
+	}
 	| '(' ')'
+	{
+		var d = new FunctionDeclarator();
+		d.InnerDeclarator = (Declarator)$1;
+		d.Parameters = new List<ParameterDecl>();
+		$$ = d;
+	}
 	| '(' parameter_type_list ')'
+	{
+		var d = new FunctionDeclarator();
+		d.Parameters = (List<ParameterDecl>)$2;
+		$$ = d;
+	}
 	| direct_abstract_declarator '(' ')'
+	{
+		var d = new FunctionDeclarator();
+		d.InnerDeclarator = (Declarator)$1;
+		d.Parameters = new List<ParameterDecl> ();
+		$$ = d;
+	}
 	| direct_abstract_declarator '(' parameter_type_list ')'
+	{
+		var d = new FunctionDeclarator();
+		d.InnerDeclarator = (Declarator)$1;
+		d.Parameters = (List<ParameterDecl>)$3;
+		$$ = d;
+	}
 	;
-
+	
 initializer
 	: assignment_expression
 	{

@@ -21,11 +21,6 @@ namespace CLanguage
             get { throw new NotImplementedException(); }
         }
 
-        protected override Expression DoResolve(ResolveContext rc)
-        {
-            return new MemberFromReferenceExpression(Left.Resolve(rc), MemberName);
-        }
-
         protected override void DoEmit(EmitContext ec)
         {
             throw new NotImplementedException();
