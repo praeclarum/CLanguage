@@ -2,7 +2,14 @@
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
+
+#if VS_UNIT_TESTING
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+#else
+using NUnit.Framework;
+using TestClassAttribute = NUnit.Framework.TestFixtureAttribute;
+using TestMethodAttribute = NUnit.Framework.TestAttribute;
+#endif
 
 namespace CLanguage.Tests
 {
@@ -11,15 +18,15 @@ namespace CLanguage.Tests
     {
         CType ParseType(string code)
         {
-            var pp = new Preprocessor(new Config());
+            var pp = new Preprocessor();
             pp.AddCode("stdin", code);
             var lexer = new Lexer(pp);
             var parser = new CParser();
-            var tu = parser.ParseTranslationUnit(lexer);
+            var tu = parser.ParseTranslationUnit(lexer, new Report (new TextWriterReportPrinter (Console.Out)));
             return tu.Variables[0].VariableType;
         }
 
-        EmitContext _c = new EmitContext(null, MachineInfo.WindowsX86);
+        EmitContext _c = new EmitContext (new Report (new TextWriterReportPrinter (Console.Out)));
 
         [TestMethod]
         public void BasicSizes()

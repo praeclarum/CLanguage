@@ -33,11 +33,11 @@ namespace CLanguage
 
         public void AddCode(string code)
         {
-            var pp = new Preprocessor(new Config());
+            var pp = new Preprocessor ();
             pp.AddCode("stdin", code);
             var lexer = new Lexer(pp);
             var parser = new CParser();
-            Add(parser.ParseTranslationUnit(lexer));
+            Add(parser.ParseTranslationUnit(lexer, _compilerCtx.Report));
         }
 
         void IntegrateTranslationUnit(CompiledBlock block)
@@ -94,6 +94,8 @@ namespace CLanguage
             Dictionary<string, IFunction> Functions;
             Dictionary<string, VariableDeclaration> Variables;
 
+			CompilerContext context;
+
             /*class LocalVariable
             {
                 public int FunctionIndex;
@@ -103,8 +105,9 @@ namespace CLanguage
             }*/
 
             public CompiledBlock(Block block, CompiledBlock parent, CompilerContext c)
-                : base(c)
+                : base(c.Report)
             {
+				context = c;
                 Parent = parent;
                 Functions = new Dictionary<string, IFunction>();
                 Variables = new Dictionary<string, VariableDeclaration>();
@@ -117,7 +120,7 @@ namespace CLanguage
 
             public override void DeclareFunction(FunctionDeclaration f)
             {
-                var fun = new CompiledFunction(f, this, Compiler);
+                var fun = new CompiledFunction(f, this, context);
                 if (f.Body != null)
                 {
                     f.Body.Emit(fun);
@@ -130,7 +133,7 @@ namespace CLanguage
                 Variables[v.Name] = v;
             }
 
-            public override Expression ResolveVariable(string name, VariableExpression original)
+            public Expression ResolveVariable(string name, VariableExpression original)
             {
                 var v = ResolveVariableR(name);
 
@@ -186,7 +189,7 @@ namespace CLanguage
                     get { return _type; }
                 }
 
-                protected override Expression DoResolve(ResolveContext rc)
+                protected Expression DoResolve(ResolveContext rc)
                 {
                     return this;
                 }
@@ -218,7 +221,7 @@ namespace CLanguage
                     get { return _type; }
                 }
 
-                protected override Expression DoResolve(ResolveContext rc)
+                protected Expression DoResolve(ResolveContext rc)
                 {
                     return this;
                 }
@@ -294,16 +297,19 @@ namespace CLanguage
 
             CompiledBlock _currentBlock;
 
+			CompilerContext context;
+
             public TranslationUnitContext(Compiler i, CompilerContext c)
-                : base(c)
+                : base(c.Report)
             {
+				context = c;
                 _i = i;
                 _currentBlock = null;
             }
 
             public override void BeginBlock(Block block)
             {
-                var b = new CompiledBlock(block, _currentBlock, Compiler);
+                var b = new CompiledBlock(block, _currentBlock, context);
                 _currentBlock = b;
             }
 

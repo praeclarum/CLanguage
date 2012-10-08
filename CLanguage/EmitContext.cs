@@ -22,17 +22,14 @@ namespace CLanguage
             }
         }
 		
-		public ObjectFile ObjectFile { get; private set; }
-		
 		public MachineInfo MachineInfo { get; private set; }
 		
 		public Report Report { get; private set; }
 
-        public EmitContext (ReportPrinter printer, ObjectFile obj)
+        public EmitContext (Report report)
         {
 			MachineInfo = MachineInfo.WindowsX86;
-			Report = new Report (printer);
-			ObjectFile = obj;
+			Report = report;
         }
 
         public virtual void DeclareVariable(VariableDeclaration v) { }
