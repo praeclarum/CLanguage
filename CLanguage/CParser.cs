@@ -1201,6 +1201,18 @@ case 227:
 case 228:
   case_228();
   break;
+case 232:
+#line 870 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+  {
+		yyVal = new ReturnStatement ();
+	}
+  break;
+case 233:
+#line 874 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+  {
+		yyVal = new ReturnStatement ((Expression)yyVals[-1+yyTop]);
+	}
+  break;
 case 234:
   case_234();
   break;
@@ -1621,21 +1633,21 @@ void case_228()
 	}
 
 void case_234()
-#line 873 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 879 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
 {
 		AddDeclaration(yyVals[0+yyTop]);
 		yyVal = _tu;
 	}
 
 void case_235()
-#line 878 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 884 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
 {
 		AddDeclaration(yyVals[0+yyTop]);
 		yyVal = _tu;
 	}
 
 void case_238()
-#line 891 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 897 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
 {
 		var f = new FunctionDefinition();
 		f.Specifiers = (DeclarationSpecifiers)yyVals[-3+yyTop];
@@ -1646,7 +1658,7 @@ void case_238()
 	}
 
 void case_239()
-#line 900 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 906 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
 {
 		var f = new FunctionDefinition();
 		f.Specifiers = (DeclarationSpecifiers)yyVals[-2+yyTop];
@@ -1656,7 +1668,7 @@ void case_239()
 	}
 
 void case_240()
-#line 911 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 917 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
 {
 		var l = new List<Declaration>();
 		l.Add((Declaration)yyVals[0+yyTop]);
@@ -1664,7 +1676,7 @@ void case_240()
 	}
 
 void case_241()
-#line 917 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 923 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
 {
 		var l = (List<Declaration>)yyVals[-1+yyTop];
 		l.Add((Declaration)yyVals[0+yyTop]);
@@ -2452,7 +2464,7 @@ void case_241()
   303,  304,  305,  306,
   };
 
-#line 927 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 933 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
 
 }
 

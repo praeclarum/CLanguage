@@ -80,6 +80,11 @@ namespace CLanguage
         {
             return Code.GetHashCode() + Location.GetHashCode();
         }
+
+		public override string ToString ()
+		{
+			return string.Format ("{0} C{1:0000}: {2}", MessageType, Code, Text);
+		}
     }
 
     public class ErrorMessage : AbstractMessage
@@ -133,8 +138,6 @@ namespace CLanguage
 		
         public override void Print(AbstractMessage msg)
         {
-			base.Print(msg);
-
 			if (!msg.Location.IsNull) {
                 output.Write (msg.Location.ToString());
                 output.Write (" ");

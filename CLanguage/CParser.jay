@@ -865,7 +865,13 @@ jump_statement
 	| CONTINUE ';'
 	| BREAK ';'
 	| RETURN ';'
+	{
+		$$ = new ReturnStatement ();
+	}
 	| RETURN expression ';'
+	{
+		$$ = new ReturnStatement ((Expression)$2);
+	}
 	;
 
 translation_unit

@@ -7,28 +7,39 @@ namespace CLanguage
 {
     public class Compiler
     {
-        CompiledBlock _rootBlock;
-        CompilerContext _compilerCtx;
+		CompilerContext context;
+		List<TranslationUnit> tus;
 
         public Compiler(Report report, MachineInfo m)
         {
-            _compilerCtx = new CompilerContext (report, m);
+            context = new CompilerContext (report, m);
+			tus = new List<TranslationUnit> ();
         }
 
-        public void Add(IFunction func)
-        {
-            if (_rootBlock == null)
-            {
-                _rootBlock = new CompiledBlock(null, null, _compilerCtx);
-            }
+		public Executable Compile ()
+		{
+			var exe = new Executable ();
 
-            _rootBlock.AddFunction(func);
-        }
+			foreach (var tu in tus) {
+				foreach (var fdecl in tu.Functions) {
+					var fexe = exe.Functions.FirstOrDefault (x => x.Name == fdecl.Name);
+					if (fexe == null) {
+						fexe = new Executable.Function (fdecl.Name);
+						exe.Functions.Add (fexe);
+					}
+					if (fdecl.Body != null) {
+						var c = new FunctionContext (fdecl, fexe, context);
+						fdecl.Body.Emit (c);
+					}
+				}
+			}
+
+			return exe;
+		}
 
         public void Add(TranslationUnit translationUnit)
         {
-            var ctx = new TranslationUnitContext(this, _compilerCtx);
-            translationUnit.Emit(ctx);
+			tus.Add (translationUnit);
         }
 
         public void AddCode(string code)
@@ -37,299 +48,120 @@ namespace CLanguage
             pp.AddCode("stdin", code);
             var lexer = new Lexer(pp);
             var parser = new CParser();
-            Add(parser.ParseTranslationUnit(lexer, _compilerCtx.Report));
+            Add(parser.ParseTranslationUnit(lexer, context.Report));
         }
 
-        void IntegrateTranslationUnit(CompiledBlock block)
+        class FunctionContext : EmitContext
         {
-            _rootBlock = block;
-        }
-
-		class SymbolTable
-		{
-			List<KeyValuePair<string,object>> _syms = new List<KeyValuePair<string, object>>();
-			
-			Dictionary<string,object> _index = new Dictionary<string, object>();
-			public void Add (string name, object val)
-			{
-				_syms.Add (new KeyValuePair<string,object>(name, val));
-				_index [name] = val;
-			}
-			public bool Contains (string name) {
-				return _index.ContainsKey (name);
-			}
-			public object this[string name] { get { return _index[name]; } }
-		}
-
-		class Symbols
-		{
-			SymbolTable Globals;
-			SymbolTable Params;
-			SymbolTable Locals;
-		}
-
-        class CompiledFunction : CompiledBlock, IFunction
-        {
-            public string Name { get; private set; }
-            public CFunctionType FunctionType { get; private set; }
-
-            public CompiledFunction(FunctionDeclaration fdecl, CompiledBlock parent, CompilerContext c)
-                : base(fdecl.Body, parent, c)
-            {
-                Name = fdecl.Name;
-                FunctionType = fdecl.FunctionType;
-            }
-        }
-
-        public interface IFunction
-        {
-            string Name { get; }
-            CFunctionType FunctionType { get; }
-        }
-
-        class CompiledBlock : EmitContext
-        {
-            public CompiledBlock Parent { get; private set; }
-
-            Dictionary<string, IFunction> Functions;
-            Dictionary<string, VariableDeclaration> Variables;
-
+			FunctionDeclaration fdecl;
+			Executable.Function fexe;
 			CompilerContext context;
 
-            /*class LocalVariable
+			public FunctionContext (FunctionDeclaration fdecl, Executable.Function fexe, CompilerContext context)
+                : base (fdecl, context.Report)
             {
-                public int FunctionIndex;
-                public int BlockIndex;
-                public string Name;
-                public CType VariableType;
-            }*/
-
-            public CompiledBlock(Block block, CompiledBlock parent, CompilerContext c)
-                : base(c.Report)
-            {
-				context = c;
-                Parent = parent;
-                Functions = new Dictionary<string, IFunction>();
-                Variables = new Dictionary<string, VariableDeclaration>();
+				this.fdecl = fdecl;
+				this.fexe = fexe;
+				this.context = context;
             }
 
-            public void AddFunction(IFunction fun)
+            public override ResolvedVariable ResolveVariable (string name)
+			{
+				for (var i = 0; i < fdecl.ParameterInfos.Count; i++) {
+					if (fdecl.ParameterInfos[i].Name == name) {
+						return new ResolvedVariable (VariableScope.Arg, i);
+					}
+				}
+				return null;
+			}
+
+            public override void EmitBranchIfFalse(Label l)
             {
-                Functions[fun.Name] = fun;
+				fexe.Instructions.Add (new BranchIfFalseInstruction (l));
             }
 
-            public override void DeclareFunction(FunctionDeclaration f)
+            public override void EmitJump(Label l)
             {
-                var fun = new CompiledFunction(f, this, context);
-                if (f.Body != null)
-                {
-                    f.Body.Emit(fun);
-                }
-                AddFunction(fun);                
+				fexe.Instructions.Add (new JumpInstruction (l));
             }
 
-            public override void DeclareVariable(VariableDeclaration v)
+			public override Label DefineLabel ()
+			{
+				return new Label ();
+			}
+
+            public override void EmitLabel(Label l)
             {
-                Variables[v.Name] = v;
+				l.Index = fexe.Instructions.Count;
             }
 
-            public Expression ResolveVariable(string name, VariableExpression original)
-            {
-                var v = ResolveVariableR(name);
-
-                if (v != null)
-                {
-                    return v;
-                }
-                else
-                {
-                    Report.Error(3861, "'{0}': identifier not found", name);
-                    original.HasError = true;
-                    return original;
-                }
-            }
-
-            protected virtual Expression ResolveVariableR(string name)
-            {
-                VariableDeclaration v = null;
-                if (Variables.TryGetValue(name, out v))
-                {
-                    return new LocalVariableRefExpression(v); 
-                }
-                
-                IFunction f = null;
-                if (Functions.TryGetValue(name, out f))
-                {
-                    return new FunctionRefExpression(f);
-                }
-
-                if (Parent != null)
-                {
-                    return Parent.ResolveVariableR(name);
-                }
-                else
-                {
-                    return null;
-                }
-            }
-
-            class LocalVariableRefExpression : Expression
-            {
-                string _name;
-                CType _type;
-
-                public LocalVariableRefExpression(VariableDeclaration v)
-                {
-                    _name = v.Name;
-                    _type = v.VariableType;
-                }
-
-                public override CType ExpressionType
-                {
-                    get { return _type; }
-                }
-
-                protected Expression DoResolve(ResolveContext rc)
-                {
-                    return this;
-                }
-
-                protected override void DoEmit(EmitContext ec)
-                {
-                    ec.EmitLoadLocal(0);
-                }
-
-                public override string ToString()
-                {
-                    return _name;
-                }
-            }
-
-            class FunctionRefExpression : Expression
-            {
-                string _name;
-                CType _type;
-
-                public FunctionRefExpression(IFunction f)
-                {
-                    _name = f.Name;
-                    _type = f.FunctionType;
-                }
-
-                public override CType ExpressionType
-                {
-                    get { return _type; }
-                }
-
-                protected Expression DoResolve(ResolveContext rc)
-                {
-                    return this;
-                }
-
-                protected override void DoEmit(EmitContext ec)
-                {
-                    throw new NotImplementedException();
-                }
-            }
-
-			List<Op> _body = new List<Op>();
-
-            public override void EmitBranchIfFalse(EmitContext.Label l)
-            {
-                Console.WriteLine("  BRFALSE " + l);
-            }
-
-            public override void EmitBranchIfTrue(EmitContext.Label l)
-            {
-                Console.WriteLine("  BRTRUE " + l);
-            }
-
-            public override void EmitJump(EmitContext.Label l)
-            {
-                Console.WriteLine("  JUMP " + l);
-            }
-
-            public override void EmitLabel(EmitContext.Label l)
-            {
-                Console.WriteLine(l + ":");
-            }
+			public override void EmitReturn ()
+			{
+				fexe.Instructions.Add (new ReturnInstruction ());
+			}
 
             public override void EmitUnop(Unop op)
             {
                 Console.WriteLine("  " + op);
             }
 
-            public override void EmitLoadLocal(int index)
-            {
-                Console.WriteLine("  LDLOC " + index);
+            public override void EmitVariable (ResolvedVariable variable)
+			{
+				if (variable.Scope == VariableScope.Arg) {
+					fexe.Instructions.Add (new LoadArgInstruction (variable.Index));
+				}
+				else {
+					throw new NotImplementedException (variable.Scope.ToString ());
+				}
             }
 
             public override void EmitBinop(Binop op)
             {
-                Console.WriteLine("  " + op);
+				fexe.Instructions.Add (new BinopInstruction (op));
             }
 
             public override void EmitCall(CFunctionType type, int argsCount)
             {
                 Console.WriteLine("  -> " + type + "/" + argsCount);
+				throw new NotImplementedException ();
             }
 
             public override void EmitConstant(object value, CType type)
             {
-                Console.WriteLine("  PUSH " + value);
+				fexe.Instructions.Add (new PushInstruction (value, type));
             }
 
             public override void EmitAssign(Expression left)
             {
                 Console.WriteLine("  => " + left);
 				//_body.Add (Ops.Assign ());
+				throw new NotImplementedException ();
             }
 
             public override void EmitPop()
             {
-                _body.Add (new PopOp ());
             }
         }
 
         class TranslationUnitContext : EmitContext
         {
-            Compiler _i;
+            Compiler compiler;
+			Executable exe;
 
-            CompiledBlock _currentBlock;
-
-			CompilerContext context;
-
-            public TranslationUnitContext(Compiler i, CompilerContext c)
-                : base(c.Report)
+            public TranslationUnitContext (Compiler compiler, Executable exe)
+                : base (null, compiler.context.Report)
             {
-				context = c;
-                _i = i;
-                _currentBlock = null;
+                this.compiler = compiler;
+				this.exe = exe;
             }
 
-            public override void BeginBlock(Block block)
-            {
-                var b = new CompiledBlock(block, _currentBlock, context);
-                _currentBlock = b;
+            public override void DeclareFunction (FunctionDeclaration fdecl)
+			{
+
             }
 
-            public override void EndBlock()
+            public override void DeclareVariable (VariableDeclaration v)
             {
-                if (_currentBlock.Parent == null)
-                {
-                    _i.IntegrateTranslationUnit(_currentBlock);
-                }
-                _currentBlock = _currentBlock.Parent;
-            }
-
-            public override void DeclareFunction(FunctionDeclaration f)
-            {
-                _currentBlock.DeclareFunction(f);
-            }
-
-            public override void DeclareVariable(VariableDeclaration v)
-            {
-                _currentBlock.DeclareVariable(v);
             }
         }
     }

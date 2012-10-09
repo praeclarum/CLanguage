@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="3.5" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -7,18 +7,18 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{FEEF50E7-2104-4F68-8AA4-F2B6BEB4E5F5}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>MonoCLanguage</RootNamespace>
+    <RootNamespace>CLanguage</RootNamespace>
     <AssemblyName>MonoCLanguage</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
+    <DebugSymbols>True</DebugSymbols>
     <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
+    <Optimize>False</Optimize>
     <OutputPath>bin\Debug</OutputPath>
     <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <ConsolePause>false</ConsolePause>
+    <ConsolePause>False</ConsolePause>
     <CustomCommands>
       <CustomCommands>
         <Command type="BeforeBuild" command="prebuild.sh ${ProjectDir}" workingdir="${ProjectDir}" />
@@ -27,11 +27,11 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
-    <Optimize>false</Optimize>
+    <Optimize>False</Optimize>
     <OutputPath>bin\Release</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <ConsolePause>false</ConsolePause>
+    <ConsolePause>False</ConsolePause>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -57,7 +57,6 @@
     <Compile Include="Lexer.cs" />
     <Compile Include="Location.cs" />
     <Compile Include="MemberFromReferenceExpression.cs" />
-    <Compile Include="OpCode.cs" />
     <Compile Include="Preprocessor.cs" />
     <Compile Include="Report.cs" />
     <Compile Include="SizeOfExpression.cs" />
@@ -71,7 +70,11 @@
     <Compile Include="WhileStatement.cs" />
     <Compile Include="EmitContext.cs" />
     <Compile Include="MachineInfo.cs" />
-    <Compile Include="ObjectFile.cs" />
+    <Compile Include="Compiler.cs" />
+    <Compile Include="Executable.cs" />
+    <Compile Include="CompilerContext.cs" />
+    <Compile Include="Instruction.cs" />
+    <Compile Include="ReturnStatement.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="CParser.jay" />

@@ -26,7 +26,7 @@ namespace CLanguage.Tests
             return tu.Variables[0].VariableType;
         }
 
-        EmitContext _c = new EmitContext (new Report (new TextWriterReportPrinter (Console.Out)));
+        EmitContext _c = new EmitContext (null, new Report (new TextWriterReportPrinter (Console.Out)));
 
         [TestMethod]
         public void BasicSizes()
