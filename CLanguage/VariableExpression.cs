@@ -14,9 +14,15 @@ namespace CLanguage
             VariableName = val;
         }
 
-        public override CType ExpressionType
-        {
-            get { return CType.Void; }
+		public override CType GetEvaluatedCType (EmitContext ec)
+		{
+			var v = ec.ResolveVariable (VariableName);
+			if (v != null) {
+				return v.VariableType;
+			}
+			else {
+				return CBasicType.SignedInt;
+			}
         }
 
         protected override void DoEmit(EmitContext ec)
@@ -26,7 +32,7 @@ namespace CLanguage
 				ec.EmitVariable (v);
 			}
 			else {
-				ec.Report.Error (103, "The name `" + VariableName + "' does not exist in the current context");
+				ec.EmitConstant (0, CBasicType.SignedInt);
 			}
         }
 

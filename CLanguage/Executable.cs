@@ -6,13 +6,16 @@ namespace CLanguage
 {
 	public class Executable
 	{
-		public class Function
+		public class Function : IFunction
 		{
 			public string Name { get; private set; }
+			public CFunctionType FunctionType { get; private set; }
+
 			public ObservableCollection<Instruction> Instructions { get; private set; }
-			public Function (string name)
+			public Function (string name, CFunctionType functionType)
 			{
 				Name = name;
+				FunctionType = functionType;
 				Instructions = new ObservableCollection<Instruction> ();
 			}
 			public override string ToString ()
@@ -30,11 +33,25 @@ namespace CLanguage
 			}
 		}
 
+		public class Global
+		{
+			public string Name { get; private set; }
+			public CType VariableType { get; private set; }
+
+			public Global (string name, CType variableType)
+			{
+				Name = name;
+				VariableType = variableType;
+			}
+		}
+
 		public ObservableCollection<Function> Functions { get; private set; }
+		public ObservableCollection<Global> Globals { get; private set; }
 
 		public Executable ()
 		{
 			Functions = new ObservableCollection<Function> ();
+			Globals = new ObservableCollection<Global> ();
 		}
 	}
 }

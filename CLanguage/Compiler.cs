@@ -21,14 +21,17 @@ namespace CLanguage
 			var exe = new Executable ();
 
 			foreach (var tu in tus) {
+				foreach (var v in tu.Variables) {
+					exe.Globals.Add (new Executable.Global (v.Name, v.VariableType));
+				}
 				foreach (var fdecl in tu.Functions) {
 					var fexe = exe.Functions.FirstOrDefault (x => x.Name == fdecl.Name);
 					if (fexe == null) {
-						fexe = new Executable.Function (fdecl.Name);
+						fexe = new Executable.Function (fdecl.Name, fdecl.FunctionType);
 						exe.Functions.Add (fexe);
 					}
 					if (fdecl.Body != null) {
-						var c = new FunctionContext (fdecl, fexe, context);
+						var c = new FunctionContext (exe, fdecl, fexe, context);
 						fdecl.Body.Emit (c);
 					}
 				}
@@ -53,13 +56,15 @@ namespace CLanguage
 
         class FunctionContext : EmitContext
         {
+			Executable exe;
 			FunctionDeclaration fdecl;
 			Executable.Function fexe;
 			CompilerContext context;
 
-			public FunctionContext (FunctionDeclaration fdecl, Executable.Function fexe, CompilerContext context)
+			public FunctionContext (Executable exe, FunctionDeclaration fdecl, Executable.Function fexe, CompilerContext context)
                 : base (fdecl, context.Report)
             {
+				this.exe = exe;
 				this.fdecl = fdecl;
 				this.fexe = fexe;
 				this.context = context;
@@ -67,12 +72,61 @@ namespace CLanguage
 
             public override ResolvedVariable ResolveVariable (string name)
 			{
+				//
+				// Look for function parameters
+				//
 				for (var i = 0; i < fdecl.ParameterInfos.Count; i++) {
 					if (fdecl.ParameterInfos[i].Name == name) {
-						return new ResolvedVariable (VariableScope.Arg, i);
+						return new ResolvedVariable (VariableScope.Arg, i, fdecl.FunctionType.Parameters[i].ParameterType);
 					}
 				}
+
+				//
+				// Look for global variables
+				//
+				for (var i = 0; i < exe.Globals.Count; i++) {
+					if (exe.Globals[i].Name == name) {
+						return new ResolvedVariable (VariableScope.Global, i, exe.Globals[i].VariableType);
+					}
+				}
+
+				//
+				// Look for functions
+				//
+				foreach (var f in exe.Functions) {
+					if (f.Name == name) {
+						return new ResolvedVariable (f);
+					}
+				}
+
+				//
+				// Look for machine functions
+				//
+				foreach (var f in context.MachineInfo.InternalFunctions) {
+					if (f.Name == name) {
+						return new ResolvedVariable (f);
+					}
+				}
+
+				context.Report.Error (103, "The name '" + name + "' does not exist in the current context");
 				return null;
+			}
+
+			public override void EmitVariable (ResolvedVariable variable)
+			{
+				if (variable.Scope == VariableScope.Arg) {
+					fexe.Instructions.Add (new LoadArgInstruction (variable.Index));
+				}
+				else if (variable.Scope == VariableScope.Function) {
+					fexe.Instructions.Add (new PushInstruction (variable.Function, variable.Function.FunctionType));
+				}
+				else if (variable.Scope == VariableScope.Global) {
+					fexe.Instructions.Add (new LoadGlobalInstruction (variable.Index));
+				}
+				else {
+
+					throw new NotImplementedException (variable.Scope.ToString ());
+				}
 			}
 
             public override void EmitBranchIfFalse(Label l)
@@ -100,67 +154,44 @@ namespace CLanguage
 				fexe.Instructions.Add (new ReturnInstruction ());
 			}
 
-            public override void EmitUnop(Unop op)
-            {
-                Console.WriteLine("  " + op);
-            }
-
-            public override void EmitVariable (ResolvedVariable variable)
+			public override void EmitUnop(Unop op)
 			{
-				if (variable.Scope == VariableScope.Arg) {
-					fexe.Instructions.Add (new LoadArgInstruction (variable.Index));
-				}
-				else {
-					throw new NotImplementedException (variable.Scope.ToString ());
-				}
-            }
+				fexe.Instructions.Add (new UnopInstruction (op));
+			}
 
-            public override void EmitBinop(Binop op)
+			public override void EmitBinop (Binop op)
             {
 				fexe.Instructions.Add (new BinopInstruction (op));
             }
 
-            public override void EmitCall(CFunctionType type, int argsCount)
+            public override void EmitCall (CFunctionType type)
             {
-                Console.WriteLine("  -> " + type + "/" + argsCount);
-				throw new NotImplementedException ();
+				fexe.Instructions.Add (new CallInstruction (type));
             }
 
-            public override void EmitConstant(object value, CType type)
+            public override void EmitConstant (object value, CType type)
             {
 				fexe.Instructions.Add (new PushInstruction (value, type));
             }
 
-            public override void EmitAssign(Expression left)
-            {
-                Console.WriteLine("  => " + left);
-				//_body.Add (Ops.Assign ());
-				throw new NotImplementedException ();
-            }
-
-            public override void EmitPop()
-            {
-            }
-        }
-
-        class TranslationUnitContext : EmitContext
-        {
-            Compiler compiler;
-			Executable exe;
-
-            public TranslationUnitContext (Compiler compiler, Executable exe)
-                : base (null, compiler.context.Report)
-            {
-                this.compiler = compiler;
-				this.exe = exe;
-            }
-
-            public override void DeclareFunction (FunctionDeclaration fdecl)
+            public override void EmitAssign (Expression left)
 			{
+				if (left is VariableExpression) {
+					var v = ResolveVariable (((VariableExpression)left).VariableName);
 
+					if (v == null) {
+						fexe.Instructions.Add (new PushInstruction (0, CBasicType.SignedInt));
+					} else if (v.Scope == VariableScope.Global) {
+						fexe.Instructions.Add (new StoreGlobalInstruction (v.Index));
+					} else {
+						throw new NotSupportedException ("Assigning to " + v.Scope);
+					}
+				} else {
+					throw new NotImplementedException ("Assign " + left.GetType ());
+				}
             }
 
-            public override void DeclareVariable (VariableDeclaration v)
+            public override void EmitPop ()
             {
             }
         }

@@ -16,7 +16,7 @@ namespace CLanguage
             DoEmit(ec);
         }
 
-        public abstract CType ExpressionType { get; }
+		public abstract CType GetEvaluatedCType (EmitContext ec);
 
         protected abstract void DoEmit(EmitContext ec);
     }

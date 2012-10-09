@@ -16,9 +16,9 @@ namespace CLanguage
             MemberName = memberName;
         }
 
-        public override CType ExpressionType
-        {
-            get { throw new NotImplementedException(); }
+		public override CType GetEvaluatedCType (EmitContext ec)
+		{
+			throw new NotImplementedException();
         }
 
         protected override void DoEmit(EmitContext ec)

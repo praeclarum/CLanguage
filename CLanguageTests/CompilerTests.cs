@@ -30,10 +30,10 @@ namespace CLanguage.Tests
 		}
 		Compiler CreateCompiler ()
 		{
-			return new Compiler (new Report (new TestPrinter ()), MachineInfo.WindowsX86);
+			return new Compiler (new Report (new TestPrinter ()), MachineInfo.Arduino);
 		}
 
-		Executable CompileCode (string code)
+		Executable Compile (string code)
 		{
 			var c = CreateCompiler ();
 			c.AddCode (code);
@@ -43,7 +43,7 @@ namespace CLanguage.Tests
 		[TestMethod]
 		public void ReturnConstant ()
 		{
-			var exe = CompileCode (@"int f () { return 42; }");
+			var exe = Compile (@"int f () { return 42; }");
 			Assert.That (exe.Functions.Count, Is.EqualTo (1));
 			var f = exe.Functions.First (x => x.Name == "f");
 			Assert.That (f.Instructions.Count, Is.EqualTo (2));
@@ -54,7 +54,7 @@ namespace CLanguage.Tests
 		[TestMethod]
 		public void ReturnParamExpr ()
 		{
-			var exe = CompileCode (@"int f (int i) { return i + 42; }");
+			var exe = Compile (@"int f (int i) { return i + 42; }");
 			Assert.That (exe.Functions.Count, Is.EqualTo (1));
 			var f = exe.Functions.First (x => x.Name == "f");
 			Assert.That (f.Instructions.Count, Is.EqualTo (4));
@@ -67,7 +67,7 @@ namespace CLanguage.Tests
 		[TestMethod]
 		public void ConditionalReturn ()
 		{
-			var exe = CompileCode (@"int f (int i) { if (i) return 0; else return 42; }");
+			var exe = Compile (@"int f (int i) { if (i) return 0; else return 42; }");
 			Assert.That (exe.Functions.Count, Is.EqualTo (1));
 			var f = exe.Functions.First (x => x.Name == "f");
 			Assert.That (f.Instructions.Count, Is.EqualTo (7));
@@ -78,6 +78,20 @@ namespace CLanguage.Tests
 			Assert.That (f.Instructions[4], Is.AssignableTo<JumpInstruction> ());
 			Assert.That (f.Instructions[5], Is.AssignableTo<PushInstruction> ());
 			Assert.That (f.Instructions[6], Is.AssignableTo<ReturnInstruction> ());
+		}
+
+		[TestMethod]
+		public void ArduinoBlink ()
+		{
+			var exe = Compile (ArduinoTests.BlinkCode);
+			Assert.That (exe.Functions.Count, Is.EqualTo (2));
+		}
+
+		[TestMethod]
+		public void ArduinoFade ()
+		{
+			var exe = Compile (ArduinoTests.FadeCode);
+			Assert.That (exe.Functions.Count, Is.EqualTo (2));
 		}
 	}
 }

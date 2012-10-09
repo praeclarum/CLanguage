@@ -22,39 +22,28 @@ namespace CLanguage
             Arguments = new List<Expression>(args);
         }
 
-        public override CType ExpressionType
-        {
-            get
+		public override CType GetEvaluatedCType (EmitContext ec)
+		{
+            var ft = Function.GetEvaluatedCType (ec) as CFunctionType;
+            if (ft != null)
             {
-                var ft = Function.ExpressionType as CFunctionType;
-                if (ft != null)
-                {
-                    return ft.ReturnType;
-                }
-                else
-                {
-                    return CType.Void;
-                }
+                return ft.ReturnType;
+            }
+            else
+            {
+                return CType.Void;
             }
         }
 
         protected override void DoEmit(EmitContext ec)
         {
-            var type = Function.ExpressionType as CFunctionType;
-
-            Function.Emit(ec);
-
-            var argsCount = Arguments.Count;
-
-            foreach (var a in Arguments)
-            {
-                a.Emit(ec);
-            }
+            var type = Function.GetEvaluatedCType (ec) as CFunctionType;
 
             if (type != null)
             {
-                
-                
+				if (type.Parameters.Count != Arguments.Count) {
+					ec.Report.Error (1501, "'{0}' takes {1} arguments, {2} provided", Function, type.Parameters.Count, Arguments.Count);
+				}
             }
             else
             {
@@ -64,7 +53,14 @@ namespace CLanguage
                 }
             }
 
-            ec.EmitCall(type, argsCount);
+			foreach (var a in Arguments)
+			{
+				a.Emit(ec);
+			}
+
+			Function.Emit (ec);
+
+            ec.EmitCall (type);
         }
 
         public override string ToString()

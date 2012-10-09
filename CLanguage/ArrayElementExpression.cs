@@ -16,18 +16,16 @@ namespace CLanguage
             ElementIndex = elementIndex;
         }
 
-        public override CType ExpressionType
+		public override CType GetEvaluatedCType (EmitContext ec)
         {
-            get {
-                var a = Array.ExpressionType as CArrayType;
-                if (a != null)
-                {
-                    return a.ElementType;
-                }
-                else
-                {
-                    return CType.Void;
-                }
+            var a = Array.GetEvaluatedCType (ec) as CArrayType;
+            if (a != null)
+            {
+                return a.ElementType;
+            }
+            else
+            {
+                return CType.Void;
             }
         }
 

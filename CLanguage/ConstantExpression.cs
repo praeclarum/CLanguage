@@ -68,9 +68,9 @@ namespace CLanguage
             }
         }
 
-        public override CType ExpressionType
-        {
-            get { return ConstantType; }
+		public override CType GetEvaluatedCType (EmitContext ec)
+		{
+			return ConstantType;
         }
 
         protected override void DoEmit(EmitContext ec)

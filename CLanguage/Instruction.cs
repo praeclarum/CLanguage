@@ -34,6 +34,21 @@ namespace CLanguage
 		}
 	}
 
+	public class CallInstruction : Instruction
+	{
+		CFunctionType type;
+
+		public CallInstruction (CFunctionType type)
+		{
+			this.type = type;
+		}
+
+		public override string ToString ()
+		{
+			return string.Format ("CALL {0}", type);
+		}
+	}
+
 	public class LoadArgInstruction : Instruction
 	{
 		int index;
@@ -43,7 +58,33 @@ namespace CLanguage
 		}
 		public override string ToString ()
 		{
-			return string.Format ("LOADARG {0}", index);
+			return string.Format ("LOADARG #{0}", index);
+		}
+	}
+
+	public class LoadGlobalInstruction : Instruction
+	{
+		int index;
+		public LoadGlobalInstruction (int index)
+		{
+			this.index = index;
+		}
+		public override string ToString ()
+		{
+			return string.Format ("LOADGLOBAL #{0}", index);
+		}
+	}
+
+	public class StoreGlobalInstruction : Instruction
+	{
+		int index;
+		public StoreGlobalInstruction (int index)
+		{
+			this.index = index;
+		}
+		public override string ToString ()
+		{
+			return string.Format ("STOREGLOBAL #{0}", index);
 		}
 	}
 
@@ -93,6 +134,19 @@ namespace CLanguage
 		public override string ToString ()
 		{
 			return binop.ToString ();
+		}
+	}
+
+	public class UnopInstruction : Instruction
+	{
+		Unop unop;
+		public UnopInstruction (Unop unop)
+		{
+			this.unop = unop;
+		}
+		public override string ToString ()
+		{
+			return unop.ToString ();
 		}
 	}
 }

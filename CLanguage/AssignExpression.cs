@@ -16,9 +16,9 @@ namespace CLanguage
             Right = right;
         }
 
-        public override CType ExpressionType
-        {
-            get { return Left.ExpressionType; }
+		public override CType GetEvaluatedCType (EmitContext ec)
+		{
+			return Left.GetEvaluatedCType (ec);
         }
 
         protected override void DoEmit(EmitContext ec)

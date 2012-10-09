@@ -15,9 +15,9 @@ namespace CLanguage
             Location = loc;
         }
 
-        public override CType ExpressionType
-        {
-            get { return CBasicType.SignedInt; }
+		public override CType GetEvaluatedCType (EmitContext ec)
+		{
+			return CBasicType.SignedInt;
         }
 
         protected override void DoEmit(EmitContext ec)

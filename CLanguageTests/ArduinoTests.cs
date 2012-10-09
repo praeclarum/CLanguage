@@ -26,10 +26,10 @@ namespace CLanguage.Tests
             return parser.ParseTranslationUnit(lexer, report);
         }
 
-        [TestMethod]
-        public void Blink()
-        {
-            var code = @"
+		public const string BlinkCode = @"
+int OUTPUT = 0;
+int HIGH = 1;
+int LOW = 0;
 void setup() {                
   // initialize the digital pin as an output.
   // Pin 13 has an LED connected on most Arduino boards:
@@ -43,7 +43,11 @@ void loop() {
   delay(1000);              // wait for a second
 }
 ";
-            var tu = Parse(code);
+
+        [TestMethod]
+        public void Blink()
+        {
+            var tu = Parse(BlinkCode);
 
             Assert.AreEqual(2, tu.Functions.Count);
 
@@ -95,10 +99,9 @@ void loop() {
 			Assert.IsInstanceOf<MemberFromReferenceExpression>(println.Function);
         }
 
-        [TestMethod]
-        public void Fade()
-        {
-            var code = @"
+		public const string FadeCode = @"
+int OUTPUT = 0;
+
 int brightness = 0;    // how bright the LED is
 int fadeAmount = 5;    // how many points to fade the LED by
 
@@ -122,7 +125,11 @@ void loop()  {
   delay(30);                            
 }
 ";
-            var tu = Parse(code);
+
+        [TestMethod]
+        public void Fade()
+        {            
+            var tu = Parse(FadeCode);
 
             Assert.AreEqual(2, tu.Functions.Count);
             Assert.AreEqual(2, tu.Variables.Count);

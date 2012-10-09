@@ -21,9 +21,9 @@ namespace CLanguage
             Items = new List<Item>();
         }
 
-        public override CType ExpressionType
-        {
-            get { return CType.Void; }
+		public override CType GetEvaluatedCType (EmitContext ec)
+		{
+			return CType.Void;
         }
 
         protected override void DoEmit(EmitContext ec)

@@ -48,21 +48,18 @@ namespace CLanguage
             ec.EmitBinop(Op);
         }
 
-        public override CType ExpressionType
-        {
-            get
+		public override CType GetEvaluatedCType (EmitContext ec)
+		{
+            if (Op == Binop.Equals || Op == Binop.NotEquals || 
+                Op == Binop.GreaterThan || Op == Binop.GreaterThanOrEqual ||
+                Op == Binop.LessThan || Op == Binop.LessThanOrEqual ||
+                Op == Binop.LogicalAnd || Op == Binop.LogicalOr)
             {
-                if (Op == Binop.Equals || Op == Binop.NotEquals || 
-                    Op == Binop.GreaterThan || Op == Binop.GreaterThanOrEqual ||
-                    Op == Binop.LessThan || Op == Binop.LessThanOrEqual ||
-                    Op == Binop.LogicalAnd || Op == Binop.LogicalOr)
-                {
-                    return CBasicType.SignedInt;
-                }
-                else
-                {
-                    return Left.ExpressionType;
-                }
+                return CBasicType.SignedInt;
+            }
+            else
+            {
+                return Left.GetEvaluatedCType (ec);
             }
         }
 

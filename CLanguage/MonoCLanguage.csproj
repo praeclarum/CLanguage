@@ -75,6 +75,8 @@
     <Compile Include="CompilerContext.cs" />
     <Compile Include="Instruction.cs" />
     <Compile Include="ReturnStatement.cs" />
+    <Compile Include="IFunction.cs" />
+    <Compile Include="InternalFunction.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="CParser.jay" />

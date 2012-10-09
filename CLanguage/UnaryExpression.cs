@@ -28,17 +28,15 @@ namespace CLanguage
             Right = right;
         }
 
-        public override CType ExpressionType
-        {
-            get
-            {
-                return Right.ExpressionType;
-            }
+		public override CType GetEvaluatedCType (EmitContext ec)
+		{
+			return Right.GetEvaluatedCType (ec);
         }
 
         protected override void DoEmit(EmitContext ec)
         {
-            throw new NotImplementedException();
+			Right.Emit (ec);
+			ec.EmitUnop (Op);
         }
 
         public override string ToString()

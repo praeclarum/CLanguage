@@ -11,18 +11,29 @@ namespace CLanguage
 		{
 			Global,
 			Local,
-			Arg
+			Arg,
+			Function,
 		}
 
 		public class ResolvedVariable
 		{
 			public VariableScope Scope { get; private set; }
 			public int Index { get; private set; }
+			public CType VariableType { get; private set; }
+			public IFunction Function { get; private set; }
 
-			public ResolvedVariable (VariableScope scope, int index)
+			public ResolvedVariable (VariableScope scope, int index, CType variableType)
 			{
 				Scope = scope;
 				Index = index;
+				VariableType = variableType;
+			}
+
+			public ResolvedVariable (IFunction function)
+			{
+				Scope = VariableScope.Function;
+				Function = function;
+				VariableType = Function.FunctionType;
 			}
 		}
 
@@ -79,7 +90,7 @@ namespace CLanguage
         {
         }
         
-        public virtual void EmitCall(CFunctionType type, int argsCount)
+        public virtual void EmitCall(CFunctionType type)
         {
         }
 
