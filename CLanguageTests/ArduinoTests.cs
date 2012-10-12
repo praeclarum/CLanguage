@@ -132,7 +132,7 @@ void loop()  {
             var tu = Parse(FadeCode);
 
             Assert.AreEqual(2, tu.Functions.Count);
-            Assert.AreEqual(2, tu.Variables.Count);
+            Assert.AreEqual(3, tu.Variables.Count);
 
             var setup = tu.Functions[0];
             Assert.AreEqual("setup", setup.Name);

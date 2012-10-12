@@ -68,6 +68,19 @@ namespace CLanguage.Tests
 			Assert.That (f.Instructions[6], Is.AssignableTo<ReturnInstruction> ());
 		}
 
+		[Test]
+		public void LocalVariables ()
+		{
+			var exe = Compile (@"
+void f () {
+	int a = 4;
+	int b = 8;
+	int c = a + b;
+}");
+			var f = exe.Functions.First (x => x.Name == "f");
+			Assert.That (f.LocalVariables.Count, Is.EqualTo (3));
+		}
+
 		[TestMethod]
 		public void ArduinoBlink ()
 		{

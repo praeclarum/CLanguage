@@ -1,5 +1,5 @@
 using System;
-using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.IO;
 
 namespace CLanguage
@@ -8,27 +8,28 @@ namespace CLanguage
 	{
 		public MachineInfo MachineInfo { get; private set; }
 
-		public Collection<Function> Functions { get; private set; }
-		public Collection<Global> Globals { get; private set; }
+		public List<Function> Functions { get; private set; }
+		public List<Global> Globals { get; private set; }
 
 		public Executable (MachineInfo machineInfo)
 		{
 			MachineInfo = machineInfo;
-			Functions = new Collection<Function> ();
-			Globals = new Collection<Global> ();
+			Functions = new List<Function> ();
+			Globals = new List<Global> ();
 		}
 
 		public class Function : IFunction
 		{
 			public string Name { get; private set; }
 			public CFunctionType FunctionType { get; private set; }
-
-			public Collection<Instruction> Instructions { get; private set; }
+			public List<VariableDeclaration> LocalVariables { get; private set; }
+			public List<Instruction> Instructions { get; private set; }
 			public Function (string name, CFunctionType functionType)
 			{
 				Name = name;
 				FunctionType = functionType;
-				Instructions = new Collection<Instruction> ();
+				LocalVariables = new List<VariableDeclaration> ();
+				Instructions = new List<Instruction> ();
 			}
 			public override string ToString ()
 			{

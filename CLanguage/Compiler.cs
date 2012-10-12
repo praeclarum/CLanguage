@@ -33,6 +33,7 @@ namespace CLanguage
 					if (fdecl.Body != null) {
 						var c = new FunctionContext (exe, fdecl, fexe, context);
 						fdecl.Body.Emit (c);
+						fexe.LocalVariables.AddRange (c.LocalVariables);
 					}
 				}
 			}
@@ -69,6 +70,8 @@ namespace CLanguage
 			List<Block> blocks;
 			Dictionary<Block, BlockLocals> blockLocals;
 			List<VariableDeclaration> allLocals;
+
+			public IEnumerable<VariableDeclaration> LocalVariables { get { return allLocals; } }
 
 			public FunctionContext (Executable exe, FunctionDeclaration fdecl, Executable.Function fexe, CompilerContext context)
                 : base (fdecl, context.Report)
