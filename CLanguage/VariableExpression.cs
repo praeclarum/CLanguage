@@ -27,12 +27,28 @@ namespace CLanguage
 
         protected override void DoEmit(EmitContext ec)
         {
-			var v = ec.ResolveVariable (VariableName);
-			if (v != null) {
-				ec.EmitVariable (v);
+			var variable = ec.ResolveVariable (VariableName);
+
+			if (variable != null) {
+				if (variable.Scope == VariableScope.Arg) {
+					//fexe.Instructions.Add (new LoadArgInstruction (variable.Index));
+				}
+				else if (variable.Scope == VariableScope.Function) {
+					//fexe.Instructions.Add (new PushInstruction (variable.Function, variable.Function.FunctionType));
+				}
+				else if (variable.Scope == VariableScope.Global) {
+					//fexe.Instructions.Add (new LoadGlobalInstruction (variable.Index));
+				}
+				else if (variable.Scope == VariableScope.Local) {
+					//fexe.Instructions.Add (new LoadLocalInstruction (variable.Index));
+				}
+				else {
+
+					throw new NotImplementedException (variable.Scope.ToString ());
+				}
 			}
 			else {
-				ec.EmitConstant (0, CBasicType.SignedInt);
+				new ConstantExpression (0, CBasicType.SignedInt).Emit (ec);
 			}
         }
 

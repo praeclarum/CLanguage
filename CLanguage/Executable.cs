@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
+using ValueType = System.Int32;
+
 namespace CLanguage
 {
 	public class Executable

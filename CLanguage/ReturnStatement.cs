@@ -23,12 +23,12 @@ namespace CLanguage
 				}
 				else {
 					ReturnExpression.Emit (ec);
-					ec.EmitReturn ();
+					ec.Emit (OpCode.Return);
 				}
 			}
 			else {
 				if (ec.FunctionDecl.FunctionType.IsVoid) {
-					ec.EmitReturn ();
+					ec.Emit (OpCode.Return);
 				}
 				else {
 					ec.Report.Error (126, "A value is required for the return statement");

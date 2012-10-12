@@ -56,6 +56,17 @@ namespace CLanguage
             Size = size;
         }
 
+		public override bool Equals (object obj)
+		{
+			var o = obj as CBasicType;
+			return (o != null) && (Name == o.Name) && (Signedness == o.Signedness) && (Size == o.Size);
+		}
+
+		public override int GetHashCode ()
+		{
+			return Name.GetHashCode () + Size.GetHashCode () + Signedness.GetHashCode ();
+		}
+
         public override bool IsIntegral
         {
             get

@@ -41,11 +41,11 @@ namespace CLanguage
             Right = right;
         }
 
-        protected override void DoEmit(EmitContext ec)
+        protected override void DoEmit (EmitContext ec)
         {
             Left.Emit(ec);
             Right.Emit(ec);
-            ec.EmitBinop(Op);
+			throw new NotImplementedException ();
         }
 
 		public override CType GetEvaluatedCType (EmitContext ec)

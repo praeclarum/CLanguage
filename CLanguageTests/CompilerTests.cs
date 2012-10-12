@@ -35,8 +35,9 @@ namespace CLanguage.Tests
 			Assert.That (exe.Functions.Count, Is.EqualTo (1));
 			var f = exe.Functions.First (x => x.Name == "f");
 			Assert.That (f.Instructions.Count, Is.EqualTo (2));
-			//Assert.That (f.Instructions[0], Is.AssignableTo<PushInstruction> ());
-			//Assert.That (f.Instructions[1], Is.AssignableTo<ReturnInstruction> ());
+
+			Assert.That (f.Instructions[0].Op, Is.EqualTo (OpCode.LoadValueInt16));
+			Assert.That (f.Instructions[1].Op, Is.EqualTo (OpCode.Return));
 		}
 
 		[TestMethod]

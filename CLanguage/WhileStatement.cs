@@ -32,10 +32,11 @@ namespace CLanguage
 
                 ec.EmitLabel(condLabel);
                 Condition.Emit(ec);
-                ec.EmitBranchIfFalse(endLabel);
+				ec.EmitCastToBoolean (Condition.GetEvaluatedCType (ec));
+				ec.Emit (OpCode.BranchIfFalse, endLabel);
                 ec.EmitLabel(loopLabel);
                 Loop.Emit(ec);
-                ec.EmitJump(condLabel);
+                ec.Emit (OpCode.Jump, condLabel);
                 ec.EmitLabel(endLabel);
             }
         }

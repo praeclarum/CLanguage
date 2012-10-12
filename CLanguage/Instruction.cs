@@ -1,5 +1,7 @@
 using System;
 
+using ValueType = System.Int32;
+
 namespace CLanguage
 {
 	public class Label
@@ -14,34 +16,45 @@ namespace CLanguage
 
 	public class Instruction
 	{
-		OpCode op;
-		Int32 x;
+		public OpCode Op;
+		public ValueType X;
+		public Label Label;
 
-		Instruction (OpCode op, int x)
+		public Instruction (OpCode op, ValueType x)
 		{
-			this.op = op;
-			this.x = x;
+			Op = op;
+			X = x;
 		}
 
-		public static Instruction LoadValue (Int32 value)
+		public Instruction (OpCode op, Label label)
 		{
-			return new Instruction (OpCode.LoadValueInt32, value);
+			Op = op;
+			Label = label;
 		}
 
 		public override string ToString ()
 		{
-			return string.Format ("{0} {1}", op, x);
+			if (Label != null) {
+				return string.Format ("{0} {1}", Op, Label);
+			} else {
+				return string.Format ("{0} {1}", Op, X);
+			}
 		}
 	}
 
 	public enum OpCode
 	{
 		Nop,
+		Pop,
 
 		Jump,
 		BranchIfFalse,
 		Call,
 		Return,
+
+		#region Conversion
+
+		#endregion
 
 		#region Memory
 
@@ -108,22 +121,16 @@ namespace CLanguage
 		SubtractInt32,
 		SubtractUInt32,
 
-		MultiplyInt8,
-		MultiplyUInt8,
 		MultiplyInt16,
 		MultiplyUInt16,
 		MultiplyInt32,
 		MultiplyUInt32,
 
-		DivideInt8,
-		DivideUInt8,
 		DivideInt16,
 		DivideUInt16,
 		DivideInt32,
 		DivideUInt32,
 
-		ModuloInt8,
-		ModuloUInt8,
 		ModuloInt16,
 		ModuloUInt16,
 		ModuloInt32,
@@ -133,22 +140,16 @@ namespace CLanguage
 
 		#region Comparison
 
-		EqualToInt8,
-		EqualToUInt8,
 		EqualToInt16,
 		EqualToUInt16,
 		EqualToInt32,
 		EqualToUInt32,
 
-		LessThanInt8,
-		LessThanUInt8,
 		LessThanInt16,
 		LessThanUInt16,
 		LessThanInt32,
 		LessThanUInt32,
 
-		GreaterThanInt8,
-		GreaterThanUInt8,
 		GreaterThanInt16,
 		GreaterThanUInt16,
 		GreaterThanInt32,

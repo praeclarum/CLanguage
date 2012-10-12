@@ -43,6 +43,7 @@ namespace CLanguage
             {
 				if (type.Parameters.Count != Arguments.Count) {
 					ec.Report.Error (1501, "'{0}' takes {1} arguments, {2} provided", Function, type.Parameters.Count, Arguments.Count);
+					return;
 				}
             }
             else
@@ -51,16 +52,18 @@ namespace CLanguage
                 {
                     ec.Report.Error(2064, "'{0}' does not evaluate to a function taking {1} arguments", Function, Arguments.Count);
                 }
+				return;
             }
 
-			foreach (var a in Arguments)
+			for (var i = 0; i < Arguments.Count; i++)
 			{
-				a.Emit(ec);
+				Arguments[i].Emit (ec);
+				ec.EmitCast (Arguments[i].GetEvaluatedCType (ec), type.Parameters[i].ParameterType);
 			}
 
 			Function.Emit (ec);
 
-            ec.EmitCall (type);
+            ec.Emit (OpCode.Call, type.Parameters.Count);
         }
 
         public override string ToString()

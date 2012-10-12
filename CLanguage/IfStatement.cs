@@ -27,23 +27,24 @@ namespace CLanguage
             Location = loc;
         }
 
-        protected override void DoEmit(EmitContext ec)
+        protected override void DoEmit (EmitContext ec)
         {
             var endLabel = ec.DefineLabel();
             
             Condition.Emit(ec);
+			ec.EmitCastToBoolean (Condition.GetEvaluatedCType (ec));
 
             if (FalseStatement == null)
             {
-                ec.EmitBranchIfFalse(endLabel);
+                ec.Emit (OpCode.BranchIfFalse, endLabel);
                 TrueStatement.Emit(ec);
             }
             else
             {
                 var falseLabel = ec.DefineLabel();
-                ec.EmitBranchIfFalse(falseLabel);
+				ec.Emit (OpCode.BranchIfFalse, falseLabel);
                 TrueStatement.Emit(ec);
-				ec.EmitJump (endLabel);
+				ec.Emit (OpCode.Jump);
                 ec.EmitLabel(falseLabel);
                 FalseStatement.Emit(ec);
             }

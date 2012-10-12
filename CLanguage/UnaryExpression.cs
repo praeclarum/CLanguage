@@ -36,7 +36,7 @@ namespace CLanguage
         protected override void DoEmit(EmitContext ec)
         {
 			Right.Emit (ec);
-			ec.EmitUnop (Op);
+			throw new NotImplementedException ();
         }
 
         public override string ToString()

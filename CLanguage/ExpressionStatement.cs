@@ -21,7 +21,7 @@ namespace CLanguage
                 Expression.Emit(ec);
                 if (!(Expression is AssignExpression))
                 {
-                    ec.EmitPop();
+                    ec.Emit (OpCode.Pop);
                 }
             }
         }

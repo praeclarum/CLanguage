@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using ValueType = System.Int32;
+
 namespace CLanguage
 {
     public class Compiler
@@ -162,36 +164,6 @@ namespace CLanguage
 				blocks.RemoveAt (blocks.Count - 1);
 			}
 
-			public override void EmitVariable (ResolvedVariable variable)
-			{
-				if (variable.Scope == VariableScope.Arg) {
-					//fexe.Instructions.Add (new LoadArgInstruction (variable.Index));
-				}
-				else if (variable.Scope == VariableScope.Function) {
-					//fexe.Instructions.Add (new PushInstruction (variable.Function, variable.Function.FunctionType));
-				}
-				else if (variable.Scope == VariableScope.Global) {
-					//fexe.Instructions.Add (new LoadGlobalInstruction (variable.Index));
-				}
-				else if (variable.Scope == VariableScope.Local) {
-					//fexe.Instructions.Add (new LoadLocalInstruction (variable.Index));
-				}
-				else {
-
-					throw new NotImplementedException (variable.Scope.ToString ());
-				}
-			}
-
-            public override void EmitBranchIfFalse(Label l)
-            {
-				//fexe.Instructions.Add (new BranchIfFalseInstruction (l));
-            }
-
-            public override void EmitJump(Label l)
-            {
-				//fexe.Instructions.Add (new JumpInstruction (l));
-            }
-
 			public override Label DefineLabel ()
 			{
 				return new Label ();
@@ -202,53 +174,10 @@ namespace CLanguage
 				l.Index = fexe.Instructions.Count;
             }
 
-			public override void EmitReturn ()
+			public override void Emit (Instruction instruction)
 			{
-				//fexe.Instructions.Add (new ReturnInstruction ());
+				fexe.Instructions.Add (instruction);
 			}
-
-			public override void EmitUnop(Unop op)
-			{
-				//fexe.Instructions.Add (new UnopInstruction (op));
-			}
-
-			public override void EmitBinop (Binop op)
-            {
-				//fexe.Instructions.Add (new BinopInstruction (op));
-            }
-
-            public override void EmitCall (CFunctionType type)
-            {
-				//fexe.Instructions.Add (new CallInstruction (type));
-            }
-
-            public override void EmitConstant (object value, CType type)
-            {
-				//fexe.Instructions.Add (new PushInstruction (value, type));
-            }
-
-            public override void EmitAssign (Expression left)
-			{
-				if (left is VariableExpression) {
-					var v = ResolveVariable (((VariableExpression)left).VariableName);
-
-					if (v == null) {
-						//fexe.Instructions.Add (new PushInstruction (0, CBasicType.SignedInt));
-					} else if (v.Scope == VariableScope.Global) {
-						//fexe.Instructions.Add (new StoreGlobalInstruction (v.Index));
-					} else if (v.Scope == VariableScope.Local) {
-						//fexe.Instructions.Add (new StoreLocalInstruction (v.Index));
-					} else {
-						throw new NotSupportedException ("Assigning to " + v.Scope);
-					}
-				} else {
-					throw new NotImplementedException ("Assign " + left.GetType ());
-				}
-            }
-
-            public override void EmitPop ()
-            {
-            }
         }
     }
 }
