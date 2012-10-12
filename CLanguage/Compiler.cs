@@ -74,7 +74,7 @@ namespace CLanguage
 			public IEnumerable<VariableDeclaration> LocalVariables { get { return allLocals; } }
 
 			public FunctionContext (Executable exe, FunctionDeclaration fdecl, Executable.Function fexe, CompilerContext context)
-                : base (fdecl, context.Report)
+                : base (context.MachineInfo, context.Report, fdecl)
             {
 				this.exe = exe;
 				this.fdecl = fdecl;

@@ -19,6 +19,11 @@ namespace CLanguage
 		}
 	}
 
+	public enum OpCode
+	{
+		PushInt16,
+	}
+
 	public class PushInstruction : Instruction
 	{
 		object value;

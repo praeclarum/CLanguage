@@ -47,13 +47,13 @@ namespace CLanguage
 		{
 			CharSize = 1;
 			ShortIntSize = 2;
-			IntSize = 4;
+			IntSize = 2;
 			LongIntSize = 4;
 			LongLongIntSize = 8;
 			FloatSize = 4;
 			DoubleSize = 8;
 			LongDoubleSize = 8;
-			PointerSize = 4;
+			PointerSize = 2;
 			InternalFunctions = new ObservableCollection<IFunction> {
 				new InternalFunction ("void pinMode (int pin, int mode)"),
 				new InternalFunction ("void digitalWrite (int pin, int value)"),

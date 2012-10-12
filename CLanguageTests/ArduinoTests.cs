@@ -22,9 +22,39 @@ namespace CLanguage.Tests
             pp.AddCode("stdin", code);
             var lexer = new Lexer(pp);
             var parser = new CParser();
-			var report = new Report (new TextWriterReportPrinter (Console.Out));
+			var report = new Report (new TestPrinter ());
             return parser.ParseTranslationUnit(lexer, report);
         }
+
+		VariableDeclaration ParseVariable (string code)
+		{
+			var tu = Parse (code);
+			return tu.Variables.First ();
+		}
+
+		[Test]
+		public void Sizes ()
+		{
+			var ec = new EmitContext (MachineInfo.Arduino, new Report (new TestPrinter ()));
+
+			var intV = ParseVariable ("int v;");
+			Assert.That (intV.VariableType.GetSize (ec), Is.EqualTo (2));
+
+			var shortIntV = ParseVariable ("short int v;");
+			Assert.That (shortIntV.VariableType.GetSize (ec), Is.EqualTo (2));
+
+			var unsignedLongV = ParseVariable ("unsigned long v;");
+			Assert.That (unsignedLongV.VariableType.GetSize (ec), Is.EqualTo (4));
+
+			var unsignedLongLongV = ParseVariable ("unsigned long long v;");
+			Assert.That (unsignedLongLongV.VariableType.GetSize (ec), Is.EqualTo (8));
+
+			var intPV = ParseVariable ("int *v;");
+			Assert.That (intPV.VariableType.GetSize (ec), Is.EqualTo (2));
+
+			var longPV = ParseVariable ("long *v;");
+			Assert.That (longPV.VariableType.GetSize (ec), Is.EqualTo (2));
+		}
 
 		public const string BlinkCode = @"
 int OUTPUT = 0;

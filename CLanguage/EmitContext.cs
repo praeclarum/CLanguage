@@ -43,11 +43,14 @@ namespace CLanguage
 		
 		public Report Report { get; private set; }
 
-        public EmitContext (FunctionDeclaration fdecl, Report report)
+		public EmitContext (MachineInfo machineInfo, Report report, FunctionDeclaration fdecl = null)
         {
-			FunctionDecl = fdecl;
-			MachineInfo = MachineInfo.WindowsX86;
+			if (machineInfo == null) throw new ArgumentNullException ("machineInfo");
+			if (report == null) throw new ArgumentNullException ("report");
+
+			MachineInfo = machineInfo;
 			Report = report;
+			FunctionDecl = fdecl;
         }
 
 		public virtual ResolvedVariable ResolveVariable (string name)
