@@ -5,7 +5,7 @@ using System.Text;
 
 namespace CLanguage
 {
-    public class EmitContext
+    public class EmitContext : CompilerContext
     {
 		public enum VariableScope
 		{
@@ -39,17 +39,9 @@ namespace CLanguage
 
 		public FunctionDeclaration FunctionDecl { get; private set; }
 
-		public MachineInfo MachineInfo { get; private set; }
-		
-		public Report Report { get; private set; }
-
 		public EmitContext (MachineInfo machineInfo, Report report, FunctionDeclaration fdecl = null)
+			: base (machineInfo, report)
         {
-			if (machineInfo == null) throw new ArgumentNullException ("machineInfo");
-			if (report == null) throw new ArgumentNullException ("report");
-
-			MachineInfo = machineInfo;
-			Report = report;
 			FunctionDecl = fdecl;
         }
 

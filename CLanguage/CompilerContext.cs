@@ -11,10 +11,13 @@ namespace CLanguage
 
 		public MachineInfo MachineInfo { get; private set; }
 
-        public CompilerContext(Report report, MachineInfo machineInfo)
+		public CompilerContext (MachineInfo machineInfo, Report report)
         {
-            Report = report;
+			if (machineInfo == null) throw new ArgumentNullException ("machineInfo");
+			if (report == null) throw new ArgumentNullException ("report");
+
 			MachineInfo = machineInfo;
+            Report = report;
         }
     }
 }

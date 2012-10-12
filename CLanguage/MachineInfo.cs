@@ -38,6 +38,19 @@ namespace CLanguage
             PointerSize = 4,
         };
 
+		public static readonly MachineInfo Mac64 = new MachineInfo
+		{
+			CharSize = 1,
+			ShortIntSize = 2,
+			IntSize = 4,
+			LongIntSize = 8,
+			LongLongIntSize = 8,
+			FloatSize = 4,
+			DoubleSize = 8,
+			LongDoubleSize = 8,
+			PointerSize = 8,
+		};
+
 		public static readonly MachineInfo Arduino = new ArduinoMachineInfo ();
     }
 

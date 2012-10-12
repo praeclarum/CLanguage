@@ -8,12 +8,18 @@ namespace CLanguage
     public class Compiler
     {
 		CompilerContext context;
+
 		List<TranslationUnit> tus;
 
-        public Compiler(Report report, MachineInfo m)
-        {
-            context = new CompilerContext (report, m);
+		public Compiler (CompilerContext context)
+		{
+			this.context = context;
 			tus = new List<TranslationUnit> ();
+		}
+
+		public Compiler (MachineInfo mi, Report report)
+			: this (new CompilerContext (mi, report))
+        {
         }
 
 		public Executable Compile ()
@@ -159,16 +165,16 @@ namespace CLanguage
 			public override void EmitVariable (ResolvedVariable variable)
 			{
 				if (variable.Scope == VariableScope.Arg) {
-					fexe.Instructions.Add (new LoadArgInstruction (variable.Index));
+					//fexe.Instructions.Add (new LoadArgInstruction (variable.Index));
 				}
 				else if (variable.Scope == VariableScope.Function) {
-					fexe.Instructions.Add (new PushInstruction (variable.Function, variable.Function.FunctionType));
+					//fexe.Instructions.Add (new PushInstruction (variable.Function, variable.Function.FunctionType));
 				}
 				else if (variable.Scope == VariableScope.Global) {
-					fexe.Instructions.Add (new LoadGlobalInstruction (variable.Index));
+					//fexe.Instructions.Add (new LoadGlobalInstruction (variable.Index));
 				}
 				else if (variable.Scope == VariableScope.Local) {
-					fexe.Instructions.Add (new LoadLocalInstruction (variable.Index));
+					//fexe.Instructions.Add (new LoadLocalInstruction (variable.Index));
 				}
 				else {
 
@@ -178,12 +184,12 @@ namespace CLanguage
 
             public override void EmitBranchIfFalse(Label l)
             {
-				fexe.Instructions.Add (new BranchIfFalseInstruction (l));
+				//fexe.Instructions.Add (new BranchIfFalseInstruction (l));
             }
 
             public override void EmitJump(Label l)
             {
-				fexe.Instructions.Add (new JumpInstruction (l));
+				//fexe.Instructions.Add (new JumpInstruction (l));
             }
 
 			public override Label DefineLabel ()
@@ -198,27 +204,27 @@ namespace CLanguage
 
 			public override void EmitReturn ()
 			{
-				fexe.Instructions.Add (new ReturnInstruction ());
+				//fexe.Instructions.Add (new ReturnInstruction ());
 			}
 
 			public override void EmitUnop(Unop op)
 			{
-				fexe.Instructions.Add (new UnopInstruction (op));
+				//fexe.Instructions.Add (new UnopInstruction (op));
 			}
 
 			public override void EmitBinop (Binop op)
             {
-				fexe.Instructions.Add (new BinopInstruction (op));
+				//fexe.Instructions.Add (new BinopInstruction (op));
             }
 
             public override void EmitCall (CFunctionType type)
             {
-				fexe.Instructions.Add (new CallInstruction (type));
+				//fexe.Instructions.Add (new CallInstruction (type));
             }
 
             public override void EmitConstant (object value, CType type)
             {
-				fexe.Instructions.Add (new PushInstruction (value, type));
+				//fexe.Instructions.Add (new PushInstruction (value, type));
             }
 
             public override void EmitAssign (Expression left)
@@ -227,11 +233,11 @@ namespace CLanguage
 					var v = ResolveVariable (((VariableExpression)left).VariableName);
 
 					if (v == null) {
-						fexe.Instructions.Add (new PushInstruction (0, CBasicType.SignedInt));
+						//fexe.Instructions.Add (new PushInstruction (0, CBasicType.SignedInt));
 					} else if (v.Scope == VariableScope.Global) {
-						fexe.Instructions.Add (new StoreGlobalInstruction (v.Index));
+						//fexe.Instructions.Add (new StoreGlobalInstruction (v.Index));
 					} else if (v.Scope == VariableScope.Local) {
-						fexe.Instructions.Add (new StoreLocalInstruction (v.Index));
+						//fexe.Instructions.Add (new StoreLocalInstruction (v.Index));
 					} else {
 						throw new NotSupportedException ("Assigning to " + v.Scope);
 					}

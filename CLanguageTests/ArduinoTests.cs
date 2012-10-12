@@ -37,6 +37,9 @@ namespace CLanguage.Tests
 		{
 			var ec = new EmitContext (MachineInfo.Arduino, new Report (new TestPrinter ()));
 
+			var charV = ParseVariable ("char v;");
+			Assert.That (charV.VariableType.GetSize (ec), Is.EqualTo (1));
+
 			var intV = ParseVariable ("int v;");
 			Assert.That (intV.VariableType.GetSize (ec), Is.EqualTo (2));
 

@@ -9,8 +9,8 @@ namespace CLanguage.Tests
 		Interpreter Compile (string code)
 		{
 			var c = new Compiler (
-				new Report (new TestPrinter ()),
-				new ArduinoTestMachineInfo ());
+				new ArduinoTestMachineInfo (),
+				new Report (new TestPrinter ()));
 			c.AddCode (code);
 			var exe = c.Compile ();
 			return new Interpreter (exe);

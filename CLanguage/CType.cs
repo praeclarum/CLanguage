@@ -11,7 +11,7 @@ namespace CLanguage
 
         public Location Location { get; set; }
 
-        public abstract int GetSize(EmitContext c);
+		public abstract int GetSize (CompilerContext c);
 
         public static readonly CVoidType Void = new CVoidType();
 
@@ -78,7 +78,7 @@ namespace CLanguage
         public static readonly CBasicType Float = new CBasicType("float", Signedness.Signed, "");
         public static readonly CBasicType Double = new CBasicType("double", Signedness.Signed, "");
 
-        public override int GetSize(EmitContext c)
+		public override int GetSize (CompilerContext c)
         {
             if (Name == "char")
             {
@@ -117,6 +117,110 @@ namespace CLanguage
             }
         }
 
+		/// <summary>
+		/// Section 6.3.1.1 (page 51) of N1570
+		/// </summary>
+		/// <returns>
+		/// The promototed integer.
+		/// </returns>
+		/// <param name='context'>
+		/// Context.
+		/// </param>
+		public CBasicType IntegerPromote (CompilerContext context)
+		{
+			var size = GetSize (context);
+			var intSize = context.MachineInfo.IntSize;
+			if (size < intSize) {
+				return SignedInt;
+			}
+			else if (size == intSize) {
+				if (Signedness == Signedness.Unsigned) {
+					return UnsignedInt;
+				}
+				else {
+					return SignedInt;
+				}
+			}
+			else {
+				return this;
+			}
+		}
+
+		/// <summary>
+		/// Section 6.3.1.8 (page 53) of N1570
+		/// </summary>
+		/// <returns>
+		/// The converted type.
+		/// </returns>
+		/// <param name='otherType'>
+		/// The other type participating in the arithmetic.
+		/// </param>
+		/// <param name='context'>
+		/// Context.
+		/// </param>
+		public CBasicType ArithmeticConvert (CType otherType, CompilerContext context)
+		{
+			var otherBasicType = otherType as CBasicType;
+			if (otherBasicType == null) {
+				context.Report.Error (19, "Cannot perform arithmetic with " + otherType);
+				return CBasicType.SignedInt;
+			}
+			if (Name == "double" || otherBasicType.Name == "double") {
+				return Double;
+			}
+			else if (Name == "single" || otherBasicType.Name == "single") {
+				return Float;
+			}
+			else {
+
+				var p1 = IntegerPromote (context);
+				var size1 = p1.GetSize (context);
+
+				var p2 = otherBasicType.IntegerPromote (context);
+				var size2 = p2.GetSize (context);
+
+				if (p1.Signedness == p2.Signedness) {
+					return size1 >= size2 ? p1 : p2;
+				}
+				else {
+
+					if (p1.Signedness == Signedness.Unsigned) {
+
+						if (size1 > size2) {//p1.HasRankGreaterThan (p2, context)) {
+							return p1;
+						}
+						else {
+							if (size2 > size1) {
+								return p2;
+							}
+							else {
+								return new CBasicType (p2.Name, Signedness.Unsigned, p2.Size);
+							}
+						}
+					}
+					else {
+
+						if (size2 > size1) {//p2.HasRankGreaterThan (p1, context)) {
+							return p2;
+						}
+						else {
+							if (size1 > size2) {
+								return p1;
+							}
+							else {
+								return new CBasicType (p1.Name, Signedness.Unsigned, p1.Size);
+							}
+						}
+					}
+				}
+			}
+		}
+
+		bool HasRankGreaterThan (CBasicType otherBasicType, CompilerContext context)
+		{
+			return false;
+		}
+
         public override string ToString()
         {
             return string.Format("{0} {1} {2}", Signedness, Size, Name);
@@ -149,7 +253,7 @@ namespace CLanguage
             Parameters = new List<Parameter>();
         }
 
-        public override int GetSize(EmitContext c)
+		public override int GetSize (CompilerContext c)
         {
             return c.MachineInfo.PointerSize;
         }
@@ -180,7 +284,7 @@ namespace CLanguage
 
         public static readonly CPointerType PointerToConstChar = new CPointerType(CBasicType.ConstChar);
 
-        public override int GetSize(EmitContext c)
+		public override int GetSize (CompilerContext c)
         {
             return c.MachineInfo.PointerSize;
         }
@@ -205,7 +309,7 @@ namespace CLanguage
             }
         }
 
-        public override int GetSize(EmitContext c)
+		public override int GetSize (CompilerContext c)
         {
             c.Report.Error(2070, "'void': illegal sizeof operand");
             return 0;
@@ -228,7 +332,7 @@ namespace CLanguage
             LengthExpression = lengthExpression;
         }
 
-        public override int GetSize(EmitContext c)
+		public override int GetSize (CompilerContext c)
         {
             var innerSize = ElementType.GetSize(c);
             if (LengthExpression == null)
