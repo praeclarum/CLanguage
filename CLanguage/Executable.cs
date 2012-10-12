@@ -6,17 +6,29 @@ namespace CLanguage
 {
 	public class Executable
 	{
+		public MachineInfo MachineInfo { get; private set; }
+
+		public Collection<Function> Functions { get; private set; }
+		public Collection<Global> Globals { get; private set; }
+
+		public Executable (MachineInfo machineInfo)
+		{
+			MachineInfo = machineInfo;
+			Functions = new Collection<Function> ();
+			Globals = new Collection<Global> ();
+		}
+
 		public class Function : IFunction
 		{
 			public string Name { get; private set; }
 			public CFunctionType FunctionType { get; private set; }
 
-			public ObservableCollection<Instruction> Instructions { get; private set; }
+			public Collection<Instruction> Instructions { get; private set; }
 			public Function (string name, CFunctionType functionType)
 			{
 				Name = name;
 				FunctionType = functionType;
-				Instructions = new ObservableCollection<Instruction> ();
+				Instructions = new Collection<Instruction> ();
 			}
 			public override string ToString ()
 			{
@@ -43,15 +55,6 @@ namespace CLanguage
 				Name = name;
 				VariableType = variableType;
 			}
-		}
-
-		public ObservableCollection<Function> Functions { get; private set; }
-		public ObservableCollection<Global> Globals { get; private set; }
-
-		public Executable ()
-		{
-			Functions = new ObservableCollection<Function> ();
-			Globals = new ObservableCollection<Global> ();
 		}
 	}
 }

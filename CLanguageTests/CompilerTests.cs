@@ -16,18 +16,6 @@ namespace CLanguage.Tests
 	[TestClass]
 	public class CompilerTests
 	{
-		class TestPrinter : ReportPrinter
-		{
-			public override void Print (AbstractMessage msg)
-			{
-				if (msg.MessageType == "Error") {
-					Assert.Fail (msg.ToString ());
-				}
-				else {
-					Console.WriteLine (msg);
-				}
-			}
-		}
 		Compiler CreateCompiler ()
 		{
 			return new Compiler (new Report (new TestPrinter ()), MachineInfo.Arduino);

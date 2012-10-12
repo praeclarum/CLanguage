@@ -75,6 +75,19 @@ namespace CLanguage
 		}
 	}
 
+	public class LoadLocalInstruction : Instruction
+	{
+		int index;
+		public LoadLocalInstruction (int index)
+		{
+			this.index = index;
+		}
+		public override string ToString ()
+		{
+			return string.Format ("LOADLOCAL #{0}", index);
+		}
+	}
+
 	public class StoreGlobalInstruction : Instruction
 	{
 		int index;
@@ -85,6 +98,19 @@ namespace CLanguage
 		public override string ToString ()
 		{
 			return string.Format ("STOREGLOBAL #{0}", index);
+		}
+	}
+
+	public class StoreLocalInstruction : Instruction
+	{
+		int index;
+		public StoreLocalInstruction (int index)
+		{
+			this.index = index;
+		}
+		public override string ToString ()
+		{
+			return string.Format ("STORELOCAL #{0}", index);
 		}
 	}
 

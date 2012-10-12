@@ -7,18 +7,16 @@ namespace CLanguage
 {
     public class Interpreter
     {
-        CompilerContext _c;
-        MachineInfo _m;
+		Executable exe;
 
-        public Interpreter(CompilerContext c, MachineInfo m)
+        public Interpreter (Executable exe)
         {
-            _c = c;
-            _m = m;
-            Reset();
+			this.exe = exe;
         }
 
-        public void Reset()
-        {
-        }
+		public void Start (string entrypoint)
+		{
+			var f = exe.Functions.First (x => x.Name == entrypoint);
+		}
     }
 }

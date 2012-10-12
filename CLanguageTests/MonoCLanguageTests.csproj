@@ -7,7 +7,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{406FB72A-46EC-4CBB-8D35-21673018BD9C}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>MonoCLanguageTests</RootNamespace>
+    <RootNamespace>CLanguage.Tests</RootNamespace>
     <AssemblyName>MonoCLanguageTests</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -41,6 +41,9 @@
     <Compile Include="ParserTests.cs" />
     <Compile Include="SizeTests.cs" />
     <Compile Include="CompilerTests.cs" />
+    <Compile Include="InterpreterTests.cs" />
+    <Compile Include="TestPrinter.cs" />
+    <Compile Include="ArduinoTestMachineInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CLanguage\MonoCLanguage.csproj">

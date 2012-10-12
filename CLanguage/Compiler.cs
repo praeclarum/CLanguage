@@ -18,7 +18,7 @@ namespace CLanguage
 
 		public Executable Compile ()
 		{
-			var exe = new Executable ();
+			var exe = new Executable (context.MachineInfo);
 
 			foreach (var tu in tus) {
 				foreach (var v in tu.Variables) {
@@ -61,6 +61,15 @@ namespace CLanguage
 			Executable.Function fexe;
 			CompilerContext context;
 
+			class BlockLocals
+			{
+				public int StartIndex;
+				public int Length;
+			}
+			List<Block> blocks;
+			Dictionary<Block, BlockLocals> blockLocals;
+			List<VariableDeclaration> allLocals;
+
 			public FunctionContext (Executable exe, FunctionDeclaration fdecl, Executable.Function fexe, CompilerContext context)
                 : base (fdecl, context.Report)
             {
@@ -68,6 +77,9 @@ namespace CLanguage
 				this.fdecl = fdecl;
 				this.fexe = fexe;
 				this.context = context;
+				blocks = new List<Block> ();
+				blockLocals = new Dictionary<Block, BlockLocals> ();
+				allLocals = new List<VariableDeclaration> ();
             }
 
             public override ResolvedVariable ResolveVariable (string name)
@@ -78,6 +90,19 @@ namespace CLanguage
 				for (var i = 0; i < fdecl.ParameterInfos.Count; i++) {
 					if (fdecl.ParameterInfos[i].Name == name) {
 						return new ResolvedVariable (VariableScope.Arg, i, fdecl.FunctionType.Parameters[i].ParameterType);
+					}
+				}
+
+				//
+				// Look for locals
+				//
+				foreach (var b in blocks.Reverse<Block> ()) {
+					var blocals = blockLocals[b];
+					for (var i = 0; i < blocals.Length; i++) {
+						var j = blocals.StartIndex + i;
+						if (allLocals[j].Name == name) {
+							return new ResolvedVariable (VariableScope.Local, j, allLocals[j].VariableType);
+						}
 					}
 				}
 
@@ -112,6 +137,22 @@ namespace CLanguage
 				return null;
 			}
 
+			public override void BeginBlock (Block b)
+			{
+				blocks.Add (b);
+				var locs = new BlockLocals {
+					StartIndex = allLocals.Count,
+					Length = b.Variables.Count,
+				};
+				blockLocals[b] = locs;
+				allLocals.AddRange (b.Variables);
+			}
+
+			public override void EndBlock ()
+			{
+				blocks.RemoveAt (blocks.Count - 1);
+			}
+
 			public override void EmitVariable (ResolvedVariable variable)
 			{
 				if (variable.Scope == VariableScope.Arg) {
@@ -122,6 +163,9 @@ namespace CLanguage
 				}
 				else if (variable.Scope == VariableScope.Global) {
 					fexe.Instructions.Add (new LoadGlobalInstruction (variable.Index));
+				}
+				else if (variable.Scope == VariableScope.Local) {
+					fexe.Instructions.Add (new LoadLocalInstruction (variable.Index));
 				}
 				else {
 
@@ -183,6 +227,8 @@ namespace CLanguage
 						fexe.Instructions.Add (new PushInstruction (0, CBasicType.SignedInt));
 					} else if (v.Scope == VariableScope.Global) {
 						fexe.Instructions.Add (new StoreGlobalInstruction (v.Index));
+					} else if (v.Scope == VariableScope.Local) {
+						fexe.Instructions.Add (new StoreLocalInstruction (v.Index));
 					} else {
 						throw new NotSupportedException ("Assigning to " + v.Scope);
 					}
