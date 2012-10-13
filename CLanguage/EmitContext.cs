@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -90,7 +90,7 @@ namespace CLanguage
 		public VariableScope Scope { get; private set; }
 		public int Index { get; private set; }
 		public CType VariableType { get; private set; }
-		public IFunction Function { get; private set; }
+		public BaseFunction Function { get; private set; }
 
 		public ResolvedVariable (VariableScope scope, int index, CType variableType)
 		{
@@ -99,10 +99,11 @@ namespace CLanguage
 			VariableType = variableType;
 		}
 
-		public ResolvedVariable (IFunction function)
+		public ResolvedVariable (BaseFunction function, int index)
 		{
 			Scope = VariableScope.Function;
 			Function = function;
+			Index = index;
 			VariableType = Function.FunctionType;
 		}
 	}

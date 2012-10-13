@@ -2,11 +2,8 @@ using System;
 
 namespace CLanguage
 {
-	public class InternalFunction : IFunction
+	public class InternalFunction : BaseFunction
 	{
-		public string Name { get; private set; }
-		public CFunctionType FunctionType { get; private set; }
-
 		public InternalFunction (string prototype)
 		{
 			var parser = new CParser ();
@@ -23,9 +20,9 @@ namespace CLanguage
 			return Name;
 		}
 
-		public void Step (ExecutionState state)
+		public override void Step (ExecutionState state)
 		{
-
+			throw new NotImplementedException ();
 		}
 	}
 }

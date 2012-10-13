@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 using ValueType = System.Int32;
 
@@ -10,26 +11,16 @@ namespace CLanguage
 	{
 		public MachineInfo MachineInfo { get; private set; }
 
-		public List<CompiledFunction> Functions { get; private set; }
-		public List<Global> Globals { get; private set; }
+		public List<BaseFunction> Functions { get; private set; }
+		public List<VariableDeclaration> Globals { get; private set; }
 
 		public Executable (MachineInfo machineInfo)
 		{
 			MachineInfo = machineInfo;
-			Functions = new List<CompiledFunction> ();
-			Globals = new List<Global> ();
-		}
+			Functions = new List<BaseFunction> ();
+			Globals = new List<VariableDeclaration> ();
 
-		public class Global
-		{
-			public string Name { get; private set; }
-			public CType VariableType { get; private set; }
-
-			public Global (string name, CType variableType)
-			{
-				Name = name;
-				VariableType = variableType;
-			}
+			Functions.AddRange (machineInfo.InternalFunctions.Cast<BaseFunction> ());
 		}
 	}
 }

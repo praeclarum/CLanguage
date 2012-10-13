@@ -82,7 +82,7 @@
     <Compile Include="RelationalExpression.cs" />
     <Compile Include="LogicExpression.cs" />
     <Compile Include="CompiledFunction.cs" />
-    <Compile Include="IFunction.cs" />
+    <Compile Include="BaseFunction.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="CParser.jay" />

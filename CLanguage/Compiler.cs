@@ -29,19 +29,20 @@ namespace CLanguage
 			var exe = new Executable (context.MachineInfo);
 
 			foreach (var tu in tus) {
-				foreach (var v in tu.Variables) {
-					exe.Globals.Add (new Executable.Global (v.Name, v.VariableType));
-				}
+
+				exe.Globals.AddRange (tu.Variables);
+
 				foreach (var fdecl in tu.Functions) {
 					var fexe = exe.Functions.FirstOrDefault (x => x.Name == fdecl.Name);
 					if (fexe == null) {
 						fexe = new CompiledFunction (fdecl.Name, fdecl.FunctionType);
 						exe.Functions.Add (fexe);
 					}
-					if (fdecl.Body != null) {
-						var c = new FunctionContext (exe, fdecl, fexe, context);
+					var cfexe = fexe as CompiledFunction;
+					if (cfexe != null && fdecl.Body != null) {
+						var c = new FunctionContext (exe, fdecl, cfexe, context);
 						fdecl.Body.Emit (c);
-						fexe.LocalVariables.AddRange (c.LocalVariables);
+						cfexe.LocalVariables.AddRange (c.LocalVariables);
 					}
 				}
 			}
@@ -129,18 +130,10 @@ namespace CLanguage
 				//
 				// Look for functions
 				//
-				foreach (var f in exe.Functions) {
+				for (var i = 0; i < exe.Functions.Count; i++) {
+					var f = exe.Functions[i];
 					if (f.Name == name) {
-						return new ResolvedVariable (f);
-					}
-				}
-
-				//
-				// Look for machine functions
-				//
-				foreach (var f in context.MachineInfo.InternalFunctions) {
-					if (f.Name == name) {
-						return new ResolvedVariable (f);
+						return new ResolvedVariable (f, i);
 					}
 				}
 

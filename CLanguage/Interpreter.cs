@@ -7,14 +7,17 @@ using ValueType = System.Int32;
 
 namespace CLanguage
 {
-	public struct ExecutionFrame
+	public class ExecutionFrame
 	{
 		public int IP;
-		public IFunction Function;
+		public BaseFunction Function;
+		public ValueType[] Locals;
 	}
 
 	public class ExecutionState
 	{
+		Executable exe;
+
 		public readonly ValueType[] Stack;
 		public readonly ExecutionFrame[] Frames;
 
@@ -26,10 +29,24 @@ namespace CLanguage
 
 		public int CpuSpeed = 1000;
 
-		public ExecutionState (int maxStack, int maxFrames)
+		public ExecutionState (Executable exe, int maxStack, int maxFrames)
 		{
+			this.exe = exe;
 			Stack = new ValueType[maxStack];
-			Frames = new ExecutionFrame[maxFrames];
+			Frames = (from i in Enumerable.Range (0, maxFrames) select new ExecutionFrame ()).ToArray ();
+		}
+
+		public void Call (int functionAddress)
+		{
+			Call (exe.Functions [functionAddress]);
+		}
+
+		public void Call (BaseFunction function)
+		{
+			FP++;
+			Frames[FP].Function = function;
+			Frames[FP].IP = 0;
+			function.Init (this);
 		}
 	}
 
@@ -41,17 +58,22 @@ namespace CLanguage
         public Interpreter (Executable exe, int maxStack = 1024, int maxFrames = 24)
         {
 			this.exe = exe;
-			state = new ExecutionState (maxStack, maxFrames);
+			state = new ExecutionState (exe, maxStack, maxFrames);
         }
 
 		public void Reset (string entrypoint)
 		{
-			var f = exe.Functions.First (x => x.Name == entrypoint);
 			state.FP = 0;
 			state.SP = 0;
-			state.Frames[0].Function = f;
-			state.Frames[0].IP = 0;
 			state.SleepTime = 0;
+
+			var f = exe.Functions.First (x => x.Name == entrypoint);
+			state.Call (f);
+		}
+
+		public void Step ()
+		{
+			Step (1000000);
 		}
 
 		public void Step (int microseconds)

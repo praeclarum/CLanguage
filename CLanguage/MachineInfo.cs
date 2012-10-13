@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,11 +18,11 @@ namespace CLanguage
         public int LongDoubleSize { get; set; }
         public int PointerSize { get; set; }
 
-		public ObservableCollection<IFunction> InternalFunctions { get; set; }
+		public ObservableCollection<BaseFunction> InternalFunctions { get; set; }
 
 		public MachineInfo ()
 		{
-			InternalFunctions = new ObservableCollection<IFunction> ();
+			InternalFunctions = new ObservableCollection<BaseFunction> ();
 		}
 
         public static readonly MachineInfo WindowsX86 = new MachineInfo
@@ -67,7 +67,7 @@ namespace CLanguage
 			DoubleSize = 8;
 			LongDoubleSize = 8;
 			PointerSize = 2;
-			InternalFunctions = new ObservableCollection<IFunction> {
+			InternalFunctions = new ObservableCollection<BaseFunction> {
 				new InternalFunction ("void pinMode (int pin, int mode)"),
 				new InternalFunction ("void digitalWrite (int pin, int value)"),
 				new InternalFunction ("void analogWrite (int pin, int value)"),

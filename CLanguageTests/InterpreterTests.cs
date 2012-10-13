@@ -28,6 +28,7 @@ void math () {
 	assertAreEqual (12, c);
 }");
 			i.Reset ("math");
+			i.Step ();
 		}
 	}
 }
