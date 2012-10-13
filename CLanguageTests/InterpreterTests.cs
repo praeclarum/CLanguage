@@ -17,6 +17,22 @@ namespace CLanguage.Tests
 		}
 
 		[Test]
+		public void OverwriteArgs ()
+		{
+			var i = Compile (@"
+int abs (int x) {
+	if (x < 0) x = -x;
+	return x;
+}
+void main () {
+	assertAreEqual (0, abs(0));
+	assertAreEqual (101, abs(-101));
+	assertAreEqual (101, abs(101));
+}");
+			i.Reset ("main");
+			i.Step ();
+		}
+		[Test]
 		public void VoidFunctionCalls ()
 		{
 			var i = Compile (@"

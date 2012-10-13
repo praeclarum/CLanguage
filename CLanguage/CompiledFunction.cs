@@ -114,6 +114,11 @@ namespace CLanguage
 					state.SP++;
 					ip++;
 					break;
+				case OpCode.StoreArg:
+					args [i.X] = state.Stack [state.SP - 1];
+					state.SP--;
+					ip++;
+					break;
 				case OpCode.LoadLocal:
 					state.Stack[state.SP] = locals [i.X];
 					state.SP++;
@@ -205,6 +210,34 @@ namespace CLanguage
 					a = state.Stack[state.SP - 2];
 					b = state.Stack[state.SP - 1];
 					state.Stack[state.SP - 2] = (StackValue)((uint)a / (uint)b);
+					state.SP--;
+					ip++;
+					break;
+				case OpCode.LessThanInt16:
+					a = state.Stack[state.SP - 2];
+					b = state.Stack[state.SP - 1];
+					state.Stack[state.SP - 2] = ((short)a < (short)b) ? 1 : 0;
+					state.SP--;
+					ip++;
+					break;
+				case OpCode.LessThanUInt16:
+					a = state.Stack[state.SP - 2];
+					b = state.Stack[state.SP - 1];
+					state.Stack[state.SP - 2] = ((ushort)a < (ushort)b) ? 1 : 0;
+					state.SP--;
+					ip++;
+					break;
+				case OpCode.LessThanInt32:
+					a = state.Stack[state.SP - 2];
+					b = state.Stack[state.SP - 1];
+					state.Stack[state.SP - 2] = ((int)a < (int)b) ? 1 : 0;
+					state.SP--;
+					ip++;
+					break;
+				case OpCode.LessThanUInt32:
+					a = state.Stack[state.SP - 2];
+					b = state.Stack[state.SP - 1];
+					state.Stack[state.SP - 2] = ((uint)a < (uint)b) ? 1 : 0;
 					state.SP--;
 					ip++;
 					break;
