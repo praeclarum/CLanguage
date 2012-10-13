@@ -84,6 +84,7 @@
     <Compile Include="CompiledFunction.cs" />
     <Compile Include="BaseFunction.cs" />
     <Compile Include="SequenceExpression.cs" />
+    <Compile Include="ConditionalExpression.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="CParser.jay" />

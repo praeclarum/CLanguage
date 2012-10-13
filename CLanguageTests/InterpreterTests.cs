@@ -17,6 +17,67 @@ namespace CLanguage.Tests
 		}
 
 		[Test]
+		public void MutualRecursive ()
+		{
+			var i = Compile (@"
+int m (int);
+
+int f (int n) {
+	return (n == 0) ? 1 : n - m (f (n - 1));
+}
+int m (int n) {
+	return (n == 0) ? 0 : n - f (m (n - 1));
+}
+void main () {
+	assertAreEqual (1, f (0));
+	assertAreEqual (1, f (1));
+	assertAreEqual (2, f (2));
+	assertAreEqual (2, f (3));
+	assertAreEqual (3, f (4));
+	assertAreEqual (3, f (5));
+	assertAreEqual (4, f (6));
+	assertAreEqual (5, f (7));
+
+	assertAreEqual (0, m (0));
+	assertAreEqual (0, m (1));
+	assertAreEqual (1, m (2));
+	assertAreEqual (2, m (3));
+	assertAreEqual (2, m (4));
+	assertAreEqual (3, m (5));
+	assertAreEqual (4, m (6));
+	assertAreEqual (4, m (7));
+}");
+			i.Reset ("main");
+			i.Step ();
+		}
+
+		[Test]
+		public void Recursive ()
+		{
+			var i = Compile (@"
+unsigned long fib (unsigned long n) {
+	if (n == 0 || n == 1) {
+		return n;
+	}
+	else {
+		return fib (n - 1) + fib (n - 2);
+	}
+}
+void main () {
+	assertAreEqual (0, fib (0));
+	assertAreEqual (1, fib (1));
+	assertAreEqual (1, fib (2));
+	assertAreEqual (2, fib (3));
+	assertAreEqual (3, fib (4));
+	assertAreEqual (5, fib (5));
+	assertAreEqual (8, fib (6));
+	assertAreEqual (13, fib (7));
+}");
+			i.Reset ("main");
+			i.Step ();
+		}
+
+		[Test]
 		public void OverwriteArgs ()
 		{
 			var i = Compile (@"
@@ -32,6 +93,7 @@ void main () {
 			i.Reset ("main");
 			i.Step ();
 		}
+
 		[Test]
 		public void VoidFunctionCalls ()
 		{

@@ -157,6 +157,34 @@ namespace CLanguage
 					state.SP--;
 					ip++;
 					break;
+				case OpCode.SubtractInt16:
+					a = state.Stack[state.SP - 2];
+					b = state.Stack[state.SP - 1];
+					state.Stack[state.SP - 2] = ((short)a - (short)b);
+					state.SP--;
+					ip++;
+					break;
+				case OpCode.SubtractUInt16:
+					a = state.Stack[state.SP - 2];
+					b = state.Stack[state.SP - 1];
+					state.Stack[state.SP - 2] = ((ushort)a - (ushort)b);
+					state.SP--;
+					ip++;
+					break;
+				case OpCode.SubtractInt32:
+					a = state.Stack[state.SP - 2];
+					b = state.Stack[state.SP - 1];
+					state.Stack[state.SP - 2] = ((int)a - (int)b);
+					state.SP--;
+					ip++;
+					break;
+				case OpCode.SubtractUInt32:
+					a = state.Stack[state.SP - 2];
+					b = state.Stack[state.SP - 1];
+					state.Stack[state.SP - 2] = (StackValue)((uint)a - (uint)b);
+					state.SP--;
+					ip++;
+					break;
 				case OpCode.MultiplyInt16:
 					a = state.Stack[state.SP - 2];
 					b = state.Stack[state.SP - 1];
@@ -210,6 +238,34 @@ namespace CLanguage
 					a = state.Stack[state.SP - 2];
 					b = state.Stack[state.SP - 1];
 					state.Stack[state.SP - 2] = (StackValue)((uint)a / (uint)b);
+					state.SP--;
+					ip++;
+					break;
+				case OpCode.EqualToInt16:
+					a = state.Stack[state.SP - 2];
+					b = state.Stack[state.SP - 1];
+					state.Stack[state.SP - 2] = ((short)a == (short)b) ? 1 : 0;
+					state.SP--;
+					ip++;
+					break;
+				case OpCode.EqualToUInt16:
+					a = state.Stack[state.SP - 2];
+					b = state.Stack[state.SP - 1];
+					state.Stack[state.SP - 2] = ((ushort)a == (ushort)b) ? 1 : 0;
+					state.SP--;
+					ip++;
+					break;
+				case OpCode.EqualToInt32:
+					a = state.Stack[state.SP - 2];
+					b = state.Stack[state.SP - 1];
+					state.Stack[state.SP - 2] = ((int)a == (int)b) ? 1 : 0;
+					state.SP--;
+					ip++;
+					break;
+				case OpCode.EqualToUInt32:
+					a = state.Stack[state.SP - 2];
+					b = state.Stack[state.SP - 1];
+					state.Stack[state.SP - 2] = ((uint)a == (uint)b) ? 1 : 0;
 					state.SP--;
 					ip++;
 					break;
@@ -292,6 +348,20 @@ namespace CLanguage
 				case OpCode.LogicalNot:
 					a = state.Stack[state.SP - 1];
 					state.Stack[state.SP - 1] = (a == 0) ? 1 : 0;
+					ip++;
+					break;
+				case OpCode.LogicalAnd:
+					a = state.Stack[state.SP - 2];
+					b = state.Stack[state.SP - 1];
+					state.Stack[state.SP - 2] = ((a != 0) && (b != 0)) ? 1 : 0;
+					state.SP--;
+					ip++;
+					break;
+				case OpCode.LogicalOr:
+					a = state.Stack[state.SP - 2];
+					b = state.Stack[state.SP - 1];
+					state.Stack[state.SP - 2] = ((a != 0) || (b != 0)) ? 1 : 0;
+					state.SP--;
 					ip++;
 					break;
 				default:

@@ -43,8 +43,14 @@ namespace CLanguage
 			try {
 	            yyparse(lexer);
 			}
+			catch (NotImplementedException err) {
+				report.Error (9003, "Feature not implemented: " + err.Message);
+			}
+			catch (NotSupportedException err) {
+				report.Error (9002, "Feature not supported: " + err.Message);
+			}
 			catch (Exception err) {
-				report.Error (0, err.Message);
+				report.Error (9001, "Internal compiler error: " + err.Message);
 			}
 			
             lexer.IsTypedef = null;

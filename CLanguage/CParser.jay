@@ -267,7 +267,13 @@ logical_or_expression
 
 conditional_expression
 	: logical_or_expression
+	{
+		$$ = $1;
+	}
 	| logical_or_expression '?' expression ':' conditional_expression
+	{
+		$$ = new ConditionalExpression ((Expression)$1, (Expression)$3, (Expression)$5);
+	}
 	;
 
 assignment_expression
