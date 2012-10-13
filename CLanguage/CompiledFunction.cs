@@ -44,6 +44,7 @@ namespace CLanguage
 			var frame = state.ActiveFrame;
 			var ip = frame.IP;
 			var locals = frame.Locals;
+			var args = frame.Args;
 
 			var done = false;
 
@@ -98,6 +99,11 @@ namespace CLanguage
 					state.SP++;
 					ip++;
 					break;
+				case OpCode.LoadArg:
+					state.Stack[state.SP] = args[i.X];
+					state.SP++;
+					ip++;
+					break;
 				case OpCode.LoadLocal:
 					state.Stack[state.SP] = locals[i.X];
 					state.SP++;
@@ -133,6 +139,62 @@ namespace CLanguage
 					a = state.Stack[state.SP - 2];
 					b = state.Stack[state.SP - 1];
 					state.Stack[state.SP - 2] = (StackValue)((uint)a + (uint)b);
+					state.SP--;
+					ip++;
+					break;
+				case OpCode.MultiplyInt16:
+					a = state.Stack[state.SP - 2];
+					b = state.Stack[state.SP - 1];
+					state.Stack[state.SP - 2] = ((short)a * (short)b);
+					state.SP--;
+					ip++;
+					break;
+				case OpCode.MultiplyUInt16:
+					a = state.Stack[state.SP - 2];
+					b = state.Stack[state.SP - 1];
+					state.Stack[state.SP - 2] = ((ushort)a * (ushort)b);
+					state.SP--;
+					ip++;
+					break;
+				case OpCode.MultiplyInt32:
+					a = state.Stack[state.SP - 2];
+					b = state.Stack[state.SP - 1];
+					state.Stack[state.SP - 2] = ((int)a * (int)b);
+					state.SP--;
+					ip++;
+					break;
+				case OpCode.MultiplyUInt32:
+					a = state.Stack[state.SP - 2];
+					b = state.Stack[state.SP - 1];
+					state.Stack[state.SP - 2] = (StackValue)((uint)a * (uint)b);
+					state.SP--;
+					ip++;
+					break;
+				case OpCode.DivideInt16:
+					a = state.Stack[state.SP - 2];
+					b = state.Stack[state.SP - 1];
+					state.Stack[state.SP - 2] = ((short)a / (short)b);
+					state.SP--;
+					ip++;
+					break;
+				case OpCode.DivideUInt16:
+					a = state.Stack[state.SP - 2];
+					b = state.Stack[state.SP - 1];
+					state.Stack[state.SP - 2] = ((ushort)a / (ushort)b);
+					state.SP--;
+					ip++;
+					break;
+				case OpCode.DivideInt32:
+					a = state.Stack[state.SP - 2];
+					b = state.Stack[state.SP - 1];
+					state.Stack[state.SP - 2] = ((int)a / (int)b);
+					state.SP--;
+					ip++;
+					break;
+				case OpCode.DivideUInt32:
+					a = state.Stack[state.SP - 2];
+					b = state.Stack[state.SP - 1];
+					state.Stack[state.SP - 2] = (StackValue)((uint)a / (uint)b);
 					state.SP--;
 					ip++;
 					break;

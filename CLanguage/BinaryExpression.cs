@@ -27,6 +27,9 @@ namespace CLanguage
 
         public BinaryExpression(Expression left, Binop op, Expression right)
         {
+			if (left == null) throw new ArgumentNullException ("left");
+			if (right == null) throw new ArgumentNullException ("right");
+
             Left = left;
             Op = op;
             Right = right;

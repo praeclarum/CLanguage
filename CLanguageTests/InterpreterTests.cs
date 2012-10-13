@@ -17,10 +17,26 @@ namespace CLanguage.Tests
 		}
 
 		[Test]
+		public void FunctionCallsWithValues ()
+		{
+			var i = Compile (@"
+int mulMulDiv (long m1, long m2, long d) {
+	return (m1 * m2) / d;
+}
+
+void main () {
+	assertAreEqual (66, mulMulDiv (2, 100, 3));
+}");
+			i.Reset ("main");
+			i.Step ();
+		}
+
+
+		[Test]
 		public void ForLoop ()
 		{
 			var i = Compile (@"
-void f () {
+void main () {
 	int acc;
 	int i;
 	for (acc = 0, i = -10; i <= 10; i += 2) {
@@ -28,7 +44,7 @@ void f () {
 	}
 	assertAreEqual (11, acc);
 }");
-			i.Reset ("f");
+			i.Reset ("main");
 			i.Step ();
 		}
 
@@ -36,13 +52,13 @@ void f () {
 		public void LocalVariableInitialization ()
 		{
 			var i = Compile (@"
-void f () {
+void main () {
 	int a = 4;
 	int b = 8;
 	int c = a + b;
 	assertAreEqual (12, c);
 }");
-			i.Reset ("f");
+			i.Reset ("main");
 			i.Step ();
 		}
 	}
