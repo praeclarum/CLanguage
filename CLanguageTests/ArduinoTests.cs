@@ -60,9 +60,6 @@ namespace CLanguage.Tests
 		}
 
 		public const string BlinkCode = @"
-int OUTPUT = 0;
-int HIGH = 1;
-int LOW = 0;
 void setup() {                
   // initialize the digital pin as an output.
   // Pin 13 has an LED connected on most Arduino boards:
@@ -133,8 +130,6 @@ void loop() {
         }
 
 		public const string FadeCode = @"
-int OUTPUT = 0;
-
 int brightness = 0;    // how bright the LED is
 int fadeAmount = 5;    // how many points to fade the LED by
 
@@ -165,7 +160,7 @@ void loop()  {
             var tu = Parse(FadeCode);
 
             Assert.AreEqual(2, tu.Functions.Count);
-            Assert.AreEqual(3, tu.Variables.Count);
+            Assert.AreEqual(2, tu.Variables.Count);
 
             var setup = tu.Functions[0];
             Assert.AreEqual("setup", setup.Name);

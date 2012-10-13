@@ -18,11 +18,14 @@ namespace CLanguage
         public int LongDoubleSize { get; set; }
         public int PointerSize { get; set; }
 
-		public ObservableCollection<BaseFunction> InternalFunctions { get; set; }
+		public string HeaderCode { get; set; }
+
+		public Collection<BaseFunction> InternalFunctions { get; set; }
 
 		public MachineInfo ()
 		{
-			InternalFunctions = new ObservableCollection<BaseFunction> ();
+			InternalFunctions = new Collection<BaseFunction> ();
+			HeaderCode = "";
 		}
 
         public static readonly MachineInfo WindowsX86 = new MachineInfo
@@ -67,12 +70,21 @@ namespace CLanguage
 			DoubleSize = 8;
 			LongDoubleSize = 8;
 			PointerSize = 2;
-			InternalFunctions = new ObservableCollection<BaseFunction> {
+			InternalFunctions = new Collection<BaseFunction> {
 				new InternalFunction ("void pinMode (int pin, int mode)"),
 				new InternalFunction ("void digitalWrite (int pin, int value)"),
 				new InternalFunction ("void analogWrite (int pin, int value)"),
 				new InternalFunction ("void delay (unsigned long ms)"),
 			};
+			HeaderCode = @"
+#define HIGH 1
+#define LOW 0
+#define INPUT 0
+#define INPUT_PULLUP 2
+#define OUTPUT 1
+#define true 1
+#define false 0
+";
 		}
 	}
 }

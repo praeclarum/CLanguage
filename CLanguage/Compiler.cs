@@ -60,18 +60,24 @@ namespace CLanguage
 			return exe;
 		}
 
-        public void Add(TranslationUnit translationUnit)
+        public void Add (TranslationUnit translationUnit)
         {
 			tus.Add (translationUnit);
         }
 
-        public void AddCode(string code)
+		public void AddCode (string code)
+		{
+			AddCode("stdin", code);
+		}
+
+        public void AddCode (string name, string code)
         {
             var pp = new Preprocessor (context.Report);
-            pp.AddCode("stdin", code);
-            var lexer = new Lexer(pp);
-            var parser = new CParser();
-            Add(parser.ParseTranslationUnit(lexer, context.Report));
+			pp.AddCode ("machine.h", context.MachineInfo.HeaderCode);
+            pp.AddCode (name, code);
+            var lexer = new Lexer (pp);
+            var parser = new CParser ();
+            Add (parser.ParseTranslationUnit (lexer, context.Report));
         }
 
         class FunctionContext : EmitContext
