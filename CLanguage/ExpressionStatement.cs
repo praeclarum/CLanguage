@@ -18,7 +18,8 @@ namespace CLanguage
         {
             if (Expression != null)
             {
-                Expression.Emit(ec);
+                Expression.Emit (ec);
+
                 if (!(Expression is AssignExpression))
                 {
                     ec.Emit (OpCode.Pop);

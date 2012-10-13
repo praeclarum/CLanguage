@@ -46,6 +46,7 @@ namespace CLanguage
 	{
 		Nop,
 		Pop,
+		Dup,
 
 		Jump,
 		BranchIfFalse,
@@ -122,14 +123,6 @@ namespace CLanguage
 
 		#endregion
 
-		#region Boolean
-
-		LogicalAnd,
-		LogicalOr,
-		LogicalNot,
-
-		#endregion
-
 		#region Unary
 
 		NotInt16,
@@ -141,6 +134,14 @@ namespace CLanguage
 		NegateUInt16,
 		NegateInt32,
 		NegateUInt32,
+
+		#endregion
+
+		#region Boolean
+
+		LogicalAnd,
+		LogicalOr,
+		LogicalNot,
 
 		#endregion
 	}	

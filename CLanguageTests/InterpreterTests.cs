@@ -27,7 +27,7 @@ void math () {
 	int c = a + b;
 	assertAreEqual (12, c);
 }");
-			i.Start ("math");
+			i.Reset ("math");
 		}
 	}
 }

@@ -6,6 +6,8 @@ namespace CLanguage
 	{
 		string Name { get; }
 		CFunctionType FunctionType { get; }
+
+		void Step (ExecutionState state);
 	}
 }
 

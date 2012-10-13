@@ -22,6 +22,11 @@ namespace CLanguage
 		{
 			return Name;
 		}
+
+		public void Step (ExecutionState state)
+		{
+
+		}
 	}
 }
 

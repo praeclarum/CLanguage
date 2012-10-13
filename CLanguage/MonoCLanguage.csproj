@@ -76,12 +76,13 @@
     <Compile Include="CompilerContext.cs" />
     <Compile Include="Instruction.cs" />
     <Compile Include="ReturnStatement.cs" />
-    <Compile Include="IFunction.cs" />
     <Compile Include="InternalFunction.cs" />
     <Compile Include="Interpreter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RelationalExpression.cs" />
     <Compile Include="LogicExpression.cs" />
+    <Compile Include="CompiledFunction.cs" />
+    <Compile Include="IFunction.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="CParser.jay" />

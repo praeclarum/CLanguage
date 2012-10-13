@@ -25,6 +25,7 @@ namespace CLanguage
         {
             Right.Emit(ec);
 			ec.EmitCast (Right.GetEvaluatedCType (ec), Left.GetEvaluatedCType (ec));
+			ec.Emit (OpCode.Dup);
 
 			if (Left is VariableExpression) {
 

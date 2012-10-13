@@ -35,7 +35,7 @@ namespace CLanguage
 				foreach (var fdecl in tu.Functions) {
 					var fexe = exe.Functions.FirstOrDefault (x => x.Name == fdecl.Name);
 					if (fexe == null) {
-						fexe = new Executable.Function (fdecl.Name, fdecl.FunctionType);
+						fexe = new CompiledFunction (fdecl.Name, fdecl.FunctionType);
 						exe.Functions.Add (fexe);
 					}
 					if (fdecl.Body != null) {
@@ -67,7 +67,7 @@ namespace CLanguage
         {
 			Executable exe;
 			FunctionDeclaration fdecl;
-			Executable.Function fexe;
+			CompiledFunction fexe;
 			CompilerContext context;
 
 			class BlockLocals
@@ -81,7 +81,7 @@ namespace CLanguage
 
 			public IEnumerable<VariableDeclaration> LocalVariables { get { return allLocals; } }
 
-			public FunctionContext (Executable exe, FunctionDeclaration fdecl, Executable.Function fexe, CompilerContext context)
+			public FunctionContext (Executable exe, FunctionDeclaration fdecl, CompiledFunction fexe, CompilerContext context)
                 : base (context.MachineInfo, context.Report, fdecl)
             {
 				this.exe = exe;
