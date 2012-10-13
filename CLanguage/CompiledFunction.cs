@@ -99,18 +99,28 @@ namespace CLanguage
 					state.SP++;
 					ip++;
 					break;
+				case OpCode.LoadMemory:
+					state.Stack[state.SP] = state.Stack [i.X];
+					state.SP++;
+					ip++;
+					break;
+				case OpCode.StoreMemory:
+					state.Stack [i.X] = state.Stack [state.SP - 1];
+					state.SP--;
+					ip++;
+					break;
 				case OpCode.LoadArg:
-					state.Stack[state.SP] = args[i.X];
+					state.Stack[state.SP] = args [i.X];
 					state.SP++;
 					ip++;
 					break;
 				case OpCode.LoadLocal:
-					state.Stack[state.SP] = locals[i.X];
+					state.Stack[state.SP] = locals [i.X];
 					state.SP++;
 					ip++;
 					break;
 				case OpCode.StoreLocal:
-					locals[i.X] = state.Stack[state.SP - 1];
+					locals[i.X] = state.Stack [state.SP - 1];
 					state.SP--;
 					ip++;
 					break;

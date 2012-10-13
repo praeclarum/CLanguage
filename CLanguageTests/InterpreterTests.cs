@@ -17,6 +17,24 @@ namespace CLanguage.Tests
 		}
 
 		[Test]
+		public void VoidFunctionCalls ()
+		{
+			var i = Compile (@"
+int output = 0;
+void print (int v) {
+	output += v;
+}
+void main () {
+	print (1);
+	print (2);
+	print (3);
+	assertAreEqual (6, output);
+}");
+			i.Reset ("main");
+			i.Step ();
+		}
+
+		[Test]
 		public void FunctionCallsWithValues ()
 		{
 			var i = Compile (@"

@@ -14,7 +14,7 @@ namespace CLanguage.Tests
 			compiler.AddCode (type + " v;");
 			var exe = compiler.Compile ();
 
-			var ty = exe.Globals[0].VariableType;
+			var ty = exe.Globals[1].VariableType;
 			Assert.That (ty, Is.InstanceOf<CBasicType> ());
 			var bty = (CBasicType)ty;
 			Assert.That (bty.IsIntegral, Is.True);
@@ -33,9 +33,9 @@ namespace CLanguage.Tests
 			compiler.AddCode (type1 + " v1; " + type2 + " v2;");
 			var exe = compiler.Compile ();
 
-			var ty1 = exe.Globals[0].VariableType;
+			var ty1 = exe.Globals[1].VariableType;
 			Assert.That (ty1, Is.InstanceOf<CBasicType> ());
-			var ty2 = exe.Globals[1].VariableType;
+			var ty2 = exe.Globals[2].VariableType;
 			Assert.That (ty2, Is.InstanceOf<CBasicType> ());
 
 			var bty1 = (CBasicType)ty1;

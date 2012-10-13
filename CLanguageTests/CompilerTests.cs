@@ -88,6 +88,17 @@ namespace CLanguage.Tests
 		}
 
 		[Test]
+		public void VoidFunctionsHaveNoValue ()
+		{
+			CompileWithErrors (@"
+void f () {
+}
+void main () {
+	int a = f ();
+}", 30);
+		}
+
+		[Test]
 		public void LocalVariables ()
 		{
 			var exe = Compile (@"

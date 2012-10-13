@@ -234,9 +234,27 @@ namespace CLanguage
 			return false;
 		}
 
-        public override string ToString()
-        {
-            return string.Format("{0} {1} {2}", Signedness, Size, Name);
+        public override string ToString ()
+		{
+			if (IsIntegral) {
+
+				var sign = Signedness == Signedness.Signed ? "signed" : "unsigned";
+
+				if (string.IsNullOrEmpty (Size)) {
+					return sign + " " + Name;
+				}
+				else {
+					return sign + " " + Size + " " + Name;
+				}
+
+			} else {
+				if (string.IsNullOrEmpty (Size)) {
+					return Name;
+				}
+				else {
+					return Size + " " + Name;
+				}
+			}            
         }
     }
 

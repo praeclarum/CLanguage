@@ -28,6 +28,9 @@ namespace CLanguage
 		{
 			var exe = new Executable (context.MachineInfo);
 
+			// Put something at the zero address so we don't get 0 addresses of globals
+			exe.Globals.Add (new VariableDeclaration ("__zero__", CBasicType.SignedInt));
+
 			foreach (var tu in tus) {
 
 				exe.Globals.AddRange (tu.Variables);

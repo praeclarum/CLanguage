@@ -89,7 +89,7 @@ namespace CLanguage
 		public void Reset ()
 		{
 			FP = -1;
-			SP = 0;
+			SP = exe.Globals.Count;
 			SleepTime = 0;
 		}
 	}

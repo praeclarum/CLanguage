@@ -64,6 +64,10 @@ namespace CLanguage
 			Function.Emit (ec);
 
             ec.Emit (OpCode.Call, type.Parameters.Count);
+
+			if (type.ReturnType.IsVoid) {
+				ec.Emit (OpCode.LoadValue, 0); // Expressions should leave something on the stack
+			}
         }
 
         public override string ToString()
