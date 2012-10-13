@@ -10,10 +10,11 @@ namespace CLanguage
 
 		public InternalFunction (string prototype, InternalFunctionAction action = null)
 		{
+			var report = new Report (new TextWriterReportPrinter (Console.Out));
 			var parser = new CParser ();
-			var pp = new Preprocessor ();
+			var pp = new Preprocessor (report);
 			pp.AddCode ("<Internal>", prototype + ";");
-			var tu = parser.ParseTranslationUnit (new Lexer (pp), new Report (new TextWriterReportPrinter (Console.Out)));
+			var tu = parser.ParseTranslationUnit (new Lexer (pp), report);
 			var f = tu.Functions[0];
 			Name = f.Name;
 			FunctionType = f.FunctionType;

@@ -22,11 +22,12 @@ namespace CLanguage.Tests
 
         TranslationUnit Parse(string code)
         {
-            var pp = new Preprocessor();
+			var report = new Report(new TestPrinter ());
+            var pp = new Preprocessor(report);
             pp.AddCode("stdin", code);
             var lexer = new Lexer(pp);
             var parser = new CParser();
-            return parser.ParseTranslationUnit(lexer, new Report(new TestPrinter ()));
+            return parser.ParseTranslationUnit(lexer, report);
         }
 
         [TestMethod]

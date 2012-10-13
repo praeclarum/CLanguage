@@ -8,17 +8,25 @@ namespace CLanguage
 {
     public class Preprocessor
     {
-        //Log _log;
+		Report report;
         List<File> _files;
         List<Chunk> _chunks;
         Position _pos;
+		Dictionary<string, Chunk> simpleDefines;
 
-        public Preprocessor()
+		char[] ident;
+		int identLength;
+
+        public Preprocessor (Report report)
         {
+			this.report = report;
             _files = new List<File>();
             _chunks = new List<Chunk>();
             //_log = log;
             _pos = new Position();
+			simpleDefines = new Dictionary<string, Chunk> ();
+			ident = new char[255];
+			identLength = 0;
         }
 
         class File
@@ -33,8 +41,58 @@ namespace CLanguage
             public int StartIndex;
             public int Length;
             public int Line;
-            //public int Column;
+
             public string Data { get { return File.Content.Substring(StartIndex, Length); } }
+
+			public char this[int index] { get { return File.Content[StartIndex + index]; } }
+
+			public string Substring (int startIndex, int length)
+			{
+				return File.Content.Substring (StartIndex + startIndex, length);
+			}
+
+			public Chunk Subchunk (int startIndex)
+			{
+				var length = Length - startIndex;
+				return Subchunk (startIndex, length);
+			}
+
+			public Chunk Subchunk (int startIndex, int length)
+			{
+				if (length < 0) {
+					length = 0;
+				}
+				return new Chunk {
+					File = File,
+					StartIndex = StartIndex + startIndex,
+					Length = length,
+					Line = Line,
+				};
+			}
+
+			public int IndexOf (string substring)
+			{
+				if (string.IsNullOrEmpty (substring)) return -1;
+				var n = substring.Length;
+				if (n > Length) return -1;
+				for (var i = 0; i <= Length - n; i++) {
+					var j = 0;
+					var match = true;
+					while (match && j < n) {
+						match = File.Content [StartIndex + i + j] == substring [j];
+						j++;
+					}
+					if (match) {
+						return i;
+					}
+				}
+				return -1;
+			}
+
+			public override string ToString ()
+			{
+				return Data;
+			}
         }
 
         class Position
@@ -49,8 +107,19 @@ namespace CLanguage
             Preprocessor,
         }
 
+		bool StringMatchesIdent (string s)
+		{
+			if (s.Length != identLength) return false;
+			for (var i = 0; i < identLength; i++) {
+				if (s[i] != ident[i]) return false;
+			}
+			return true;
+		}
+
         void Process(File file)
         {
+			identLength = 0;
+
             var p = 0;
             var numChars = file.Content.Length;
             var state = ProcessState.Normal;
@@ -63,6 +132,7 @@ namespace CLanguage
             };
 
             Action NewChunk = () => {
+				identLength = 0;
                 if (chunk != null && chunk.Length > 0)
                 {
                     _chunks.Add(chunk);
@@ -107,6 +177,25 @@ namespace CLanguage
                     }
                     else
                     {
+						if ((identLength < ident.Length) && (char.IsLetterOrDigit (ch) || ch == '_')) {
+							ident[identLength] = ch;
+							identLength++;
+						}
+						else {
+
+							if (identLength > 0) {
+								var defChunk = simpleDefines.Where (x => StringMatchesIdent (x.Key)).Select (x => x.Value).FirstOrDefault ();
+								if (defChunk != null) {
+									chunk.Length -= identLength;
+									NewChunk ();
+									chunk = defChunk;
+									NewChunk ();
+								}
+							}
+
+							identLength = 0;
+						}
+
                         chunk.Length++;
                         p++;
                     }
@@ -139,9 +228,37 @@ namespace CLanguage
             NewChunk(); // Consume the last chunk
         }
 
-        void ExecuteDirective(Chunk chunk)
-        {
-            Console.WriteLine("PP: " + chunk.Data);
+        void ExecuteDirective (Chunk chunk)
+		{
+			var n = chunk.Length;
+			var defineIndex = chunk.IndexOf ("#define");
+			if (defineIndex >= 0) {
+				var p = defineIndex + 7;
+				var idStart = p;
+				while (idStart < n && char.IsWhiteSpace (chunk[idStart])) {
+					idStart++;
+				}
+				if (idStart >= n) return;
+				var idEnd = idStart;
+				while (idEnd < n && (char.IsLetterOrDigit (chunk[idEnd]) || chunk[idEnd] == '_')) {
+					idEnd++;
+				}
+				var idLength = idEnd - idStart;
+				if (idLength <= 0) return;
+				var id = chunk.Substring (idStart, idEnd - idStart);
+				if (idEnd < n) {
+					if (chunk[idEnd] == '(') {
+						report.Error (2001, "Macros with parameters are not supported");
+						simpleDefines[id] = chunk.Subchunk (idEnd);
+					}
+					else {
+						simpleDefines[id] = chunk.Subchunk (idEnd);
+					}
+				}
+				else {
+					simpleDefines[id] = chunk.Subchunk (idEnd);
+				}
+			}
         }
 
         public void AddCode(string name, string code)
@@ -216,7 +333,7 @@ namespace CLanguage
             }
             else
             {
-                throw new ApplicationException("OMFG we're screwed");
+				return -1;
             }
         }
 

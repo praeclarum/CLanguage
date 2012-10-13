@@ -27,7 +27,7 @@ namespace CLanguage
         {
 			if (report == null) throw new ArgumentNullException ("report");
 			
-			var pp = new Preprocessor ();
+			var pp = new Preprocessor (report);
 			pp.AddCode ("stdin", code);
 			var lex = new Lexer (pp);
 			return ParseTranslationUnit (lex, report);

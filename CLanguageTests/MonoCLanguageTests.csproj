@@ -46,6 +46,7 @@
     <Compile Include="TestPrinter.cs" />
     <Compile Include="ArduinoTestMachineInfo.cs" />
     <Compile Include="IntegerTests.cs" />
+    <Compile Include="PreprocessorTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CLanguage\MonoCLanguage.csproj">

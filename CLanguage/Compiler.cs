@@ -67,7 +67,7 @@ namespace CLanguage
 
         public void AddCode(string code)
         {
-            var pp = new Preprocessor ();
+            var pp = new Preprocessor (context.Report);
             pp.AddCode("stdin", code);
             var lexer = new Lexer(pp);
             var parser = new CParser();

@@ -10,7 +10,7 @@ namespace CLanguage.Tests
 		TranslationUnit Parse (string code)
 		{
 			var report = new Report (new TestPrinter ());
-			var pp = new Preprocessor ();
+			var pp = new Preprocessor (report);
 			pp.AddCode ("stdin", code);
 			var lexer = new Lexer (pp);
 			var parser = new CParser ();

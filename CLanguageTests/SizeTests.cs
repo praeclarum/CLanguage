@@ -18,11 +18,12 @@ namespace CLanguage.Tests
     {
         CType ParseType(string code)
         {
-            var pp = new Preprocessor();
+			var report = new Report (new TestPrinter ());
+            var pp = new Preprocessor(report);
             pp.AddCode("stdin", code);
             var lexer = new Lexer(pp);
             var parser = new CParser();
-            var tu = parser.ParseTranslationUnit(lexer, new Report (new TextWriterReportPrinter (Console.Out)));
+            var tu = parser.ParseTranslationUnit(lexer, report);
             return tu.Variables[0].VariableType;
         }
 
