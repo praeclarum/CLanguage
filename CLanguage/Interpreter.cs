@@ -13,6 +13,11 @@ namespace CLanguage
 			: base (message)
 		{
 		}
+
+		public ExecutionException (string message, Exception innerException)
+			: base (message, innerException)
+		{
+		}
 	}
 
 	public class ExecutionFrame
@@ -48,7 +53,9 @@ namespace CLanguage
 
 		Executable exe;
 		public int CpuSpeed = 1000;
-		public ExecutionFrame ActiveFrame { get { return FP < 0 ? null : Frames[FP]; } }
+
+		public ExecutionFrame CallerFrame { get { return (0 <= (FP-1) && (FP-1) < Frames.Length) ? Frames[FP-1] : null; } }
+		public ExecutionFrame ActiveFrame { get { return (0 <= FP && FP < Frames.Length) ? Frames[FP] : null; } }
 
 		public ExecutionState (Executable exe, int maxStack, int maxFrames)
 		{
@@ -99,6 +106,9 @@ namespace CLanguage
 		Executable exe;
 		ExecutionState state;
 
+		BaseFunction entrypoint;
+		//BaseFunction loop;
+
         public Interpreter (Executable exe, int maxStack = 1024, int maxFrames = 24)
         {
 			this.exe = exe;
@@ -107,10 +117,16 @@ namespace CLanguage
 
 		public void Reset (string entrypoint)
 		{
-			state.Reset ();
+			this.entrypoint = exe.Functions.FirstOrDefault (x => x.Name == entrypoint);
+			Reset ();
+		}
 
-			var f = exe.Functions.First (x => x.Name == entrypoint);
-			state.Call (f);
+		void Reset ()
+		{
+			state.Reset ();
+			if (entrypoint != null) {
+				state.Call (entrypoint);
+			}
 		}
 
 		public void Step ()
@@ -126,11 +142,24 @@ namespace CLanguage
 			if (microseconds <= state.SleepTime) {
 				state.SleepTime -= microseconds;
 			} else {
+
 				state.RemainingTime = microseconds - state.SleepTime;
 				state.SleepTime = 0;
 
-				while (state.RemainingTime > 0 && state.ActiveFrame != null) {
-					state.ActiveFrame.Function.Step (state);
+				try {
+					while (state.RemainingTime > 0 && state.ActiveFrame != null) {
+						state.ActiveFrame.Function.Step (state);
+					}
+				}
+				catch (IndexOutOfRangeException ex) {
+					var cname = state.CallerFrame != null ? state.CallerFrame.Function.Name : "?";
+					var name = state.ActiveFrame != null ? state.ActiveFrame.Function.Name : "?";
+					Reset ();
+					throw new ExecutionException ("Stack overflow while executing '" + name + "' from '" + cname + "'", ex);
+				}
+				catch (Exception) {
+					Reset ();
+					throw;
 				}
 			}
 		}

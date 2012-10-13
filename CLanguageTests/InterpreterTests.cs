@@ -16,6 +16,32 @@ namespace CLanguage.Tests
 			return new Interpreter (exe);
 		}
 
+		[Test, ExpectedException (typeof (ExecutionException))]
+		public void InfiniteRecursionThrows ()
+		{
+			var i = Compile (@"
+int f (int n) {
+	return f (n);
+}
+void main () {
+	f (1);
+}");
+			i.Reset ("main");
+			i.Step ();
+		}
+
+		[Test]
+		public void InfiniteLoopStopsEventually ()
+		{
+			var i = Compile (@"
+void main () {
+	while (true) {
+	}
+}");
+			i.Reset ("main");
+			i.Step ();
+		}
+
 		[Test]
 		public void MutualRecursive ()
 		{
