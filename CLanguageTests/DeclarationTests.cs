@@ -26,7 +26,7 @@ namespace CLanguage.Tests
             pp.AddCode("stdin", code);
             var lexer = new Lexer(pp);
             var parser = new CParser();
-            return parser.ParseTranslationUnit(lexer, new Report(new TextWriterReportPrinter(Console.Out)));
+            return parser.ParseTranslationUnit(lexer, new Report(new TestPrinter ()));
         }
 
         [TestMethod]

@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
+using StackValue = System.Int32;
+
 namespace CLanguage
 {
 	public class CompiledFunction : BaseFunction
@@ -42,7 +44,6 @@ namespace CLanguage
 			var frame = state.ActiveFrame;
 			var ip = frame.IP;
 			var locals = frame.Locals;
-			var stackSize = state.Stack.Length;
 
 			var done = false;
 
@@ -62,6 +63,19 @@ namespace CLanguage
 				case OpCode.Pop:
 					state.SP--;
 					ip++;
+					break;
+				case OpCode.Jump:
+					ip = i.Label.Index;
+					break;
+				case OpCode.BranchIfFalse:
+					a = state.Stack[state.SP - 1];
+					state.SP--;
+					if (a == 0) {
+						ip = i.Label.Index;
+					}
+					else {
+						ip++;
+					}
 					break;
 				case OpCode.Call:
 					a = state.Stack[state.SP - 1];
@@ -101,8 +115,82 @@ namespace CLanguage
 					state.SP--;
 					ip++;
 					break;
+				case OpCode.AddUInt16:
+					a = state.Stack[state.SP - 2];
+					b = state.Stack[state.SP - 1];
+					state.Stack[state.SP - 2] = ((ushort)a + (ushort)b);
+					state.SP--;
+					ip++;
+					break;
+				case OpCode.AddInt32:
+					a = state.Stack[state.SP - 2];
+					b = state.Stack[state.SP - 1];
+					state.Stack[state.SP - 2] = ((int)a + (int)b);
+					state.SP--;
+					ip++;
+					break;
+				case OpCode.AddUInt32:
+					a = state.Stack[state.SP - 2];
+					b = state.Stack[state.SP - 1];
+					state.Stack[state.SP - 2] = (StackValue)((uint)a + (uint)b);
+					state.SP--;
+					ip++;
+					break;
+				case OpCode.GreaterThanInt16:
+					a = state.Stack[state.SP - 2];
+					b = state.Stack[state.SP - 1];
+					state.Stack[state.SP - 2] = ((short)a > (short)b) ? 1 : 0;
+					state.SP--;
+					ip++;
+					break;
+				case OpCode.GreaterThanUInt16:
+					a = state.Stack[state.SP - 2];
+					b = state.Stack[state.SP - 1];
+					state.Stack[state.SP - 2] = ((ushort)a > (ushort)b) ? 1 : 0;
+					state.SP--;
+					ip++;
+					break;
+				case OpCode.GreaterThanInt32:
+					a = state.Stack[state.SP - 2];
+					b = state.Stack[state.SP - 1];
+					state.Stack[state.SP - 2] = ((int)a > (int)b) ? 1 : 0;
+					state.SP--;
+					ip++;
+					break;
+				case OpCode.GreaterThanUInt32:
+					a = state.Stack[state.SP - 2];
+					b = state.Stack[state.SP - 1];
+					state.Stack[state.SP - 2] = ((uint)a > (uint)b) ? 1 : 0;
+					state.SP--;
+					ip++;
+					break;
+				case OpCode.NegateInt16:
+					a = state.Stack[state.SP - 1];
+					state.Stack[state.SP - 1] = -(short)a;
+					ip++;
+					break;
+				case OpCode.NegateUInt16:
+					a = state.Stack[state.SP - 1];
+					state.Stack[state.SP - 1] = -(ushort)a;
+					ip++;
+					break;
+				case OpCode.NegateInt32:
+					a = state.Stack[state.SP - 1];
+					state.Stack[state.SP - 1] = -(int)a;
+					ip++;
+					break;
+				case OpCode.NegateUInt32:
+					a = state.Stack[state.SP - 1];
+					state.Stack[state.SP - 1] = (StackValue)(-(uint)a);
+					ip++;
+					break;
+				case OpCode.LogicalNot:
+					a = state.Stack[state.SP - 1];
+					state.Stack[state.SP - 1] = (a == 0) ? 1 : 0;
+					ip++;
+					break;
 				default:
-					throw new NotImplementedException (i.Op.ToString ());
+					throw new NotImplementedException (i.Op + " has not been implemented yet.");
 				}
 
 				state.RemainingTime -= state.CpuSpeed;

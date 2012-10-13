@@ -83,6 +83,7 @@
     <Compile Include="LogicExpression.cs" />
     <Compile Include="CompiledFunction.cs" />
     <Compile Include="BaseFunction.cs" />
+    <Compile Include="SequenceExpression.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="CParser.jay" />

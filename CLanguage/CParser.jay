@@ -264,7 +264,13 @@ assignment_operator
 
 expression
 	: assignment_expression
+	{
+		$$ = $1;
+	}
 	| expression ',' assignment_expression
+	{
+		$$ = new SequenceExpression ((Expression)$1, (Expression)$3);
+	}
 	;
 
 constant_expression
@@ -839,11 +845,11 @@ iteration_statement
 	}
 	| FOR '(' expression_statement expression_statement ')' statement
 	{
-		$$ = new ForStatement(((ExpressionStatement)$3).Expression, ((ExpressionStatement)$4).Expression, (Statement)$6, _currentBlock, GetLocation($1), GetLocation($6));
+		$$ = new ForStatement((ExpressionStatement)$3, ((ExpressionStatement)$4).Expression, (Statement)$6, _currentBlock, GetLocation($1), GetLocation($6));
 	}
 	| FOR '(' expression_statement expression_statement expression ')' statement
 	{
-		$$ = new ForStatement(((ExpressionStatement)$3).Expression, ((ExpressionStatement)$4).Expression, (Expression)$5, (Statement)$7, _currentBlock, GetLocation($1), GetLocation($7));
+		$$ = new ForStatement((ExpressionStatement)$3, ((ExpressionStatement)$4).Expression, (Expression)$5, (Statement)$7, _currentBlock, GetLocation($1), GetLocation($7));
 	}
 	| FOR '(' declaration expression_statement ')' { StartBlock(GetLocation($1)); } statement
 	{

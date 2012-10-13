@@ -27,12 +27,13 @@ namespace CLanguage
             LoopBody = body;
         }
 
-        public ForStatement(Expression initExpr, Expression continueExpr, Statement body, Block parent, Location startLoc, Location endLoc)
+	    public ForStatement(ExpressionStatement initStatement, Expression continueExpr, Statement body, Block parent, Location startLoc, Location endLoc)
         {
             InitBlock = new Block(parent, startLoc)
             {
                 EndLocation = endLoc
             };
+			InitBlock.Statements.Add (initStatement);
             ContinueExpression = continueExpr;
             LoopBody = body;
             if (LoopBody is Block)
@@ -41,12 +42,13 @@ namespace CLanguage
             }
         }
 
-        public ForStatement(Expression initExpr, Expression continueExpr, Expression nextExpr, Statement body, Block parent, Location startLoc, Location endLoc)
+		public ForStatement(ExpressionStatement initStatement, Expression continueExpr, Expression nextExpr, Statement body, Block parent, Location startLoc, Location endLoc)
         {
             InitBlock = new Block(parent, startLoc)
             {
                 EndLocation = endLoc
             };
+			InitBlock.Statements.Add (initStatement);
             ContinueExpression = continueExpr;
             NextExpression = nextExpr;
             LoopBody = body;
@@ -56,9 +58,24 @@ namespace CLanguage
             }
         }
 
-        protected override void DoEmit(EmitContext ec)
+        protected override void DoEmit (EmitContext ec)
         {
-            throw new NotImplementedException();
+			InitBlock.Emit (ec);
+
+			var endLabel = ec.DefineLabel ();
+
+			var contLabel = ec.DefineLabel ();
+			ec.EmitLabel (contLabel);
+			ContinueExpression.Emit (ec);
+			ec.EmitCastToBoolean (ContinueExpression.GetEvaluatedCType (ec));
+			ec.Emit (OpCode.BranchIfFalse, endLabel);
+
+			LoopBody.Emit (ec);
+			NextExpression.Emit (ec);
+			ec.Emit (OpCode.Pop);
+			ec.Emit (OpCode.Jump, contLabel);
+
+			ec.EmitLabel (endLabel);
         }
 
 		public override bool AlwaysReturns {
