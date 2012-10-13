@@ -34,17 +34,15 @@ namespace CLanguage
 
 		public override void Init (ExecutionState state)
 		{
-			var locals = state.Frames[state.FP].Locals;
-			if (locals == null || locals.Length < LocalVariables.Count) {
-				locals = new int[LocalVariables.Count];
-				state.Frames[state.FP].Locals = locals;
-			}
+			state.ActiveFrame.AllocateLocals (LocalVariables.Count);
 		}
 
 		public override void Step (ExecutionState state)
 		{
-			var ip = state.Frames[state.FP].IP;
-			var locals = state.Frames[state.FP].Locals;
+			var frame = state.ActiveFrame;
+			var ip = frame.IP;
+			var locals = frame.Locals;
+			var stackSize = state.Stack.Length;
 
 			var done = false;
 
@@ -61,11 +59,19 @@ namespace CLanguage
 					state.SP++;
 					ip++;
 					break;
+				case OpCode.Pop:
+					state.SP--;
+					ip++;
+					break;
 				case OpCode.Call:
 					a = state.Stack[state.SP - 1];
 					state.SP--;
 					ip++;
 					state.Call (a);
+					done = true;
+					break;
+				case OpCode.Return:
+					state.Return ();
 					done = true;
 					break;
 				case OpCode.LoadFunction:
@@ -102,7 +108,11 @@ namespace CLanguage
 				state.RemainingTime -= state.CpuSpeed;
 			}
 
-			state.Frames[state.FP].IP = ip;
+			frame.IP = ip;
+
+			if (ip >= Instructions.Count) {
+				throw new ExecutionException ("Function '" + Name + "' never returned.");
+			}
 		}
 	}
 }

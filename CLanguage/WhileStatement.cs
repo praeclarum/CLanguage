@@ -41,6 +41,12 @@ namespace CLanguage
             }
         }
 
+		public override bool AlwaysReturns {
+			get {
+				return false;
+			}
+		}
+
         public override string ToString()
         {
             if (IsDo)

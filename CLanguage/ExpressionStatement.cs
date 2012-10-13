@@ -5,31 +5,33 @@ using System.Text;
 
 namespace CLanguage
 {
-    public class ExpressionStatement : Statement
-    {
-        public Expression Expression { get; set; }
+	public class ExpressionStatement : Statement
+	{
+		public Expression Expression { get; set; }
 
-        public ExpressionStatement(Expression expr)
-        {
-            Expression = expr;
-        }
+		public ExpressionStatement (Expression expr)
+		{
+			Expression = expr;
+		}
 
-        protected override void DoEmit(EmitContext ec)
-        {
-            if (Expression != null)
-            {
-                Expression.Emit (ec);
+		protected override void DoEmit (EmitContext ec)
+		{
+			if (Expression != null) {
+				Expression.Emit (ec);
 
-                if (!(Expression is AssignExpression))
-                {
-                    ec.Emit (OpCode.Pop);
-                }
-            }
-        }
+				ec.Emit (OpCode.Pop);
+			}
+		}
 
-        public override string ToString()
-        {
-            return string.Format("{0};", Expression);
-        }
-    }
+		public override string ToString ()
+		{
+			return string.Format ("{0};", Expression);
+		}
+
+		public override bool AlwaysReturns {
+			get {
+				return false;
+			}
+		}
+	}
 }

@@ -16,23 +16,40 @@ namespace CLanguage.Tests
 	[TestClass]
 	public class CompilerTests
 	{
-		Compiler CreateCompiler ()
-		{
-			return new Compiler (MachineInfo.Arduino, new Report (new TestPrinter ()));
-		}
-
 		Executable Compile (string code)
 		{
-			var c = CreateCompiler ();
+			var c = new Compiler (MachineInfo.Arduino, new Report (new TestPrinter ()));
 			c.AddCode (code);
 			return c.Compile ();
+		}
+
+		Executable CompileWithErrors (string code, params int[] errorCodes)
+		{
+			var printer = new TestPrinter (errorCodes);
+			var c = new Compiler (MachineInfo.Arduino, new Report (printer));
+			c.AddCode (code);
+			var exe = c.Compile ();
+			printer.CheckForErrors ();
+			return exe;
+		}
+
+		[TestMethod]
+		public void ErrorIfDoesntReturn ()
+		{
+			CompileWithErrors (@"int f () { int a = 42; }", 161);
+		}
+
+		[TestMethod]
+		public void ErrorIfDoesntReturnValue ()
+		{
+			CompileWithErrors (@"int f () { int a = 42; return; }", 126);
 		}
 
 		[TestMethod]
 		public void ReturnConstant ()
 		{
 			var exe = Compile (@"int f () { return 42; }");
-			Assert.That (exe.Functions.Count, Is.EqualTo (1));
+			Assert.That (exe.Functions.Count, Is.EqualTo (exe.MachineInfo.InternalFunctions.Count + 1));
 			var f = exe.Functions.OfType<CompiledFunction> ().First (x => x.Name == "f");
 			Assert.That (f.Instructions.Count, Is.EqualTo (2));
 
@@ -44,7 +61,7 @@ namespace CLanguage.Tests
 		public void ReturnParamExpr ()
 		{
 			var exe = Compile (@"int f (int i) { return i + 42; }");
-			Assert.That (exe.Functions.Count, Is.EqualTo (1));
+			Assert.That (exe.Functions.Count, Is.EqualTo (exe.MachineInfo.InternalFunctions.Count + 1));
 			var f = exe.Functions.OfType<CompiledFunction> ().First (x => x.Name == "f");
 			Assert.That (f.Instructions.Count, Is.EqualTo (4));
 
@@ -58,7 +75,7 @@ namespace CLanguage.Tests
 		public void ConditionalReturn ()
 		{
 			var exe = Compile (@"int f (int i) { if (i) return 0; else return 42; }");
-			Assert.That (exe.Functions.Count, Is.EqualTo (1));
+			Assert.That (exe.Functions.Count, Is.EqualTo (exe.MachineInfo.InternalFunctions.Count + 1));
 			var f = exe.Functions.OfType<CompiledFunction> ().First (x => x.Name == "f");
 			Assert.That (f.Instructions.Count, Is.EqualTo (7));
 			Assert.That (f.Instructions[0].Op, Is.EqualTo (OpCode.LoadArg));
@@ -87,14 +104,14 @@ void f () {
 		public void ArduinoBlink ()
 		{
 			var exe = Compile (ArduinoTests.BlinkCode);
-			Assert.That (exe.Functions.Count, Is.EqualTo (2));
+			Assert.That (exe.Functions.Count, Is.EqualTo (exe.MachineInfo.InternalFunctions.Count + 2));
 		}
 
 		[TestMethod]
 		public void ArduinoFade ()
 		{
 			var exe = Compile (ArduinoTests.FadeCode);
-			Assert.That (exe.Functions.Count, Is.EqualTo (2));
+			Assert.That (exe.Functions.Count, Is.EqualTo (exe.MachineInfo.InternalFunctions.Count + 2));
 		}
 	}
 }

@@ -2,9 +2,13 @@ using System;
 
 namespace CLanguage
 {
+	public delegate void InternalFunctionAction (ExecutionState state);
+
 	public class InternalFunction : BaseFunction
 	{
-		public InternalFunction (string prototype)
+		public InternalFunctionAction Action { get; set; }
+
+		public InternalFunction (string prototype, InternalFunctionAction action = null)
 		{
 			var parser = new CParser ();
 			var pp = new Preprocessor ();
@@ -13,6 +17,8 @@ namespace CLanguage
 			var f = tu.Functions[0];
 			Name = f.Name;
 			FunctionType = f.FunctionType;
+
+			Action = action;
 		}
 
 		public override string ToString ()
@@ -22,7 +28,10 @@ namespace CLanguage
 
 		public override void Step (ExecutionState state)
 		{
-			throw new NotImplementedException ();
+			if (Action != null) {
+				Action (state);
+			}
+			state.Return ();
 		}
 	}
 }

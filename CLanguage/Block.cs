@@ -63,5 +63,11 @@ namespace CLanguage
             }
             ec.EndBlock();
         }
+
+		public override bool AlwaysReturns {
+			get {
+				return Statements.Any (s => s.AlwaysReturns);
+			}
+		}
     }
 }

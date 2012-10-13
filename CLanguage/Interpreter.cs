@@ -7,27 +7,48 @@ using ValueType = System.Int32;
 
 namespace CLanguage
 {
+	public class ExecutionException : Exception
+	{
+		public ExecutionException (string message)
+			: base (message)
+		{
+		}
+	}
+
 	public class ExecutionFrame
 	{
-		public int IP;
-		public BaseFunction Function;
-		public ValueType[] Locals;
+		public int IP { get; set; }
+		public BaseFunction Function { get; set; }
+		public ValueType[] Args { get; private set; }
+		public ValueType[] Locals { get; private set; }
+
+		public void AllocateArgs (int count)
+		{
+			if (Args == null || Args.Length < count) {
+				Args = new ValueType[count];
+			}
+		}
+
+		public void AllocateLocals (int count)
+		{
+			if (Locals == null || Locals.Length < count) {
+				Locals = new ValueType[count];
+			}
+		}
 	}
 
 	public class ExecutionState
 	{
-		Executable exe;
-
 		public readonly ValueType[] Stack;
-		public readonly ExecutionFrame[] Frames;
-
-		public int FP;
 		public int SP;
+		readonly ExecutionFrame[] Frames;
+		int FP;
+		public int SleepTime { get; set; }
+		public int RemainingTime { get; set; }
 
-		public int SleepTime;
-		public int RemainingTime;
-
+		Executable exe;
 		public int CpuSpeed = 1000;
+		public ExecutionFrame ActiveFrame { get { return FP < 0 ? null : Frames[FP]; } }
 
 		public ExecutionState (Executable exe, int maxStack, int maxFrames)
 		{
@@ -46,7 +67,30 @@ namespace CLanguage
 			FP++;
 			Frames[FP].Function = function;
 			Frames[FP].IP = 0;
+
+			var frame = ActiveFrame;
+
+			var nargs = function.FunctionType.Parameters.Count;
+			frame.AllocateArgs (nargs);
+			var args = frame.Args;
+			for (var i = nargs - 1; i >= 0; i--) {
+				args[i] = Stack[SP-1];
+				SP--;
+			}
+
 			function.Init (this);
+		}
+
+		public void Return ()
+		{
+			FP--;
+		}
+
+		public void Reset ()
+		{
+			FP = -1;
+			SP = 0;
+			SleepTime = 0;
 		}
 	}
 
@@ -63,9 +107,7 @@ namespace CLanguage
 
 		public void Reset (string entrypoint)
 		{
-			state.FP = 0;
-			state.SP = 0;
-			state.SleepTime = 0;
+			state.Reset ();
 
 			var f = exe.Functions.First (x => x.Name == entrypoint);
 			state.Call (f);
@@ -78,9 +120,7 @@ namespace CLanguage
 
 		public void Step (int microseconds)
 		{
-			if (state.FP < 0)
-				return;
-			if (state.FP >= state.Frames.Length)
+			if (state.ActiveFrame == null)
 				return;
 
 			if (microseconds <= state.SleepTime) {
@@ -89,8 +129,8 @@ namespace CLanguage
 				state.RemainingTime = microseconds - state.SleepTime;
 				state.SleepTime = 0;
 
-				while (state.RemainingTime > 0) {
-					state.Frames [state.FP].Function.Step (state);
+				while (state.RemainingTime > 0 && state.ActiveFrame != null) {
+					state.ActiveFrame.Function.Step (state);
 				}
 			}
 		}

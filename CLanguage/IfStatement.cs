@@ -56,5 +56,13 @@ namespace CLanguage
         {
             return string.Format("if ({0}) {1};", Condition, TrueStatement);
         }
+
+		public override bool AlwaysReturns {
+			get {
+				var tr = TrueStatement.AlwaysReturns;
+				var fr = FalseStatement != null ? FalseStatement.AlwaysReturns : false;
+				return tr && fr;
+			}
+		}
     }
 }

@@ -60,5 +60,11 @@ namespace CLanguage
         {
             throw new NotImplementedException();
         }
+
+		public override bool AlwaysReturns {
+			get {
+				return false;
+			}
+		}
     }
 }

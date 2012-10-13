@@ -15,5 +15,7 @@ namespace CLanguage
         }
 
         protected abstract void DoEmit(EmitContext ec);
+
+		public abstract bool AlwaysReturns { get; }
     }
 }

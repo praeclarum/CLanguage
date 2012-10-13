@@ -43,6 +43,16 @@ namespace CLanguage
 						var c = new FunctionContext (exe, fdecl, cfexe, context);
 						fdecl.Body.Emit (c);
 						cfexe.LocalVariables.AddRange (c.LocalVariables);
+
+						// Make sure it returns
+						if (fdecl.Body.Statements.Count == 0 || !fdecl.Body.AlwaysReturns) {
+							if (fdecl.FunctionType.ReturnType.IsVoid) {
+								c.Emit (OpCode.Return);
+							}
+							else {
+								context.Report.Error (161, "'" + fdecl.Name + "' not all code paths return a value");
+							}
+						}
 					}
 				}
 			}

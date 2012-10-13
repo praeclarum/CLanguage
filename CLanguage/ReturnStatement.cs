@@ -23,6 +23,7 @@ namespace CLanguage
 				}
 				else {
 					ReturnExpression.Emit (ec);
+					ec.EmitCast (ReturnExpression.GetEvaluatedCType (ec), ec.FunctionDecl.FunctionType.ReturnType);
 					ec.Emit (OpCode.Return);
 				}
 			}
@@ -33,6 +34,12 @@ namespace CLanguage
 				else {
 					ec.Report.Error (126, "A value is required for the return statement");
 				}
+			}
+		}
+
+		public override bool AlwaysReturns {
+			get {
+				return true;
 			}
 		}
 	}
