@@ -54,6 +54,7 @@ namespace CLanguage
 
 		public void EmitCastToBoolean (CType fromType)
 		{
+			// Don't really need to do anything since 0 on that eval stack is false
 		}
 
 		public virtual void Emit (Instruction instruction)
@@ -79,8 +80,8 @@ namespace CLanguage
 	public enum VariableScope
 	{
 		Global,
-		Local,
 		Arg,
+		Local,
 		Function,
 	}
 

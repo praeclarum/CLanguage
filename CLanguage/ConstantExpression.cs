@@ -98,13 +98,13 @@ namespace CLanguage
 					if (basicType.Signedness == Signedness.Signed) {
 						switch (size) {
 						case 1:
-							ec.Emit (OpCode.LoadValueInt8, (ValueType)(sbyte)EmitValue);
+							ec.Emit (OpCode.LoadValue, (ValueType)(sbyte)EmitValue);
 							break;
 						case 2:
-							ec.Emit (OpCode.LoadValueInt16, (ValueType)(short)EmitValue);
+							ec.Emit (OpCode.LoadValue, (ValueType)(short)EmitValue);
 							break;
 						case 4:
-							ec.Emit (OpCode.LoadValueInt32, (ValueType)(int)EmitValue);
+							ec.Emit (OpCode.LoadValue, (ValueType)(int)EmitValue);
 							break;
 						default:
 							throw new NotSupportedException ("Constants with type '" + ConstantType + "'");
@@ -113,13 +113,13 @@ namespace CLanguage
 					else {
 						switch (size) {
 						case 1:
-							ec.Emit (OpCode.LoadValueUInt8, (ValueType)(byte)EmitValue);
+							ec.Emit (OpCode.LoadValue, (ValueType)(byte)EmitValue);
 							break;
 						case 2:
-							ec.Emit (OpCode.LoadValueUInt16, (ValueType)(ushort)EmitValue);
+							ec.Emit (OpCode.LoadValue, (ValueType)(ushort)EmitValue);
 							break;
 						case 4:
-							ec.Emit (OpCode.LoadValueUInt32, (ValueType)(uint)EmitValue);
+							ec.Emit (OpCode.LoadValue, (ValueType)(uint)EmitValue);
 							break;
 						default:
 							throw new NotSupportedException ("Constants with type '" + ConstantType + "'");

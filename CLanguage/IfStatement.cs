@@ -44,7 +44,7 @@ namespace CLanguage
                 var falseLabel = ec.DefineLabel();
 				ec.Emit (OpCode.BranchIfFalse, falseLabel);
                 TrueStatement.Emit(ec);
-				ec.Emit (OpCode.Jump);
+				ec.Emit (OpCode.Jump, endLabel);
                 ec.EmitLabel(falseLabel);
                 FalseStatement.Emit(ec);
             }

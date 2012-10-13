@@ -161,19 +161,19 @@ relational_expression
 	: shift_expression
 	| relational_expression '<' shift_expression
 	{
-		$$ = new BinaryExpression((Expression)$1, Binop.LessThan, (Expression)$3);
+		$$ = new RelationalExpression((Expression)$1, RelationalOp.LessThan, (Expression)$3);
 	}
 	| relational_expression '>' shift_expression
 	{
-		$$ = new BinaryExpression((Expression)$1, Binop.GreaterThan, (Expression)$3);
+		$$ = new RelationalExpression((Expression)$1, RelationalOp.GreaterThan, (Expression)$3);
 	}
 	| relational_expression LE_OP shift_expression
 	{
-		$$ = new BinaryExpression((Expression)$1, Binop.LessThanOrEqual, (Expression)$3);
+		$$ = new RelationalExpression((Expression)$1, RelationalOp.LessThanOrEqual, (Expression)$3);
 	}
 	| relational_expression GE_OP shift_expression
 	{
-		$$ = new BinaryExpression((Expression)$1, Binop.GreaterThanOrEqual, (Expression)$3);
+		$$ = new RelationalExpression((Expression)$1, RelationalOp.GreaterThanOrEqual, (Expression)$3);
 	}
 	;
 
@@ -181,11 +181,11 @@ equality_expression
 	: relational_expression
 	| equality_expression EQ_OP relational_expression
 	{
-		$$ = new BinaryExpression((Expression)$1, Binop.Equals, (Expression)$3);
+		$$ = new RelationalExpression((Expression)$1, RelationalOp.Equals, (Expression)$3);
 	}
 	| equality_expression NE_OP relational_expression
 	{
-		$$ = new BinaryExpression((Expression)$1, Binop.NotEquals, (Expression)$3);
+		$$ = new RelationalExpression((Expression)$1, RelationalOp.NotEquals, (Expression)$3);
 	}
 	;
 
@@ -217,7 +217,7 @@ logical_and_expression
 	: inclusive_or_expression
 	| logical_and_expression AND_OP inclusive_or_expression
 	{
-		$$ = new BinaryExpression((Expression)$1, Binop.LogicalAnd, (Expression)$3);
+		$$ = new LogicExpression((Expression)$1, LogicOp.And, (Expression)$3);
 	}
 	;
 
@@ -225,7 +225,7 @@ logical_or_expression
 	: logical_and_expression
 	| logical_or_expression OR_OP logical_and_expression
 	{
-		$$ = new BinaryExpression((Expression)$1, Binop.LogicalOr, (Expression)$3);
+		$$ = new LogicExpression((Expression)$1, LogicOp.Or, (Expression)$3);
 	}
 	;
 
@@ -238,19 +238,18 @@ assignment_expression
 	: conditional_expression
 	| unary_expression assignment_operator assignment_expression
 	{
-		var op = (Binop)$2;
-		if (op == Binop.Equals) {
+		if ($2 is RelationalOp && ((RelationalOp)$2) == RelationalOp.Equals) {
 			$$ = new AssignExpression((Expression)$1, (Expression)$3);
 		}
 		else {
 			var left = (Expression)$1; 
-			$$ = new AssignExpression(left, new BinaryExpression (left, op, (Expression)$3));
+			$$ = new AssignExpression(left, new BinaryExpression (left, (Binop)$2, (Expression)$3));
 		}
 	}
 	;
 
 assignment_operator
-	: '='				{ $$ = Binop.Equals; }
+	: '='				{ $$ = RelationalOp.Equals; }
 	| MUL_ASSIGN		{ $$ = Binop.Multiply; }
 	| DIV_ASSIGN		{ $$ = Binop.Divide; }
 	| MOD_ASSIGN		{ $$ = Binop.Mod; }

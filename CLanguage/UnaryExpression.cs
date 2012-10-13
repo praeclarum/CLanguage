@@ -7,14 +7,14 @@ namespace CLanguage
 {
     public enum Unop
     {
-        None,
-        Negate,
+		None,
+		Not,
+		Negate,
         BinaryComplement,
-        Not,
         PreIncrement,
         PreDecrement,
         PostIncrement,
-        PostDecrement
+        PostDecrement,
     }
 
     public class UnaryExpression : Expression
@@ -30,14 +30,31 @@ namespace CLanguage
 
 		public override CType GetEvaluatedCType (EmitContext ec)
 		{
-			return Right.GetEvaluatedCType (ec);
+			return (Op == Unop.Not) ? CBasicType.SignedInt : GetPromotedType (Right, Op.ToString (), ec);
         }
 
         protected override void DoEmit(EmitContext ec)
         {
+			var aType = (CBasicType)GetEvaluatedCType (ec);
+
 			Right.Emit (ec);
-			throw new NotImplementedException ();
-        }
+			ec.EmitCast (Right.GetEvaluatedCType (ec), aType);
+
+			var ioff = GetInstructionOffset (aType, ec);
+
+			switch (Op) {
+			case Unop.None:
+				break;
+			case Unop.Negate:
+				ec.Emit ((OpCode)(OpCode.NegateInt16 + ioff));
+				break;
+			case Unop.Not:
+				ec.Emit ((OpCode)(OpCode.NotInt16 + ioff));
+				break;
+			default:
+				throw new NotSupportedException ("Unsupported unary operator '" + Op + "'");
+			}
+		}
 
         public override string ToString()
         {

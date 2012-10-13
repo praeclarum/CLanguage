@@ -27,21 +27,23 @@ namespace CLanguage
 			ec.EmitCast (Right.GetEvaluatedCType (ec), Left.GetEvaluatedCType (ec));
 
 			if (Left is VariableExpression) {
+
 				var v = ec.ResolveVariable (((VariableExpression)Left).VariableName);
 
 				if (v == null) {
-					//fexe.Instructions.Add (new PushInstruction (0, CBasicType.SignedInt));
+					ec.Emit (OpCode.Pop);
 				} else if (v.Scope == VariableScope.Global) {
-					//fexe.Instructions.Add (new StoreGlobalInstruction (v.Index));
+					ec.Emit (OpCode.StoreMemory, v.Index);
 				} else if (v.Scope == VariableScope.Local) {
-					//fexe.Instructions.Add (new StoreLocalInstruction (v.Index));
+					ec.Emit (OpCode.StoreLocal, v.Index);
+				} else if (v.Scope == VariableScope.Arg) {
+					ec.Emit (OpCode.StoreArg, v.Index);
 				} else {
-					throw new NotSupportedException ("Assigning to " + v.Scope);
+					throw new NotSupportedException ("Assigning to scope '" + v.Scope + "'");
 				}
 			} else {
-				throw new NotImplementedException ("Assign " + Left.GetType ());
+				throw new NotImplementedException ("Assign " + Left.GetType ().Name);
 			}
-			throw new NotImplementedException ("Assign " + Left.GetType ());
         }
 
         public override string ToString()

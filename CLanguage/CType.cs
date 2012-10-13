@@ -139,17 +139,19 @@ namespace CLanguage
 		/// </param>
 		public CBasicType IntegerPromote (CompilerContext context)
 		{
-			var size = GetSize (context);
-			var intSize = context.MachineInfo.IntSize;
-			if (size < intSize) {
-				return SignedInt;
-			}
-			else if (size == intSize) {
-				if (Signedness == Signedness.Unsigned) {
-					return UnsignedInt;
-				}
-				else {
+			if (IsIntegral) {
+				var size = GetSize (context);
+				var intSize = context.MachineInfo.IntSize;
+				if (size < intSize) {
 					return SignedInt;
+				} else if (size == intSize) {
+					if (Signedness == Signedness.Unsigned) {
+						return UnsignedInt;
+					} else {
+						return SignedInt;
+					}
+				} else {
+					return this;
 				}
 			}
 			else {

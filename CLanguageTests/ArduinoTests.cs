@@ -181,7 +181,7 @@ void loop()  {
             
 			Assert.IsInstanceOf<IfStatement>(loop.Body.Statements[2]);
             var iff = (IfStatement)loop.Body.Statements[2];
-            Assert.IsInstanceOf<BinaryExpression>(iff.Condition);
+            Assert.IsInstanceOf<LogicExpression>(iff.Condition);
             Assert.IsInstanceOf<Block>(iff.TrueStatement);
             Assert.IsNull(iff.FalseStatement);
 
@@ -251,8 +251,8 @@ void loop() {
 
             Assert.AreEqual(1, f.InitBlock.Variables.Count);
             Assert.AreEqual(1, f.InitBlock.Statements.Count);
-            Assert.IsInstanceOf<BinaryExpression>(f.ContinueExpression);
-            Assert.AreEqual(Binop.LessThan, ((BinaryExpression)f.ContinueExpression).Op);
+            Assert.IsInstanceOf<RelationalExpression>(f.ContinueExpression);
+			Assert.AreEqual(RelationalOp.LessThan, ((RelationalExpression)f.ContinueExpression).Op);
             Assert.IsInstanceOf<UnaryExpression>(f.NextExpression);
             Assert.AreEqual(Unop.PostIncrement, ((UnaryExpression)f.NextExpression).Op);
             Assert.AreEqual("thisNote", ((VariableExpression)((UnaryExpression)f.NextExpression).Right).VariableName);

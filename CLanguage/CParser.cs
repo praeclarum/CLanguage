@@ -656,37 +656,37 @@ case 40:
 case 42:
 #line 165 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   {
-		yyVal = new BinaryExpression((Expression)yyVals[-2+yyTop], Binop.LessThan, (Expression)yyVals[0+yyTop]);
+		yyVal = new RelationalExpression((Expression)yyVals[-2+yyTop], RelationalOp.LessThan, (Expression)yyVals[0+yyTop]);
 	}
   break;
 case 43:
 #line 169 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   {
-		yyVal = new BinaryExpression((Expression)yyVals[-2+yyTop], Binop.GreaterThan, (Expression)yyVals[0+yyTop]);
+		yyVal = new RelationalExpression((Expression)yyVals[-2+yyTop], RelationalOp.GreaterThan, (Expression)yyVals[0+yyTop]);
 	}
   break;
 case 44:
 #line 173 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   {
-		yyVal = new BinaryExpression((Expression)yyVals[-2+yyTop], Binop.LessThanOrEqual, (Expression)yyVals[0+yyTop]);
+		yyVal = new RelationalExpression((Expression)yyVals[-2+yyTop], RelationalOp.LessThanOrEqual, (Expression)yyVals[0+yyTop]);
 	}
   break;
 case 45:
 #line 177 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   {
-		yyVal = new BinaryExpression((Expression)yyVals[-2+yyTop], Binop.GreaterThanOrEqual, (Expression)yyVals[0+yyTop]);
+		yyVal = new RelationalExpression((Expression)yyVals[-2+yyTop], RelationalOp.GreaterThanOrEqual, (Expression)yyVals[0+yyTop]);
 	}
   break;
 case 47:
 #line 185 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   {
-		yyVal = new BinaryExpression((Expression)yyVals[-2+yyTop], Binop.Equals, (Expression)yyVals[0+yyTop]);
+		yyVal = new RelationalExpression((Expression)yyVals[-2+yyTop], RelationalOp.Equals, (Expression)yyVals[0+yyTop]);
 	}
   break;
 case 48:
 #line 189 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   {
-		yyVal = new BinaryExpression((Expression)yyVals[-2+yyTop], Binop.NotEquals, (Expression)yyVals[0+yyTop]);
+		yyVal = new RelationalExpression((Expression)yyVals[-2+yyTop], RelationalOp.NotEquals, (Expression)yyVals[0+yyTop]);
 	}
   break;
 case 50:
@@ -710,60 +710,60 @@ case 54:
 case 56:
 #line 221 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   {
-		yyVal = new BinaryExpression((Expression)yyVals[-2+yyTop], Binop.LogicalAnd, (Expression)yyVals[0+yyTop]);
+		yyVal = new LogicExpression((Expression)yyVals[-2+yyTop], LogicOp.And, (Expression)yyVals[0+yyTop]);
 	}
   break;
 case 58:
 #line 229 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   {
-		yyVal = new BinaryExpression((Expression)yyVals[-2+yyTop], Binop.LogicalOr, (Expression)yyVals[0+yyTop]);
+		yyVal = new LogicExpression((Expression)yyVals[-2+yyTop], LogicOp.Or, (Expression)yyVals[0+yyTop]);
 	}
   break;
 case 62:
   case_62();
   break;
 case 63:
-#line 253 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
-  { yyVal = Binop.Equals; }
+#line 252 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+  { yyVal = RelationalOp.Equals; }
   break;
 case 64:
-#line 254 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 253 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   { yyVal = Binop.Multiply; }
   break;
 case 65:
-#line 255 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 254 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   { yyVal = Binop.Divide; }
   break;
 case 66:
-#line 256 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 255 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   { yyVal = Binop.Mod; }
   break;
 case 67:
-#line 257 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 256 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   { yyVal = Binop.Add; }
   break;
 case 68:
-#line 258 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 257 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   { yyVal = Binop.Subtract; }
   break;
 case 69:
-#line 259 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 258 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   { yyVal = Binop.ShiftLeft; }
   break;
 case 70:
-#line 260 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 259 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   { yyVal = Binop.ShiftRight; }
   break;
 case 71:
-#line 261 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 260 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   { yyVal = Binop.BinaryAnd; }
   break;
 case 72:
-#line 262 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 261 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   { yyVal = Binop.BinaryXor; }
   break;
 case 73:
-#line 263 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 262 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   { yyVal = Binop.BinaryOr; }
   break;
 case 77:
@@ -809,142 +809,142 @@ case 90:
   case_90();
   break;
 case 91:
-#line 374 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 373 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   { yyVal = StorageClassSpecifier.Typedef; }
   break;
 case 92:
-#line 375 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 374 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   { yyVal = StorageClassSpecifier.Extern; }
   break;
 case 93:
-#line 376 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 375 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   { yyVal = StorageClassSpecifier.Static; }
   break;
 case 94:
-#line 377 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 376 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   { yyVal = StorageClassSpecifier.Auto; }
   break;
 case 95:
-#line 378 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 377 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   { yyVal = StorageClassSpecifier.Register; }
   break;
 case 96:
-#line 382 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 381 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   { yyVal = new TypeSpecifier(TypeSpecifierKind.Builtin, "void"); }
   break;
 case 97:
-#line 383 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 382 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   { yyVal = new TypeSpecifier(TypeSpecifierKind.Builtin, "char"); }
   break;
 case 98:
-#line 384 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 383 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   { yyVal = new TypeSpecifier(TypeSpecifierKind.Builtin, "short"); }
   break;
 case 99:
-#line 385 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 384 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   { yyVal = new TypeSpecifier(TypeSpecifierKind.Builtin, "int"); }
   break;
 case 100:
-#line 386 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 385 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   { yyVal = new TypeSpecifier(TypeSpecifierKind.Builtin, "long"); }
   break;
 case 101:
-#line 387 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 386 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   { yyVal = new TypeSpecifier(TypeSpecifierKind.Builtin, "float"); }
   break;
 case 102:
-#line 388 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 387 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   { yyVal = new TypeSpecifier(TypeSpecifierKind.Builtin, "double"); }
   break;
 case 103:
-#line 389 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 388 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   { yyVal = new TypeSpecifier(TypeSpecifierKind.Builtin, "signed"); }
   break;
 case 104:
-#line 390 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 389 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   { yyVal = new TypeSpecifier(TypeSpecifierKind.Builtin, "unsigned"); }
   break;
 case 105:
-#line 391 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 390 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   { yyVal = new TypeSpecifier(TypeSpecifierKind.Builtin, "bool"); }
   break;
 case 106:
-#line 392 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 391 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   { yyVal = new TypeSpecifier(TypeSpecifierKind.Builtin, "complex"); }
   break;
 case 107:
-#line 393 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 392 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   { yyVal = new TypeSpecifier(TypeSpecifierKind.Builtin, "imaginary"); }
   break;
 case 110:
-#line 396 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 395 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   { yyVal = new TypeSpecifier(TypeSpecifierKind.Typename, (yyVals[0+yyTop]).ToString()); }
   break;
 case 137:
-#line 456 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 455 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   { yyVal = FunctionSpecifier.Inline; }
   break;
 case 138:
-#line 463 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 462 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   {
 		yyVal = new PointerDeclarator((Pointer)yyVals[-1+yyTop], (Declarator)yyVals[0+yyTop]);
 	}
   break;
 case 139:
-#line 464 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 463 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   { yyVal = yyVals[0+yyTop]; }
   break;
 case 140:
-#line 469 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 468 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   { yyVal = new IdentifierDeclarator((yyVals[0+yyTop]).ToString()); }
   break;
 case 141:
   case_141();
   break;
 case 142:
-#line 485 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 484 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   {
 		yyVal = MakeArrayDeclarator((Declarator)yyVals[-4+yyTop], (TypeQualifiers)yyVals[-2+yyTop], (Expression)yyVals[-1+yyTop], false);
 	}
   break;
 case 143:
-#line 489 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 488 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   {
 		yyVal = MakeArrayDeclarator((Declarator)yyVals[-3+yyTop], TypeQualifiers.None, null, false);
 	}
   break;
 case 144:
-#line 493 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 492 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   {
 		yyVal = MakeArrayDeclarator((Declarator)yyVals[-3+yyTop], TypeQualifiers.None, (Expression)yyVals[-1+yyTop], false);
 	}
   break;
 case 145:
-#line 497 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 496 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   {
 		yyVal = MakeArrayDeclarator((Declarator)yyVals[-5+yyTop], (TypeQualifiers)yyVals[-2+yyTop], (Expression)yyVals[-1+yyTop], true);
 	}
   break;
 case 146:
-#line 501 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 500 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   {
 		yyVal = MakeArrayDeclarator((Declarator)yyVals[-5+yyTop], (TypeQualifiers)yyVals[-3+yyTop], (Expression)yyVals[-1+yyTop], true);
 	}
   break;
 case 147:
-#line 505 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 504 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   {
 		yyVal = MakeArrayDeclarator((Declarator)yyVals[-4+yyTop], (TypeQualifiers)yyVals[-2+yyTop], null, false);
 	}
   break;
 case 148:
-#line 509 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 508 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   {
 		yyVal = MakeArrayDeclarator((Declarator)yyVals[-3+yyTop], TypeQualifiers.None, null, false);
 	}
   break;
 case 149:
-#line 513 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 512 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   {
 		yyVal = MakeArrayDeclarator((Declarator)yyVals[-2+yyTop], TypeQualifiers.None, null, false);
 	}
@@ -959,45 +959,45 @@ case 152:
   case_152();
   break;
 case 153:
-#line 541 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 540 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   { yyVal = new Pointer(TypeQualifiers.None); }
   break;
 case 154:
-#line 542 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 541 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   { yyVal = new Pointer((TypeQualifiers)yyVals[0+yyTop]); }
   break;
 case 155:
-#line 543 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 542 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   { yyVal = new Pointer(TypeQualifiers.None, (Pointer)yyVals[0+yyTop]); }
   break;
 case 156:
-#line 544 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 543 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   { yyVal = new Pointer((TypeQualifiers)yyVals[-1+yyTop], (Pointer)yyVals[0+yyTop]); }
   break;
 case 157:
-#line 548 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 547 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   { yyVal = yyVals[0+yyTop]; }
   break;
 case 158:
-#line 552 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 551 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   {
 		yyVal = (TypeQualifiers)(yyVals[-1+yyTop]) | (TypeQualifiers)(yyVals[0+yyTop]);
 	}
   break;
 case 159:
-#line 556 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 555 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   { yyVal = TypeQualifiers.Const; }
   break;
 case 160:
-#line 557 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 556 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   { yyVal = TypeQualifiers.Restrict; }
   break;
 case 161:
-#line 558 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 557 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   { yyVal = TypeQualifiers.Volatile; }
   break;
 case 162:
-#line 565 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 564 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   {
 		yyVal = yyVals[0+yyTop];
 	}
@@ -1030,37 +1030,37 @@ case 176:
   case_176();
   break;
 case 177:
-#line 649 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 648 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   {
 		yyVal = MakeArrayDeclarator(null, TypeQualifiers.None, null, false);
 	}
   break;
 case 178:
-#line 653 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 652 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   {
 		yyVal = MakeArrayDeclarator(null, TypeQualifiers.None, (Expression)yyVals[-1+yyTop], false);
 	}
   break;
 case 179:
-#line 657 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 656 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   {
 		yyVal = MakeArrayDeclarator((Declarator)yyVals[-2+yyTop], TypeQualifiers.None, null, false);
 	}
   break;
 case 180:
-#line 661 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 660 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   {
 		yyVal = MakeArrayDeclarator((Declarator)yyVals[-3+yyTop], TypeQualifiers.None, (Expression)yyVals[-1+yyTop], false);
 	}
   break;
 case 181:
-#line 665 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 664 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   {
 		yyVal = MakeArrayDeclarator(null, TypeQualifiers.None, null, false);
 	}
   break;
 case 182:
-#line 669 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 668 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   {
 		yyVal = MakeArrayDeclarator((Declarator)yyVals[-3+yyTop], TypeQualifiers.None, null, false);
 	}
@@ -1078,19 +1078,19 @@ case 186:
   case_186();
   break;
 case 187:
-#line 703 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 702 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   {
 		yyVal = new ExpressionInitializer((Expression)yyVals[0+yyTop]);
 	}
   break;
 case 188:
-#line 707 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 706 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   {
 		yyVal = yyVals[-1+yyTop];
 	}
   break;
 case 189:
-#line 711 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 710 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   {
 		yyVal = yyVals[-2+yyTop];
 	}
@@ -1108,27 +1108,27 @@ case 193:
   case_193();
   break;
 case 194:
-#line 751 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 750 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   {
 		yyVal = new InitializerDesignation((List<InitializerDesignator>)yyVals[-1+yyTop]);
 	}
   break;
 case 208:
-#line 780 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 779 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   { StartBlock(GetLocation(yyVals[0+yyTop])); }
   break;
 case 209:
-#line 783 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 782 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   {
 		yyVal = EndBlock(GetLocation(yyVals[0+yyTop]));
 	}
   break;
 case 210:
-#line 784 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 783 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   { StartBlock(GetLocation(yyVals[0+yyTop])); }
   break;
 case 211:
-#line 787 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 786 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   {
 		yyVal = EndBlock(GetLocation(yyVals[0+yyTop]));
 	}
@@ -1140,75 +1140,75 @@ case 215:
   case_215();
   break;
 case 216:
-#line 813 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 812 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   {
 		yyVal = null;
 	}
   break;
 case 217:
-#line 817 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 816 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   {
 		yyVal = new ExpressionStatement((Expression)yyVals[-1+yyTop]);
 	}
   break;
 case 218:
-#line 824 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 823 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   {
 		yyVal = new IfStatement((Expression)yyVals[-2+yyTop], (Statement)yyVals[0+yyTop], GetLocation(yyVals[-4+yyTop]));
 	}
   break;
 case 219:
-#line 828 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 827 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   {
 		yyVal = new IfStatement((Expression)yyVals[-4+yyTop], (Statement)yyVals[-2+yyTop], (Statement)yyVals[0+yyTop], GetLocation(yyVals[-6+yyTop]));
 	}
   break;
 case 221:
-#line 836 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 835 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   {
 		yyVal = new WhileStatement(false, (Expression)yyVals[-2+yyTop], (Statement)yyVals[0+yyTop]);
 	}
   break;
 case 222:
-#line 840 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 839 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   {
 		yyVal = new WhileStatement(true, (Expression)yyVals[-2+yyTop], (Statement)yyVals[-5+yyTop]);
 	}
   break;
 case 223:
-#line 844 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 843 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   {
 		yyVal = new ForStatement(((ExpressionStatement)yyVals[-3+yyTop]).Expression, ((ExpressionStatement)yyVals[-2+yyTop]).Expression, (Statement)yyVals[0+yyTop], _currentBlock, GetLocation(yyVals[-5+yyTop]), GetLocation(yyVals[0+yyTop]));
 	}
   break;
 case 224:
-#line 848 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 847 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   {
 		yyVal = new ForStatement(((ExpressionStatement)yyVals[-4+yyTop]).Expression, ((ExpressionStatement)yyVals[-3+yyTop]).Expression, (Expression)yyVals[-2+yyTop], (Statement)yyVals[0+yyTop], _currentBlock, GetLocation(yyVals[-6+yyTop]), GetLocation(yyVals[0+yyTop]));
 	}
   break;
 case 225:
-#line 849 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 848 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   { StartBlock(GetLocation(yyVals[-4+yyTop])); }
   break;
 case 226:
   case_226();
   break;
 case 227:
-#line 855 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 854 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   { StartBlock(GetLocation(yyVals[-5+yyTop])); }
   break;
 case 228:
   case_228();
   break;
 case 232:
-#line 870 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 869 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   {
 		yyVal = new ReturnStatement ();
 	}
   break;
 case 233:
-#line 874 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 873 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
   {
 		yyVal = new ReturnStatement ((Expression)yyVals[-1+yyTop]);
 	}
@@ -1285,18 +1285,17 @@ void case_16()
 void case_62()
 #line 240 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
 {
-		var op = (Binop)yyVals[-1+yyTop];
-		if (op == Binop.Equals) {
+		if (yyVals[-1+yyTop] is RelationalOp && ((RelationalOp)yyVals[-1+yyTop]) == RelationalOp.Equals) {
 			yyVal = new AssignExpression((Expression)yyVals[-2+yyTop], (Expression)yyVals[0+yyTop]);
 		}
 		else {
 			var left = (Expression)yyVals[-2+yyTop]; 
-			yyVal = new AssignExpression(left, new BinaryExpression (left, op, (Expression)yyVals[0+yyTop]));
+			yyVal = new AssignExpression(left, new BinaryExpression (left, (Binop)yyVals[-1+yyTop], (Expression)yyVals[0+yyTop]));
 		}
 	}
 
 void case_77()
-#line 277 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 276 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
 {
 		var d = new MultiDeclaration();
 		d.Specifiers = (DeclarationSpecifiers)yyVals[-1+yyTop];
@@ -1304,7 +1303,7 @@ void case_77()
 	}
 
 void case_78()
-#line 283 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 282 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
 {
 		var d = new MultiDeclaration();
 		d.Specifiers = (DeclarationSpecifiers)yyVals[-2+yyTop];
@@ -1313,7 +1312,7 @@ void case_78()
 	}
 
 void case_79()
-#line 293 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 292 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
 {
 		var ds = new DeclarationSpecifiers();
 		ds.StorageClassSpecifier = (StorageClassSpecifier)yyVals[0+yyTop];
@@ -1321,7 +1320,7 @@ void case_79()
 	}
 
 void case_80()
-#line 299 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 298 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
 {
 		var ds = (DeclarationSpecifiers)yyVals[0+yyTop];
 		ds.StorageClassSpecifier = ds.StorageClassSpecifier | (StorageClassSpecifier)yyVals[-1+yyTop];
@@ -1329,7 +1328,7 @@ void case_80()
 	}
 
 void case_81()
-#line 305 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 304 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
 {
 		var ds = new DeclarationSpecifiers();
 		ds.TypeSpecifiers.Add((TypeSpecifier)yyVals[0+yyTop]);
@@ -1337,7 +1336,7 @@ void case_81()
 	}
 
 void case_82()
-#line 311 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 310 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
 {
 		var ds = (DeclarationSpecifiers)yyVals[0+yyTop];
 		ds.TypeSpecifiers.Add((TypeSpecifier)yyVals[-1+yyTop]);
@@ -1345,7 +1344,7 @@ void case_82()
 	}
 
 void case_83()
-#line 317 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 316 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
 {
 		var ds = new DeclarationSpecifiers();
 		ds.TypeQualifiers = (TypeQualifiers)yyVals[0+yyTop];
@@ -1353,7 +1352,7 @@ void case_83()
 	}
 
 void case_84()
-#line 323 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 322 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
 {
 		var ds = (DeclarationSpecifiers)yyVals[0+yyTop];
 		ds.TypeQualifiers = (TypeQualifiers)yyVals[-1+yyTop];
@@ -1361,7 +1360,7 @@ void case_84()
 	}
 
 void case_85()
-#line 329 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 328 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
 {
 		var ds = new DeclarationSpecifiers();
 		ds.FunctionSpecifier = (FunctionSpecifier)yyVals[0+yyTop];
@@ -1369,7 +1368,7 @@ void case_85()
 	}
 
 void case_86()
-#line 335 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 334 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
 {
 		var ds = (DeclarationSpecifiers)yyVals[0+yyTop];
 		ds.FunctionSpecifier = (FunctionSpecifier)yyVals[-1+yyTop];
@@ -1377,7 +1376,7 @@ void case_86()
 	}
 
 void case_87()
-#line 344 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 343 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
 {
 		var idl = new List<InitDeclarator>();
 		idl.Add((InitDeclarator)yyVals[0+yyTop]);
@@ -1385,7 +1384,7 @@ void case_87()
 	}
 
 void case_88()
-#line 350 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 349 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
 {
 		var idl = (List<InitDeclarator>)yyVals[-2+yyTop];
 		idl.Add((InitDeclarator)yyVals[0+yyTop]);
@@ -1393,7 +1392,7 @@ void case_88()
 	}
 
 void case_89()
-#line 359 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 358 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
 {
 		var id = new InitDeclarator();
 		id.Declarator = (Declarator)yyVals[0+yyTop];
@@ -1401,7 +1400,7 @@ void case_89()
 	}
 
 void case_90()
-#line 365 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 364 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
 {
 		var id = new InitDeclarator();
 		id.Declarator = (Declarator)yyVals[-2+yyTop];
@@ -1410,7 +1409,7 @@ void case_90()
 	}
 
 void case_141()
-#line 471 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 470 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
 {
 		var d = (Declarator)yyVals[-1+yyTop];
 		var f = FixPointerAndArrayPrecedence(d);
@@ -1424,7 +1423,7 @@ void case_141()
 	}
 
 void case_150()
-#line 515 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 514 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
 {
 		var d = new FunctionDeclarator();
 		d.InnerDeclarator = (Declarator)yyVals[-3+yyTop];
@@ -1433,7 +1432,7 @@ void case_150()
 	}
 
 void case_151()
-#line 522 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 521 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
 {
 		var d = new FunctionDeclarator();
 		d.InnerDeclarator = (Declarator)yyVals[-3+yyTop];
@@ -1445,7 +1444,7 @@ void case_151()
 	}
 
 void case_152()
-#line 532 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 531 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
 {
 		var d = new FunctionDeclarator();
 		d.InnerDeclarator = (Declarator)yyVals[-2+yyTop];
@@ -1454,7 +1453,7 @@ void case_152()
 	}
 
 void case_163()
-#line 567 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 566 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
 {
 		var l = (List<ParameterDecl>)yyVals[-2+yyTop];
 		l.Add(new VarParameter());
@@ -1462,7 +1461,7 @@ void case_163()
 	}
 
 void case_164()
-#line 576 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 575 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
 {
 		var l = new List<ParameterDecl>();
 		l.Add((ParameterDecl)yyVals[0+yyTop]);
@@ -1470,7 +1469,7 @@ void case_164()
 	}
 
 void case_165()
-#line 582 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 581 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
 {
 		var l = (List<ParameterDecl>)yyVals[-2+yyTop];
 		l.Add((ParameterDecl)yyVals[0+yyTop]);
@@ -1478,28 +1477,28 @@ void case_165()
 	}
 
 void case_166()
-#line 591 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 590 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
 {
 		var p = new ParameterDecl((DeclarationSpecifiers)yyVals[-1+yyTop], (Declarator)yyVals[0+yyTop]);
 		yyVal = p;
 	}
 
 void case_167()
-#line 596 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 595 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
 {
 		var p = new ParameterDecl((DeclarationSpecifiers)yyVals[-1+yyTop], (Declarator)yyVals[0+yyTop]);
 		yyVal = p;
 	}
 
 void case_168()
-#line 601 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 600 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
 {
 		var p = new ParameterDecl((DeclarationSpecifiers)yyVals[0+yyTop]);
 		yyVal = p;
 	}
 
 void case_169()
-#line 609 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 608 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
 {
 		var l = new List<string>();
 		l.Add((yyVals[0+yyTop]).ToString());
@@ -1507,7 +1506,7 @@ void case_169()
 	}
 
 void case_170()
-#line 615 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 614 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
 {
 		var l = (List<string>)yyVals[-2+yyTop];
 		l.Add((yyVals[0+yyTop]).ToString());
@@ -1515,7 +1514,7 @@ void case_170()
 	}
 
 void case_176()
-#line 635 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 634 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
 {
 		var d = (Declarator)yyVals[-1+yyTop];
 		var f = FixPointerAndArrayPrecedence(d);
@@ -1529,7 +1528,7 @@ void case_176()
 	}
 
 void case_183()
-#line 671 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 670 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
 {
 		var d = new FunctionDeclarator();
 		d.InnerDeclarator = (Declarator)yyVals[-1+yyTop];
@@ -1538,7 +1537,7 @@ void case_183()
 	}
 
 void case_184()
-#line 678 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 677 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
 {
 		var d = new FunctionDeclarator();
 		d.Parameters = (List<ParameterDecl>)yyVals[-1+yyTop];
@@ -1546,7 +1545,7 @@ void case_184()
 	}
 
 void case_185()
-#line 684 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 683 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
 {
 		var d = new FunctionDeclarator();
 		d.InnerDeclarator = (Declarator)yyVals[-2+yyTop];
@@ -1555,7 +1554,7 @@ void case_185()
 	}
 
 void case_186()
-#line 691 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 690 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
 {
 		var d = new FunctionDeclarator();
 		d.InnerDeclarator = (Declarator)yyVals[-3+yyTop];
@@ -1564,7 +1563,7 @@ void case_186()
 	}
 
 void case_190()
-#line 716 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 715 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
 {
 		var l = new StructuredInitializer();
 		var i = (Initializer)yyVals[0+yyTop];
@@ -1573,7 +1572,7 @@ void case_190()
 	}
 
 void case_191()
-#line 723 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 722 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
 {
 		var l = new StructuredInitializer();
 		var i = (Initializer)yyVals[0+yyTop];
@@ -1583,7 +1582,7 @@ void case_191()
 	}
 
 void case_192()
-#line 731 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 730 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
 {
 		var l = (StructuredInitializer)yyVals[-2+yyTop];
 		var i = (Initializer)yyVals[0+yyTop];
@@ -1592,7 +1591,7 @@ void case_192()
 	}
 
 void case_193()
-#line 738 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 737 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
 {
 		var l = (StructuredInitializer)yyVals[-3+yyTop];
 		var i = (Initializer)yyVals[0+yyTop];
@@ -1602,14 +1601,14 @@ void case_193()
 	}
 
 void case_214()
-#line 797 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 796 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
 {
 		AddDeclaration(yyVals[0+yyTop], _currentBlock);
 		yyVal = null;
 	}
 
 void case_215()
-#line 802 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 801 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
 {
 		if (yyVal != null) {
 			_currentBlock.AddStatement((Statement)yyVals[0+yyTop]);
@@ -1617,7 +1616,7 @@ void case_215()
 	}
 
 void case_226()
-#line 850 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 849 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
 {
 		AddDeclaration(yyVals[-4+yyTop], _currentBlock);
 		var b = EndBlock(GetLocation(yyVals[0+yyTop]));		
@@ -1625,7 +1624,7 @@ void case_226()
 	}
 
 void case_228()
-#line 856 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 855 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
 {
 		AddDeclaration(yyVals[-5+yyTop], _currentBlock);
 		var b = EndBlock(GetLocation(yyVals[-1+yyTop]));		
@@ -1633,21 +1632,21 @@ void case_228()
 	}
 
 void case_234()
-#line 879 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 878 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
 {
 		AddDeclaration(yyVals[0+yyTop]);
 		yyVal = _tu;
 	}
 
 void case_235()
-#line 884 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 883 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
 {
 		AddDeclaration(yyVals[0+yyTop]);
 		yyVal = _tu;
 	}
 
 void case_238()
-#line 897 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 896 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
 {
 		var f = new FunctionDefinition();
 		f.Specifiers = (DeclarationSpecifiers)yyVals[-3+yyTop];
@@ -1658,7 +1657,7 @@ void case_238()
 	}
 
 void case_239()
-#line 906 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 905 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
 {
 		var f = new FunctionDefinition();
 		f.Specifiers = (DeclarationSpecifiers)yyVals[-2+yyTop];
@@ -1668,7 +1667,7 @@ void case_239()
 	}
 
 void case_240()
-#line 917 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 916 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
 {
 		var l = new List<Declaration>();
 		l.Add((Declaration)yyVals[0+yyTop]);
@@ -1676,7 +1675,7 @@ void case_240()
 	}
 
 void case_241()
-#line 923 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 922 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
 {
 		var l = (List<Declaration>)yyVals[-1+yyTop];
 		l.Add((Declaration)yyVals[0+yyTop]);
@@ -2464,7 +2463,7 @@ void case_241()
   303,  304,  305,  306,
   };
 
-#line 933 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
+#line 932 "/Users/fak/Projects/Circuit/CLanguage/CLanguage/CParser.jay"
 
 }
 

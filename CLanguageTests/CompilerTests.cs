@@ -36,7 +36,7 @@ namespace CLanguage.Tests
 			var f = exe.Functions.First (x => x.Name == "f");
 			Assert.That (f.Instructions.Count, Is.EqualTo (2));
 
-			Assert.That (f.Instructions[0].Op, Is.EqualTo (OpCode.LoadValueInt16));
+			Assert.That (f.Instructions[0].Op, Is.EqualTo (OpCode.LoadValue));
 			Assert.That (f.Instructions[1].Op, Is.EqualTo (OpCode.Return));
 		}
 
@@ -47,10 +47,11 @@ namespace CLanguage.Tests
 			Assert.That (exe.Functions.Count, Is.EqualTo (1));
 			var f = exe.Functions.First (x => x.Name == "f");
 			Assert.That (f.Instructions.Count, Is.EqualTo (4));
-			//Assert.That (f.Instructions[0], Is.AssignableTo<LoadArgInstruction> ());
-			//Assert.That (f.Instructions[1], Is.AssignableTo<PushInstruction> ());
-			//Assert.That (f.Instructions[2], Is.AssignableTo<BinopInstruction> ());
-			//Assert.That (f.Instructions[3], Is.AssignableTo<ReturnInstruction> ());
+
+			Assert.That (f.Instructions[0].Op, Is.EqualTo (OpCode.LoadArg));
+			Assert.That (f.Instructions[1].Op, Is.EqualTo (OpCode.LoadValue));
+			Assert.That (f.Instructions[2].Op, Is.EqualTo (OpCode.AddInt16));
+			Assert.That (f.Instructions[3].Op, Is.EqualTo (OpCode.Return));
 		}
 
 		[TestMethod]
@@ -60,13 +61,13 @@ namespace CLanguage.Tests
 			Assert.That (exe.Functions.Count, Is.EqualTo (1));
 			var f = exe.Functions.First (x => x.Name == "f");
 			Assert.That (f.Instructions.Count, Is.EqualTo (7));
-			//Assert.That (f.Instructions[0], Is.AssignableTo<LoadArgInstruction> ());
-			//Assert.That (f.Instructions[1], Is.AssignableTo<BranchIfFalseInstruction> ());
-			//Assert.That (f.Instructions[2], Is.AssignableTo<PushInstruction> ());
-			//Assert.That (f.Instructions[3], Is.AssignableTo<ReturnInstruction> ());
-			//Assert.That (f.Instructions[4], Is.AssignableTo<JumpInstruction> ());
-			//Assert.That (f.Instructions[5], Is.AssignableTo<PushInstruction> ());
-			//Assert.That (f.Instructions[6], Is.AssignableTo<ReturnInstruction> ());
+			Assert.That (f.Instructions[0].Op, Is.EqualTo (OpCode.LoadArg));
+			Assert.That (f.Instructions[1].Op, Is.EqualTo (OpCode.BranchIfFalse));
+			Assert.That (f.Instructions[2].Op, Is.EqualTo (OpCode.LoadValue));
+			Assert.That (f.Instructions[3].Op, Is.EqualTo (OpCode.Return));
+			Assert.That (f.Instructions[4].Op, Is.EqualTo (OpCode.Jump));
+			Assert.That (f.Instructions[5].Op, Is.EqualTo (OpCode.LoadValue));
+			Assert.That (f.Instructions[6].Op, Is.EqualTo (OpCode.Return));
 		}
 
 		[Test]

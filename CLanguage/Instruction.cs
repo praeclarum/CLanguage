@@ -58,54 +58,15 @@ namespace CLanguage
 
 		#region Memory
 
-		LoadValueInt8,
-		LoadValueUInt8,
-		LoadValueInt16,
-		LoadValueUInt16,
-		LoadValueInt32,
-		LoadValueUInt32,
+		LoadFunction,
+		LoadValue,
 
-		LoadArgInt8,
-		LoadArgUInt8,
-		LoadArgInt16,
-		LoadArgUInt16,
-		LoadArgInt32,
-		LoadArgUInt32,
-
-		LoadLocalInt8,
-		LoadLocalUInt8,
-		LoadLocalInt16,
-		LoadLocalUInt16,
-		LoadLocalInt32,
-		LoadLocalUInt32,
-
-		LoadMemoryInt8,
-		LoadMemoryUInt8,
-		LoadMemoryInt16,
-		LoadMemoryUInt16,
-		LoadMemoryInt32,
-		LoadMemoryUInt32,
-
-		StoreArgInt8,
-		StoreArgUInt8,
-		StoreArgInt16,
-		StoreArgUInt16,
-		StoreArgInt32,
-		StoreArgUInt32,
-
-		StoreLocalInt8,
-		StoreLocalUInt8,
-		StoreLocalInt16,
-		StoreLocalUInt16,
-		StoreLocalInt32,
-		StoreLocalUInt32,
-
-		StoreMemoryInt8,
-		StoreMemoryUInt8,
-		StoreMemoryInt16,
-		StoreMemoryUInt16,
-		StoreMemoryInt32,
-		StoreMemoryUInt32,
+		LoadArg,
+		LoadLocal,
+		LoadMemory,
+		StoreArg,
+		StoreLocal,
+		StoreMemory,
 
 		#endregion
 
@@ -138,7 +99,7 @@ namespace CLanguage
 
 		#endregion
 
-		#region Comparison
+		#region Relational
 
 		EqualToInt16,
 		EqualToUInt16,
@@ -157,15 +118,29 @@ namespace CLanguage
 
 		#endregion
 
-		#region Boolean
-
-		LogicalNotInt16,
-		LogicalOrInt16,
-		LogicalAndInt16,
+		#region Bitwise
 
 		#endregion
 
-		#region Bitwise
+		#region Boolean
+
+		LogicalAnd,
+		LogicalOr,
+		LogicalNot,
+
+		#endregion
+
+		#region Unary
+
+		NotInt16,
+		NotUInt16,
+		NotInt32,
+		NotUInt32,
+
+		NegateInt16,
+		NegateUInt16,
+		NegateInt32,
+		NegateUInt32,
 
 		#endregion
 	}	

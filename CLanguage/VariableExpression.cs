@@ -30,25 +30,39 @@ namespace CLanguage
 			var variable = ec.ResolveVariable (VariableName);
 
 			if (variable != null) {
-				if (variable.Scope == VariableScope.Arg) {
-					//fexe.Instructions.Add (new LoadArgInstruction (variable.Index));
-				}
-				else if (variable.Scope == VariableScope.Function) {
-					//fexe.Instructions.Add (new PushInstruction (variable.Function, variable.Function.FunctionType));
-				}
-				else if (variable.Scope == VariableScope.Global) {
-					//fexe.Instructions.Add (new LoadGlobalInstruction (variable.Index));
-				}
-				else if (variable.Scope == VariableScope.Local) {
-					//fexe.Instructions.Add (new LoadLocalInstruction (variable.Index));
+
+				if (variable.Scope == VariableScope.Function) {
+					ec.Emit (OpCode.LoadFunction, variable.Index);
 				}
 				else {
+					var basicType = variable.VariableType as CBasicType;
+					if (basicType != null) {
 
-					throw new NotImplementedException (variable.Scope.ToString ());
+						var size = basicType.GetSize (ec);
+						if (size > 4 || basicType.Equals (CBasicType.Double)) {
+							throw new NotSupportedException ("Cannot evaluate variable type '" + variable.VariableType + "'");
+						}
+
+						if (variable.Scope == VariableScope.Arg) {
+							ec.Emit (OpCode.LoadArg, variable.Index);
+						}
+						else if (variable.Scope == VariableScope.Global) {
+							ec.Emit (OpCode.LoadMemory, variable.Index);
+						}
+						else if (variable.Scope == VariableScope.Local) {
+							ec.Emit (OpCode.LoadLocal, variable.Index);
+						}
+						else {
+							throw new NotSupportedException ("Cannot evaluate variable scope '" + variable.Scope + "'");
+						}
+					}
+					else {
+						throw new NotSupportedException ("Cannot evaluate variable type '" + variable.VariableType + "'");
+					}
 				}
 			}
 			else {
-				new ConstantExpression (0, CBasicType.SignedInt).Emit (ec);
+				ec.Emit (OpCode.LoadValue, 0);
 			}
         }
 
