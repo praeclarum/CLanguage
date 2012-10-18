@@ -115,7 +115,7 @@ namespace CLanguage
 			state = new ExecutionState (exe, maxStack, maxFrames);
         }
 
-		public void Reset (string entrypoint, string loop)
+		public void Reset (string entrypoint, string loop = null)
 		{
 			this.entrypoint = exe.Functions.FirstOrDefault (x => x.Name == entrypoint);
 			Reset ();

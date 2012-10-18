@@ -17,6 +17,21 @@ namespace CLanguage.Tests
 			return parser.ParseTranslationUnit (lexer, report);
 		}
 
+		[Test, ExpectedException (typeof (Exception))]
+		public void BadFunction ()
+		{
+			var tu = Parse (@"void setup()
+{
+pinMode (4, OUTPUT);
+}
+
+void loop()
+{
+pinMode
+sleep(1000);
+}");
+		}
+
 		[Test]
 		public void ForLoopWithThreeInits ()
 		{
