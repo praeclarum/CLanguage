@@ -1,16 +1,17 @@
 using System;
 
-#if NETFX_CORE
-using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
-#else
 using NUnit.Framework;
-using TestClassAttribute = NUnit.Framework.TestFixtureAttribute;
-using TestMethodAttribute = NUnit.Framework.TestAttribute;
+
+#if NETFX_CORE
+using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
+#elif VS_UNIT_TESTING
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 #endif
 
 namespace CLanguage.Tests
 {
-	[TestClass]
+	[TestFixture]
 	public class IntegerTests
 	{
 		void TestPromote (MachineInfo mi, string type, int resultBytes, Signedness signedness)
@@ -61,7 +62,7 @@ namespace CLanguage.Tests
 			Assert.That (aty2.GetSize (context), Is.EqualTo (result.GetSize (context)), type1 + " OP " + type2);
 		}
 
-		[TestMethod]
+		[Test]
 		public void ArduinoPromote ()
 		{
 			var mi = MachineInfo.Arduino;
@@ -76,7 +77,7 @@ namespace CLanguage.Tests
 			TestPromote (mi, "unsigned long", 4, Signedness.Unsigned);
 		}
 
-		[TestMethod]
+		[Test]
 		public void ArduinoArithmatic ()
 		{
 			var mi = MachineInfo.Arduino;
@@ -154,7 +155,7 @@ namespace CLanguage.Tests
 			TestArithmetic (mi, "unsigned long", "unsigned long", CBasicType.UnsignedLongInt);
 		}
 
-		[TestMethod]
+		[Test]
 		public void WindowsX86Promote ()
 		{
 			var mi = MachineInfo.WindowsX86;
@@ -169,7 +170,7 @@ namespace CLanguage.Tests
 			TestPromote (mi, "unsigned long", 4, Signedness.Unsigned);
 		}
 
-		[TestMethod]
+		[Test]
 		public void Mac64Arithmatic ()
 		{
 			var mi = MachineInfo.Mac64;

@@ -139,6 +139,7 @@
     <Compile Include="..\CLanguageTests\TestPrinter.cs">
       <Link>TestPrinter.cs</Link>
     </Compile>
+    <Compile Include="NUnit.Framework.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

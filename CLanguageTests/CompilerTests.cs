@@ -3,19 +3,18 @@ using System.Text;
 using System.Collections.Generic;
 using System.Linq;
 
+using NUnit.Framework;
+
 #if NETFX_CORE
-using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
 #elif VS_UNIT_TESTING
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-#else
-using NUnit.Framework;
-using TestClassAttribute = NUnit.Framework.TestFixtureAttribute;
-using TestMethodAttribute = NUnit.Framework.TestAttribute;
 #endif
 
 namespace CLanguage.Tests
 {
-	[TestClass]
+	[TestFixture]
 	public class CompilerTests
 	{
 		Executable Compile (string code)
@@ -35,19 +34,19 @@ namespace CLanguage.Tests
 			return exe;
 		}
 
-		[TestMethod]
+		[Test]
 		public void ErrorIfDoesntReturn ()
 		{
 			CompileWithErrors (@"int f () { int a = 42; }", 161);
 		}
 
-		[TestMethod]
+		[Test]
 		public void ErrorIfDoesntReturnValue ()
 		{
 			CompileWithErrors (@"int f () { int a = 42; return; }", 126);
 		}
 
-		[TestMethod]
+		[Test]
 		public void ReturnConstant ()
 		{
 			var exe = Compile (@"int f () { return 42; }");
@@ -59,7 +58,7 @@ namespace CLanguage.Tests
 			Assert.That (f.Instructions[1].Op, Is.EqualTo (OpCode.Return));
 		}
 
-		[TestMethod]
+		[Test]
 		public void ReturnParamExpr ()
 		{
 			var exe = Compile (@"int f (int i) { return i + 42; }");
@@ -73,7 +72,7 @@ namespace CLanguage.Tests
 			Assert.That (f.Instructions[3].Op, Is.EqualTo (OpCode.Return));
 		}
 
-		[TestMethod]
+		[Test]
 		public void ConditionalReturn ()
 		{
 			var exe = Compile (@"int f (int i) { if (i) return 0; else return 42; }");
@@ -89,7 +88,7 @@ namespace CLanguage.Tests
 			Assert.That (f.Instructions[6].Op, Is.EqualTo (OpCode.Return));
 		}
 
-		[TestMethod]
+		[Test]
 		public void VoidFunctionsHaveNoValue ()
 		{
 			CompileWithErrors (@"
@@ -100,7 +99,7 @@ void main () {
 }", 30);
 		}
 
-		[TestMethod]
+		[Test]
 		public void LocalVariables ()
 		{
 			var exe = Compile (@"
@@ -113,14 +112,14 @@ void f () {
 			Assert.That (f.LocalVariables.Count, Is.EqualTo (3));
 		}
 
-		[TestMethod]
+		[Test]
 		public void ArduinoBlink ()
 		{
 			var exe = Compile (ArduinoTests.BlinkCode);
 			Assert.That (exe.Functions.Count, Is.EqualTo (exe.MachineInfo.InternalFunctions.Count + 2));
 		}
 
-		[TestMethod]
+		[Test]
 		public void ArduinoFade ()
 		{
 			var exe = Compile (ArduinoTests.FadeCode);
