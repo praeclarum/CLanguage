@@ -272,14 +272,14 @@ namespace CLanguage
             Process(file);
         }
 
-        public void AddDiskFile(string filename)
+        public void AddDiskFile (string path, string content)
         {
             try
             {
                 var file = new File()
                 {
-                    Path = filename,
-                    Content = System.IO.File.ReadAllText(filename)
+                    Path = path,
+                    Content = content,
                 };
                 _files.Add(file);
                 Process(file);
