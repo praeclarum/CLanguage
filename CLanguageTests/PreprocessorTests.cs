@@ -1,10 +1,17 @@
 using System;
 using System.Linq;
+
+#if NETFX_CORE
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+#else
 using NUnit.Framework;
+using TestClassAttribute = NUnit.Framework.TestFixtureAttribute;
+using TestMethodAttribute = NUnit.Framework.TestAttribute;
+#endif
 
 namespace CLanguage.Tests
 {
-	[TestFixture]
+	[TestClass]
 	public class PreprocessorTests
 	{
 		TranslationUnit Parse (string code)
@@ -17,7 +24,7 @@ namespace CLanguage.Tests
 			return parser.ParseTranslationUnit (lexer, report);
 		}
 
-		[Test]
+		[TestMethod]
 		public void AssignToDefines ()
 		{
 			var tu = Parse (@"

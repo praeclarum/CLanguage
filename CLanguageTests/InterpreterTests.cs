@@ -1,9 +1,16 @@
 using System;
+
+#if NETFX_CORE
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+#else
 using NUnit.Framework;
+using TestClassAttribute = NUnit.Framework.TestFixtureAttribute;
+using TestMethodAttribute = NUnit.Framework.TestAttribute;
+#endif
 
 namespace CLanguage.Tests
 {
-	[TestFixture]
+	[TestClass]
 	public class InterpreterTests
 	{
 		Interpreter Compile (string code)
@@ -16,21 +23,30 @@ namespace CLanguage.Tests
 			return new Interpreter (exe);
 		}
 
-		[Test, ExpectedException (typeof (ExecutionException))]
+		[TestMethod]
 		public void InfiniteRecursionThrows ()
 		{
-			var i = Compile (@"
+			try {
+				var i = Compile (@"
 int f (int n) {
 	return f (n);
 }
 void main () {
 	f (1);
 }");
-			i.Reset ("main");
-			i.Step ();
+				i.Reset ("main");
+				i.Step ();
+
+				Assert.Fail ("Expected ExecutionException but got nothing");
+			}
+			catch (ExecutionException) {
+			}
+			catch (Exception ex) {
+				Assert.Fail ("Expected ExecutionException but got " + ex.GetType ());
+			}
 		}
 
-		[Test]
+		[TestMethod]
 		public void InfiniteLoopStopsEventually ()
 		{
 			var i = Compile (@"
@@ -42,7 +58,7 @@ void main () {
 			i.Step ();
 		}
 
-		[Test]
+		[TestMethod]
 		public void MutualRecursive ()
 		{
 			var i = Compile (@"
@@ -77,7 +93,7 @@ void main () {
 			i.Step ();
 		}
 
-		[Test]
+		[TestMethod]
 		public void Recursive ()
 		{
 			var i = Compile (@"
@@ -103,7 +119,7 @@ void main () {
 			i.Step ();
 		}
 
-		[Test]
+		[TestMethod]
 		public void OverwriteArgs ()
 		{
 			var i = Compile (@"
@@ -120,7 +136,7 @@ void main () {
 			i.Step ();
 		}
 
-		[Test]
+		[TestMethod]
 		public void VoidFunctionCalls ()
 		{
 			var i = Compile (@"
@@ -138,7 +154,7 @@ void main () {
 			i.Step ();
 		}
 
-		[Test]
+		[TestMethod]
 		public void FunctionCallsWithValues ()
 		{
 			var i = Compile (@"
@@ -154,7 +170,7 @@ void main () {
 		}
 
 
-		[Test]
+		[TestMethod]
 		public void ForLoop ()
 		{
 			var i = Compile (@"
@@ -170,7 +186,7 @@ void main () {
 			i.Step ();
 		}
 
-		[Test]
+		[TestMethod]
 		public void LocalVariableInitialization ()
 		{
 			var i = Compile (@"

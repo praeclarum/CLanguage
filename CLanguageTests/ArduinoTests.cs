@@ -3,7 +3,9 @@ using System.Text;
 using System.Collections.Generic;
 using System.Linq;
 
-#if VS_UNIT_TESTING
+#if NETFX_CORE
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+#elif VS_UNIT_TESTING
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 #else
 using NUnit.Framework;
@@ -32,7 +34,7 @@ namespace CLanguage.Tests
 			return tu.Variables.First ();
 		}
 
-		[Test]
+		[TestMethod]
 		public void Sizes ()
 		{
 			var ec = new EmitContext (MachineInfo.Arduino, new Report (new TestPrinter ()));
