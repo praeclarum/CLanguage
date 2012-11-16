@@ -3,12 +3,13 @@ using System.Text;
 using System.Collections.Generic;
 using System.Linq;
 
-#if VS_UNIT_TESTING
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-#else
 using NUnit.Framework;
-using TestClassAttribute = NUnit.Framework.TestFixtureAttribute;
-using TestMethodAttribute = NUnit.Framework.TestAttribute;
+
+#if NETFX_CORE
+using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
+#elif VS_UNIT_TESTING
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 #endif
 
 namespace CLanguage.Tests
@@ -16,7 +17,7 @@ namespace CLanguage.Tests
     /// <summary>
     /// http://en.wikipedia.org/wiki/C_variable_types_and_declarations
     /// </summary>
-    [TestClass]
+	[TestFixture]
     public class DeclarationTests
     {
 
@@ -30,7 +31,7 @@ namespace CLanguage.Tests
             return parser.ParseTranslationUnit(lexer, report);
         }
 
-        [TestMethod]
+		[Test]
         public void Basic()
         {
             var tu = Parse("int cat;");
@@ -40,7 +41,7 @@ namespace CLanguage.Tests
             Assert.IsInstanceOf<CBasicType>(v.VariableType);
         }
 
-        [TestMethod]
+		[Test]
         public void SignednessBasic()
         {
             var tu = Parse("unsigned int x; signed int y; int z; unsigned char grey;signed char white;");
@@ -57,7 +58,7 @@ namespace CLanguage.Tests
             Assert.AreEqual(Signedness.Signed, ((CBasicType)white.VariableType).Signedness);
         }
 
-        [TestMethod]
+		[Test]
         public void SignednessNoBasic()
         {
             var tu = Parse("unsigned x; signed y;");
@@ -69,7 +70,7 @@ namespace CLanguage.Tests
             Assert.AreEqual("int", y.Name);
         }
 
-        [TestMethod]
+		[Test]
         public void SizeBasic()
         {
             var tu = Parse("short int yellow;long int orange;long long int red;long brown;long double black;");
@@ -90,7 +91,7 @@ namespace CLanguage.Tests
             Assert.AreEqual("double", black.Name);
         }
 
-        [TestMethod]
+		[Test]
         public void QualifiedBasic()
         {
             var tu = Parse("const int cat;");
@@ -99,7 +100,7 @@ namespace CLanguage.Tests
             Assert.AreEqual(TypeQualifiers.Const, v.VariableType.TypeQualifiers);
         }
 
-        [TestMethod]
+		[Test]
         public void Pointer()
         {
             var tu = Parse("char *square;");
@@ -110,7 +111,7 @@ namespace CLanguage.Tests
             Assert.AreEqual("char", ((CBasicType)((CPointerType)v.VariableType).InnerType).Name);
         }
 
-        [TestMethod]
+		[Test]
         public void VoidPointer()
         {
             var tu = Parse("void *triangle;");
@@ -121,7 +122,7 @@ namespace CLanguage.Tests
             Assert.IsTrue(((CPointerType)v.VariableType).InnerType.IsVoid);
         }
 
-        [TestMethod]
+		[Test]
         public void PointerSeparation()
         {
             var tu = Parse("long* first, second;");
@@ -136,7 +137,7 @@ namespace CLanguage.Tests
             Assert.AreEqual("int", ((CBasicType)v1.VariableType).Name);
         }
 
-        [TestMethod]
+		[Test]
         public void NonConstPointerToConstChar()
         {
             var tu = Parse("const char *kite;");
@@ -150,7 +151,7 @@ namespace CLanguage.Tests
             Assert.AreEqual(TypeQualifiers.Const, ((CBasicType)pt.InnerType).TypeQualifiers);
         }
 
-        [TestMethod]
+		[Test]
         public void ConstPointerToChar()
         {
             var tu = Parse("char * const pentagon;");
@@ -164,7 +165,7 @@ namespace CLanguage.Tests
             Assert.AreEqual(TypeQualifiers.None, ((CBasicType)pt.InnerType).TypeQualifiers);
         }
 
-        [TestMethod]
+		[Test]
         public void ConstPointerToConstChar1()
         {
             var tu = Parse("char const * const hexagon;");
@@ -178,7 +179,7 @@ namespace CLanguage.Tests
             Assert.AreEqual(TypeQualifiers.Const, ((CBasicType)pt.InnerType).TypeQualifiers);
         }
 
-        [TestMethod]
+		[Test]
         public void ConstPointerToConstChar2()
         {
             var tu = Parse("const char * const hexagon;");
@@ -192,7 +193,7 @@ namespace CLanguage.Tests
             Assert.AreEqual(TypeQualifiers.Const, ((CBasicType)pt.InnerType).TypeQualifiers);
         }
 
-        [TestMethod]
+		[Test]
         public void PointerToPointer()
         {
             var tu = Parse("char **septagon;");
@@ -206,7 +207,7 @@ namespace CLanguage.Tests
             Assert.AreEqual("char", ((CBasicType)pt1.InnerType).Name);
         }
 
-        [TestMethod]
+		[Test]
         public void PointerToConstPointerToConstBasic()
         {
             var tu = Parse("unsigned long const int * const *octagon;");
@@ -227,7 +228,7 @@ namespace CLanguage.Tests
             Assert.AreEqual("int", b.Name);
         }
 
-        [TestMethod]
+		[Test]
         public void Array()
         {
             var tu = Parse("int cat[10];");
@@ -237,7 +238,7 @@ namespace CLanguage.Tests
             Assert.IsInstanceOf<CBasicType>(t.ElementType);
         }
 
-        [TestMethod]
+		[Test]
         public void ArrayOfArrays()
         {
             var tu = Parse("double dog[5][12];");
@@ -253,7 +254,7 @@ namespace CLanguage.Tests
             Assert.AreEqual("double", ((CBasicType)a1.ElementType).Name);
         }
 
-        [TestMethod]
+		[Test]
         public void ArrayOfPointers()
         {
             var tu = Parse("char *mice[10];");
@@ -269,7 +270,7 @@ namespace CLanguage.Tests
             Assert.AreEqual("char", ((CBasicType)p.InnerType).Name);
         }
 
-        [TestMethod]
+		[Test]
         public void PointerToArray()
         {
             var tu = Parse("double (*elephant)[20];");
@@ -285,7 +286,7 @@ namespace CLanguage.Tests
             Assert.AreEqual("double", ((CBasicType)a.ElementType).Name);
         }
 
-        [TestMethod]
+		[Test]
         public void ArrayOfPointersToArray()
         {
             var tu = Parse("int (*a[5])[42];");
@@ -300,7 +301,7 @@ namespace CLanguage.Tests
             Assert.IsInstanceOf<CArrayType>(p.InnerType);
         }
 
-        [TestMethod]
+		[Test]
         public void PointerToArrayOfPointers()
         {
             var tu = Parse("int *(*crocodile)[15];");
@@ -321,7 +322,7 @@ namespace CLanguage.Tests
             Assert.AreEqual("int", ((CBasicType)p2.InnerType).Name);
         }
 
-        [TestMethod]
+		[Test]
         public void FunctionNoArgName()
         {
             var codes = new string[] {
@@ -344,7 +345,7 @@ namespace CLanguage.Tests
             }
         }
 
-        [TestMethod]
+		[Test]
         public void FunctionPointerReturnVoidArg()
         {
             var codes = new string[] {
@@ -365,7 +366,7 @@ namespace CLanguage.Tests
             }
         }
 
-        [TestMethod]
+		[Test]
         public void FunctionWithFunctionArg()
         {
             var codes = new string[] {
@@ -396,7 +397,7 @@ namespace CLanguage.Tests
             }
         }
 
-        [TestMethod]
+		[Test]
         public void FunctionWithFunctionArgReturningPointer()
         {
             var codes = new string[] {
@@ -421,7 +422,7 @@ namespace CLanguage.Tests
             }
         }
 
-        [TestMethod]
+		[Test]
         public void PointerToFunction()
         {
             var code = "int (**f)();";
@@ -440,7 +441,7 @@ namespace CLanguage.Tests
             Assert.AreEqual(0, f.Parameters.Count);
         }
 
-        [TestMethod]
+		[Test]
         public void FunctionReturningFunction()
         {
             var code = "long int *(*boundary(double size))(int x, int y);";

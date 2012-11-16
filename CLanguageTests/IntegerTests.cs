@@ -1,8 +1,17 @@
 using System;
+
 using NUnit.Framework;
+
+#if NETFX_CORE
+using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
+#elif VS_UNIT_TESTING
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+#endif
 
 namespace CLanguage.Tests
 {
+	[TestFixture]
 	public class IntegerTests
 	{
 		void TestPromote (MachineInfo mi, string type, int resultBytes, Signedness signedness)

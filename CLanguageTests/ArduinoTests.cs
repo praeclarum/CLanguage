@@ -3,17 +3,18 @@ using System.Text;
 using System.Collections.Generic;
 using System.Linq;
 
-#if VS_UNIT_TESTING
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-#else
 using NUnit.Framework;
-using TestClassAttribute = NUnit.Framework.TestFixtureAttribute;
-using TestMethodAttribute = NUnit.Framework.TestAttribute;
+
+#if NETFX_CORE
+using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
+#elif VS_UNIT_TESTING
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 #endif
 
 namespace CLanguage.Tests
 {
-    [TestClass]
+	[TestFixture]
     public class ArduinoTests
     {
         TranslationUnit Parse(string code)
@@ -74,7 +75,7 @@ void loop() {
 }
 ";
 
-        [TestMethod]
+		[Test]
         public void Blink()
         {
             var tu = Parse(BlinkCode);
@@ -90,7 +91,7 @@ void loop() {
             Assert.AreEqual(4, loop.Body.Statements.Count);
         }
 
-        [TestMethod]
+		[Test]
         public void DigitalReadSerial()
         {
             var code = @"
@@ -154,7 +155,7 @@ void loop()  {
 }
 ";
 
-        [TestMethod]
+		[Test]
         public void Fade()
         {            
             var tu = Parse(FadeCode);
@@ -190,7 +191,7 @@ void loop()  {
             Assert.AreEqual(Unop.Negate, ((UnaryExpression)r).Op);
         }
 
-        [TestMethod]
+		[Test]
         public void Tone()
         {
             var code = @"
@@ -267,7 +268,7 @@ void loop() {
             Assert.AreEqual(0, loop.Body.Statements.Count);
         }
 
-        [TestMethod]
+		[Test]
         public void Calibration()
         {
             var code = @"

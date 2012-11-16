@@ -123,7 +123,7 @@ namespace CLanguage
                 }
                 _lastR = r;
 
-                var id = string.Intern(new string(_chbuf, 0, _chbuflen));
+                var id = new string(_chbuf, 0, _chbuflen);
                 _value = id;
 
                 var tok = 0;
@@ -175,7 +175,7 @@ namespace CLanguage
                 }
                 _lastR = r;
 
-                var vals = string.Intern(new string(_chbuf, 0, _chbuflen));
+                var vals = new string(_chbuf, 0, _chbuflen);
                 if (onlydigits)
                 {
                     if (islong)

@@ -1,5 +1,13 @@
 using System;
+
 using NUnit.Framework;
+
+#if NETFX_CORE
+using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
+#elif VS_UNIT_TESTING
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+#endif
 
 namespace CLanguage.Tests
 {
@@ -16,18 +24,27 @@ namespace CLanguage.Tests
 			return new Interpreter (exe);
 		}
 
-		[Test, ExpectedException (typeof (ExecutionException))]
+		[Test]
 		public void InfiniteRecursionThrows ()
 		{
-			var i = Compile (@"
+			try {
+				var i = Compile (@"
 int f (int n) {
 	return f (n);
 }
 void main () {
 	f (1);
 }");
-			i.Reset ("main");
-			i.Step ();
+				i.Reset ("main");
+				i.Step ();
+
+				Assert.Fail ("Expected ExecutionException but got nothing");
+			}
+			catch (ExecutionException) {
+			}
+			catch (Exception ex) {
+				Assert.Fail ("Expected ExecutionException but got " + ex.GetType ());
+			}
 		}
 
 		[Test]
