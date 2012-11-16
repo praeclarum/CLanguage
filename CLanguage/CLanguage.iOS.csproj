@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>10.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{E8453234-AC5B-4AC0-8303-D11E6801C1C8}</ProjectGuid>
+    <ProjectTypeGuids>{6BC8ED88-2882-458C-8E55-DFD12B67127B};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <RootNamespace>CLanguage.iOS</RootNamespace>
+    <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
+    <AssemblyName>CLanguage.iOS</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>True</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>False</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>False</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>True</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>False</ConsolePause>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Core" />
+    <Reference Include="monotouch" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Compile Include="ArrayElementExpression.cs" />
+    <Compile Include="AssignExpression.cs" />
+    <Compile Include="BaseFunction.cs" />
+    <Compile Include="BinaryExpression.cs" />
+    <Compile Include="Block.cs" />
+    <Compile Include="CompiledFunction.cs" />
+    <Compile Include="Compiler.cs" />
+    <Compile Include="CompilerContext.cs" />
+    <Compile Include="ConditionalExpression.cs" />
+    <Compile Include="Config.cs" />
+    <Compile Include="ConstantExpression.cs" />
+    <Compile Include="CParser.cs" />
+    <Compile Include="CParserImpl.cs" />
+    <Compile Include="CType.cs" />
+    <Compile Include="Declaration.cs" />
+    <Compile Include="EmitContext.cs" />
+    <Compile Include="Executable.cs" />
+    <Compile Include="Expression.cs" />
+    <Compile Include="ExpressionStatement.cs" />
+    <Compile Include="ForStatement.cs" />
+    <Compile Include="FuncallExpression.cs" />
+    <Compile Include="FunctionDeclaration.cs" />
+    <Compile Include="FunctionSpecifier.cs" />
+    <Compile Include="IfStatement.cs" />
+    <Compile Include="Instruction.cs" />
+    <Compile Include="InternalFunction.cs" />
+    <Compile Include="Interpreter.cs" />
+    <Compile Include="Lexer.cs" />
+    <Compile Include="Location.cs" />
+    <Compile Include="LogicExpression.cs" />
+    <Compile Include="MachineInfo.cs" />
+    <Compile Include="MemberFromReferenceExpression.cs" />
+    <Compile Include="Preprocessor.cs" />
+    <Compile Include="RelationalExpression.cs" />
+    <Compile Include="Report.cs" />
+    <Compile Include="ResolveContext.cs" />
+    <Compile Include="ReturnStatement.cs" />
+    <Compile Include="SequenceExpression.cs" />
+    <Compile Include="SizeOfExpression.cs" />
+    <Compile Include="Statement.cs" />
+    <Compile Include="StructureExpression.cs" />
+    <Compile Include="TranslationUnit.cs" />
+    <Compile Include="TypeQualifiers.cs" />
+    <Compile Include="UnaryExpression.cs" />
+    <Compile Include="VariableDeclaration.cs" />
+    <Compile Include="VariableExpression.cs" />
+    <Compile Include="WhileStatement.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="CParser.jay" />
+    <None Include="prebuild.sh" />
+  </ItemGroup>
+</Project>
