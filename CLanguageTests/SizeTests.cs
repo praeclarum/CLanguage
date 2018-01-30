@@ -3,18 +3,11 @@ using System.Text;
 using System.Collections.Generic;
 using System.Linq;
 
-using NUnit.Framework;
-
-#if NETFX_CORE
-using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
-using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
-#elif VS_UNIT_TESTING
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-#endif
 
 namespace CLanguage.Tests
 {
-    [TestFixture]
+    [TestClass]
     public class SizeTests
     {
         CType ParseType(string code)
@@ -30,7 +23,7 @@ namespace CLanguage.Tests
 
         EmitContext _c = new EmitContext (MachineInfo.WindowsX86, new Report (new TextWriterReportPrinter (Console.Out)));
 
-        [Test]
+        [TestMethod]
         public void BasicSizes()
         {
             var tests = new Dictionary<string, int> {
@@ -63,7 +56,7 @@ namespace CLanguage.Tests
             }
         }
 
-		[Test]
+		[TestMethod]
         public void PointerSizes()
         {
             var tests = new Dictionary<string, int> {
@@ -94,7 +87,7 @@ namespace CLanguage.Tests
             }
         }
 
-		[Test]
+		[TestMethod]
         public void ArraySizes()
         {
             var tests = new Dictionary<string, int> {

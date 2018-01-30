@@ -1,18 +1,11 @@
 ﻿using System;
 using System.Linq;
 
-using NUnit.Framework;
-
-#if NETFX_CORE
-using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
-using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
-#elif VS_UNIT_TESTING
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-#endif
 
 namespace CLanguage.Tests
 {
-	[TestFixture]
+	[TestClass]
 	public class ParserTests
 	{
 		TranslationUnit Parse (string code)
@@ -25,10 +18,12 @@ namespace CLanguage.Tests
 			return parser.ParseTranslationUnit (lexer, report);
 		}
 
-		[Test, ExpectedException (typeof (Exception))]
+		[TestMethod]
 		public void BadFunction ()
 		{
-			var tu = Parse (@"void setup()
+			var failed = false;
+			try {
+				var tu = Parse (@"void setup()
 {
 pinMode (4, OUTPUT);
 }
@@ -38,9 +33,16 @@ void loop()
 pinMode
 sleep(1000);
 }");
+			}
+			catch {
+				failed = true;
+			}
+			if (!failed) {
+				Assert.Fail ("Shouldn't have compiled");
+			}
 		}
 
-		[Test]
+		[TestMethod]
 		public void ForLoopWithThreeInits ()
 		{
 			var tu = Parse (@"
@@ -56,14 +58,14 @@ void f () {
 			var f = tu.Functions.First (x => x.Name == "f");
 			var forS = (ForStatement)f.Body.Statements[0];
 			var init = forS.InitBlock;
-			Assert.That (init.Statements.Count, Is.EqualTo (1));
+			Assert.AreEqual (init.Statements.Count, 1);
 			var expr = (SequenceExpression)((ExpressionStatement)init.Statements[0]).Expression;
-			Assert.That (expr.First, Is.InstanceOf<SequenceExpression> ());
+			Assert.IsInstanceOfType (expr.First, typeof(SequenceExpression));
 			var sexpr = (SequenceExpression)expr.First;
-			Assert.That (((VariableExpression)((AssignExpression)sexpr.First).Left).VariableName, Is.EqualTo ("i"));
-			Assert.That (((VariableExpression)((AssignExpression)sexpr.Second).Left).VariableName, Is.EqualTo ("acc"));
-			Assert.That (expr.Second, Is.InstanceOf<AssignExpression> ());
-			Assert.That (((VariableExpression)((AssignExpression)expr.Second).Left).VariableName, Is.EqualTo ("j"));
+			Assert.AreEqual (((VariableExpression)((AssignExpression)sexpr.First).Left).VariableName, "i");
+			Assert.AreEqual (((VariableExpression)((AssignExpression)sexpr.Second).Left).VariableName, "acc");
+			Assert.IsInstanceOfType (expr.Second, typeof(AssignExpression));
+			Assert.AreEqual (((VariableExpression)((AssignExpression)expr.Second).Left).VariableName, "j");
 		}
 	}
 }

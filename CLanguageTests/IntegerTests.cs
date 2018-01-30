@@ -1,17 +1,10 @@
 using System;
 
-using NUnit.Framework;
-
-#if NETFX_CORE
-using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
-using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
-#elif VS_UNIT_TESTING
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-#endif
 
 namespace CLanguage.Tests
 {
-	[TestFixture]
+	[TestClass]
 	public class IntegerTests
 	{
 		void TestPromote (MachineInfo mi, string type, int resultBytes, Signedness signedness)
@@ -24,13 +17,13 @@ namespace CLanguage.Tests
 			var exe = compiler.Compile ();
 
 			var ty = exe.Globals[1].VariableType;
-			Assert.That (ty, Is.InstanceOf<CBasicType> ());
+			Assert.IsInstanceOfType (ty, typeof(CBasicType));
 			var bty = (CBasicType)ty;
-			Assert.That (bty.IsIntegral, Is.True);
+			Assert.IsTrue (bty.IsIntegral);
 			var pty = bty.IntegerPromote (context);
 
-			Assert.That (pty.Signedness, Is.EqualTo (signedness));
-			Assert.That (pty.GetSize (context), Is.EqualTo (resultBytes));
+			Assert.AreEqual (pty.Signedness, signedness);
+			Assert.AreEqual (pty.GetSize (context), resultBytes);
 		}
 
 		void TestArithmetic (MachineInfo mi, string type1, string type2, CBasicType result)
@@ -43,26 +36,26 @@ namespace CLanguage.Tests
 			var exe = compiler.Compile ();
 
 			var ty1 = exe.Globals[1].VariableType;
-			Assert.That (ty1, Is.InstanceOf<CBasicType> ());
+			Assert.IsInstanceOfType (ty1, typeof(CBasicType));
 			var ty2 = exe.Globals[2].VariableType;
-			Assert.That (ty2, Is.InstanceOf<CBasicType> ());
+			Assert.IsInstanceOfType (ty2, typeof(CBasicType));
 
 			var bty1 = (CBasicType)ty1;
 			var bty2 = (CBasicType)ty2;
 
-			Assert.That (bty1.IsIntegral, Is.True);
-			Assert.That (bty2.IsIntegral, Is.True);
+			Assert.IsTrue (bty1.IsIntegral);
+			Assert.IsTrue (bty2.IsIntegral);
 
 			var aty1 = bty1.ArithmeticConvert (bty2, context);
 			var aty2 = bty2.ArithmeticConvert (bty1, context);
 
-			Assert.That (aty1.Signedness, Is.EqualTo (result.Signedness), type1 + " OP " + type2);
-			Assert.That (aty1.GetSize (context), Is.EqualTo (result.GetSize (context)), type1 + " OP " + type2);
-			Assert.That (aty2.Signedness, Is.EqualTo (result.Signedness), type1 + " OP " + type2);
-			Assert.That (aty2.GetSize (context), Is.EqualTo (result.GetSize (context)), type1 + " OP " + type2);
+			Assert.AreEqual (aty1.Signedness, result.Signedness);
+			Assert.AreEqual (aty1.GetSize (context), result.GetSize (context));
+			Assert.AreEqual (aty2.Signedness, result.Signedness);
+			Assert.AreEqual (aty2.GetSize (context), result.GetSize (context));
 		}
 
-		[Test]
+		[TestMethod]
 		public void ArduinoPromote ()
 		{
 			var mi = MachineInfo.Arduino;
@@ -77,7 +70,7 @@ namespace CLanguage.Tests
 			TestPromote (mi, "unsigned long", 4, Signedness.Unsigned);
 		}
 
-		[Test]
+		[TestMethod]
 		public void ArduinoArithmatic ()
 		{
 			var mi = MachineInfo.Arduino;
@@ -155,7 +148,7 @@ namespace CLanguage.Tests
 			TestArithmetic (mi, "unsigned long", "unsigned long", CBasicType.UnsignedLongInt);
 		}
 
-		[Test]
+		[TestMethod]
 		public void WindowsX86Promote ()
 		{
 			var mi = MachineInfo.WindowsX86;
@@ -170,7 +163,7 @@ namespace CLanguage.Tests
 			TestPromote (mi, "unsigned long", 4, Signedness.Unsigned);
 		}
 
-		[Test]
+		[TestMethod]
 		public void Mac64Arithmatic ()
 		{
 			var mi = MachineInfo.Mac64;

@@ -1,18 +1,11 @@
 using System;
 using System.Linq;
 
-using NUnit.Framework;
-
-#if NETFX_CORE
-using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
-using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
-#elif VS_UNIT_TESTING
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-#endif
 
 namespace CLanguage.Tests
 {
-	[TestFixture]
+	[TestClass]
 	public class PreprocessorTests
 	{
 		TranslationUnit Parse (string code)
@@ -25,7 +18,7 @@ namespace CLanguage.Tests
 			return parser.ParseTranslationUnit (lexer, report);
 		}
 
-		[Test]
+		[TestMethod]
 		public void AssignToDefines ()
 		{
 			var tu = Parse (@"
@@ -40,15 +33,15 @@ int high = HIGH;
 int low = LOW;
 
 ");
-			Assert.That (((AssignExpression)((ExpressionStatement)tu.Statements[0]).Expression).Right, Is.InstanceOf<ConstantExpression> ());
-			Assert.That (((AssignExpression)((ExpressionStatement)tu.Statements[1]).Expression).Right, Is.InstanceOf<ConstantExpression> ());
-			Assert.That (((AssignExpression)((ExpressionStatement)tu.Statements[2]).Expression).Right, Is.InstanceOf<ConstantExpression> ());
-			Assert.That (((AssignExpression)((ExpressionStatement)tu.Statements[3]).Expression).Right, Is.InstanceOf<ConstantExpression> ());
+			Assert.IsInstanceOfType (((AssignExpression)((ExpressionStatement)tu.Statements[0]).Expression).Right, typeof(ConstantExpression));
+			Assert.IsInstanceOfType (((AssignExpression)((ExpressionStatement)tu.Statements[1]).Expression).Right, typeof(ConstantExpression));
+			Assert.IsInstanceOfType (((AssignExpression)((ExpressionStatement)tu.Statements[2]).Expression).Right, typeof(ConstantExpression));
+			Assert.IsInstanceOfType (((AssignExpression)((ExpressionStatement)tu.Statements[3]).Expression).Right, typeof(ConstantExpression));
 
-			Assert.That (((ConstantExpression)((AssignExpression)((ExpressionStatement)tu.Statements[0]).Expression).Right).EmitValue, Is.EqualTo (1));
-			Assert.That (((ConstantExpression)((AssignExpression)((ExpressionStatement)tu.Statements[1]).Expression).Right).EmitValue, Is.EqualTo (0));
-			Assert.That (((ConstantExpression)((AssignExpression)((ExpressionStatement)tu.Statements[2]).Expression).Right).EmitValue, Is.EqualTo (255));
-			Assert.That (((ConstantExpression)((AssignExpression)((ExpressionStatement)tu.Statements[3]).Expression).Right).EmitValue, Is.EqualTo (0));
+			Assert.AreEqual (((ConstantExpression)((AssignExpression)((ExpressionStatement)tu.Statements[0]).Expression).Right).EmitValue, 1);
+			Assert.AreEqual (((ConstantExpression)((AssignExpression)((ExpressionStatement)tu.Statements[1]).Expression).Right).EmitValue, 0);
+			Assert.AreEqual (((ConstantExpression)((AssignExpression)((ExpressionStatement)tu.Statements[2]).Expression).Right).EmitValue, 255);
+			Assert.AreEqual (((ConstantExpression)((AssignExpression)((ExpressionStatement)tu.Statements[3]).Expression).Right).EmitValue, 0);
 		}
 	}
 }

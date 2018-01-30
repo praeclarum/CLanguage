@@ -3,18 +3,11 @@ using System.Text;
 using System.Collections.Generic;
 using System.Linq;
 
-using NUnit.Framework;
-
-#if NETFX_CORE
-using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
-using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
-#elif VS_UNIT_TESTING
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-#endif
 
 namespace CLanguage.Tests
 {
-	[TestFixture]
+	[TestClass]
     public class ArduinoTests
     {
         TranslationUnit Parse(string code)
@@ -33,31 +26,31 @@ namespace CLanguage.Tests
 			return tu.Variables.First ();
 		}
 
-		[Test]
+		[TestMethod]
 		public void Sizes ()
 		{
 			var ec = new EmitContext (MachineInfo.Arduino, new Report (new TestPrinter ()));
 
 			var charV = ParseVariable ("char v;");
-			Assert.That (charV.VariableType.GetSize (ec), Is.EqualTo (1));
+			Assert.AreEqual (charV.VariableType.GetSize (ec), 1);
 
 			var intV = ParseVariable ("int v;");
-			Assert.That (intV.VariableType.GetSize (ec), Is.EqualTo (2));
+			Assert.AreEqual (intV.VariableType.GetSize (ec), 2);
 
 			var shortIntV = ParseVariable ("short int v;");
-			Assert.That (shortIntV.VariableType.GetSize (ec), Is.EqualTo (2));
+			Assert.AreEqual (shortIntV.VariableType.GetSize (ec), 2);
 
 			var unsignedLongV = ParseVariable ("unsigned long v;");
-			Assert.That (unsignedLongV.VariableType.GetSize (ec), Is.EqualTo (4));
+			Assert.AreEqual (unsignedLongV.VariableType.GetSize (ec), 4);
 
 			var unsignedLongLongV = ParseVariable ("unsigned long long v;");
-			Assert.That (unsignedLongLongV.VariableType.GetSize (ec), Is.EqualTo (8));
+			Assert.AreEqual (unsignedLongLongV.VariableType.GetSize (ec), 8);
 
 			var intPV = ParseVariable ("int *v;");
-			Assert.That (intPV.VariableType.GetSize (ec), Is.EqualTo (2));
+			Assert.AreEqual (intPV.VariableType.GetSize (ec), 2);
 
 			var longPV = ParseVariable ("long *v;");
-			Assert.That (longPV.VariableType.GetSize (ec), Is.EqualTo (2));
+			Assert.AreEqual (longPV.VariableType.GetSize (ec), 2);
 		}
 
 		public const string BlinkCode = @"
@@ -75,7 +68,7 @@ void loop() {
 }
 ";
 
-		[Test]
+		[TestMethod]
         public void Blink()
         {
             var tu = Parse(BlinkCode);
@@ -91,7 +84,7 @@ void loop() {
             Assert.AreEqual(4, loop.Body.Statements.Count);
         }
 
-		[Test]
+		[TestMethod]
         public void DigitalReadSerial()
         {
             var code = @"
@@ -118,16 +111,16 @@ void loop() {
             Assert.AreEqual(1, loop.Body.Variables.Count);
             Assert.AreEqual(2, loop.Body.Statements.Count);
 
-            Assert.IsInstanceOf<ExpressionStatement>(loop.Body.Statements[0]);
-            Assert.IsInstanceOf<AssignExpression>(((ExpressionStatement)loop.Body.Statements[0]).Expression);
-            Assert.IsInstanceOf<ExpressionStatement>(loop.Body.Statements[1]);
-            Assert.IsInstanceOf<FuncallExpression>(((ExpressionStatement)loop.Body.Statements[1]).Expression);
+            Assert.IsInstanceOfType(loop.Body.Statements[0], typeof(ExpressionStatement));
+            Assert.IsInstanceOfType(((ExpressionStatement)loop.Body.Statements[0]).Expression, typeof(AssignExpression));
+            Assert.IsInstanceOfType(loop.Body.Statements[1], typeof(ExpressionStatement));
+            Assert.IsInstanceOfType(((ExpressionStatement)loop.Body.Statements[1]).Expression, typeof(FuncallExpression));
 
             var println = (FuncallExpression)((ExpressionStatement)loop.Body.Statements[1]).Expression;
 
             Assert.AreEqual(2, println.Arguments.Count);
 
-			Assert.IsInstanceOf<MemberFromReferenceExpression>(println.Function);
+			Assert.IsInstanceOfType(println.Function, typeof(MemberFromReferenceExpression));
         }
 
 		public const string FadeCode = @"
@@ -155,7 +148,7 @@ void loop()  {
 }
 ";
 
-		[Test]
+		[TestMethod]
         public void Fade()
         {            
             var tu = Parse(FadeCode);
@@ -172,26 +165,26 @@ void loop()  {
             Assert.AreEqual(0, loop.Body.Variables.Count);
             Assert.AreEqual(4, loop.Body.Statements.Count);
 
-            Assert.IsInstanceOf<ExpressionStatement>(loop.Body.Statements[1]);
-            Assert.IsInstanceOf<AssignExpression>(((ExpressionStatement)loop.Body.Statements[1]).Expression);
+            Assert.IsInstanceOfType(loop.Body.Statements[1], typeof(ExpressionStatement));
+            Assert.IsInstanceOfType(((ExpressionStatement)loop.Body.Statements[1]).Expression, typeof(AssignExpression));
             
-			Assert.IsInstanceOf<IfStatement>(loop.Body.Statements[2]);
+			Assert.IsInstanceOfType(loop.Body.Statements[2], typeof(IfStatement));
             var iff = (IfStatement)loop.Body.Statements[2];
-            Assert.IsInstanceOf<LogicExpression>(iff.Condition);
-            Assert.IsInstanceOf<Block>(iff.TrueStatement);
+            Assert.IsInstanceOfType(iff.Condition, typeof(LogicExpression));
+            Assert.IsInstanceOfType(iff.TrueStatement, typeof(Block));
             Assert.IsNull(iff.FalseStatement);
 
             var tr = (Block)iff.TrueStatement;
             Assert.AreEqual(1, tr.Statements.Count);
-            Assert.IsInstanceOf<ExpressionStatement>(tr.Statements[0]);
-            Assert.IsInstanceOf<AssignExpression>(((ExpressionStatement)tr.Statements[0]).Expression);
+            Assert.IsInstanceOfType(tr.Statements[0], typeof(ExpressionStatement));
+            Assert.IsInstanceOfType(((ExpressionStatement)tr.Statements[0]).Expression, typeof(AssignExpression));
 
             var r = ((AssignExpression)((ExpressionStatement)tr.Statements[0]).Expression).Right;
-            Assert.IsInstanceOf<UnaryExpression>(r);
+            Assert.IsInstanceOfType(r, typeof(UnaryExpression));
             Assert.AreEqual(Unop.Negate, ((UnaryExpression)r).Op);
         }
 
-		[Test]
+		[TestMethod]
         public void Tone()
         {
             var code = @"
@@ -232,10 +225,10 @@ void loop() {
             Assert.AreEqual(2, tu.Statements.Count);
 
             var len = ((CArrayType)tu.Variables[0].VariableType).LengthExpression;
-            Assert.IsInstanceOf<ConstantExpression>(len);
+            Assert.IsInstanceOfType(len, typeof(ConstantExpression));
             Assert.AreEqual(8, ((ConstantExpression)len).Value);
             
-            Assert.IsInstanceOf<StructureExpression>(((AssignExpression)((ExpressionStatement)tu.Statements[0]).Expression).Right);
+            Assert.IsInstanceOfType(((AssignExpression)((ExpressionStatement)tu.Statements[0]).Expression).Right, typeof(StructureExpression));
             var st = (StructureExpression)((AssignExpression)((ExpressionStatement)tu.Statements[0]).Expression).Right;
             Assert.AreEqual(8, st.Items.Count);
 
@@ -247,20 +240,20 @@ void loop() {
 
             Assert.AreEqual(1, f.InitBlock.Variables.Count);
             Assert.AreEqual(1, f.InitBlock.Statements.Count);
-            Assert.IsInstanceOf<RelationalExpression>(f.ContinueExpression);
+            Assert.IsInstanceOfType(f.ContinueExpression, typeof(RelationalExpression));
 			Assert.AreEqual(RelationalOp.LessThan, ((RelationalExpression)f.ContinueExpression).Op);
-            Assert.IsInstanceOf<UnaryExpression>(f.NextExpression);
+            Assert.IsInstanceOfType(f.NextExpression, typeof(UnaryExpression));
             Assert.AreEqual(Unop.PostIncrement, ((UnaryExpression)f.NextExpression).Op);
             Assert.AreEqual("thisNote", ((VariableExpression)((UnaryExpression)f.NextExpression).Right).VariableName);
 
-            Assert.IsInstanceOf<Block>(f.LoopBody);
+            Assert.IsInstanceOfType(f.LoopBody, typeof(Block));
             var b = (Block)f.LoopBody;
             Assert.AreEqual(2, b.Variables.Count);
             Assert.AreEqual(5, b.Statements.Count);
 
             var tone = (FuncallExpression)((ExpressionStatement)b.Statements[1]).Expression;
             Assert.AreEqual(3, tone.Arguments.Count);
-			Assert.IsInstanceOf<ArrayElementExpression>(tone.Arguments[1]);
+			Assert.IsInstanceOfType(tone.Arguments[1], typeof(ArrayElementExpression));
 
             var loop = tu.Functions[1];
             Assert.AreEqual("loop", loop.Name);
@@ -268,7 +261,7 @@ void loop() {
             Assert.AreEqual(0, loop.Body.Statements.Count);
         }
 
-		[Test]
+		[TestMethod]
         public void Calibration()
         {
             var code = @"

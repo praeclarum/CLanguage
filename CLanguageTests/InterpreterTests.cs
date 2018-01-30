@@ -1,17 +1,10 @@
 using System;
 
-using NUnit.Framework;
-
-#if NETFX_CORE
-using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
-using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
-#elif VS_UNIT_TESTING
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-#endif
 
 namespace CLanguage.Tests
 {
-	[TestFixture]
+	[TestClass]
 	public class InterpreterTests
 	{
 		Interpreter Compile (string code)
@@ -24,7 +17,7 @@ namespace CLanguage.Tests
 			return new Interpreter (exe);
 		}
 
-		[Test]
+		[TestMethod]
 		public void InfiniteRecursionThrows ()
 		{
 			try {
@@ -47,7 +40,7 @@ void main () {
 			}
 		}
 
-		[Test]
+		[TestMethod]
 		public void InfiniteLoopStopsEventually ()
 		{
 			var i = Compile (@"
@@ -59,7 +52,7 @@ void main () {
 			i.Step ();
 		}
 
-		[Test]
+		[TestMethod]
 		public void MutualRecursive ()
 		{
 			var i = Compile (@"
@@ -94,7 +87,7 @@ void main () {
 			i.Step ();
 		}
 
-		[Test]
+		[TestMethod]
 		public void Recursive ()
 		{
 			var i = Compile (@"
@@ -120,7 +113,7 @@ void main () {
 			i.Step ();
 		}
 
-		[Test]
+		[TestMethod]
 		public void OverwriteArgs ()
 		{
 			var i = Compile (@"
@@ -137,7 +130,7 @@ void main () {
 			i.Step ();
 		}
 
-		[Test]
+		[TestMethod]
 		public void VoidFunctionCalls ()
 		{
 			var i = Compile (@"
@@ -155,7 +148,7 @@ void main () {
 			i.Step ();
 		}
 
-		[Test]
+		[TestMethod]
 		public void FunctionCallsWithValues ()
 		{
 			var i = Compile (@"
@@ -171,7 +164,7 @@ void main () {
 		}
 
 
-		[Test]
+		[TestMethod]
 		public void ForLoop ()
 		{
 			var i = Compile (@"
@@ -187,7 +180,7 @@ void main () {
 			i.Step ();
 		}
 
-		[Test]
+		[TestMethod]
 		public void LocalVariableInitialization ()
 		{
 			var i = Compile (@"

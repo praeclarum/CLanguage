@@ -3,21 +3,14 @@ using System.Text;
 using System.Collections.Generic;
 using System.Linq;
 
-using NUnit.Framework;
-
-#if NETFX_CORE
-using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
-using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
-#elif VS_UNIT_TESTING
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-#endif
 
 namespace CLanguage.Tests
 {
     /// <summary>
     /// http://en.wikipedia.org/wiki/C_variable_types_and_declarations
     /// </summary>
-	[TestFixture]
+	[TestClass]
     public class DeclarationTests
     {
 
@@ -31,17 +24,17 @@ namespace CLanguage.Tests
             return parser.ParseTranslationUnit(lexer, report);
         }
 
-		[Test]
+		[TestMethod]
         public void Basic()
         {
             var tu = Parse("int cat;");
             Assert.AreEqual(1, tu.Variables.Count);
             var v = tu.Variables[0];
             Assert.AreEqual("cat", v.Name);
-            Assert.IsInstanceOf<CBasicType>(v.VariableType);
+            Assert.IsInstanceOfType(v.VariableType, typeof(CBasicType));
         }
 
-		[Test]
+		[TestMethod]
         public void SignednessBasic()
         {
             var tu = Parse("unsigned int x; signed int y; int z; unsigned char grey;signed char white;");
@@ -58,7 +51,7 @@ namespace CLanguage.Tests
             Assert.AreEqual(Signedness.Signed, ((CBasicType)white.VariableType).Signedness);
         }
 
-		[Test]
+		[TestMethod]
         public void SignednessNoBasic()
         {
             var tu = Parse("unsigned x; signed y;");
@@ -70,7 +63,7 @@ namespace CLanguage.Tests
             Assert.AreEqual("int", y.Name);
         }
 
-		[Test]
+		[TestMethod]
         public void SizeBasic()
         {
             var tu = Parse("short int yellow;long int orange;long long int red;long brown;long double black;");
@@ -91,238 +84,238 @@ namespace CLanguage.Tests
             Assert.AreEqual("double", black.Name);
         }
 
-		[Test]
+		[TestMethod]
         public void QualifiedBasic()
         {
             var tu = Parse("const int cat;");
             var v = tu.Variables[0];
-            Assert.IsInstanceOf<CBasicType>(v.VariableType);
+            Assert.IsInstanceOfType(v.VariableType, typeof(CBasicType));
             Assert.AreEqual(TypeQualifiers.Const, v.VariableType.TypeQualifiers);
         }
 
-		[Test]
+		[TestMethod]
         public void Pointer()
         {
             var tu = Parse("char *square;");
             var v = tu.Variables[0];
             Assert.AreEqual("square", v.Name);
-            Assert.IsInstanceOf<CPointerType>(v.VariableType);
-            Assert.IsInstanceOf<CBasicType>(((CPointerType)v.VariableType).InnerType);
+            Assert.IsInstanceOfType(v.VariableType, typeof(CPointerType));
+            Assert.IsInstanceOfType(((CPointerType)v.VariableType).InnerType, typeof(CBasicType));
             Assert.AreEqual("char", ((CBasicType)((CPointerType)v.VariableType).InnerType).Name);
         }
 
-		[Test]
+		[TestMethod]
         public void VoidPointer()
         {
             var tu = Parse("void *triangle;");
             var v = tu.Variables[0];
             Assert.AreEqual("triangle", v.Name);
-            Assert.IsInstanceOf<CPointerType>(v.VariableType);
-            Assert.IsInstanceOf<CVoidType>(((CPointerType)v.VariableType).InnerType);
+            Assert.IsInstanceOfType(v.VariableType, typeof(CPointerType));
+            Assert.IsInstanceOfType(((CPointerType)v.VariableType).InnerType, typeof(CVoidType));
             Assert.IsTrue(((CPointerType)v.VariableType).InnerType.IsVoid);
         }
 
-		[Test]
+		[TestMethod]
         public void PointerSeparation()
         {
             var tu = Parse("long* first, second;");
             var v = tu.Variables[0];
             var v1 = tu.Variables[1];
             Assert.AreEqual("first", v.Name);
-            Assert.IsInstanceOf<CPointerType>(v.VariableType);
-            Assert.IsInstanceOf<CBasicType>(((CPointerType)v.VariableType).InnerType);
+            Assert.IsInstanceOfType(v.VariableType, typeof(CPointerType));
+            Assert.IsInstanceOfType(((CPointerType)v.VariableType).InnerType, typeof(CBasicType));
             Assert.AreEqual("int", ((CBasicType)((CPointerType)v.VariableType).InnerType).Name);
             Assert.AreEqual("second", v1.Name);
-            Assert.IsInstanceOf<CBasicType>(v1.VariableType);
+            Assert.IsInstanceOfType(v1.VariableType, typeof(CBasicType));
             Assert.AreEqual("int", ((CBasicType)v1.VariableType).Name);
         }
 
-		[Test]
+		[TestMethod]
         public void NonConstPointerToConstChar()
         {
             var tu = Parse("const char *kite;");
             var v = tu.Variables[0];
             Assert.AreEqual("kite", v.Name);
-            Assert.IsInstanceOf<CPointerType>(v.VariableType);
+            Assert.IsInstanceOfType(v.VariableType, typeof(CPointerType));
             var pt = (CPointerType)v.VariableType;
             Assert.AreEqual(TypeQualifiers.None, pt.TypeQualifiers);
-            Assert.IsInstanceOf<CBasicType>(pt.InnerType);
+            Assert.IsInstanceOfType(pt.InnerType, typeof(CBasicType));
             Assert.AreEqual("char", ((CBasicType)pt.InnerType).Name);
             Assert.AreEqual(TypeQualifiers.Const, ((CBasicType)pt.InnerType).TypeQualifiers);
         }
 
-		[Test]
+		[TestMethod]
         public void ConstPointerToChar()
         {
             var tu = Parse("char * const pentagon;");
             var v = tu.Variables[0];
             Assert.AreEqual("pentagon", v.Name);
-            Assert.IsInstanceOf<CPointerType>(v.VariableType);
+            Assert.IsInstanceOfType(v.VariableType, typeof(CPointerType));
             var pt = (CPointerType)v.VariableType;
             Assert.AreEqual(TypeQualifiers.Const, pt.TypeQualifiers);
-            Assert.IsInstanceOf<CBasicType>(pt.InnerType);
+            Assert.IsInstanceOfType(pt.InnerType, typeof(CBasicType));
             Assert.AreEqual("char", ((CBasicType)pt.InnerType).Name);
             Assert.AreEqual(TypeQualifiers.None, ((CBasicType)pt.InnerType).TypeQualifiers);
         }
 
-		[Test]
+		[TestMethod]
         public void ConstPointerToConstChar1()
         {
             var tu = Parse("char const * const hexagon;");
             var v = tu.Variables[0];
             Assert.AreEqual("hexagon", v.Name);
-            Assert.IsInstanceOf<CPointerType>(v.VariableType);
+            Assert.IsInstanceOfType(v.VariableType, typeof(CPointerType));
             var pt = (CPointerType)v.VariableType;
             Assert.AreEqual(TypeQualifiers.Const, pt.TypeQualifiers);
-            Assert.IsInstanceOf<CBasicType>(pt.InnerType);
+            Assert.IsInstanceOfType(pt.InnerType, typeof(CBasicType));
             Assert.AreEqual("char", ((CBasicType)pt.InnerType).Name);
             Assert.AreEqual(TypeQualifiers.Const, ((CBasicType)pt.InnerType).TypeQualifiers);
         }
 
-		[Test]
+		[TestMethod]
         public void ConstPointerToConstChar2()
         {
             var tu = Parse("const char * const hexagon;");
             var v = tu.Variables[0];
             Assert.AreEqual("hexagon", v.Name);
-            Assert.IsInstanceOf<CPointerType>(v.VariableType);
+            Assert.IsInstanceOfType(v.VariableType, typeof(CPointerType));
             var pt = (CPointerType)v.VariableType;
             Assert.AreEqual(TypeQualifiers.Const, pt.TypeQualifiers);
-            Assert.IsInstanceOf<CBasicType>(pt.InnerType);
+            Assert.IsInstanceOfType(pt.InnerType, typeof(CBasicType));
             Assert.AreEqual("char", ((CBasicType)pt.InnerType).Name);
             Assert.AreEqual(TypeQualifiers.Const, ((CBasicType)pt.InnerType).TypeQualifiers);
         }
 
-		[Test]
+		[TestMethod]
         public void PointerToPointer()
         {
             var tu = Parse("char **septagon;");
             var v = tu.Variables[0];
             Assert.AreEqual("septagon", v.Name);
-            Assert.IsInstanceOf<CPointerType>(v.VariableType);
+            Assert.IsInstanceOfType(v.VariableType, typeof(CPointerType));
             var pt = (CPointerType)v.VariableType;
-            Assert.IsInstanceOf<CPointerType>(pt.InnerType);
+            Assert.IsInstanceOfType(pt.InnerType, typeof(CPointerType));
             var pt1 = (CPointerType)pt.InnerType;
-            Assert.IsInstanceOf<CBasicType>(pt1.InnerType);
+            Assert.IsInstanceOfType(pt1.InnerType, typeof(CBasicType));
             Assert.AreEqual("char", ((CBasicType)pt1.InnerType).Name);
         }
 
-		[Test]
+		[TestMethod]
         public void PointerToConstPointerToConstBasic()
         {
             var tu = Parse("unsigned long const int * const *octagon;");
             var v = tu.Variables[0];
             Assert.AreEqual("octagon", v.Name);
 
-            Assert.IsInstanceOf<CPointerType>(v.VariableType);
+            Assert.IsInstanceOfType(v.VariableType, typeof(CPointerType));
             var pt = (CPointerType)v.VariableType;
             Assert.AreEqual(TypeQualifiers.None, pt.TypeQualifiers);
 
-            Assert.IsInstanceOf<CPointerType>(pt.InnerType);
+            Assert.IsInstanceOfType(pt.InnerType, typeof(CPointerType));
             var pt1 = (CPointerType)pt.InnerType;
             Assert.AreEqual(TypeQualifiers.Const, pt1.TypeQualifiers);
 
-            Assert.IsInstanceOf<CBasicType>(pt1.InnerType);
+            Assert.IsInstanceOfType(pt1.InnerType, typeof(CBasicType));
             var b = (CBasicType)pt1.InnerType;
             Assert.AreEqual(TypeQualifiers.Const, b.TypeQualifiers);
             Assert.AreEqual("int", b.Name);
         }
 
-		[Test]
+		[TestMethod]
         public void Array()
         {
             var tu = Parse("int cat[10];");
             var t = (CArrayType)tu.Variables[0].VariableType;
-            Assert.IsInstanceOf<ConstantExpression>(t.LengthExpression);
+            Assert.IsInstanceOfType(t.LengthExpression, typeof(ConstantExpression));
             Assert.AreEqual(10, ((ConstantExpression)t.LengthExpression).Value);
-            Assert.IsInstanceOf<CBasicType>(t.ElementType);
+            Assert.IsInstanceOfType(t.ElementType, typeof(CBasicType));
         }
 
-		[Test]
+		[TestMethod]
         public void ArrayOfArrays()
         {
             var tu = Parse("double dog[5][12];");
             var a = (CArrayType)tu.Variables[0].VariableType;
-            Assert.IsInstanceOf<ConstantExpression>(a.LengthExpression);
+            Assert.IsInstanceOfType(a.LengthExpression, typeof(ConstantExpression));
             Assert.AreEqual(5, ((ConstantExpression)a.LengthExpression).Value);
 
             var a1 = (CArrayType)a.ElementType;
-            Assert.IsInstanceOf<ConstantExpression>(a1.LengthExpression);
+            Assert.IsInstanceOfType(a1.LengthExpression, typeof(ConstantExpression));
             Assert.AreEqual(12, ((ConstantExpression)a1.LengthExpression).Value);
 
-            Assert.IsInstanceOf<CBasicType>(a1.ElementType);
+            Assert.IsInstanceOfType(a1.ElementType, typeof(CBasicType));
             Assert.AreEqual("double", ((CBasicType)a1.ElementType).Name);
         }
 
-		[Test]
+		[TestMethod]
         public void ArrayOfPointers()
         {
             var tu = Parse("char *mice[10];");
-            Assert.IsInstanceOf<CArrayType>(tu.Variables[0].VariableType);
+            Assert.IsInstanceOfType(tu.Variables[0].VariableType, typeof(CArrayType));
             var a = (CArrayType)tu.Variables[0].VariableType;
-            Assert.IsInstanceOf<ConstantExpression>(a.LengthExpression);
+            Assert.IsInstanceOfType(a.LengthExpression, typeof(ConstantExpression));
             Assert.AreEqual(10, ((ConstantExpression)a.LengthExpression).Value);
 
-            Assert.IsInstanceOf<CPointerType>(a.ElementType);
+            Assert.IsInstanceOfType(a.ElementType, typeof(CPointerType));
             var p = (CPointerType)a.ElementType;
 
-            Assert.IsInstanceOf<CBasicType>(p.InnerType);
+            Assert.IsInstanceOfType(p.InnerType, typeof(CBasicType));
             Assert.AreEqual("char", ((CBasicType)p.InnerType).Name);
         }
 
-		[Test]
+		[TestMethod]
         public void PointerToArray()
         {
             var tu = Parse("double (*elephant)[20];");
-            Assert.IsInstanceOf<CPointerType>(tu.Variables[0].VariableType);
+            Assert.IsInstanceOfType(tu.Variables[0].VariableType, typeof(CPointerType));
             var p = (CPointerType)tu.Variables[0].VariableType;
 
-            Assert.IsInstanceOf<CArrayType>(p.InnerType);
+            Assert.IsInstanceOfType(p.InnerType, typeof(CArrayType));
             var a = (CArrayType)p.InnerType;
-            Assert.IsInstanceOf<ConstantExpression>(a.LengthExpression);
+            Assert.IsInstanceOfType(a.LengthExpression, typeof(ConstantExpression));
             Assert.AreEqual(20, ((ConstantExpression)a.LengthExpression).Value);
 
-            Assert.IsInstanceOf<CBasicType>(a.ElementType);
+            Assert.IsInstanceOfType(a.ElementType, typeof(CBasicType));
             Assert.AreEqual("double", ((CBasicType)a.ElementType).Name);
         }
 
-		[Test]
+		[TestMethod]
         public void ArrayOfPointersToArray()
         {
             var tu = Parse("int (*a[5])[42];");
-            Assert.IsInstanceOf<CArrayType>(tu.Variables[0].VariableType);
+            Assert.IsInstanceOfType(tu.Variables[0].VariableType, typeof(CArrayType));
             var a = (CArrayType)tu.Variables[0].VariableType;
-            Assert.IsInstanceOf<ConstantExpression>(a.LengthExpression);
+            Assert.IsInstanceOfType(a.LengthExpression, typeof(ConstantExpression));
             Assert.AreEqual(5, ((ConstantExpression)a.LengthExpression).Value);
 
-            Assert.IsInstanceOf<CPointerType>(a.ElementType);
+            Assert.IsInstanceOfType(a.ElementType, typeof(CPointerType));
             var p = (CPointerType)a.ElementType;
 
-            Assert.IsInstanceOf<CArrayType>(p.InnerType);
+            Assert.IsInstanceOfType(p.InnerType, typeof(CArrayType));
         }
 
-		[Test]
+		[TestMethod]
         public void PointerToArrayOfPointers()
         {
             var tu = Parse("int *(*crocodile)[15];");
             var v = tu.Variables[0];
             Assert.AreEqual("crocodile", v.Name);
-            Assert.IsInstanceOf<CPointerType>(v.VariableType);
+            Assert.IsInstanceOfType(v.VariableType, typeof(CPointerType));
             var p = (CPointerType)v.VariableType;
 
-            Assert.IsInstanceOf<CArrayType>(p.InnerType);
+            Assert.IsInstanceOfType(p.InnerType, typeof(CArrayType));
             var a = (CArrayType)p.InnerType;
-            Assert.IsInstanceOf<ConstantExpression>(a.LengthExpression);
+            Assert.IsInstanceOfType(a.LengthExpression, typeof(ConstantExpression));
             Assert.AreEqual(15, ((ConstantExpression)a.LengthExpression).Value);
 
-            Assert.IsInstanceOf<CPointerType>(a.ElementType);
+            Assert.IsInstanceOfType(a.ElementType, typeof(CPointerType));
             var p2 = (CPointerType)a.ElementType;
 
-            Assert.IsInstanceOf<CBasicType>(p2.InnerType);
+            Assert.IsInstanceOfType(p2.InnerType, typeof(CBasicType));
             Assert.AreEqual("int", ((CBasicType)p2.InnerType).Name);
         }
 
-		[Test]
+		[TestMethod]
         public void FunctionNoArgName()
         {
             var codes = new string[] {
@@ -336,16 +329,16 @@ namespace CLanguage.Tests
                 var f = tu.Functions[0];
                 Assert.AreEqual("bat", f.Name);
 
-                Assert.IsInstanceOf<CBasicType>(f.FunctionType.ReturnType);
+                Assert.IsInstanceOfType(f.FunctionType.ReturnType, typeof(CBasicType));
                 Assert.AreEqual("int", ((CBasicType)f.FunctionType.ReturnType).Name);
 
                 Assert.AreEqual(1, f.ParameterInfos.Count);
                 Assert.AreEqual("", f.ParameterInfos[0].Name);
-                Assert.IsInstanceOf<CBasicType>(f.FunctionType.Parameters[0].ParameterType);
+                Assert.IsInstanceOfType(f.FunctionType.Parameters[0].ParameterType, typeof(CBasicType));
             }
         }
 
-		[Test]
+		[TestMethod]
         public void FunctionPointerReturnVoidArg()
         {
             var codes = new string[] {
@@ -359,14 +352,14 @@ namespace CLanguage.Tests
                 var f = tu.Functions[0];
                 Assert.AreEqual("wicket", f.Name);
 
-                Assert.IsInstanceOf<CPointerType>(f.FunctionType.ReturnType);
+                Assert.IsInstanceOfType(f.FunctionType.ReturnType, typeof(CPointerType));
                 Assert.AreEqual("char", ((CBasicType)((CPointerType)f.FunctionType.ReturnType).InnerType).Name);
 
                 Assert.AreEqual(0, f.ParameterInfos.Count);
             }
         }
 
-		[Test]
+		[TestMethod]
         public void FunctionWithFunctionArg()
         {
             var codes = new string[] {
@@ -382,22 +375,22 @@ namespace CLanguage.Tests
                 var f = tu.Functions[0];
                 Assert.AreEqual("crowd", f.Name);
 
-                Assert.IsInstanceOf<CBasicType>(f.FunctionType.ReturnType);
+                Assert.IsInstanceOfType(f.FunctionType.ReturnType, typeof(CBasicType));
                 Assert.AreEqual("int", ((CBasicType)f.FunctionType.ReturnType).Name);
 
                 Assert.AreEqual(2, f.ParameterInfos.Count);
                 var p1 = f.FunctionType.Parameters[0];
                 var p2 = f.FunctionType.Parameters[1];
 
-                Assert.IsInstanceOf<CBasicType>(p1.ParameterType);
+                Assert.IsInstanceOfType(p1.ParameterType, typeof(CBasicType));
                 Assert.AreEqual("char", ((CBasicType)p1.ParameterType).Name);
 
-                Assert.IsInstanceOf<CFunctionType>(p2.ParameterType);
+                Assert.IsInstanceOfType(p2.ParameterType, typeof(CFunctionType));
                 Assert.AreEqual("int", ((CBasicType)((CFunctionType)p2.ParameterType).ReturnType).Name);
             }
         }
 
-		[Test]
+		[TestMethod]
         public void FunctionWithFunctionArgReturningPointer()
         {
             var codes = new string[] {
@@ -414,15 +407,15 @@ namespace CLanguage.Tests
                 var p1 = f.FunctionType.Parameters[0];
                 var p2 = f.FunctionType.Parameters[1];
 
-                Assert.IsInstanceOf<CBasicType>(p1.ParameterType);
+                Assert.IsInstanceOfType(p1.ParameterType, typeof(CBasicType));
                 Assert.AreEqual("char", ((CBasicType)p1.ParameterType).Name);
 
-                Assert.IsInstanceOf<CFunctionType>(p2.ParameterType);
-                Assert.IsInstanceOf<CPointerType>(((CFunctionType)p2.ParameterType).ReturnType);
+                Assert.IsInstanceOfType(p2.ParameterType, typeof(CFunctionType));
+                Assert.IsInstanceOfType(((CFunctionType)p2.ParameterType).ReturnType, typeof(CPointerType));
             }
         }
 
-		[Test]
+		[TestMethod]
         public void PointerToFunction()
         {
             var code = "int (**f)();";
@@ -432,16 +425,16 @@ namespace CLanguage.Tests
             var fv = tu.Variables[0];
             Assert.AreEqual("f", fv.Name);
 
-            Assert.IsInstanceOf<CPointerType>(fv.VariableType);
+            Assert.IsInstanceOfType(fv.VariableType, typeof(CPointerType));
             var fp = (CPointerType)fv.VariableType;
 
-            Assert.IsInstanceOf<CFunctionType>(fp.InnerType);
+            Assert.IsInstanceOfType(fp.InnerType, typeof(CFunctionType));
             var f = (CFunctionType)fp.InnerType;
 
             Assert.AreEqual(0, f.Parameters.Count);
         }
 
-		[Test]
+		[TestMethod]
         public void FunctionReturningFunction()
         {
             var code = "long int *(*boundary(double size))(int x, int y);";
@@ -458,15 +451,15 @@ namespace CLanguage.Tests
 
             var p1 = f.Parameters[0];
 
-            Assert.IsInstanceOf<CBasicType>(p1.ParameterType);
+            Assert.IsInstanceOfType(p1.ParameterType, typeof(CBasicType));
             Assert.AreEqual("double", ((CBasicType)p1.ParameterType).Name);
 
-            Assert.IsInstanceOf<CFunctionType>(f.ReturnType);
+            Assert.IsInstanceOfType(f.ReturnType, typeof(CFunctionType));
             var r = (CFunctionType)f.ReturnType;
 
             Assert.AreEqual(2, r.Parameters.Count);
 
-            Assert.IsInstanceOf<CPointerType>(r.ReturnType);
+            Assert.IsInstanceOfType(r.ReturnType, typeof(CPointerType));
         }
     }
 }
