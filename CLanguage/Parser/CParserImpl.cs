@@ -22,9 +22,9 @@ namespace CLanguage.Parser
             //debug = new yydebug.yyDebugSimple();
         }
 		
-		public TranslationUnit ParseTranslationUnit(string code, Report report = null)
+		public TranslationUnit ParseTranslationUnit(string name, string code, Report report = null)
         {
-            var lex = new Lexer (code, report);
+            var lex = new Lexer (name, code, report);
 			return ParseTranslationUnit (lex);
 		}
 

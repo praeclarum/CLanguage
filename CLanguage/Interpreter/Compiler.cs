@@ -72,15 +72,10 @@ namespace CLanguage.Interpreter
 			tus.Add (translationUnit);
         }
 
-		public void AddCode (string code)
-		{
-			AddCode("stdin", code);
-		}
-
         public void AddCode (string name, string code)
         {
             var pp = new Preprocessor (context.Report);
-			pp.AddCode ("machine.h", context.MachineInfo.HeaderCode);
+            pp.AddCode ("machine.h", context.MachineInfo.HeaderCode);
             pp.AddCode (name, code);
             var lexer = new Lexer (pp);
             var parser = new CParser ();

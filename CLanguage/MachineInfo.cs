@@ -9,15 +9,15 @@ namespace CLanguage
 {
     public class MachineInfo
     {
-        public int CharSize { get; set; }
-        public int ShortIntSize { get; set; }
-        public int IntSize { get; set; }
-        public int LongIntSize { get; set; }
-        public int LongLongIntSize { get; set; }
-        public int FloatSize { get; set; }
-        public int DoubleSize { get; set; }
-        public int LongDoubleSize { get; set; }
-        public int PointerSize { get; set; }
+        public int CharSize { get; set; } = 1;
+        public int ShortIntSize { get; set; } = 2;
+        public int IntSize { get; set; } = 4;
+        public int LongIntSize { get; set; } = 4;
+        public int LongLongIntSize { get; set; } = 8;
+        public int FloatSize { get; set; } = 4;
+        public int DoubleSize { get; set; } = 8;
+        public int LongDoubleSize { get; set; } = 8;
+        public int PointerSize { get; set; } = 4;
 
 		public string HeaderCode { get; set; }
 

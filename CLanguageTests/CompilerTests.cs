@@ -13,19 +13,13 @@ namespace CLanguage.Tests
 	{
 		Executable Compile (string code)
 		{
-			var c = new Compiler (MachineInfo.Arduino, new Report (new TestPrinter ()));
-			c.AddCode (code);
-			return c.Compile ();
+            return CLanguageService.Compile (code, MachineInfo.Arduino, new TestPrinter ());
 		}
 
 		Executable CompileWithErrors (string code, params int[] errorCodes)
 		{
 			var printer = new TestPrinter (errorCodes);
-			var c = new Compiler (MachineInfo.Arduino, new Report (printer));
-			c.AddCode (code);
-			var exe = c.Compile ();
-			printer.CheckForErrors ();
-			return exe;
+            return CLanguageService.Compile (code, MachineInfo.Arduino, printer);
 		}
 
 		[TestMethod]

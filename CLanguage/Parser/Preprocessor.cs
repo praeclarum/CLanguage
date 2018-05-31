@@ -31,10 +31,10 @@ namespace CLanguage.Parser
 			identLength = 0;
         }
 
-        public Preprocessor (string code, Report report = null)
+        public Preprocessor (string name, string code, Report report = null)
             : this (report)
         {
-            AddCode ("stdin", code);
+            AddCode (name, code);
         }
 
         class File

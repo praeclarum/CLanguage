@@ -14,7 +14,7 @@ namespace CLanguage.Tests
 			var context = new EmitContext (mi, report);
 
 			var compiler = new Compiler (mi, report);
-			compiler.AddCode (type + " v;");
+			compiler.AddCode ("test.c", type + " v;");
 			var exe = compiler.Compile ();
 
 			var ty = exe.Globals[1].VariableType;
@@ -33,7 +33,7 @@ namespace CLanguage.Tests
 			var context = new EmitContext (mi, report);
 
 			var compiler = new Compiler (mi, report);
-			compiler.AddCode (type1 + " v1; " + type2 + " v2;");
+            compiler.AddCode ("test.c", type1 + " v1; " + type2 + " v2;");
 			var exe = compiler.Compile ();
 
 			var ty1 = exe.Globals[1].VariableType;

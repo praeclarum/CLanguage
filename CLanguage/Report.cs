@@ -14,15 +14,9 @@ namespace CLanguage
 
         ReportPrinter _printer = null;
 
-        public Report (ReportPrinter printer)
+        public Report (ReportPrinter printer = null)
         {
-            if (printer == null) throw new ArgumentNullException (nameof (printer));
-            _printer = printer;
-        }
-
-        public Report ()
-            : this (new ReportPrinter ())
-        {
+            _printer = printer ?? new ReportPrinter ();
         }
 
         Dictionary<AbstractMessage, bool> _previousErrors = new Dictionary<AbstractMessage, bool> ();

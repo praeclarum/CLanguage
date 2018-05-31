@@ -10,12 +10,7 @@ namespace CLanguage.Tests
 	{
 		CInterpreter Compile (string code)
 		{
-			var c = new Compiler (
-				new ArduinoTestMachineInfo (),
-				new Report (new TestPrinter ()));
-			c.AddCode (code);
-			var exe = c.Compile ();
-			return new CInterpreter (exe);
+            return CLanguageService.CreateInterpreter (code, new ArduinoTestMachineInfo (), printer: new TestPrinter ());
 		}
 
 		[TestMethod]

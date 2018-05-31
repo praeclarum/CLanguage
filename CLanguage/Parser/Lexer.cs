@@ -23,8 +23,8 @@ namespace CLanguage.Parser
             _pp = pp;
         }
 
-        public Lexer (string code, Report report = null)
-            : this (new Preprocessor (code, report))
+        public Lexer (string name, string code, Report report = null)
+            : this (new Preprocessor (name, code, report))
         {
         }
 
