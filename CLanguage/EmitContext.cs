@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using CLanguage.Ast;
 using ValueType = System.Int32;
 
 namespace CLanguage

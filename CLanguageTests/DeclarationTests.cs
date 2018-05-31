@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using CLanguage.Ast;
 
 namespace CLanguage.Tests
 {
@@ -13,7 +14,6 @@ namespace CLanguage.Tests
 	[TestClass]
     public class DeclarationTests
     {
-
         TranslationUnit Parse(string code)
         {
 			var report = new Report(new TestPrinter ());

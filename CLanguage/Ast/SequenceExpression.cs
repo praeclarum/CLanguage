@@ -1,6 +1,6 @@
 using System;
 
-namespace CLanguage
+namespace CLanguage.Ast
 {
 	public class SequenceExpression : Expression
 	{
