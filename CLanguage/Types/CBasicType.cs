@@ -48,7 +48,7 @@ namespace CLanguage.Types
         public static readonly CBasicType Float = new CBasicType("float", Signedness.Signed, "");
         public static readonly CBasicType Double = new CBasicType("double", Signedness.Signed, "");
 
-        public override int GetSize(CompilerContext c)
+        public override int GetSize(EmitContext c)
         {
             if (Name == "char")
             {
@@ -96,7 +96,7 @@ namespace CLanguage.Types
         /// <param name='context'>
         /// Context.
         /// </param>
-        public CBasicType IntegerPromote(CompilerContext context)
+        public CBasicType IntegerPromote(EmitContext context)
         {
             if (IsIntegral)
             {
@@ -140,7 +140,7 @@ namespace CLanguage.Types
         /// <param name='context'>
         /// Context.
         /// </param>
-        public CBasicType ArithmeticConvert(CType otherType, CompilerContext context)
+        public CBasicType ArithmeticConvert(CType otherType, EmitContext context)
         {
             var otherBasicType = otherType as CBasicType;
             if (otherBasicType == null)
@@ -214,7 +214,7 @@ namespace CLanguage.Types
             }
         }
 
-        bool HasRankGreaterThan(CBasicType otherBasicType, CompilerContext context)
+        bool HasRankGreaterThan(CBasicType otherBasicType, EmitContext context)
         {
             return false;
         }

@@ -10,7 +10,7 @@ namespace CLanguage.Tests
 		void TestPromote (MachineInfo mi, string type, int resultBytes, Signedness signedness)
 		{
 			var report = new Report (new TestPrinter ());
-			var context = new CompilerContext (mi, report);
+			var context = new EmitContext (mi, report);
 
 			var compiler = new Compiler (mi, report);
 			compiler.AddCode (type + " v;");
@@ -29,7 +29,7 @@ namespace CLanguage.Tests
 		void TestArithmetic (MachineInfo mi, string type1, string type2, CBasicType result)
 		{
 			var report = new Report (new TestPrinter ());
-			var context = new CompilerContext (mi, report);
+			var context = new EmitContext (mi, report);
 
 			var compiler = new Compiler (mi, report);
 			compiler.AddCode (type1 + " v1; " + type2 + " v2;");

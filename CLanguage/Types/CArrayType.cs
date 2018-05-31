@@ -14,7 +14,7 @@ namespace CLanguage.Types
             LengthExpression = lengthExpression;
         }
 
-        public override int GetSize(CompilerContext c)
+        public override int GetSize(EmitContext c)
         {
             var innerSize = ElementType.GetSize(c);
             if (LengthExpression == null)

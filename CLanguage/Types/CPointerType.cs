@@ -11,7 +11,7 @@
 
         public static readonly CPointerType PointerToConstChar = new CPointerType(CBasicType.ConstChar);
 
-        public override int GetSize(CompilerContext c)
+        public override int GetSize(EmitContext c)
         {
             return c.MachineInfo.PointerSize;
         }

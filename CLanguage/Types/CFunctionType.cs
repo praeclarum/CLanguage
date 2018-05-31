@@ -28,7 +28,7 @@ namespace CLanguage.Types
             Parameters = new List<Parameter>();
         }
 
-        public override int GetSize(CompilerContext c)
+        public override int GetSize(EmitContext c)
         {
             return c.MachineInfo.PointerSize;
         }

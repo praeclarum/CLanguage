@@ -14,7 +14,7 @@
             }
         }
 
-        public override int GetSize(CompilerContext c)
+        public override int GetSize(EmitContext c)
         {
             c.Report.Error(2070, "'void': illegal sizeof operand");
             return 0;

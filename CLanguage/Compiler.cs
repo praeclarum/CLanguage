@@ -12,18 +12,18 @@ namespace CLanguage
 {
     public class Compiler
     {
-		CompilerContext context;
+		EmitContext context;
 
 		List<TranslationUnit> tus;
 
-		public Compiler (CompilerContext context)
+		public Compiler (EmitContext context)
 		{
 			this.context = context;
 			tus = new List<TranslationUnit> ();
 		}
 
 		public Compiler (MachineInfo mi, Report report)
-			: this (new CompilerContext (mi, report))
+			: this (new EmitContext (mi, report))
         {
         }
 
@@ -91,7 +91,7 @@ namespace CLanguage
 			Executable exe;
 			FunctionDeclaration fdecl;
 			CompiledFunction fexe;
-			CompilerContext context;
+			EmitContext context;
 
 			class BlockLocals
 			{
@@ -104,7 +104,7 @@ namespace CLanguage
 
 			public IEnumerable<VariableDeclaration> LocalVariables { get { return allLocals; } }
 
-			public FunctionContext (Executable exe, FunctionDeclaration fdecl, CompiledFunction fexe, CompilerContext context)
+			public FunctionContext (Executable exe, FunctionDeclaration fdecl, CompiledFunction fexe, EmitContext context)
                 : base (context.MachineInfo, context.Report, fdecl)
             {
 				this.exe = exe;

@@ -9,7 +9,7 @@ namespace CLanguage.Types
 
         public Location Location { get; set; }
 
-        public abstract int GetSize(CompilerContext c);
+        public abstract int GetSize(EmitContext c);
 
         public static readonly CVoidType Void = new CVoidType();
 
