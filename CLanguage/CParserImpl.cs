@@ -27,7 +27,7 @@ namespace CLanguage
 		
 		public TranslationUnit ParseTranslationUnit(string code, Report report)
         {
-			if (report == null) throw new ArgumentNullException ("report");
+			if (report == null) throw new ArgumentNullException (nameof (report));
 			
 			var pp = new Preprocessor (report);
 			pp.AddCode ("stdin", code);
@@ -37,7 +37,7 @@ namespace CLanguage
 
         public TranslationUnit ParseTranslationUnit(Lexer lexer, Report report)
         {
-			if (report == null) throw new ArgumentNullException ("report");
+			if (report == null) throw new ArgumentNullException (nameof (report));
 			
             _tu = new TranslationUnit();
             lexer.IsTypedef = _tu.Typedefs.ContainsKey;
