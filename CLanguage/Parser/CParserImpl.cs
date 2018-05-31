@@ -52,230 +52,6 @@ namespace CLanguage.Parser
             return _tu;
         }
 
-        enum TypeSpecifierKind
-        {
-            Builtin,
-            Typename,
-            Struct,
-            Class,
-            Union,
-            Enum
-        }
-
-        class TypeSpecifier
-        {
-            public TypeSpecifierKind Kind { get; private set; }
-            public string Name { get; private set; }
-
-            public TypeSpecifier(TypeSpecifierKind kind, string name)
-            {
-                Kind = kind;
-                Name = name;
-            }
-
-            public override string ToString()
-            {
-                return Name;
-            }
-        }
-
-        [Flags]
-        enum StorageClassSpecifier
-        {
-            None = 0,
-            Typedef = 1,
-            Extern = 2,
-            Static = 4,
-            Auto = 8,
-            Register = 16
-        }
-
-        class DeclarationSpecifiers
-        {
-            public StorageClassSpecifier StorageClassSpecifier { get; set; }
-            public List<TypeSpecifier> TypeSpecifiers { get; private set; }
-            public FunctionSpecifier FunctionSpecifier { get; set; }
-            public TypeQualifiers TypeQualifiers { get; set; }
-            public DeclarationSpecifiers()
-            {
-                TypeSpecifiers = new List<TypeSpecifier>();
-            }
-        }
-
-        public abstract class Initializer
-        {
-            public InitializerDesignation Designation { get; set; }
-        }
-
-        public class ExpressionInitializer : Initializer
-        {
-            public Expression Expression { get; private set; }
-
-            public ExpressionInitializer(Expression expr)
-            {
-                Expression = expr;
-            }
-        }
-
-        public class StructuredInitializer : Initializer
-        {
-            public List<Initializer> Initializers { get; private set; }
-
-            public StructuredInitializer()
-            {
-                Initializers = new List<Initializer>();
-            }
-
-            public void Add(Initializer init)
-            {
-                Initializers.Add(init);
-            }
-        }
-
-        public class InitializerDesignation
-        {
-            public List<InitializerDesignator> Designators { get; private set; }
-
-            public InitializerDesignation(List<InitializerDesignator> des)
-            {
-                Designators = new List<InitializerDesignator>();
-                Designators.AddRange(des);
-            }
-        }
-
-        public class InitializerDesignator
-        {
-
-        }
-
-        class InitDeclarator
-        {
-            public Declarator Declarator;
-            public Initializer Initializer;
-        }
-
-        class Declaration
-        {
-            public DeclarationSpecifiers Specifiers { get; set; }
-            public Declarator Declarator { get; set; }
-            public Initializer Initializer { get; set; }
-
-            public Declaration(DeclarationSpecifiers specs, Declarator decl, Initializer init)
-            {
-                Specifiers = specs;
-                Declarator = decl;
-                Initializer = init;
-            }
-        }
-
-        abstract class Declarator
-        {
-            public abstract string DeclaredIdentifier { get; }
-            public bool StrongBinding { get; set; }
-            public Declarator InnerDeclarator { get; set; }
-        }
-
-        class IdentifierDeclarator : Declarator
-        {
-            public string Identifier { get; private set; }
-
-            public override string DeclaredIdentifier
-            {
-                get
-                {
-                    return Identifier;
-                }
-            }
-
-            public IdentifierDeclarator(string id)
-            {
-                Identifier = id;
-            }
-
-            public override string ToString()
-            {
-                return Identifier;
-            }
-        }
-
-        class FunctionDeclarator : Declarator
-        {
-            public List<ParameterDecl> Parameters { get; set; }
-
-            public override string DeclaredIdentifier
-            {
-                get
-                {
-                    return (InnerDeclarator != null) ? InnerDeclarator.DeclaredIdentifier : "";
-                }
-            }
-        }
-
-        class FunctionDefinition
-        {
-            public DeclarationSpecifiers Specifiers { get; set; }
-            public Declarator Declarator { get; set; }
-            public List<Declaration> ParameterDeclarations { get; set; }
-            public Block Body { get; set; }
-        }
-
-        class ArrayDeclarator : Declarator
-        {
-            public Expression LengthExpression { get; set; }
-            public TypeQualifiers TypeQualifiers { get; set; }
-            public bool LengthIsStatic { get; set; }
-
-            public override string DeclaredIdentifier
-            {
-                get
-                {
-                    return (InnerDeclarator != null) ? InnerDeclarator.DeclaredIdentifier : "";
-                }
-            }
-        }
-
-        class Pointer
-        {
-            public TypeQualifiers TypeQualifiers { get; set; }
-            public Pointer NextPointer { get; set; }
-
-            public Pointer(TypeQualifiers qual, Pointer p)
-            {
-                TypeQualifiers = qual;
-                NextPointer = p;
-            }
-
-            public Pointer(TypeQualifiers qual)
-            {
-                TypeQualifiers = qual;
-            }
-        }
-
-        class PointerDeclarator : Declarator
-        {
-            public Pointer Pointer { get; private set; }
-
-            public override string DeclaredIdentifier
-            {
-                get
-                {
-                    return (InnerDeclarator != null) ? InnerDeclarator.DeclaredIdentifier : "";
-                }
-            }
-
-            public PointerDeclarator(Pointer pointer, Declarator decl)
-            {
-                Pointer = pointer;
-                InnerDeclarator = decl;
-            }
-        }
-
-        class MultiDeclaration
-        {
-            public DeclarationSpecifiers Specifiers;
-            public List<InitDeclarator> InitDeclarators;
-        }
-
         void AddDeclaration(object a)
         {
             AddDeclaration(a, _tu);
@@ -283,13 +59,11 @@ namespace CLanguage.Parser
 
         void AddDeclaration(object a, Block block)
         {
-            if (a is CParser.MultiDeclaration)
+            if (a is MultiDeclaration multi)
             {
-                var d = (CParser.MultiDeclaration)a;
-
-                foreach (var idecl in d.InitDeclarators)
+                foreach (var idecl in multi.InitDeclarators)
                 {
-                    if ((d.Specifiers.StorageClassSpecifier & StorageClassSpecifier.Typedef) != 0)
+                    if ((multi.Specifiers.StorageClassSpecifier & StorageClassSpecifier.Typedef) != 0)
                     {
                         if (idecl.Declarator != null)
                         {
@@ -299,7 +73,7 @@ namespace CLanguage.Parser
                     }
                     else
                     {
-                        var ctype = MakeCType(d.Specifiers, idecl.Declarator);
+                        var ctype = MakeCType(multi.Specifiers, idecl.Declarator);
                         var name = idecl.Declarator.DeclaredIdentifier;
 
                         if (ctype is CFunctionType && !HasStronglyBoundPointer(idecl.Declarator))
@@ -622,39 +396,6 @@ namespace CLanguage.Parser
             {
                 a.InnerDeclarator = left;
                 return a;
-            }
-        }
-
-        class ParameterDecl
-        {
-            public string Name { get; private set; }
-            public DeclarationSpecifiers DeclarationSpecifiers { get; private set; }
-            public Declarator Declarator { get; private set; }
-
-            public ParameterDecl(string name)
-            {
-                Name = name;
-            }
-
-            public ParameterDecl(DeclarationSpecifiers specs)
-            {
-                DeclarationSpecifiers = specs;
-                Name = "";
-            }
-
-            public ParameterDecl(DeclarationSpecifiers specs, Declarator dec)
-            {
-                DeclarationSpecifiers = specs;
-                Name = dec.DeclaredIdentifier;
-                Declarator = dec;
-            }
-        }
-
-        class VarParameter : ParameterDecl
-        {
-            public VarParameter()
-                : base("...")
-            {
             }
         }
 

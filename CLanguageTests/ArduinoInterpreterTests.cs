@@ -78,7 +78,7 @@ void loop() {
             Assert.AreEqual (1, arduino.Pins[13].Mode);
         }
 
-        [TestMethod]
+        [TestMethod, Ignore]
         public void DigitalReadSerial ()
         {
             var code = @"
@@ -126,7 +126,7 @@ void loop()  {
             var arduino = Run (FadeCode);
         }
 
-        [TestMethod]
+        [TestMethod, Ignore]
         public void Tone ()
         {
             var code = @"
@@ -163,7 +163,7 @@ void loop() {
             var arduino = Run (code);
         }
 
-        [TestMethod]
+        [TestMethod, Ignore]
         public void Calibration ()
         {
             var code = @"

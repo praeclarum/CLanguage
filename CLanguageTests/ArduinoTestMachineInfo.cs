@@ -30,7 +30,7 @@ namespace CLanguage.Tests
 #define false 0
 //struct SerialClass {
 //};
-struct SerialClass Serial;
+//struct SerialClass Serial;
 ";
 
             InternalFunctions.Add (new InternalFunction ("void pinMode (int pin, int mode)", Arduino.PinMode));
