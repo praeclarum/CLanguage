@@ -20,12 +20,12 @@ namespace CLanguage
             return parser.ParseTranslationUnit (lexer);
         }
 
-        public static TranslationUnit ParseTranslationUnit (string code, ReportPrinter printer)
+        public static TranslationUnit ParseTranslationUnit (string code, Report.Printer printer)
         {
             return ParseTranslationUnit (code, new Report (printer));
         }
 
-        public static Interpreter.CInterpreter CreateInterpreter (string code, MachineInfo machineInfo = null, ReportPrinter printer = null)
+        public static Interpreter.CInterpreter CreateInterpreter (string code, MachineInfo machineInfo = null, Report.Printer printer = null)
         {
             var exe = Compile (code, machineInfo, printer);
 
@@ -34,7 +34,7 @@ namespace CLanguage
             return i;
         }
 
-        public static Interpreter.Executable Compile (string code, MachineInfo machineInfo = null, ReportPrinter printer = null)
+        public static Interpreter.Executable Compile (string code, MachineInfo machineInfo = null, Report.Printer printer = null)
         {
             var report = new Report (printer);
 

@@ -6,7 +6,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace CLanguage.Tests
 {
-	class TestPrinter : ReportPrinter
+	class TestPrinter : Report.Printer
 	{
 		int[] expectedErrors;
 		List<int> encounteredErrors;
@@ -17,7 +17,7 @@ namespace CLanguage.Tests
 			encounteredErrors = new List<int> ();
 		}
 
-		public override void Print (AbstractMessage msg)
+		public override void Print (Report.AbstractMessage msg)
 		{
 			if (msg.MessageType == "Error") {
 				encounteredErrors.Add (msg.Code);

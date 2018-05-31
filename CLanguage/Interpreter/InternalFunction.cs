@@ -11,7 +11,7 @@ namespace CLanguage.Interpreter
 
 		public InternalFunction (string prototype, InternalFunctionAction action = null)
 		{
-			var report = new Report (new TextWriterReportPrinter (Console.Out));
+			var report = new Report (new Report.TextWriterPrinter (Console.Out));
 			var parser = new CParser ();
 			var pp = new Preprocessor (report);
 			pp.AddCode ("<Internal>", prototype + ";");
