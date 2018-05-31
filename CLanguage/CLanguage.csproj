@@ -14,5 +14,6 @@
 
   <ItemGroup>
     <Folder Include="Ast\" />
+    <Folder Include="Types\" />
   </ItemGroup>
 </Project>

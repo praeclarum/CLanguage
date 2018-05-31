@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using CLanguage.Ast;
+using CLanguage.Types;
 
 namespace CLanguage
 {

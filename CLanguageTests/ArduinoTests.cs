@@ -5,6 +5,7 @@ using System.Linq;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using CLanguage.Ast;
+using CLanguage.Types;
 
 namespace CLanguage.Tests
 {

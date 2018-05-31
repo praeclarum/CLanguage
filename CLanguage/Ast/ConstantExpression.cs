@@ -5,6 +5,8 @@ using System.Text;
 
 using ValueType = System.Int32;
 
+using CLanguage.Types;
+
 namespace CLanguage.Ast
 {
     public class ConstantExpression : Expression

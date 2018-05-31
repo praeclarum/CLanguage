@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using CLanguage.Types;
+
 namespace CLanguage.Ast
 {
     public class AssignExpression : Expression

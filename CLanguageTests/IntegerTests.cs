@@ -1,5 +1,5 @@
 using System;
-
+using CLanguage.Types;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace CLanguage.Tests

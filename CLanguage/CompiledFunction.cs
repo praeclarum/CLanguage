@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-
+using CLanguage.Ast;
+using CLanguage.Types;
 using StackValue = System.Int32;
 
 namespace CLanguage
