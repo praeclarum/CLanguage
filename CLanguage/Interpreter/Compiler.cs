@@ -40,11 +40,18 @@ namespace CLanguage.Interpreter
 				exe.Globals.AddRange (tu.Variables);
 
 				foreach (var fdecl in tu.Functions) {
+                    //
+                    // Replace declarations with definitions
+                    //
 					var fexe = exe.Functions.FirstOrDefault (x => x.Name == fdecl.Name);
 					if (fexe == null) {
 						fexe = new CompiledFunction (fdecl.Name, fdecl.FunctionType);
 						exe.Functions.Add (fexe);
 					}
+
+                    //
+                    // Compile new functions
+                    //
 					var cfexe = fexe as CompiledFunction;
 					if (cfexe != null && fdecl.Body != null) {
 						var c = new FunctionContext (exe, fdecl, cfexe, context);

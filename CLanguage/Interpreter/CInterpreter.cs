@@ -19,7 +19,7 @@ namespace CLanguage.Interpreter
 			state = new ExecutionState (exe, maxStack, maxFrames);
         }
 
-		public void Reset (string entrypoint, string loop = null)
+		public void Reset (string entrypoint)
 		{
 			this.entrypoint = exe.Functions.FirstOrDefault (x => x.Name == entrypoint);
 			Reset ();

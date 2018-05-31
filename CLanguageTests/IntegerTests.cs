@@ -59,7 +59,7 @@ namespace CLanguage.Tests
 		[TestMethod]
 		public void ArduinoPromote ()
 		{
-			var mi = MachineInfo.Arduino;
+            var mi = new ArduinoTestMachineInfo ();
 
 			TestPromote (mi, "unsigned char", 2, Signedness.Signed);
 			TestPromote (mi, "char", 2, Signedness.Signed);
@@ -74,7 +74,7 @@ namespace CLanguage.Tests
 		[TestMethod]
 		public void ArduinoArithmatic ()
 		{
-			var mi = MachineInfo.Arduino;
+            var mi = new ArduinoTestMachineInfo ();
 
 			TestArithmetic (mi, "char", "char", CBasicType.SignedInt);
 			TestArithmetic (mi, "char", "unsigned char", CBasicType.SignedInt);
@@ -152,7 +152,7 @@ namespace CLanguage.Tests
 		[TestMethod]
 		public void WindowsX86Promote ()
 		{
-			var mi = MachineInfo.WindowsX86;
+			var mi = MachineInfo.Windows32;
 
 			TestPromote (mi, "unsigned char", 4, Signedness.Signed);
 			TestPromote (mi, "char", 4, Signedness.Signed);
