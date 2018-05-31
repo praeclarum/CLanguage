@@ -25,7 +25,7 @@ void loop()
 {
 pinMode
 sleep(1000);
-}");
+}", new TestPrinter ());
 			}
 			catch {
 				failed = true;
