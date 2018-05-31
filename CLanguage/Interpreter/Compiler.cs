@@ -8,7 +8,7 @@ using ValueType = System.Int32;
 using CLanguage.Ast;
 using CLanguage.Types;
 
-namespace CLanguage
+namespace CLanguage.Interpreter
 {
     public class Compiler
     {

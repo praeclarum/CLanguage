@@ -19,7 +19,7 @@ namespace CLanguage.Types
             var innerSize = ElementType.GetSize(c);
             if (LengthExpression == null)
             {
-                c.Report.Error(2133, Location, "unknown size");
+                c.Report.Error(2133, "unknown size");
                 return 0;
             }
             var lexp = LengthExpression;

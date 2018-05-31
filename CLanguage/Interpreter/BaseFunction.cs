@@ -1,7 +1,7 @@
 using System;
 using CLanguage.Types;
 
-namespace CLanguage
+namespace CLanguage.Interpreter
 {
 	public abstract class BaseFunction
 	{

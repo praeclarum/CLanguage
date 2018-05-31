@@ -2,7 +2,7 @@ using System;
 
 using ValueType = System.Int32;
 
-namespace CLanguage
+namespace CLanguage.Interpreter
 {
 	public class Label
 	{

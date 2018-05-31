@@ -5,7 +5,7 @@ using CLanguage.Ast;
 using CLanguage.Types;
 using StackValue = System.Int32;
 
-namespace CLanguage
+namespace CLanguage.Interpreter
 {
 	public class CompiledFunction : BaseFunction
 	{

@@ -1,6 +1,8 @@
 using System;
 using CLanguage.Types;
 
+using CLanguage.Interpreter;
+
 namespace CLanguage.Ast
 {
 	public class SequenceExpression : Expression

@@ -1,6 +1,6 @@
 using System;
 
-namespace CLanguage
+namespace CLanguage.Interpreter
 {
 	public delegate void InternalFunctionAction (ExecutionState state);
 

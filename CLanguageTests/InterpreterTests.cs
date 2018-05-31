@@ -1,20 +1,21 @@
 using System;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using CLanguage.Interpreter;
 
 namespace CLanguage.Tests
 {
 	[TestClass]
 	public class InterpreterTests
 	{
-		Interpreter Compile (string code)
+		CInterpreter Compile (string code)
 		{
 			var c = new Compiler (
 				new ArduinoTestMachineInfo (),
 				new Report (new TestPrinter ()));
 			c.AddCode (code);
 			var exe = c.Compile ();
-			return new Interpreter (exe);
+			return new CInterpreter (exe);
 		}
 
 		[TestMethod]

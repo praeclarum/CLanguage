@@ -16,13 +16,13 @@ namespace CLanguage
 
         public Report(ReportPrinter printer)
         {
-			if (printer == null) throw new ArgumentNullException ("printer");
+			if (printer == null) throw new ArgumentNullException (nameof (printer));
             _printer = printer;
         }
 
         Dictionary<AbstractMessage, bool> _previousErrors = new Dictionary<AbstractMessage, bool>();
 
-        public void Error(int code, Location loc, string error)
+        public void Error(int code, Ast.Location loc, string error)
         {
             if (_reportingDisabled > 0)
                 return;
@@ -37,26 +37,26 @@ namespace CLanguage
             }
         }
 
-        public void Error(int code, Location loc, string format, params object[] args)
+        public void Error(int code, Ast.Location loc, string format, params object[] args)
         {
             Error(code, loc, String.Format(format, args));
         }
 
         public void Error(int code, string error)
         {
-            Error(code, Location.Null, error);
+            Error(code, Ast.Location.Null, error);
         }
 
         public void Error(int code, string format, params object[] args)
         {
-            Error(code, Location.Null, String.Format(format, args));
+            Error(code, Ast.Location.Null, String.Format(format, args));
         }
     }
 	
     public abstract class AbstractMessage
     {
         public string MessageType { get; protected set; }
-        public Location Location { get; protected set; }
+        public Ast.Location Location { get; protected set; }
         public bool IsWarning { get; protected set; }
         public int Code { get; protected set; }
         public string Text { get; protected set; }
@@ -89,7 +89,7 @@ namespace CLanguage
 
     public class ErrorMessage : AbstractMessage
     {
-        public ErrorMessage(int code, Location loc, string error, List<string> extraInformation)
+        public ErrorMessage(int code, Ast.Location loc, string error, List<string> extraInformation)
         {
             MessageType = "Error";
             Code = code;

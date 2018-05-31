@@ -14,14 +14,11 @@ namespace CLanguage
         //
         static public int yacc_verbose_flag;
 
-        LocationsBag _lbag;
-
         TranslationUnit _tu;
         //Lexer _lexer;
 
         public CParser()
         {
-            _lbag = new LocationsBag();
             //debug = new yydebug.yyDebugSimple();
         }
 		

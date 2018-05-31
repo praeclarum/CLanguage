@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using CLanguage.Ast;
 using CLanguage.Types;
 
+#pragma warning disable 162
+
 namespace CLanguage
 {
 	/// <summary>
