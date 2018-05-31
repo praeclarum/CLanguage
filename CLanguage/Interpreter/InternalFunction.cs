@@ -16,6 +16,9 @@ namespace CLanguage.Interpreter
 			var pp = new Preprocessor (report);
 			pp.AddCode ("<Internal>", prototype + ";");
 			var tu = parser.ParseTranslationUnit (new Lexer (pp));
+            if (tu.Functions.Count == 0) {
+                throw new Exception ("Failed to parse function prototype: " + prototype);
+            }
 			var f = tu.Functions[0];
 			Name = f.Name;
 			FunctionType = f.FunctionType;

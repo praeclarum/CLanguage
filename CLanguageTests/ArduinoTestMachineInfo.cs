@@ -28,6 +28,9 @@ namespace CLanguage.Tests
 #define OUTPUT 1
 #define true 1
 #define false 0
+//struct SerialClass {
+//};
+struct SerialClass Serial;
 ";
 
             InternalFunctions.Add (new InternalFunction ("void pinMode (int pin, int mode)", Arduino.PinMode));
@@ -35,6 +38,7 @@ namespace CLanguage.Tests
             InternalFunctions.Add (new InternalFunction ("void analogWrite (int pin, int value)"));
             InternalFunctions.Add (new InternalFunction ("void delay (unsigned long ms)"));
 			InternalFunctions.Add (new InternalFunction ("void assertAreEqual (int expected, int actual)", AssertAreEqual));
+            //InternalFunctions.Add (new InternalFunction ("void SerialClass::setup (int baud)", Arduino.SerialSetup));
 		}
 
 		static void AssertAreEqual (ExecutionState state)
@@ -53,6 +57,10 @@ namespace CLanguage.Tests
                 var pin = state.ActiveFrame.Args[0];
                 var mode = state.ActiveFrame.Args[1];
                 Pins[pin].Mode = mode;
+            }
+
+            public void SerialSetup (ExecutionState state)
+            {
             }
 
             public class Pin

@@ -57,6 +57,7 @@ namespace CLanguage.Parser
             Builtin,
             Typename,
             Struct,
+            Class,
             Union,
             Enum
         }

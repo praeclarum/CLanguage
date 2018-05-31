@@ -16,7 +16,7 @@ namespace CLanguage.Tests
         ArduinoTestMachineInfo.TestArduino Run (string code)
         {
             var machine = new ArduinoTestMachineInfo ();
-            var i = CLanguageService.CreateInterpreter (code, machine);
+            var i = CLanguageService.CreateInterpreter (code, machine, new TestPrinter ());
             i.Reset ("setup");
             i.Step ();
             return machine.Arduino;

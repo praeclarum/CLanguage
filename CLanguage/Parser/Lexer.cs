@@ -50,6 +50,7 @@ namespace CLanguage.Parser
             { "unsigned", Token.UNSIGNED },
             { "bool", Token.BOOL },
             { "struct", Token.STRUCT },
+            { "class", Token.CLASS },
             { "union", Token.UNION },
             { "enum", Token.ENUM },
             { "typedef", Token.TYPEDEF },

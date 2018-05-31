@@ -19,7 +19,9 @@ namespace CLanguage.Ast
 
 		public override CType GetEvaluatedCType (EmitContext ec)
 		{
-			throw new NotImplementedException();
+            var targetType = Left.GetEvaluatedCType (ec);
+
+            throw new NotImplementedException("Member access on " + targetType.GetType ());
         }
 
         protected override void DoEmit(EmitContext ec)

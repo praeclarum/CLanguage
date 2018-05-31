@@ -29,7 +29,7 @@ namespace CLanguage.Parser
 %token TYPEDEF EXTERN STATIC AUTO REGISTER INLINE RESTRICT
 %token CHAR SHORT INT LONG SIGNED UNSIGNED FLOAT DOUBLE CONST VOLATILE VOID
 %token BOOL COMPLEX IMAGINARY
-%token STRUCT UNION ENUM ELLIPSIS
+%token STRUCT CLASS UNION ENUM ELLIPSIS
 
 %token CASE DEFAULT IF ELSE SWITCH WHILE DO FOR GOTO CONTINUE BREAK RETURN
 
@@ -450,12 +450,13 @@ type_specifier
 struct_or_union_specifier
 	: struct_or_union IDENTIFIER '{' struct_declaration_list '}'
 	| struct_or_union '{' struct_declaration_list '}'
-	| struct_or_union IDENTIFIER
+	| struct_or_union IDENTIFIER { $$ = new TypeSpecifier((TypeSpecifierKind)$1, ($2).ToString()); }
 	;
 
 struct_or_union
-	: STRUCT
-	| UNION
+	: STRUCT { $$ = TypeSpecifierKind.Struct; }
+    | CLASS  { $$ = TypeSpecifierKind.Class; }
+	| UNION  { $$ = TypeSpecifierKind.Union; }
 	;
 
 struct_declaration_list
