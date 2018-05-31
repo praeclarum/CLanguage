@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace CLanguage.Ast
+namespace CLanguage.Syntax
 {
     public abstract class Initializer
     {

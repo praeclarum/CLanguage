@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using CLanguage.Ast;
+using CLanguage.Syntax;
 using CLanguage.Types;
 using static CLanguage.CLanguageService;
 

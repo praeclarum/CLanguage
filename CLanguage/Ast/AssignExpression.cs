@@ -6,7 +6,7 @@ using System.Text;
 using CLanguage.Types;
 using CLanguage.Interpreter;
 
-namespace CLanguage.Ast
+namespace CLanguage.Syntax
 {
     public class AssignExpression : Expression
     {

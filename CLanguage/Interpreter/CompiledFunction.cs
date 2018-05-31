@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using CLanguage.Ast;
+using CLanguage.Syntax;
 using CLanguage.Types;
 using StackValue = System.Int32;
 

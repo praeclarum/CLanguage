@@ -5,7 +5,7 @@ using System.Text;
 
 using CLanguage.Interpreter;
 
-namespace CLanguage.Ast
+namespace CLanguage.Syntax
 {
     public class WhileStatement : Statement
     {

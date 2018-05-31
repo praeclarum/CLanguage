@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-using CLanguage.Ast;
+using CLanguage.Syntax;
 using CLanguage.Parser;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 

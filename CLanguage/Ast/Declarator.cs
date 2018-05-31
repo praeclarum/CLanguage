@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using CLanguage.Types;
 
-namespace CLanguage.Ast
+namespace CLanguage.Syntax
 {
     public abstract class Declarator
     {

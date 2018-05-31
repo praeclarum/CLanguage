@@ -5,7 +5,7 @@ using System.Text;
 using System.IO;
 using System;
 using System.Collections.Generic;
-using CLanguage.Ast;
+using CLanguage.Syntax;
 using CLanguage.Types;
 
 #pragma warning disable 162

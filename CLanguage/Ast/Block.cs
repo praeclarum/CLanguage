@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using CLanguage.Types;
 
-namespace CLanguage.Ast
+namespace CLanguage.Syntax
 {
     public class Block : Statement
     {

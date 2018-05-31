@@ -1,5 +1,5 @@
 ﻿using System;
-using CLanguage.Ast;
+using CLanguage.Syntax;
 using CLanguage.Parser;
 
 namespace CLanguage
