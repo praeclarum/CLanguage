@@ -5,6 +5,7 @@ using System.Linq;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using CLanguage.Types;
+using CLanguage.Parser;
 
 namespace CLanguage.Tests
 {
@@ -18,7 +19,7 @@ namespace CLanguage.Tests
             pp.AddCode("stdin", code);
             var lexer = new Lexer(pp);
             var parser = new CParser();
-            var tu = parser.ParseTranslationUnit(lexer, report);
+            var tu = parser.ParseTranslationUnit(lexer);
             return tu.Variables[0].VariableType;
         }
 

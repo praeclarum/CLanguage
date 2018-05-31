@@ -7,6 +7,7 @@ using ValueType = System.Int32;
 
 using CLanguage.Ast;
 using CLanguage.Types;
+using CLanguage.Parser;
 
 namespace CLanguage.Interpreter
 {
@@ -83,7 +84,7 @@ namespace CLanguage.Interpreter
             pp.AddCode (name, code);
             var lexer = new Lexer (pp);
             var parser = new CParser ();
-            Add (parser.ParseTranslationUnit (lexer, context.Report));
+            Add (parser.ParseTranslationUnit (lexer));
         }
 
         class FunctionContext : EmitContext

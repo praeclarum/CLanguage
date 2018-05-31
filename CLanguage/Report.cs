@@ -10,49 +10,53 @@ namespace CLanguage
     {
         int _reportingDisabled = 0;
 
-        List<string> _extraInformation = new List<string>();
+        List<string> _extraInformation = new List<string> ();
 
         ReportPrinter _printer = null;
 
-        public Report(ReportPrinter printer)
+        public Report (ReportPrinter printer)
         {
-			if (printer == null) throw new ArgumentNullException (nameof (printer));
+            if (printer == null) throw new ArgumentNullException (nameof (printer));
             _printer = printer;
         }
 
-        Dictionary<AbstractMessage, bool> _previousErrors = new Dictionary<AbstractMessage, bool>();
+        public Report ()
+            : this (new ReportPrinter ())
+        {
+        }
 
-        public void Error(int code, Ast.Location loc, string error)
+        Dictionary<AbstractMessage, bool> _previousErrors = new Dictionary<AbstractMessage, bool> ();
+
+        public void Error (int code, Ast.Location loc, string error)
         {
             if (_reportingDisabled > 0)
                 return;
 
-            ErrorMessage msg = new ErrorMessage(code, loc, error, _extraInformation);
-            _extraInformation.Clear();
+            ErrorMessage msg = new ErrorMessage (code, loc, error, _extraInformation);
+            _extraInformation.Clear ();
 
-            if (!_previousErrors.ContainsKey(msg))
-            {
+            if (!_previousErrors.ContainsKey (msg)) {
                 _previousErrors[msg] = true;
-                _printer.Print(msg);
+                _printer.Print (msg);
             }
         }
 
-        public void Error(int code, Ast.Location loc, string format, params object[] args)
+        public void Error (int code, Ast.Location loc, string format, params object[] args)
         {
-            Error(code, loc, String.Format(format, args));
+            Error (code, loc, String.Format (format, args));
         }
 
-        public void Error(int code, string error)
+        public void Error (int code, string error)
         {
-            Error(code, Ast.Location.Null, error);
+            Error (code, Ast.Location.Null, error);
         }
 
-        public void Error(int code, string format, params object[] args)
+        public void Error (int code, string format, params object[] args)
         {
-            Error(code, Ast.Location.Null, String.Format(format, args));
+            Error (code, Ast.Location.Null, String.Format (format, args));
         }
     }
-	
+
     public abstract class AbstractMessage
     {
         public string MessageType { get; protected set; }
@@ -62,93 +66,90 @@ namespace CLanguage
         public string Text { get; protected set; }
         public List<string> RelatedSymbols { get; protected set; }
 
-        public AbstractMessage()
+        public AbstractMessage ()
         {
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals (object obj)
         {
             var o = obj as AbstractMessage;
             return (o != null) &&
                 (o.Code == Code) &&
                 (o.Location == Location) &&
                 (o.IsWarning == IsWarning) &&
-                (o.Text == Text);                    
+                (o.Text == Text);
         }
 
-        public override int GetHashCode()
+        public override int GetHashCode ()
         {
-            return Code.GetHashCode() + Location.GetHashCode();
+            return Code.GetHashCode () + Location.GetHashCode ();
         }
 
-		public override string ToString ()
-		{
-			return string.Format ("{0} C{1:0000}: {2}", MessageType, Code, Text);
-		}
+        public override string ToString ()
+        {
+            return string.Format ("{0} C{1:0000}: {2}", MessageType, Code, Text);
+        }
     }
 
     public class ErrorMessage : AbstractMessage
     {
-        public ErrorMessage(int code, Ast.Location loc, string error, List<string> extraInformation)
+        public ErrorMessage (int code, Ast.Location loc, string error, List<string> extraInformation)
         {
             MessageType = "Error";
             Code = code;
             Text = error;
             Location = loc;
             IsWarning = false;
-            if (extraInformation != null)
-            {
-                RelatedSymbols = new List<string>();
-                RelatedSymbols.AddRange(extraInformation);
+            if (extraInformation != null) {
+                RelatedSymbols = new List<string> ();
+                RelatedSymbols.AddRange (extraInformation);
             }
         }
     }
 
-	public class ReportPrinter
+    public class ReportPrinter
     {
         int warnings, errors;
 
-        public int WarningsCount
-        {
+        public int WarningsCount {
             get { return warnings; }
         }
 
-        public int ErrorsCount
-        {
+        public int ErrorsCount {
             get { return errors; }
         }
 
-		public virtual void Print (AbstractMessage msg)
-		{
-	        if (msg.IsWarning)
+        public virtual void Print (AbstractMessage msg)
+        {
+            if (msg.IsWarning)
                 ++warnings;
             else
                 ++errors;
-		}
-	}
-	
+        }
+    }
+
     public class TextWriterReportPrinter : ReportPrinter
     {
-		TextWriter output;
-		
-		public TextWriterReportPrinter (TextWriter output)
-		{
-			this.output = output;
-		}
-		
-        public override void Print(AbstractMessage msg)
+        TextWriter output;
+
+        public TextWriterReportPrinter (TextWriter output)
         {
-			if (!msg.Location.IsNull) {
-                output.Write (msg.Location.ToString());
+            this.output = output;
+        }
+
+        public override void Print (AbstractMessage msg)
+        {
+            if (!msg.Location.IsNull) {
+                output.Write (msg.Location.ToString ());
                 output.Write (" ");
             }
 
             output.WriteLine ("{0} C{1:0000}: {2}", msg.MessageType, msg.Code, msg.Text);
-			
+
             if (msg.RelatedSymbols != null) {
                 foreach (string s in msg.RelatedSymbols) {
-                    output.WriteLine("  " + s);
-				}
+                    output.WriteLine ("  " + s);
+                }
             }
         }
     }

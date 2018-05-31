@@ -1,4 +1,5 @@
 using System;
+using CLanguage.Parser;
 
 namespace CLanguage.Interpreter
 {
@@ -14,7 +15,7 @@ namespace CLanguage.Interpreter
 			var parser = new CParser ();
 			var pp = new Preprocessor (report);
 			pp.AddCode ("<Internal>", prototype + ";");
-			var tu = parser.ParseTranslationUnit (new Lexer (pp), report);
+			var tu = parser.ParseTranslationUnit (new Lexer (pp));
 			var f = tu.Functions[0];
 			Name = f.Name;
 			FunctionType = f.FunctionType;

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 
-namespace CLanguage
+namespace CLanguage.Parser
 {
     public class Preprocessor
     {
@@ -17,9 +17,11 @@ namespace CLanguage
 		char[] ident;
 		int identLength;
 
-        public Preprocessor (Report report)
+        public Report Report => report;
+
+        public Preprocessor (Report report = null)
         {
-			this.report = report;
+            this.report = report ?? new Report ();
             _files = new List<File>();
             _chunks = new List<Chunk>();
             //_log = log;
@@ -27,6 +29,12 @@ namespace CLanguage
 			simpleDefines = new Dictionary<string, Chunk> ();
 			ident = new char[255];
 			identLength = 0;
+        }
+
+        public Preprocessor (string code, Report report = null)
+            : this (report)
+        {
+            AddCode ("stdin", code);
         }
 
         class File

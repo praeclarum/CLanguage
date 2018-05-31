@@ -16,5 +16,6 @@
     <Folder Include="Ast\" />
     <Folder Include="Types\" />
     <Folder Include="Interpreter\" />
+    <Folder Include="Parser\" />
   </ItemGroup>
 </Project>

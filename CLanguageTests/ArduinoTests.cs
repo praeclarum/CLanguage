@@ -6,25 +6,16 @@ using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using CLanguage.Ast;
 using CLanguage.Types;
+using static CLanguage.CLanguageService;
 
 namespace CLanguage.Tests
 {
 	[TestClass]
     public class ArduinoTests
     {
-        TranslationUnit Parse(string code)
-        {
-			var report = new Report (new TestPrinter ());
-            var pp = new Preprocessor(report);
-            pp.AddCode("stdin", code);
-            var lexer = new Lexer(pp);
-            var parser = new CParser();
-            return parser.ParseTranslationUnit(lexer, report);
-        }
-
 		VariableDeclaration ParseVariable (string code)
 		{
-			var tu = Parse (code);
+			var tu = ParseTranslationUnit (code);
 			return tu.Variables.First ();
 		}
 
@@ -73,7 +64,7 @@ void loop() {
 		[TestMethod]
         public void Blink()
         {
-            var tu = Parse(BlinkCode);
+            var tu = ParseTranslationUnit(BlinkCode);
 
             Assert.AreEqual(2, tu.Functions.Count);
 
@@ -100,7 +91,7 @@ void loop() {
   Serial.println(sensorValue, DEC);
 }
 ";
-            var tu = Parse(code);
+            var tu = ParseTranslationUnit(code);
 
             Assert.AreEqual(2, tu.Functions.Count);
 
@@ -153,7 +144,7 @@ void loop()  {
 		[TestMethod]
         public void Fade()
         {            
-            var tu = Parse(FadeCode);
+            var tu = ParseTranslationUnit(FadeCode);
 
             Assert.AreEqual(2, tu.Functions.Count);
             Assert.AreEqual(2, tu.Variables.Count);
@@ -220,7 +211,7 @@ void loop() {
   // no need to repeat the melody.
 }
 ";
-            var tu = Parse(code);
+            var tu = ParseTranslationUnit(code);
 
             Assert.AreEqual(2, tu.Functions.Count);
             Assert.AreEqual(2, tu.Variables.Count);
@@ -315,7 +306,7 @@ void loop() {
   analogWrite(ledPin, sensorValue);
 }
 ";
-            var tu = Parse(code);
+            var tu = ParseTranslationUnit(code);
 
             Assert.AreEqual(2, tu.Functions.Count);
             Assert.AreEqual(5, tu.Variables.Count);

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace CLanguage
+namespace CLanguage.Parser
 {
     public class Lexer : yyParser.yyInput
     {
@@ -16,9 +16,16 @@ namespace CLanguage
         char[] _chbuf = new char[4 * 1024];
         int _chbuflen = 0;
 
+        public Report Report => _pp.Report;
+
         public Lexer(Preprocessor pp)
         {
             _pp = pp;
+        }
+
+        public Lexer (string code, Report report = null)
+            : this (new Preprocessor (code, report))
+        {
         }
 
         bool Eof()

@@ -8,7 +8,7 @@ using CLanguage.Types;
 
 #pragma warning disable 162
 
-namespace CLanguage
+namespace CLanguage.Parser
 {
 	/// <summary>
 	///    The C Parser

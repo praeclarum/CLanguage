@@ -5,7 +5,7 @@ using System.Text;
 using CLanguage.Ast;
 using CLanguage.Types;
 
-namespace CLanguage
+namespace CLanguage.Parser
 {
     public partial class CParser
     {
@@ -22,20 +22,16 @@ namespace CLanguage
             //debug = new yydebug.yyDebugSimple();
         }
 		
-		public TranslationUnit ParseTranslationUnit(string code, Report report)
+		public TranslationUnit ParseTranslationUnit(string code, Report report = null)
         {
-			if (report == null) throw new ArgumentNullException (nameof (report));
-			
-			var pp = new Preprocessor (report);
-			pp.AddCode ("stdin", code);
-			var lex = new Lexer (pp);
-			return ParseTranslationUnit (lex, report);
+            var lex = new Lexer (code, report);
+			return ParseTranslationUnit (lex);
 		}
 
-        public TranslationUnit ParseTranslationUnit(Lexer lexer, Report report)
+        public TranslationUnit ParseTranslationUnit(Lexer lexer)
         {
-			if (report == null) throw new ArgumentNullException (nameof (report));
-			
+            var report = lexer.Report;
+
             _tu = new TranslationUnit();
             lexer.IsTypedef = _tu.Typedefs.ContainsKey;
 			

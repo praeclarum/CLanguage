@@ -1,29 +1,22 @@
 ﻿using System;
 using System.Linq;
 using CLanguage.Ast;
+using CLanguage.Parser;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+using static CLanguage.CLanguageService;
 
 namespace CLanguage.Tests
 {
 	[TestClass]
 	public class ParserTests
 	{
-		TranslationUnit Parse (string code)
-		{
-			var report = new Report (new TestPrinter ());
-			var pp = new Preprocessor (report);
-			pp.AddCode ("stdin", code);
-			var lexer = new Lexer (pp);
-			var parser = new CParser ();
-			return parser.ParseTranslationUnit (lexer, report);
-		}
-
 		[TestMethod]
 		public void BadFunction ()
 		{
 			var failed = false;
 			try {
-				var tu = Parse (@"void setup()
+				var tu = ParseTranslationUnit (@"void setup()
 {
 pinMode (4, OUTPUT);
 }
@@ -45,7 +38,7 @@ sleep(1000);
 		[TestMethod]
 		public void ForLoopWithThreeInits ()
 		{
-			var tu = Parse (@"
+            var tu = ParseTranslationUnit (@"
 void f () {
 	int acc;
 	int i;

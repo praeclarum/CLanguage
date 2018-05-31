@@ -2,26 +2,17 @@ using System;
 using System.Linq;
 using CLanguage.Ast;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using static CLanguage.CLanguageService;
 
 namespace CLanguage.Tests
 {
 	[TestClass]
 	public class PreprocessorTests
 	{
-		TranslationUnit Parse (string code)
-		{
-			var report = new Report (new TestPrinter ());
-			var pp = new Preprocessor (report);
-			pp.AddCode ("stdin", code);
-			var lexer = new Lexer (pp);
-			var parser = new CParser ();
-			return parser.ParseTranslationUnit (lexer, report);
-		}
-
 		[TestMethod]
 		public void AssignToDefines ()
 		{
-			var tu = Parse (@"
+			var tu = ParseTranslationUnit (@"
 #define INPUT 1
 #define OUTPUT 0
 #define HIGH 255
