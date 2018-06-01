@@ -126,7 +126,7 @@ void loop()  {
             var arduino = Run (FadeCode);
         }
 
-        [TestMethod, Ignore]
+        [TestMethod]
         public void Tone ()
         {
             var code = @"

@@ -50,7 +50,13 @@ namespace CLanguage.Syntax
 
         protected override void DoEmit (EmitContext ec)
         {
-			InitBlock.Emit (ec);
+            ec.BeginBlock (InitBlock);
+            foreach (var s in InitBlock.InitStatements) {
+                s.Emit (ec);
+            }
+            foreach (var s in InitBlock.Statements) {
+                s.Emit (ec);
+            }
 
 			var endLabel = ec.DefineLabel ();
 
@@ -66,6 +72,8 @@ namespace CLanguage.Syntax
 			ec.Emit (OpCode.Jump, contLabel);
 
 			ec.EmitLabel (endLabel);
+
+            ec.EndBlock ();
         }
 
         public override bool AlwaysReturns => false;

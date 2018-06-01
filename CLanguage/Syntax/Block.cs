@@ -16,6 +16,7 @@ namespace CLanguage.Syntax
         public List<CompiledVariable> Variables { get; private set; } = new List<CompiledVariable> ();
         public List<CompiledFunction> Functions { get; private set; } = new List<CompiledFunction> ();
         public Dictionary<string, CType> Typedefs { get; private set; } = new Dictionary<string, CType> ();
+        public List<Statement> InitStatements { get; private set; } = new List<Statement> ();
 
         public Block ()
         {
@@ -34,31 +35,33 @@ namespace CLanguage.Syntax
             EndLocation = endLoc;
         }
 
-        public Block(Block parent, Location startLoc)
+        public Block (Block parent, Location startLoc)
         {
             StartLocation = startLoc;
             EndLocation = Location.Null;
         }
 
-        public void AddStatement(Statement stmt)
+        public void AddStatement (Statement stmt)
         {
-            Statements.Add(stmt);
+            Statements.Add (stmt);
         }
 
-        protected override void DoEmit(EmitContext ec)
+        protected override void DoEmit (EmitContext ec)
         {
-            ec.BeginBlock(this);
-            foreach (var stmt in Statements)
-            {
-                stmt.Emit(ec);
+            ec.BeginBlock (this);
+            foreach (var s in InitStatements) {
+                s.Emit (ec);
             }
-            ec.EndBlock();
+            foreach (var s in Statements) {
+                s.Emit (ec);
+            }
+            ec.EndBlock ();
         }
 
-		public override bool AlwaysReturns {
-			get {
-				return Statements.Any (s => s.AlwaysReturns);
-			}
-		}
+        public override bool AlwaysReturns {
+            get {
+                return Statements.Any (s => s.AlwaysReturns);
+            }
+        }
     }
 }

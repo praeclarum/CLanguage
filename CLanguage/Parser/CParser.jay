@@ -448,24 +448,15 @@ type_specifier
 	;
 
 struct_or_union_specifier
-	: struct_or_union IDENTIFIER '{' struct_declaration_list '}' { $$ = new TypeSpecifier((TypeSpecifierKind)$1, ($2).ToString()); }
-	| struct_or_union '{' struct_declaration_list '}' { $$ = new TypeSpecifier((TypeSpecifierKind)$1, ""); }
-	| struct_or_union IDENTIFIER { $$ = new TypeSpecifier((TypeSpecifierKind)$1, ($2).ToString()); }
+	: struct_or_union IDENTIFIER compound_statement { $$ = new TypeSpecifier((TypeSpecifierKind)$1, ($2).ToString(), (Block)$3); }
+	| struct_or_union compound_statement            { $$ = new TypeSpecifier((TypeSpecifierKind)$1, "", (Block)$2); }
+	| struct_or_union IDENTIFIER                    { $$ = new TypeSpecifier((TypeSpecifierKind)$1, ($2).ToString()); }
 	;
 
 struct_or_union
 	: STRUCT { $$ = TypeSpecifierKind.Struct; }
     | CLASS  { $$ = TypeSpecifierKind.Class; }
 	| UNION  { $$ = TypeSpecifierKind.Union; }
-	;
-
-struct_declaration_list
-	: struct_declaration
-	| struct_declaration_list struct_declaration
-	;
-
-struct_declaration
-	: specifier_qualifier_list struct_declarator_list ';'
 	;
 
 specifier_qualifier_list
@@ -475,23 +466,12 @@ specifier_qualifier_list
 	| type_qualifier
 	;
 
-struct_declarator_list
-	: struct_declarator
-	| struct_declarator_list ',' struct_declarator
-	;
-
-struct_declarator
-	: declarator
-	| ':' constant_expression
-	| declarator ':' constant_expression
-	;
-
 enum_specifier
-	: ENUM '{' enumerator_list '}'
-	| ENUM IDENTIFIER '{' enumerator_list '}'
-	| ENUM '{' enumerator_list ',' '}'
-	| ENUM IDENTIFIER '{' enumerator_list ',' '}'
-	| ENUM IDENTIFIER
+	: ENUM '{' enumerator_list '}'                 { $$ = new TypeSpecifier(TypeSpecifierKind.Enum, ""); }
+	| ENUM IDENTIFIER '{' enumerator_list '}'      { $$ = new TypeSpecifier(TypeSpecifierKind.Enum, ($2).ToString()); }
+	| ENUM '{' enumerator_list ',' '}'             { $$ = new TypeSpecifier(TypeSpecifierKind.Enum, ""); }
+	| ENUM IDENTIFIER '{' enumerator_list ',' '}'  { $$ = new TypeSpecifier(TypeSpecifierKind.Enum, ($2).ToString()); }
+	| ENUM IDENTIFIER                              { $$ = new TypeSpecifier(TypeSpecifierKind.Enum, ($2).ToString()); }
 	;
 
 enumerator_list

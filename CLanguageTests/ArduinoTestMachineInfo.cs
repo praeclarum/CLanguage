@@ -37,6 +37,7 @@ namespace CLanguage.Tests
             InternalFunctions.Add (new InternalFunction (this, "void digitalWrite (int pin, int value)"));
             InternalFunctions.Add (new InternalFunction (this, "void analogWrite (int pin, int value)"));
             InternalFunctions.Add (new InternalFunction (this, "void delay (unsigned long ms)"));
+            InternalFunctions.Add (new InternalFunction (this, "void tone (int pin, int note, int duration)"));
             InternalFunctions.Add (new InternalFunction (this, "void assertAreEqual (int expected, int actual)", AssertAreEqual));
             //InternalFunctions.Add (new InternalFunction (this, "void SerialClass::setup (int baud)", Arduino.SerialSetup));
 		}

@@ -91,22 +91,14 @@ namespace CLanguage.Interpreter
 
         void AddStatementDeclarations (Block block)
         {
-            var allinits = new List<Statement> ();
             foreach (var s in block.Statements) {
-                var inits = AddStatementDeclarations (s, block);
-                if (inits != null)
-                    allinits.AddRange (inits);
-            }
-            for (int i = 0; i < allinits.Count; i++) {
-                block.Statements.Insert (i, allinits[i]);
+                AddStatementDeclarations (s, block);
             }
         }
 
-        List<Statement> AddStatementDeclarations (Statement a, Block block)
+        void AddStatementDeclarations (Statement statement, Block block)
         {
-            List<Statement> initStatements = null;
-
-            if (a is MultiDeclaratorStatement multi) {
+            if (statement is MultiDeclaratorStatement multi) {
                 foreach (var idecl in multi.InitDeclarators) {
                     if ((multi.Specifiers.StorageClassSpecifier & StorageClassSpecifier.Typedef) != 0) {
                         if (idecl.Declarator != null) {
@@ -120,7 +112,6 @@ namespace CLanguage.Interpreter
 
                         if (ctype is CFunctionType && !HasStronglyBoundPointer (idecl.Declarator)) {
                             var ftype = (CFunctionType)ctype;
-                            Console.WriteLine (ftype);
                             var f = new CompiledFunction (name, ftype);
                             block.Functions.Add (f);
                         }
@@ -156,24 +147,23 @@ namespace CLanguage.Interpreter
                         if (idecl.Initializer != null) {
                             var varExpr = new VariableExpression (name);
                             var initExpr = GetInitializerExpression (idecl.Initializer);
-                            if (initStatements == null)
-                                initStatements = new List<Statement> ();
-                            initStatements.Add (new ExpressionStatement (new AssignExpression (varExpr, initExpr)));
+                            block.InitStatements.Add (new ExpressionStatement (new AssignExpression (varExpr, initExpr)));
                         }
                     }
                 }
             }
-            else if (a is FunctionDefinition fdef) {
-
+            else if (statement is FunctionDefinition fdef) {
                 var ftype = (CFunctionType)MakeCType (fdef.Specifiers, fdef.Declarator);
                 var name = fdef.Declarator.DeclaredIdentifier;
-
                 var f = new CompiledFunction (name, ftype, fdef.Body);
-
                 block.Functions.Add (f);
             }
-
-            return initStatements;
+            else if (statement is ForStatement fors) {
+                AddStatementDeclarations (fors.InitBlock);
+            }
+            else if (statement is Block subblock) {
+                AddStatementDeclarations (subblock);
+            }
         }
 
         Expression GetInitializerExpression (Initializer init)

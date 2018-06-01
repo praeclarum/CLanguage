@@ -17,7 +17,7 @@ namespace CLanguage.Syntax
 
         public override string ToString ()
         {
-            return string.Join (", ", InitDeclarators);
+            return string.Join (" ", Specifiers.TypeSpecifiers) + " " + string.Join (", ", InitDeclarators);
         }
     }
 
@@ -52,33 +52,6 @@ namespace CLanguage.Syntax
         public override string ToString ()
         {
             return Declarator.ToString ();
-        }
-    }
-
-    public enum TypeSpecifierKind
-    {
-        Builtin,
-        Typename,
-        Struct,
-        Class,
-        Union,
-        Enum
-    }
-
-    public class TypeSpecifier
-    {
-        public TypeSpecifierKind Kind { get; private set; }
-        public string Name { get; private set; }
-
-        public TypeSpecifier (TypeSpecifierKind kind, string name)
-        {
-            Kind = kind;
-            Name = name;
-        }
-
-        public override string ToString ()
-        {
-            return Name;
         }
     }
 }
