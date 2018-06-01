@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Text;
+using CLanguage.Interpreter;
 
 namespace CLanguage.Types
 {

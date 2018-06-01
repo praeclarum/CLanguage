@@ -1,4 +1,6 @@
-﻿namespace CLanguage.Types
+﻿using CLanguage.Interpreter;
+
+namespace CLanguage.Types
 {
     public class CVoidType : CType
     {

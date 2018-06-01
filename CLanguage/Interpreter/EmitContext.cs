@@ -4,7 +4,7 @@ using CLanguage.Interpreter;
 using CLanguage.Types;
 using ValueType = System.Int32;
 
-namespace CLanguage
+namespace CLanguage.Interpreter
 {
     public class EmitContext
     {

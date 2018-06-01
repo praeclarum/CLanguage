@@ -7,6 +7,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using CLanguage.Syntax;
 using CLanguage.Types;
 using static CLanguage.CLanguageService;
+using CLanguage.Interpreter;
 
 namespace CLanguage.Tests
 {

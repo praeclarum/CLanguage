@@ -6,6 +6,7 @@ using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using CLanguage.Types;
 using CLanguage.Parser;
+using CLanguage.Interpreter;
 
 namespace CLanguage.Tests
 {

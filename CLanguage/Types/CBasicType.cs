@@ -1,4 +1,5 @@
 ﻿using System;
+using CLanguage.Interpreter;
 
 namespace CLanguage.Types
 {
