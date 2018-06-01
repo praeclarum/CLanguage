@@ -91,20 +91,20 @@ namespace CLanguage.Interpreter
 
         void AddStatementDeclarations (Block block)
         {
-            var inits = new List<Statement> ();
+            var allinits = new List<Statement> ();
             foreach (var s in block.Statements) {
-                var init = AddStatementDeclarations (s, block);
-                if (init != null)
-                    inits.Add (init);
+                var inits = AddStatementDeclarations (s, block);
+                if (inits != null)
+                    allinits.AddRange (inits);
             }
-            for (int i = 0; i < inits.Count; i++) {
-                block.Statements.Insert (i, inits[i]);
+            for (int i = 0; i < allinits.Count; i++) {
+                block.Statements.Insert (i, allinits[i]);
             }
         }
 
-        Statement AddStatementDeclarations (Statement a, Block block)
+        List<Statement> AddStatementDeclarations (Statement a, Block block)
         {
-            Statement initStatement = null;
+            List<Statement> initStatements = null;
 
             if (a is MultiDeclaratorStatement multi) {
                 foreach (var idecl in multi.InitDeclarators) {
@@ -156,7 +156,9 @@ namespace CLanguage.Interpreter
                         if (idecl.Initializer != null) {
                             var varExpr = new VariableExpression (name);
                             var initExpr = GetInitializerExpression (idecl.Initializer);
-                            initStatement = new ExpressionStatement (new AssignExpression (varExpr, initExpr));
+                            if (initStatements == null)
+                                initStatements = new List<Statement> ();
+                            initStatements.Add (new ExpressionStatement (new AssignExpression (varExpr, initExpr)));
                         }
                     }
                 }
@@ -171,7 +173,7 @@ namespace CLanguage.Interpreter
                 block.Functions.Add (f);
             }
 
-            return initStatement;
+            return initStatements;
         }
 
         Expression GetInitializerExpression (Initializer init)

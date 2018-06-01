@@ -1252,7 +1252,7 @@ case 211:
   break;
 case 212:
 #line 844 "CParser.jay"
-  { ((List<Statement>)yyVals[-1+yyTop]).Insert (0, (Statement)yyVals[0+yyTop]); yyVal = yyVals[-1+yyTop]; }
+  { ((List<Statement>)yyVals[-1+yyTop]).Add ((Statement)yyVals[0+yyTop]); yyVal = yyVals[-1+yyTop]; }
   break;
 case 215:
 #line 856 "CParser.jay"

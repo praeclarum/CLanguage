@@ -49,7 +49,7 @@ void f () {
 	}
 }");
             var f = (CompiledFunction)exe.Functions.First (x => x.Name == "f");
-			var forS = (ForStatement)f.Body.Statements[0];
+			var forS = (ForStatement)f.Body.Statements[3];
 			var init = forS.InitBlock;
 			Assert.AreEqual (init.Statements.Count, 1);
 			var expr = (SequenceExpression)((ExpressionStatement)init.Statements[0]).Expression;

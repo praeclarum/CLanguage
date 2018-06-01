@@ -567,16 +567,16 @@ direct_declarator
 	{
 		var d = new FunctionDeclarator();
 		d.InnerDeclarator = (Declarator)$1;
-		d.Parameters = (List<ParameterDecl>)$3;
+		d.Parameters = (List<ParameterDeclaration>)$3;
 		$$ = d;
 	}
 	| direct_declarator '(' identifier_list ')'
 	{
 		var d = new FunctionDeclarator();
 		d.InnerDeclarator = (Declarator)$1;
-		d.Parameters = new List<ParameterDecl>();
+		d.Parameters = new List<ParameterDeclaration>();
 		foreach (var n in (List<string>)$3) {
-			d.Parameters.Add(new ParameterDecl(n));
+			d.Parameters.Add(new ParameterDeclaration(n));
 		}
 		$$ = d;
 	}
@@ -584,7 +584,7 @@ direct_declarator
 	{
 		var d = new FunctionDeclarator();
 		d.InnerDeclarator = (Declarator)$1;
-		d.Parameters = new List<ParameterDecl>();
+		d.Parameters = new List<ParameterDeclaration>();
 		$$ = d;
 	}
 	;
@@ -617,7 +617,7 @@ parameter_type_list
 	}
 	| parameter_list ',' ELLIPSIS
 	{
-		var l = (List<ParameterDecl>)$1;
+		var l = (List<ParameterDeclaration>)$1;
 		l.Add(new VarParameter());
 		$$ = l;
 	}
@@ -626,14 +626,14 @@ parameter_type_list
 parameter_list
 	: parameter_declaration
 	{
-		var l = new List<ParameterDecl>();
-		l.Add((ParameterDecl)$1);
+		var l = new List<ParameterDeclaration>();
+		l.Add((ParameterDeclaration)$1);
 		$$ = l;
 	}
 	| parameter_list ',' parameter_declaration
 	{
-		var l = (List<ParameterDecl>)$1;
-		l.Add((ParameterDecl)$3);
+		var l = (List<ParameterDeclaration>)$1;
+		l.Add((ParameterDeclaration)$3);
 		$$ = l;
 	}
 	;
@@ -641,17 +641,17 @@ parameter_list
 parameter_declaration
 	: declaration_specifiers declarator
 	{
-		var p = new ParameterDecl((DeclarationSpecifiers)$1, (Declarator)$2);
+		var p = new ParameterDeclaration((DeclarationSpecifiers)$1, (Declarator)$2);
 		$$ = p;
 	}
 	| declaration_specifiers abstract_declarator
 	{
-		var p = new ParameterDecl((DeclarationSpecifiers)$1, (Declarator)$2);
+		var p = new ParameterDeclaration((DeclarationSpecifiers)$1, (Declarator)$2);
 		$$ = p;
 	}
 	| declaration_specifiers
 	{
-		var p = new ParameterDecl((DeclarationSpecifiers)$1);
+		var p = new ParameterDeclaration((DeclarationSpecifiers)$1);
 		$$ = p;
 	}
 	;
@@ -723,27 +723,27 @@ direct_abstract_declarator
 	{
 		var d = new FunctionDeclarator();
 		d.InnerDeclarator = (Declarator)$1;
-		d.Parameters = new List<ParameterDecl>();
+		d.Parameters = new List<ParameterDeclaration>();
 		$$ = d;
 	}
 	| '(' parameter_type_list ')'
 	{
 		var d = new FunctionDeclarator();
-		d.Parameters = (List<ParameterDecl>)$2;
+		d.Parameters = (List<ParameterDeclaration>)$2;
 		$$ = d;
 	}
 	| direct_abstract_declarator '(' ')'
 	{
 		var d = new FunctionDeclarator();
 		d.InnerDeclarator = (Declarator)$1;
-		d.Parameters = new List<ParameterDecl> ();
+		d.Parameters = new List<ParameterDeclaration> ();
 		$$ = d;
 	}
 	| direct_abstract_declarator '(' parameter_type_list ')'
 	{
 		var d = new FunctionDeclarator();
 		d.InnerDeclarator = (Declarator)$1;
-		d.Parameters = (List<ParameterDecl>)$3;
+		d.Parameters = (List<ParameterDeclaration>)$3;
 		$$ = d;
 	}
 	;
@@ -841,7 +841,7 @@ compound_statement
 
 block_item_list
 	: block_item                 { $$ = new List<Statement> (1) { (Statement)$1 }; }
-	| block_item_list block_item { ((List<Statement>)$1).Insert (0, (Statement)$2); $$ = $1; }
+	| block_item_list block_item { ((List<Statement>)$1).Add ((Statement)$2); $$ = $1; }
 	;
 
 block_item

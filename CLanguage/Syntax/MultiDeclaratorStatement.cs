@@ -14,6 +14,11 @@ namespace CLanguage.Syntax
         protected override void DoEmit (EmitContext ec)
         {
         }
+
+        public override string ToString ()
+        {
+            return string.Join (", ", InitDeclarators);
+        }
     }
 
     [Flags]
@@ -43,6 +48,11 @@ namespace CLanguage.Syntax
     {
         public Declarator Declarator;
         public Initializer Initializer;
+
+        public override string ToString ()
+        {
+            return Declarator.ToString ();
+        }
     }
 
     public enum TypeSpecifierKind

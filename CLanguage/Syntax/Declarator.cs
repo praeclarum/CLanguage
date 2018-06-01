@@ -8,6 +8,11 @@ namespace CLanguage.Syntax
         public abstract string DeclaredIdentifier { get; }
         public bool StrongBinding { get; set; }
         public Declarator InnerDeclarator { get; set; }
+
+        public override string ToString ()
+        {
+            return DeclaredIdentifier;
+        }
     }
 
     public class IdentifierDeclarator : Declarator

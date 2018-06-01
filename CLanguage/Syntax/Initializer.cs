@@ -15,6 +15,11 @@ namespace CLanguage.Syntax
         {
             Expression = expr;
         }
+
+        public override string ToString ()
+        {
+            return Expression.ToString ();
+        }
     }
 
     public class StructuredInitializer : Initializer
@@ -38,16 +43,12 @@ namespace CLanguage.Syntax
 
         public InitializerDesignation (List<InitializerDesignator> des)
         {
-            Designators = new List<InitializerDesignator> ();
+            Designators = new List<InitializerDesignator> (des.Count);
             Designators.AddRange (des);
         }
     }
 
     public class InitializerDesignator
     {
-
     }
-
-
-
 }
