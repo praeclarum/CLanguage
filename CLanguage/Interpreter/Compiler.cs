@@ -50,22 +50,27 @@ namespace CLanguage.Interpreter
 			// Put something at the zero address so we don't get 0 addresses of globals
 			exe.Globals.Add (new CompiledVariable ("__zero__", CBasicType.SignedInt));
 
+            //
             // Find Variables, Functions, Types
+            //
             foreach (var tu in tus) {
                 AddStatementDeclarations (tu);
             }
 
+            //
             // Link everything together
+            // This is done before compilation to make sure everything is visible (for recursion)
+            //
             foreach (var tu in tus) {
-				exe.Globals.AddRange (tu.Variables);
+                exe.Globals.AddRange (tu.Variables);
+                exe.Functions.AddRange (tu.Functions.Where (x => x.Body != null));
+            }
 
-                //
-                // Compile functions
-                //
-				foreach (var f in tu.Functions) {
-                    if (f.Body == null)
-                        continue;
-
+            //
+            // Compile functions
+            //
+            foreach (var tu in tus) {
+                foreach (var f in exe.Functions.OfType<CompiledFunction> ()) {
                     AddStatementDeclarations (f.Body);
 
 					var c = new FunctionContext (exe, f, context);
@@ -81,8 +86,6 @@ namespace CLanguage.Interpreter
 							context.Report.Error (161, "'" + f.Name + "' not all code paths return a value");
 						}
 					}
-
-                    exe.Functions.Add (f);
 				}
 			}
 

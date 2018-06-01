@@ -38,27 +38,29 @@ namespace CLanguage.Syntax
 					ec.Emit (OpCode.LoadFunction, variable.Index);
 				}
 				else {
-					var basicType = variable.VariableType as CBasicType;
-					if (basicType != null) {
+                    if (variable.VariableType is CBasicType basicType) {
 
-						var size = basicType.GetSize (ec);
-						if (size > 4 || basicType.Equals (CBasicType.Double)) {
-							throw new NotSupportedException ("Cannot evaluate variable type '" + variable.VariableType + "'");
-						}
+                        var size = basicType.GetSize (ec);
+                        if (size > 4 || basicType.Equals (CBasicType.Double)) {
+                            throw new NotSupportedException ("Cannot evaluate variable type '" + variable.VariableType + "'");
+                        }
 
-						if (variable.Scope == VariableScope.Arg) {
-							ec.Emit (OpCode.LoadArg, variable.Index);
-						}
-						else if (variable.Scope == VariableScope.Global) {
-							ec.Emit (OpCode.LoadMemory, variable.Index);
-						}
-						else if (variable.Scope == VariableScope.Local) {
-							ec.Emit (OpCode.LoadLocal, variable.Index);
-						}
-						else {
-							throw new NotSupportedException ("Cannot evaluate variable scope '" + variable.Scope + "'");
-						}
-					}
+                        if (variable.Scope == VariableScope.Arg) {
+                            ec.Emit (OpCode.LoadArg, variable.Index);
+                        }
+                        else if (variable.Scope == VariableScope.Global) {
+                            ec.Emit (OpCode.LoadMemory, variable.Index);
+                        }
+                        else if (variable.Scope == VariableScope.Local) {
+                            ec.Emit (OpCode.LoadLocal, variable.Index);
+                        }
+                        else {
+                            throw new NotSupportedException ("Cannot evaluate variable scope '" + variable.Scope + "'");
+                        }
+                    }
+                    else if (variable.VariableType is CArrayType arrayType) {
+                        ec.Emit (OpCode.LoadValue, variable.Index);
+                    }
 					else {
 						throw new NotSupportedException ("Cannot evaluate variable type '" + variable.VariableType + "'");
 					}
