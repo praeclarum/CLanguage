@@ -8,13 +8,13 @@ namespace CLanguage
 {
     public class EmitContext
     {
-        public FunctionDeclaration FunctionDecl { get; private set; }
+        public CompiledFunction FunctionDecl { get; private set; }
 
         public Report Report { get; private set; }
 
         public MachineInfo MachineInfo { get; private set; }
 
-        public EmitContext (MachineInfo machineInfo, Report report, FunctionDeclaration fdecl = null)
+        public EmitContext (MachineInfo machineInfo, Report report, CompiledFunction fdecl = null)
         {
             if (machineInfo == null) throw new ArgumentNullException (nameof (machineInfo));
             if (report == null) throw new ArgumentNullException (nameof (report));
@@ -28,9 +28,6 @@ namespace CLanguage
         {
             return null;
         }
-
-        public virtual void DeclareVariable (VariableDeclaration v) { }
-        public virtual void DeclareFunction (FunctionDeclaration f) { }
 
         public virtual void BeginBlock (Block b) { }
         public virtual void EndBlock () { }
@@ -51,6 +48,9 @@ namespace CLanguage
                 var toBasicType = toType as CBasicType;
 
                 if (fromBasicType != null && fromBasicType.IsIntegral && toBasicType != null && toBasicType.IsIntegral) {
+                    // This conversion is implicit with how the evaluator stores its stuff
+                }
+                else if (fromBasicType != null && fromBasicType.IsIntegral && toType is CPointerType) {
                     // This conversion is implicit with how the evaluator stores its stuff
                 }
                 else {

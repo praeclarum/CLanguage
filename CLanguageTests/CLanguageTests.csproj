@@ -16,4 +16,7 @@
     <ProjectReference Include="..\CLanguage\CLanguage.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Remove="ArduinoTests.cs" />
+  </ItemGroup>
 </Project>

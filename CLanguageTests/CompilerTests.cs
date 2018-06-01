@@ -103,14 +103,14 @@ void f () {
 		[TestMethod]
 		public void ArduinoBlink ()
 		{
-			var exe = Compile (ArduinoTests.BlinkCode);
+			var exe = Compile (ArduinoInterpreterTests.BlinkCode);
 			Assert.AreEqual (exe.Functions.Count, exe.MachineInfo.InternalFunctions.Count + 2);
 		}
 
 		[TestMethod]
 		public void ArduinoFade ()
 		{
-			var exe = Compile (ArduinoTests.FadeCode);
+			var exe = Compile (ArduinoInterpreterTests.FadeCode);
 			Assert.AreEqual (exe.Functions.Count, exe.MachineInfo.InternalFunctions.Count + 2);
 		}
 	}

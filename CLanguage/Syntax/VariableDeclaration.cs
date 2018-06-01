@@ -6,7 +6,7 @@ using CLanguage.Types;
 
 namespace CLanguage.Syntax
 {
-    public class VariableDeclaration : Declaration
+    public class VariableDeclaration
     {
         public string Name { get; private set; }
         public CType VariableType { get; private set; }
@@ -15,11 +15,6 @@ namespace CLanguage.Syntax
         {
             Name = name;
             VariableType = type;
-        }
-
-        protected override void DoEmit(EmitContext ec)
-        {
-            ec.DeclareVariable(this);
         }
 
         public override string ToString()

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Collections.ObjectModel;
 using CLanguage.Interpreter;
+using CLanguage.Types;
 
 namespace CLanguage
 {

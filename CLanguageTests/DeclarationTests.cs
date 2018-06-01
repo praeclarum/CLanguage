@@ -324,8 +324,8 @@ namespace CLanguage.Tests
         public void FunctionNoArgName()
         {
             var codes = new string[] {
-                "long int bat(char);",
-                "long int bat(char) {}"
+                "long int bat(int) { return 0; }",
+                "long int bat(char) { return 0; }"
             };
             foreach (var code in codes)
             {
@@ -347,8 +347,7 @@ namespace CLanguage.Tests
         public void FunctionPointerReturnVoidArg()
         {
             var codes = new string[] {
-                "char *wicket(void);",
-                "char *wicket(void) {}"
+                "char *wicket(void) {return 0;}",
             };
             foreach (var code in codes)
             {
@@ -368,10 +367,8 @@ namespace CLanguage.Tests
         public void FunctionWithFunctionArg()
         {
             var codes = new string[] {
-                "int crowd(char p1, int (*p2)(void));",
-                "int crowd(char p1, int p2(void));",
-                "int crowd(char p1, int (*p2)(void)) {}",
-                "int crowd(char p1, int p2(void)) {}"
+                "int crowd(char p1, int (*p2)(void)) {return 0;}",
+                "int crowd(char p1, int p2(void)) {return 0;}"
             };
             foreach (var code in codes)
             {
@@ -399,10 +396,8 @@ namespace CLanguage.Tests
         public void FunctionWithFunctionArgReturningPointer()
         {
             var codes = new string[] {
-                "int crowd(char p1, int *(*p2)(void));",
-                "int crowd(char p1, int *p2(void));",
-                "int crowd(char p1, int *(*p2)(void)) {}",
-                "int crowd(char p1, int *p2(void)) {}"
+                "int crowd(char p1, int *(*p2)(void)) {return 0;}",
+                "int crowd(char p1, int *p2(void)) {return 0;}"
             };
             foreach (var code in codes)
             {

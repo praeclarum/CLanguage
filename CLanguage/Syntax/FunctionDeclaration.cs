@@ -17,7 +17,7 @@ namespace CLanguage.Syntax
         }
     }
 
-    public class FunctionDeclaration : Declaration
+    public class FunctionDeclaration
     {
         public string Name { get; private set; }
         public CFunctionType FunctionType { get; private set; }
@@ -34,11 +34,6 @@ namespace CLanguage.Syntax
             {
                 ParameterInfos.Add(new ParameterInfo(""));
             }
-        }
-
-        protected override void DoEmit(EmitContext ec)
-        {
-            ec.DeclareFunction(this);
         }
 
         public override string ToString()

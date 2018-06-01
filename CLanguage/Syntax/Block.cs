@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using CLanguage.Types;
+using CLanguage.Interpreter;
 
 namespace CLanguage.Syntax
 {
@@ -13,7 +14,7 @@ namespace CLanguage.Syntax
         public Location EndLocation { get; set; } = Location.Null;
 
         public List<VariableDeclaration> Variables { get; private set; } = new List<VariableDeclaration> ();
-        public List<FunctionDeclaration> Functions { get; private set; } = new List<FunctionDeclaration> ();
+        public List<CompiledFunction> Functions { get; private set; } = new List<CompiledFunction> ();
         public Dictionary<string, CType> Typedefs { get; private set; } = new Dictionary<string, CType> ();
 
         public Block ()
@@ -44,26 +45,9 @@ namespace CLanguage.Syntax
             Statements.Add(stmt);
         }
 
-        public void AddVariable(VariableDeclaration dec)
-        {
-            Variables.Add(dec);
-        }
-
-        public void AddFunction(FunctionDeclaration dec)
-        {
-            Functions.Add(dec);
-        }
-
         protected override void DoEmit(EmitContext ec)
         {
             ec.BeginBlock(this);
-            foreach (var dec in Variables)
-            {
-                dec.Emit(ec);
-            }
-            foreach (var dec in Functions) {
-                dec.Emit (ec);
-            }
             foreach (var stmt in Statements)
             {
                 stmt.Emit(ec);

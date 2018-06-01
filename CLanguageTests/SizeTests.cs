@@ -14,13 +14,8 @@ namespace CLanguage.Tests
     {
         CType ParseType(string code)
         {
-			var report = new Report (new TestPrinter ());
-            var pp = new Preprocessor(report);
-            pp.AddCode("stdin", code);
-            var lexer = new Lexer(pp);
-            var parser = new CParser();
-            var tu = parser.ParseTranslationUnit(lexer);
-            return tu.Variables[0].VariableType;
+            var exe = CLanguageService.Compile (code, MachineInfo.Windows32, new TestPrinter ());
+            return exe.Globals.Skip (1).First ().VariableType;
         }
 
         EmitContext _c = new EmitContext (MachineInfo.Windows32, new Report (new Report.TextWriterPrinter (Console.Out)));

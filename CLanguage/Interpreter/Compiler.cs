@@ -28,57 +28,9 @@ namespace CLanguage.Interpreter
         {
         }
 
-		public Executable Compile ()
-		{
-			var exe = new Executable (context.MachineInfo);
-
-			// Put something at the zero address so we don't get 0 addresses of globals
-			exe.Globals.Add (new VariableDeclaration ("__zero__", CBasicType.SignedInt));
-
-			foreach (var tu in tus) {
-
-                AddStatementDeclarations (tu);
-
-				exe.Globals.AddRange (tu.Variables);
-
-				foreach (var fdecl in tu.Functions) {
-                    //
-                    // Replace declarations with definitions
-                    //
-					var fexe = exe.Functions.FirstOrDefault (x => x.Name == fdecl.Name);
-					if (fexe == null) {
-						fexe = new CompiledFunction (fdecl.Name, fdecl.FunctionType);
-						exe.Functions.Add (fexe);
-					}
-
-                    //
-                    // Compile new functions
-                    //
-					var cfexe = fexe as CompiledFunction;
-					if (cfexe != null && fdecl.Body != null) {
-						var c = new FunctionContext (exe, fdecl, cfexe, context);
-						fdecl.Body.Emit (c);
-						cfexe.LocalVariables.AddRange (c.LocalVariables);
-
-						// Make sure it returns
-						if (fdecl.Body.Statements.Count == 0 || !fdecl.Body.AlwaysReturns) {
-							if (fdecl.FunctionType.ReturnType.IsVoid) {
-								c.Emit (OpCode.Return);
-							}
-							else {
-								context.Report.Error (161, "'" + fdecl.Name + "' not all code paths return a value");
-							}
-						}
-					}
-				}
-			}
-
-			return exe;
-		}
-
         public void Add (TranslationUnit translationUnit)
         {
-			tus.Add (translationUnit);
+            tus.Add (translationUnit);
         }
 
         public void AddCode (string name, string code)
@@ -90,6 +42,52 @@ namespace CLanguage.Interpreter
             var parser = new CParser ();
             Add (parser.ParseTranslationUnit (lexer));
         }
+
+		public Executable Compile ()
+		{
+			var exe = new Executable (context.MachineInfo);
+
+			// Put something at the zero address so we don't get 0 addresses of globals
+			exe.Globals.Add (new VariableDeclaration ("__zero__", CBasicType.SignedInt));
+
+            // Find Variables, Functions, Types
+            foreach (var tu in tus) {
+                AddStatementDeclarations (tu);
+            }
+
+            // Link everything together
+            foreach (var tu in tus) {
+				exe.Globals.AddRange (tu.Variables);
+
+                //
+                // Compile functions
+                //
+				foreach (var f in tu.Functions) {
+                    if (f.Body == null)
+                        continue;
+
+                    AddStatementDeclarations (f.Body);
+
+					var c = new FunctionContext (exe, f, context);
+					f.Body.Emit (c);
+					f.LocalVariables.AddRange (c.LocalVariables);
+
+					// Make sure it returns
+					if (f.Body.Statements.Count == 0 || !f.Body.AlwaysReturns) {
+						if (f.FunctionType.ReturnType.IsVoid) {
+							c.Emit (OpCode.Return);
+						}
+						else {
+							context.Report.Error (161, "'" + f.Name + "' not all code paths return a value");
+						}
+					}
+
+                    exe.Functions.Add (f);
+				}
+			}
+
+			return exe;
+		}
 
         void AddStatementDeclarations (Block block)
         {
@@ -122,13 +120,9 @@ namespace CLanguage.Interpreter
 
                         if (ctype is CFunctionType && !HasStronglyBoundPointer (idecl.Declarator)) {
                             var ftype = (CFunctionType)ctype;
-                            var f = new FunctionDeclaration (name, ftype);
-
-                            for (var i = 0; i < ftype.Parameters.Count; i++) {
-                                f.ParameterInfos[i].Name = ftype.Parameters[i].Name;
-                            }
-
-                            block.AddFunction (f);
+                            Console.WriteLine (ftype);
+                            var f = new CompiledFunction (name, ftype);
+                            block.Functions.Add (f);
                         }
                         else {
                             if ((ctype is CArrayType) &&
@@ -156,7 +150,7 @@ namespace CLanguage.Interpreter
                             }
                             //var init = GetInitExpression(idecl.Initializer);
                             var vdecl = new VariableDeclaration (name, ctype);
-                            block.AddVariable (vdecl);
+                            block.Variables.Add (vdecl);
                         }
 
                         if (idecl.Initializer != null) {
@@ -172,15 +166,9 @@ namespace CLanguage.Interpreter
                 var ftype = (CFunctionType)MakeCType (fdef.Specifiers, fdef.Declarator);
                 var name = fdef.Declarator.DeclaredIdentifier;
 
-                var f = new FunctionDeclaration (name, ftype);
+                var f = new CompiledFunction (name, ftype, fdef.Body);
 
-                for (var i = 0; i < ftype.Parameters.Count; i++) {
-                    f.ParameterInfos[i].Name = ftype.Parameters[i].Name;
-                }
-
-                f.Body = fdef.Body;
-
-                block.AddFunction (f);
+                block.Functions.Add (f);
             }
 
             return initStatement;
@@ -369,7 +357,6 @@ namespace CLanguage.Interpreter
         class FunctionContext : EmitContext
         {
 			Executable exe;
-			FunctionDeclaration fdecl;
 			CompiledFunction fexe;
 			EmitContext context;
 
@@ -384,11 +371,10 @@ namespace CLanguage.Interpreter
 
 			public IEnumerable<VariableDeclaration> LocalVariables { get { return allLocals; } }
 
-			public FunctionContext (Executable exe, FunctionDeclaration fdecl, CompiledFunction fexe, EmitContext context)
-                : base (context.MachineInfo, context.Report, fdecl)
+			public FunctionContext (Executable exe, CompiledFunction fexe, EmitContext context)
+                : base (context.MachineInfo, context.Report, fexe)
             {
 				this.exe = exe;
-				this.fdecl = fdecl;
 				this.fexe = fexe;
 				this.context = context;
 				blocks = new List<Block> ();
@@ -401,9 +387,9 @@ namespace CLanguage.Interpreter
 				//
 				// Look for function parameters
 				//
-				for (var i = 0; i < fdecl.ParameterInfos.Count; i++) {
-					if (fdecl.ParameterInfos[i].Name == name) {
-						return new ResolvedVariable (VariableScope.Arg, i, fdecl.FunctionType.Parameters[i].ParameterType);
+                for (var i = 0; i < fexe.FunctionType.Parameters.Count; i++) {
+                    if (fexe.FunctionType.Parameters[i].Name == name) {
+                        return new ResolvedVariable (VariableScope.Arg, i, fexe.FunctionType.Parameters[i].ParameterType);
 					}
 				}
 

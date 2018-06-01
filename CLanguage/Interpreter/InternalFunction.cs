@@ -19,7 +19,7 @@ namespace CLanguage.Interpreter
             Compiler compiler = new Compiler (machineInfo, report);
             compiler.Add (tu);
             var exe = compiler.Compile ();
-            if (exe.Functions.Count == 0) {
+            if (tu.Functions.Count == 0) {
                 throw new Exception ("Failed to parse function prototype: " + prototype);
             }
 			var f = tu.Functions[0];

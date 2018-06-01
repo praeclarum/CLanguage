@@ -9,13 +9,16 @@ namespace CLanguage.Interpreter
 {
 	public class CompiledFunction : BaseFunction
 	{
-		public List<VariableDeclaration> LocalVariables { get; private set; }
-		public List<Instruction> Instructions { get; private set; }
+        public Block Body { get; private set; }
 
-		public CompiledFunction (string name, CFunctionType functionType)
+        public List<VariableDeclaration> LocalVariables { get; private set; }
+        public List<Instruction> Instructions { get; private set; }
+
+        public CompiledFunction (string name, CFunctionType functionType, Block body = null)
 		{
 			Name = name;
 			FunctionType = functionType;
+            Body = body;
 			LocalVariables = new List<VariableDeclaration> ();
 			Instructions = new List<Instruction> ();
 		}
