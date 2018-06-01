@@ -42,7 +42,7 @@ namespace CLanguage.Tests
             //InternalFunctions.Add (new InternalFunction (this, "void SerialClass::setup (int baud)", Arduino.SerialSetup));
 		}
 
-		static void AssertAreEqual (ExecutionState state)
+		static void AssertAreEqual (CInterpreter state)
 		{
 			var expected = state.ActiveFrame.Args[0];
 			var actual = state.ActiveFrame.Args[1];
@@ -53,14 +53,14 @@ namespace CLanguage.Tests
         {
             public Pin[] Pins = Enumerable.Range (0, 32).Select (x => new Pin { Index = x }).ToArray ();
 
-            public void PinMode (ExecutionState state)
+            public void PinMode (CInterpreter state)
             {
                 var pin = state.ActiveFrame.Args[0];
                 var mode = state.ActiveFrame.Args[1];
                 Pins[pin].Mode = mode;
             }
 
-            public void SerialSetup (ExecutionState state)
+            public void SerialSetup (CInterpreter state)
             {
             }
 

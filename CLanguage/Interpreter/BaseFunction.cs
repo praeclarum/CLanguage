@@ -8,8 +8,8 @@ namespace CLanguage.Interpreter
 		public string Name { get; protected set; }
 		public CFunctionType FunctionType { get; protected set; }
 
-		public virtual void Init (ExecutionState state) {}
-		public abstract void Step (ExecutionState state);
+		public virtual void Init (CInterpreter state) {}
+		public abstract void Step (CInterpreter state);
 	}
 }
 

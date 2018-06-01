@@ -10,6 +10,7 @@
     <PackageLicenseUrl>https://github.com/praeclarum/CLanguage/blob/master/LICENSE</PackageLicenseUrl>
     <RepositoryUrl>https://github.com/praeclarum/CLanguage.git</RepositoryUrl>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 
   <ItemGroup>

@@ -38,12 +38,12 @@ namespace CLanguage.Interpreter
 			}
 		}
 
-		public override void Init (ExecutionState state)
+		public override void Init (CInterpreter state)
 		{
 			state.ActiveFrame.AllocateLocals (LocalVariables.Count);
 		}
 
-		public override void Step (ExecutionState state)
+		public override void Step (CInterpreter state)
 		{
 			var frame = state.ActiveFrame;
 			var ip = frame.IP;

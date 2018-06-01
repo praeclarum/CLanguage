@@ -3,7 +3,7 @@ using CLanguage.Parser;
 
 namespace CLanguage.Interpreter
 {
-	public delegate void InternalFunctionAction (ExecutionState state);
+	public delegate void InternalFunctionAction (CInterpreter state);
 
 	public class InternalFunction : BaseFunction
 	{
@@ -34,7 +34,7 @@ namespace CLanguage.Interpreter
 			return Name;
 		}
 
-		public override void Step (ExecutionState state)
+		public override void Step (CInterpreter state)
 		{
 			if (Action != null) {
 				Action (state);

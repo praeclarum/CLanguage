@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 
 using CLanguage.Types;
+using CLanguage.Interpreter;
 
 namespace CLanguage.Syntax
 {
@@ -12,33 +13,41 @@ namespace CLanguage.Syntax
         public Expression Array { get; private set; }
         public Expression ElementIndex { get; private set; }
 
-        public ArrayElementExpression(Expression array, Expression elementIndex)
+        public ArrayElementExpression (Expression array, Expression elementIndex)
         {
             Array = array;
             ElementIndex = elementIndex;
         }
 
-		public override CType GetEvaluatedCType (EmitContext ec)
+        public override CType GetEvaluatedCType (EmitContext ec)
         {
-            var a = Array.GetEvaluatedCType (ec) as CArrayType;
-            if (a != null)
-            {
+            var t = Array.GetEvaluatedCType (ec);
+            if (t is CArrayType a) {
                 return a.ElementType;
             }
-            else
-            {
+            else if (t is CPointerType p) {
+                return p.InnerType;
+            }
+            else {
+                ec.Report.Error (601, "Left hand side of [ must be an array or pointer");
                 return CType.Void;
             }
         }
 
-        protected override void DoEmit(EmitContext ec)
+        protected override void DoEmit (EmitContext ec)
         {
-            throw new NotImplementedException();
+            Array.Emit (ec);
+            ElementIndex.Emit (ec);
+            ec.Emit (OpCode.LoadValue, GetEvaluatedCType (ec).GetSize (ec));
+            ec.Emit (OpCode.MultiplyInt32);
+            ec.Emit (OpCode.AddInt32);
+            ec.Emit (OpCode.LoadMemory);
+            throw new NotImplementedException ();
         }
 
-        public override string ToString()
+        public override string ToString ()
         {
-            return string.Format("{0}[{1}]", Array, ElementIndex);
+            return string.Format ("{0}[{1}]", Array, ElementIndex);
         }
     }
 }
