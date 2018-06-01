@@ -6,41 +6,24 @@ using CLanguage.Types;
 
 namespace CLanguage.Syntax
 {
-    public class VariableDeclaration
-    {
-        public string Name { get; private set; }
-        public CType VariableType { get; private set; }
-
-        public VariableDeclaration(string name, CType type)
-        {
-            Name = name;
-            VariableType = type;
-        }
-
-        public override string ToString()
-        {
-            return string.Format("{0}: {1}", Name, VariableType);
-        }
-    }
-
-    public class ParameterDecl
+    public class ParameterDeclaration
     {
         public string Name { get; private set; }
         public DeclarationSpecifiers DeclarationSpecifiers { get; private set; }
         public Declarator Declarator { get; private set; }
 
-        public ParameterDecl (string name)
+        public ParameterDeclaration (string name)
         {
             Name = name;
         }
 
-        public ParameterDecl (DeclarationSpecifiers specs)
+        public ParameterDeclaration (DeclarationSpecifiers specs)
         {
             DeclarationSpecifiers = specs;
             Name = "";
         }
 
-        public ParameterDecl (DeclarationSpecifiers specs, Declarator dec)
+        public ParameterDeclaration (DeclarationSpecifiers specs, Declarator dec)
         {
             DeclarationSpecifiers = specs;
             Name = dec.DeclaredIdentifier;
@@ -48,7 +31,7 @@ namespace CLanguage.Syntax
         }
     }
 
-    public class VarParameter : ParameterDecl
+    public class VarParameter : ParameterDeclaration
     {
         public VarParameter ()
             : base ("...")

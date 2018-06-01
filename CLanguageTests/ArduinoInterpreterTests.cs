@@ -27,7 +27,7 @@ namespace CLanguage.Tests
         {
             var ec = new EmitContext (new ArduinoTestMachineInfo (), new Report (new TestPrinter ()));
 
-            VariableDeclaration ParseVariable (string code)
+            Interpreter.CompiledVariable ParseVariable (string code)
             {
                 var exe = Compile (code, MachineInfo.Windows32, new TestPrinter ());
                 return exe.Globals.Skip (1).First ();

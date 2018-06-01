@@ -11,7 +11,7 @@ namespace CLanguage.Interpreter
 	{
         public Block Body { get; private set; }
 
-        public List<VariableDeclaration> LocalVariables { get; private set; }
+        public List<CompiledVariable> LocalVariables { get; private set; }
         public List<Instruction> Instructions { get; private set; }
 
         public CompiledFunction (string name, CFunctionType functionType, Block body = null)
@@ -19,7 +19,7 @@ namespace CLanguage.Interpreter
 			Name = name;
 			FunctionType = functionType;
             Body = body;
-			LocalVariables = new List<VariableDeclaration> ();
+            LocalVariables = new List<CompiledVariable> ();
 			Instructions = new List<Instruction> ();
 		}
 

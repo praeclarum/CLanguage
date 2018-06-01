@@ -5,6 +5,7 @@ using CLanguage.Parser;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using static CLanguage.CLanguageService;
+using CLanguage.Interpreter;
 
 namespace CLanguage.Tests
 {
@@ -27,7 +28,7 @@ pinMode
 sleep(1000);
 }", new TestPrinter ());
 			}
-			catch {
+            catch {
 				failed = true;
 			}
 			if (!failed) {
@@ -38,7 +39,7 @@ sleep(1000);
 		[TestMethod]
 		public void ForLoopWithThreeInits ()
 		{
-            var tu = ParseTranslationUnit (@"
+            var exe = Compile (@"
 void f () {
 	int acc;
 	int i;
@@ -46,9 +47,8 @@ void f () {
 	for (i = -10, acc = 0, j = 42; i <= 10; i += 2) {
 		acc = acc + 1;
 	}
-	assertAreEqual (11, acc);
 }");
-			var f = tu.Functions.First (x => x.Name == "f");
+            var f = (CompiledFunction)exe.Functions.First (x => x.Name == "f");
 			var forS = (ForStatement)f.Body.Statements[0];
 			var init = forS.InitBlock;
 			Assert.AreEqual (init.Statements.Count, 1);

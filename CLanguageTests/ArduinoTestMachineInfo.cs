@@ -45,7 +45,7 @@ namespace CLanguage.Tests
 		{
 			var expected = state.ActiveFrame.Args[0];
 			var actual = state.ActiveFrame.Args[1];
-			Assert.AreEqual (actual, expected);
+            Assert.AreEqual (expected, actual);
 		}
 
         public class TestArduino

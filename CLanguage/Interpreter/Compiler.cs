@@ -48,7 +48,7 @@ namespace CLanguage.Interpreter
 			var exe = new Executable (context.MachineInfo);
 
 			// Put something at the zero address so we don't get 0 addresses of globals
-			exe.Globals.Add (new VariableDeclaration ("__zero__", CBasicType.SignedInt));
+			exe.Globals.Add (new CompiledVariable ("__zero__", CBasicType.SignedInt));
 
             // Find Variables, Functions, Types
             foreach (var tu in tus) {
@@ -149,7 +149,7 @@ namespace CLanguage.Interpreter
                                 }
                             }
                             //var init = GetInitExpression(idecl.Initializer);
-                            var vdecl = new VariableDeclaration (name, ctype);
+                            var vdecl = new CompiledVariable (name, ctype);
                             block.Variables.Add (vdecl);
                         }
 
@@ -367,9 +367,9 @@ namespace CLanguage.Interpreter
 			}
 			List<Block> blocks;
 			Dictionary<Block, BlockLocals> blockLocals;
-			List<VariableDeclaration> allLocals;
+			List<CompiledVariable> allLocals;
 
-			public IEnumerable<VariableDeclaration> LocalVariables { get { return allLocals; } }
+			public IEnumerable<CompiledVariable> LocalVariables { get { return allLocals; } }
 
 			public FunctionContext (Executable exe, CompiledFunction fexe, EmitContext context)
                 : base (context.MachineInfo, context.Report, fexe)
@@ -379,7 +379,7 @@ namespace CLanguage.Interpreter
 				this.context = context;
 				blocks = new List<Block> ();
 				blockLocals = new Dictionary<Block, BlockLocals> ();
-				allLocals = new List<VariableDeclaration> ();
+                allLocals = new List<CompiledVariable> ();
             }
 
             public override ResolvedVariable ResolveVariable (string name)

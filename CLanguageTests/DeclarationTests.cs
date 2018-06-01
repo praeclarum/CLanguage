@@ -17,7 +17,7 @@ namespace CLanguage.Tests
 	[TestClass]
     public class DeclarationTests
     {
-        List<VariableDeclaration> ParseVariables (string code)
+        List<CompiledVariable> ParseVariables (string code)
         {
             var exe = CLanguageService.Compile (code, MachineInfo.Windows32, new TestPrinter ());
             return exe.Globals.Skip (1).ToList (); // Skip __zero__

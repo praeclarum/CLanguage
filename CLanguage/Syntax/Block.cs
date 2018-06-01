@@ -13,7 +13,7 @@ namespace CLanguage.Syntax
         public List<Statement> Statements { get; private set; } = new List<Statement> ();
         public Location EndLocation { get; set; } = Location.Null;
 
-        public List<VariableDeclaration> Variables { get; private set; } = new List<VariableDeclaration> ();
+        public List<CompiledVariable> Variables { get; private set; } = new List<CompiledVariable> ();
         public List<CompiledFunction> Functions { get; private set; } = new List<CompiledFunction> ();
         public Dictionary<string, CType> Typedefs { get; private set; } = new Dictionary<string, CType> ();
 

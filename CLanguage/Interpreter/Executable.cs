@@ -12,13 +12,13 @@ namespace CLanguage.Interpreter
 		public MachineInfo MachineInfo { get; private set; }
 
 		public List<BaseFunction> Functions { get; private set; }
-		public List<VariableDeclaration> Globals { get; private set; }
+		public List<CompiledVariable> Globals { get; private set; }
 
 		public Executable (MachineInfo machineInfo)
 		{
 			MachineInfo = machineInfo;
 			Functions = new List<BaseFunction> ();
-			Globals = new List<VariableDeclaration> ();
+            Globals = new List<CompiledVariable> ();
 
 			Functions.AddRange (machineInfo.InternalFunctions.Cast<BaseFunction> ());
 		}

@@ -46,7 +46,7 @@ namespace CLanguage.Syntax
 
     public class FunctionDeclarator : Declarator
     {
-        public List<ParameterDecl> Parameters { get; set; }
+        public List<ParameterDeclaration> Parameters { get; set; }
 
         public override string DeclaredIdentifier {
             get {

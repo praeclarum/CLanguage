@@ -1540,7 +1540,7 @@ void case_151()
 {
 		var d = new FunctionDeclarator();
 		d.InnerDeclarator = (Declarator)yyVals[-3+yyTop];
-		d.Parameters = (List<ParameterDecl>)yyVals[-1+yyTop];
+		d.Parameters = (List<ParameterDeclaration>)yyVals[-1+yyTop];
 		yyVal = d;
 	}
 
@@ -1549,9 +1549,9 @@ void case_152()
 {
 		var d = new FunctionDeclarator();
 		d.InnerDeclarator = (Declarator)yyVals[-3+yyTop];
-		d.Parameters = new List<ParameterDecl>();
+		d.Parameters = new List<ParameterDeclaration>();
 		foreach (var n in (List<string>)yyVals[-1+yyTop]) {
-			d.Parameters.Add(new ParameterDecl(n));
+			d.Parameters.Add(new ParameterDeclaration(n));
 		}
 		yyVal = d;
 	}
@@ -1561,14 +1561,14 @@ void case_153()
 {
 		var d = new FunctionDeclarator();
 		d.InnerDeclarator = (Declarator)yyVals[-2+yyTop];
-		d.Parameters = new List<ParameterDecl>();
+		d.Parameters = new List<ParameterDeclaration>();
 		yyVal = d;
 	}
 
 void case_164()
 #line 619 "CParser.jay"
 {
-		var l = (List<ParameterDecl>)yyVals[-2+yyTop];
+		var l = (List<ParameterDeclaration>)yyVals[-2+yyTop];
 		l.Add(new VarParameter());
 		yyVal = l;
 	}
@@ -1576,37 +1576,37 @@ void case_164()
 void case_165()
 #line 628 "CParser.jay"
 {
-		var l = new List<ParameterDecl>();
-		l.Add((ParameterDecl)yyVals[0+yyTop]);
+		var l = new List<ParameterDeclaration>();
+		l.Add((ParameterDeclaration)yyVals[0+yyTop]);
 		yyVal = l;
 	}
 
 void case_166()
 #line 634 "CParser.jay"
 {
-		var l = (List<ParameterDecl>)yyVals[-2+yyTop];
-		l.Add((ParameterDecl)yyVals[0+yyTop]);
+		var l = (List<ParameterDeclaration>)yyVals[-2+yyTop];
+		l.Add((ParameterDeclaration)yyVals[0+yyTop]);
 		yyVal = l;
 	}
 
 void case_167()
 #line 643 "CParser.jay"
 {
-		var p = new ParameterDecl((DeclarationSpecifiers)yyVals[-1+yyTop], (Declarator)yyVals[0+yyTop]);
+		var p = new ParameterDeclaration((DeclarationSpecifiers)yyVals[-1+yyTop], (Declarator)yyVals[0+yyTop]);
 		yyVal = p;
 	}
 
 void case_168()
 #line 648 "CParser.jay"
 {
-		var p = new ParameterDecl((DeclarationSpecifiers)yyVals[-1+yyTop], (Declarator)yyVals[0+yyTop]);
+		var p = new ParameterDeclaration((DeclarationSpecifiers)yyVals[-1+yyTop], (Declarator)yyVals[0+yyTop]);
 		yyVal = p;
 	}
 
 void case_169()
 #line 653 "CParser.jay"
 {
-		var p = new ParameterDecl((DeclarationSpecifiers)yyVals[0+yyTop]);
+		var p = new ParameterDeclaration((DeclarationSpecifiers)yyVals[0+yyTop]);
 		yyVal = p;
 	}
 
@@ -1645,7 +1645,7 @@ void case_184()
 {
 		var d = new FunctionDeclarator();
 		d.InnerDeclarator = (Declarator)yyVals[-1+yyTop];
-		d.Parameters = new List<ParameterDecl>();
+		d.Parameters = new List<ParameterDeclaration>();
 		yyVal = d;
 	}
 
@@ -1653,7 +1653,7 @@ void case_185()
 #line 730 "CParser.jay"
 {
 		var d = new FunctionDeclarator();
-		d.Parameters = (List<ParameterDecl>)yyVals[-1+yyTop];
+		d.Parameters = (List<ParameterDeclaration>)yyVals[-1+yyTop];
 		yyVal = d;
 	}
 
@@ -1662,7 +1662,7 @@ void case_186()
 {
 		var d = new FunctionDeclarator();
 		d.InnerDeclarator = (Declarator)yyVals[-2+yyTop];
-		d.Parameters = new List<ParameterDecl> ();
+		d.Parameters = new List<ParameterDeclaration> ();
 		yyVal = d;
 	}
 
@@ -1671,7 +1671,7 @@ void case_187()
 {
 		var d = new FunctionDeclarator();
 		d.InnerDeclarator = (Declarator)yyVals[-3+yyTop];
-		d.Parameters = (List<ParameterDecl>)yyVals[-1+yyTop];
+		d.Parameters = (List<ParameterDeclaration>)yyVals[-1+yyTop];
 		yyVal = d;
 	}
 
