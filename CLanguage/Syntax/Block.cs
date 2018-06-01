@@ -8,30 +8,35 @@ namespace CLanguage.Syntax
 {
     public class Block : Statement
     {
-		public string LocalSymbolName { get; set; }
-		
-        public Block Parent { get; set; }
-        public Location StartLocation { get; private set; }
-        public Location EndLocation { get; set; }
+        public Location StartLocation { get; private set; } = Location.Null;
+        public List<Statement> Statements { get; private set; } = new List<Statement> ();
+        public Location EndLocation { get; set; } = Location.Null;
 
-        public List<Declaration> Declarations { get; private set; }
-        public List<VariableDeclaration> Variables { get; private set; }
-        public List<FunctionDeclaration> Functions { get; private set; }
-        public Dictionary<string, CType> Typedefs { get; private set; }
+        public List<VariableDeclaration> Variables { get; private set; } = new List<VariableDeclaration> ();
+        public List<FunctionDeclaration> Functions { get; private set; } = new List<FunctionDeclaration> ();
+        public Dictionary<string, CType> Typedefs { get; private set; } = new Dictionary<string, CType> ();
 
-        public List<Statement> Statements { get; private set; }        
+        public Block ()
+        {
+        }
+
+        public Block (Location startLoc, List<Statement> statements, Location endLoc)
+        {
+            StartLocation = startLoc;
+            Statements.AddRange (statements);
+            EndLocation = endLoc;
+        }
+
+        public Block (Location startLoc, Location endLoc)
+        {
+            StartLocation = startLoc;
+            EndLocation = endLoc;
+        }
 
         public Block(Block parent, Location startLoc)
         {
-            Parent = parent;
             StartLocation = startLoc;
             EndLocation = Location.Null;
-
-            Typedefs = new Dictionary<string, CType>();
-            Declarations = new List<Declaration>();
-            Variables = new List<VariableDeclaration>();
-            Functions = new List<FunctionDeclaration>();
-            Statements = new List<Statement>();
         }
 
         public void AddStatement(Statement stmt)
@@ -41,22 +46,23 @@ namespace CLanguage.Syntax
 
         public void AddVariable(VariableDeclaration dec)
         {
-            Declarations.Add(dec);
             Variables.Add(dec);
         }
 
         public void AddFunction(FunctionDeclaration dec)
         {
-            Declarations.Add(dec);
             Functions.Add(dec);
         }
 
         protected override void DoEmit(EmitContext ec)
         {
             ec.BeginBlock(this);
-            foreach (var dec in Declarations)
+            foreach (var dec in Variables)
             {
                 dec.Emit(ec);
+            }
+            foreach (var dec in Functions) {
+                dec.Emit (ec);
             }
             foreach (var stmt in Statements)
             {

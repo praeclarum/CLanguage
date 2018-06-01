@@ -326,13 +326,13 @@ constant_expression
 declaration
 	: declaration_specifiers ';'
 	{
-		var d = new MultiDeclaration();
+		var d = new MultiDeclaratorStatement ();
 		d.Specifiers = (DeclarationSpecifiers)$1;
 		$$ = d;
 	}
 	| declaration_specifiers init_declarator_list ';'
 	{
-		var d = new MultiDeclaration();
+		var d = new MultiDeclaratorStatement ();
 		d.Specifiers = (DeclarationSpecifiers)$1;
 		d.InitDeclarators = (List<InitDeclarator>)$2;
 		$$ = d;
@@ -448,8 +448,8 @@ type_specifier
 	;
 
 struct_or_union_specifier
-	: struct_or_union IDENTIFIER '{' struct_declaration_list '}'
-	| struct_or_union '{' struct_declaration_list '}'
+	: struct_or_union IDENTIFIER '{' struct_declaration_list '}' { $$ = new TypeSpecifier((TypeSpecifierKind)$1, ($2).ToString()); }
+	| struct_or_union '{' struct_declaration_list '}' { $$ = new TypeSpecifier((TypeSpecifierKind)$1, ""); }
 	| struct_or_union IDENTIFIER { $$ = new TypeSpecifier((TypeSpecifierKind)$1, ($2).ToString()); }
 	;
 
@@ -829,33 +829,24 @@ labeled_statement
 	;
 
 compound_statement
-	: '{' { StartBlock(GetLocation($1)); } '}'
+	: '{' '}'
 	{
-		$$ = EndBlock(GetLocation($3));
+		$$ = new Block (GetLocation($1), GetLocation($2));
 	}
-	| '{' { StartBlock(GetLocation($1)); } block_item_list '}'
+	| '{' block_item_list '}'
 	{
-		$$ = EndBlock(GetLocation($4));
+        $$ = new Block (GetLocation($1), (List<Statement>)$2, GetLocation($3));
 	}
 	;
 
 block_item_list
-	: block_item
-	| block_item_list block_item
+	: block_item                 { $$ = new List<Statement> (1) { (Statement)$1 }; }
+	| block_item_list block_item { ((List<Statement>)$1).Insert (0, (Statement)$2); $$ = $1; }
 	;
 
 block_item
 	: declaration
-	{
-		AddDeclaration($1, _currentBlock);
-		$$ = null;
-	}
 	| statement
-	{
-		if ($$ != null) {
-			_currentBlock.AddStatement((Statement)$1);
-		}
-	}
 	;
 
 expression_statement
@@ -892,23 +883,19 @@ iteration_statement
 	}
 	| FOR '(' expression_statement expression_statement ')' statement
 	{
-		$$ = new ForStatement((ExpressionStatement)$3, ((ExpressionStatement)$4).Expression, (Statement)$6, _currentBlock, GetLocation($1), GetLocation($6));
+		$$ = new ForStatement((Statement)$3, ((ExpressionStatement)$4).Expression, (Statement)$6, null, GetLocation($1), GetLocation($6));
 	}
 	| FOR '(' expression_statement expression_statement expression ')' statement
 	{
-		$$ = new ForStatement((ExpressionStatement)$3, ((ExpressionStatement)$4).Expression, (Expression)$5, (Statement)$7, _currentBlock, GetLocation($1), GetLocation($7));
+		$$ = new ForStatement((Statement)$3, ((ExpressionStatement)$4).Expression, (Expression)$5, (Statement)$7, null, GetLocation($1), GetLocation($7));
 	}
-	| FOR '(' declaration expression_statement ')' { StartBlock(GetLocation($1)); } statement
+	| FOR '(' declaration expression_statement ')' statement
 	{
-		AddDeclaration($3, _currentBlock);
-		var b = EndBlock(GetLocation($7));		
-		$$ = new ForStatement(b, ((ExpressionStatement)$4).Expression, (Statement)$7);
+		$$ = new ForStatement((Statement)$3, ((ExpressionStatement)$4).Expression, (Statement)$6);
 	}
-	| FOR '(' declaration expression_statement expression ')' { StartBlock(GetLocation($1)); } statement
+	| FOR '(' declaration expression_statement expression ')' statement
 	{
-		AddDeclaration($3, _currentBlock);
-		var b = EndBlock(GetLocation($7));		
-		$$ = new ForStatement(b, ((ExpressionStatement)$4).Expression, (Expression)$5, (Statement)$8);
+		$$ = new ForStatement((Statement)$3, ((ExpressionStatement)$4).Expression, (Expression)$5, (Statement)$7);
 	}
 	;
 

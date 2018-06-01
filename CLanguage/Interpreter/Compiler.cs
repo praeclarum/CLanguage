@@ -37,6 +37,8 @@ namespace CLanguage.Interpreter
 
 			foreach (var tu in tus) {
 
+                AddStatementDeclarations (tu);
+
 				exe.Globals.AddRange (tu.Variables);
 
 				foreach (var fdecl in tu.Functions) {
@@ -88,6 +90,281 @@ namespace CLanguage.Interpreter
             var parser = new CParser ();
             Add (parser.ParseTranslationUnit (lexer));
         }
+
+        void AddStatementDeclarations (Block block)
+        {
+            var inits = new List<Statement> ();
+            foreach (var s in block.Statements) {
+                var init = AddStatementDeclarations (s, block);
+                if (init != null)
+                    inits.Add (init);
+            }
+            for (int i = 0; i < inits.Count; i++) {
+                block.Statements.Insert (i, inits[i]);
+            }
+        }
+
+        Statement AddStatementDeclarations (Statement a, Block block)
+        {
+            Statement initStatement = null;
+
+            if (a is MultiDeclaratorStatement multi) {
+                foreach (var idecl in multi.InitDeclarators) {
+                    if ((multi.Specifiers.StorageClassSpecifier & StorageClassSpecifier.Typedef) != 0) {
+                        if (idecl.Declarator != null) {
+                            var name = idecl.Declarator.DeclaredIdentifier;
+                            //Typedefs[name] = decl;
+                        }
+                    }
+                    else {
+                        var ctype = MakeCType (multi.Specifiers, idecl.Declarator);
+                        var name = idecl.Declarator.DeclaredIdentifier;
+
+                        if (ctype is CFunctionType && !HasStronglyBoundPointer (idecl.Declarator)) {
+                            var ftype = (CFunctionType)ctype;
+                            var f = new FunctionDeclaration (name, ftype);
+
+                            for (var i = 0; i < ftype.Parameters.Count; i++) {
+                                f.ParameterInfos[i].Name = ftype.Parameters[i].Name;
+                            }
+
+                            block.AddFunction (f);
+                        }
+                        else {
+                            if ((ctype is CArrayType) &&
+                                (((CArrayType)ctype).LengthExpression == null) &&
+                                (idecl.Initializer != null)) {
+                                if (idecl.Initializer is StructuredInitializer) {
+                                    var atype = (CArrayType)ctype;
+                                    var len = 0;
+                                    foreach (var i in ((StructuredInitializer)idecl.Initializer).Initializers) {
+                                        if (i.Designation == null) {
+                                            len++;
+                                        }
+                                        else {
+                                            foreach (var de in i.Designation.Designators) {
+                                                // TODO: Pay attention to designators
+                                                len++;
+                                            }
+                                        }
+                                    }
+                                    atype.LengthExpression = new ConstantExpression (len);
+                                }
+                                else {
+                                    //Report.Error();
+                                }
+                            }
+                            //var init = GetInitExpression(idecl.Initializer);
+                            var vdecl = new VariableDeclaration (name, ctype);
+                            block.AddVariable (vdecl);
+                        }
+
+                        if (idecl.Initializer != null) {
+                            var varExpr = new VariableExpression (name);
+                            var initExpr = GetInitializerExpression (idecl.Initializer);
+                            initStatement = new ExpressionStatement (new AssignExpression (varExpr, initExpr));
+                        }
+                    }
+                }
+            }
+            else if (a is FunctionDefinition fdef) {
+
+                var ftype = (CFunctionType)MakeCType (fdef.Specifiers, fdef.Declarator);
+                var name = fdef.Declarator.DeclaredIdentifier;
+
+                var f = new FunctionDeclaration (name, ftype);
+
+                for (var i = 0; i < ftype.Parameters.Count; i++) {
+                    f.ParameterInfos[i].Name = ftype.Parameters[i].Name;
+                }
+
+                f.Body = fdef.Body;
+
+                block.AddFunction (f);
+            }
+
+            return initStatement;
+        }
+
+        Expression GetInitializerExpression (Initializer init)
+        {
+            if (init is ExpressionInitializer) {
+                return ((ExpressionInitializer)init).Expression;
+            }
+            else if (init is StructuredInitializer) {
+                var sinit = (StructuredInitializer)init;
+
+                var sexpr = new StructureExpression ();
+
+                foreach (var i in sinit.Initializers) {
+                    var e = GetInitializerExpression (i);
+
+                    if (i.Designation == null || i.Designation.Designators.Count == 0) {
+                        var ie = new StructureExpression.Item ();
+                        ie.Expression = GetInitializerExpression (i);
+                        sexpr.Items.Add (ie);
+                    }
+                    else {
+
+                        foreach (var d in i.Designation.Designators) {
+                            var ie = new StructureExpression.Item ();
+                            ie.Field = d.ToString ();
+                            ie.Expression = e;
+                            sexpr.Items.Add (ie);
+                        }
+                    }
+                }
+
+                return sexpr;
+            }
+            else {
+                throw new NotSupportedException (init.ToString ());
+            }
+        }
+
+        FunctionDeclarator GetFunctionDeclarator (Declarator d)
+        {
+            if (d == null) return null;
+            else if (d is FunctionDeclarator) return (FunctionDeclarator)d;
+            else return GetFunctionDeclarator (d.InnerDeclarator);
+        }
+
+        bool HasStronglyBoundPointer (Declarator d)
+        {
+            if (d == null) return false;
+            else if (d is PointerDeclarator && ((PointerDeclarator)d).StrongBinding) return true;
+            else return HasStronglyBoundPointer (d.InnerDeclarator);
+        }
+
+        CType MakeCType (DeclarationSpecifiers specs, Declarator decl)
+        {
+            var type = MakeCType (specs);
+            return MakeCType (type, decl);
+        }
+
+        CType MakeCType (CType type, Declarator decl)
+        {
+            if (decl is IdentifierDeclarator) {
+                // This is the name
+            }
+            else if (decl is PointerDeclarator) {
+                var pdecl = (PointerDeclarator)decl;
+                var isPointerToFunc = false;
+
+                if (pdecl.StrongBinding) {
+                    type = MakeCType (type, pdecl.InnerDeclarator);
+                    isPointerToFunc = type is CFunctionType;
+                }
+
+                var p = pdecl.Pointer;
+                while (p != null) {
+                    type = new CPointerType (type);
+                    type.TypeQualifiers = p.TypeQualifiers;
+                    p = p.NextPointer;
+                }
+
+                if (!pdecl.StrongBinding) {
+                    type = MakeCType (type, pdecl.InnerDeclarator);
+                }
+
+                //
+                // Remove 1 level of pointer indirection if this is
+                // a pointer to a function since functions are themselves
+                // pointers
+                //
+                if (isPointerToFunc) {
+                    type = ((CPointerType)type).InnerType;
+                }
+            }
+            else if (decl is ArrayDeclarator) {
+                var adecl = (ArrayDeclarator)decl;
+
+                while (adecl != null) {
+                    type = new CArrayType (type, adecl.LengthExpression);
+                    adecl = adecl.InnerDeclarator as ArrayDeclarator;
+                    if (adecl != null && adecl.InnerDeclarator != null) {
+                        if (adecl.InnerDeclarator is IdentifierDeclarator) {
+                        }
+                        else if (!(adecl.InnerDeclarator is ArrayDeclarator)) {
+                            type = MakeCType (type, adecl.InnerDeclarator);
+                        }
+                        else {
+                            //throw new NotSupportedException("Unrecognized array syntax");
+                        }
+                    }
+                }
+            }
+            else if (decl is FunctionDeclarator) {
+                type = MakeCFunctionType (type, decl);
+            }
+
+            return type;
+        }
+
+        private CType MakeCFunctionType (CType type, Declarator decl)
+        {
+            var fdecl = (FunctionDeclarator)decl;
+
+            var name = decl.DeclaredIdentifier;
+            var returnType = type;
+            var ftype = new CFunctionType (returnType);
+            foreach (var pdecl in fdecl.Parameters) {
+                var pt = MakeCType (pdecl.DeclarationSpecifiers, pdecl.Declarator);
+                if (!pt.IsVoid) {
+                    ftype.Parameters.Add (new CFunctionType.Parameter (pdecl.Name, pt));
+                }
+            }
+            type = ftype;
+
+            type = MakeCType (type, fdecl.InnerDeclarator);
+
+            return type;
+        }
+
+        CType MakeCType (DeclarationSpecifiers specs)
+        {
+            //
+            // Try for Basic. The TypeSpecifiers are recorded in reverse from what is actually declared
+            // in code.
+            //
+            var basicTs = specs.TypeSpecifiers.FirstOrDefault (x => x.Kind == TypeSpecifierKind.Builtin);
+            if (basicTs != null) {
+                if (basicTs.Name == "void") {
+                    return CType.Void;
+                }
+                else {
+                    var sign = Signedness.Signed;
+                    var size = "";
+                    TypeSpecifier trueTs = null;
+
+                    foreach (var ts in specs.TypeSpecifiers) {
+                        if (ts.Name == "unsigned") {
+                            sign = Signedness.Unsigned;
+                        }
+                        else if (ts.Name == "signed") {
+                            sign = Signedness.Signed;
+                        }
+                        else if (ts.Name == "short" || ts.Name == "long") {
+                            if (size.Length == 0) size = ts.Name;
+                            else size = size + " " + ts.Name;
+                        }
+                        else {
+                            trueTs = ts;
+                        }
+                    }
+
+                    var type = new CBasicType (trueTs == null ? "int" : trueTs.Name, sign, size);
+                    type.TypeQualifiers = specs.TypeQualifiers;
+                    return type;
+                }
+            }
+
+            //
+            // Rest
+            //
+            throw new NotImplementedException ();
+        }
+
 
         class FunctionContext : EmitContext
         {

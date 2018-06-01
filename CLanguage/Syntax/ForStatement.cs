@@ -14,50 +14,38 @@ namespace CLanguage.Syntax
         public Expression NextExpression { get; private set; }
         public Statement LoopBody { get; private set; }
 
-        public ForStatement(Block decls, Expression continueExpr, Statement body)
+        public ForStatement (Statement initStatement, Expression continueExpr, Statement body)
         {
-            InitBlock = decls;
+            InitBlock = new Block ();
+            InitBlock.Statements.Add (initStatement);
             ContinueExpression = continueExpr;
             LoopBody = body;
         }
 
-        public ForStatement(Block decls, Expression continueExpr, Expression nextExpr, Statement body)
+        public ForStatement (Statement initStatement, Expression continueExpr, Expression nextExpr, Statement body)
         {
-            InitBlock = decls;
+            InitBlock = new Block ();
+            InitBlock.Statements.Add (initStatement);
             ContinueExpression = continueExpr;
             NextExpression = nextExpr;
             LoopBody = body;
         }
 
-	    public ForStatement(ExpressionStatement initStatement, Expression continueExpr, Statement body, Block parent, Location startLoc, Location endLoc)
+	    public ForStatement(Statement initStatement, Expression continueExpr, Statement body, Block parent, Location startLoc, Location endLoc)
         {
-            InitBlock = new Block(parent, startLoc)
-            {
-                EndLocation = endLoc
-            };
+            InitBlock = new Block(startLoc, endLoc);
 			InitBlock.Statements.Add (initStatement);
             ContinueExpression = continueExpr;
             LoopBody = body;
-            if (LoopBody is Block)
-            {
-                ((Block)LoopBody).Parent = InitBlock;
-            }
         }
 
-		public ForStatement(ExpressionStatement initStatement, Expression continueExpr, Expression nextExpr, Statement body, Block parent, Location startLoc, Location endLoc)
+		public ForStatement(Statement initStatement, Expression continueExpr, Expression nextExpr, Statement body, Block parent, Location startLoc, Location endLoc)
         {
-            InitBlock = new Block(parent, startLoc)
-            {
-                EndLocation = endLoc
-            };
+            InitBlock = new Block(startLoc, endLoc);
 			InitBlock.Statements.Add (initStatement);
             ContinueExpression = continueExpr;
             NextExpression = nextExpr;
             LoopBody = body;
-            if (LoopBody is Block)
-            {
-                ((Block)LoopBody).Parent = InitBlock;
-            }
         }
 
         protected override void DoEmit (EmitContext ec)
@@ -80,10 +68,6 @@ namespace CLanguage.Syntax
 			ec.EmitLabel (endLabel);
         }
 
-		public override bool AlwaysReturns {
-			get {
-				return false;
-			}
-		}
+        public override bool AlwaysReturns => false;
     }
 }

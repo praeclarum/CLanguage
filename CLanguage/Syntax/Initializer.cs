@@ -48,11 +48,6 @@ namespace CLanguage.Syntax
 
     }
 
-    public class InitDeclarator
-    {
-        public Declarator Declarator;
-        public Initializer Initializer;
-    }
 
 
 }

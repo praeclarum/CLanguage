@@ -7,10 +7,9 @@ namespace CLanguage.Syntax
 {
     public class TranslationUnit : Block
     {
-        public TranslationUnit()
-            : base(null, Location.Null)
+        public TranslationUnit ()
+            : base (Location.Null, Location.Null)
         {
-			LocalSymbolName = "_";
         }
     }
 }

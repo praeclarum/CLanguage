@@ -29,8 +29,8 @@ namespace CLanguage.Tests
 
             VariableDeclaration ParseVariable (string code)
             {
-                var tu = ParseTranslationUnit (code);
-                return tu.Variables.First ();
+                var exe = Compile (code, MachineInfo.Windows32, new TestPrinter ());
+                return exe.Globals.Skip (1).First ();
             }
 
             var charV = ParseVariable ("char v;");

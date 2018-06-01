@@ -33,12 +33,12 @@ namespace CLanguage.Tests
 //struct SerialClass Serial;
 ";
 
-            InternalFunctions.Add (new InternalFunction ("void pinMode (int pin, int mode)", Arduino.PinMode));
-            InternalFunctions.Add (new InternalFunction ("void digitalWrite (int pin, int value)"));
-            InternalFunctions.Add (new InternalFunction ("void analogWrite (int pin, int value)"));
-            InternalFunctions.Add (new InternalFunction ("void delay (unsigned long ms)"));
-			InternalFunctions.Add (new InternalFunction ("void assertAreEqual (int expected, int actual)", AssertAreEqual));
-            //InternalFunctions.Add (new InternalFunction ("void SerialClass::setup (int baud)", Arduino.SerialSetup));
+            InternalFunctions.Add (new InternalFunction (this, "void pinMode (int pin, int mode)", Arduino.PinMode));
+            InternalFunctions.Add (new InternalFunction (this, "void digitalWrite (int pin, int value)"));
+            InternalFunctions.Add (new InternalFunction (this, "void analogWrite (int pin, int value)"));
+            InternalFunctions.Add (new InternalFunction (this, "void delay (unsigned long ms)"));
+            InternalFunctions.Add (new InternalFunction (this, "void assertAreEqual (int expected, int actual)", AssertAreEqual));
+            //InternalFunctions.Add (new InternalFunction (this, "void SerialClass::setup (int baud)", Arduino.SerialSetup));
 		}
 
 		static void AssertAreEqual (ExecutionState state)

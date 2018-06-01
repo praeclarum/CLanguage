@@ -28,56 +28,6 @@ namespace CLanguage.Syntax
         }
     }
 
-    public enum TypeSpecifierKind
-    {
-        Builtin,
-        Typename,
-        Struct,
-        Class,
-        Union,
-        Enum
-    }
-
-    public class TypeSpecifier
-    {
-        public TypeSpecifierKind Kind { get; private set; }
-        public string Name { get; private set; }
-
-        public TypeSpecifier (TypeSpecifierKind kind, string name)
-        {
-            Kind = kind;
-            Name = name;
-        }
-
-        public override string ToString ()
-        {
-            return Name;
-        }
-    }
-
-    [Flags]
-    public enum StorageClassSpecifier
-    {
-        None = 0,
-        Typedef = 1,
-        Extern = 2,
-        Static = 4,
-        Auto = 8,
-        Register = 16
-    }
-
-    public class DeclarationSpecifiers
-    {
-        public StorageClassSpecifier StorageClassSpecifier { get; set; }
-        public List<TypeSpecifier> TypeSpecifiers { get; private set; }
-        public FunctionSpecifier FunctionSpecifier { get; set; }
-        public TypeQualifiers TypeQualifiers { get; set; }
-        public DeclarationSpecifiers ()
-        {
-            TypeSpecifiers = new List<TypeSpecifier> ();
-        }
-    }
-
     public class ParameterDecl
     {
         public string Name { get; private set; }
@@ -108,27 +58,6 @@ namespace CLanguage.Syntax
         public VarParameter ()
             : base ("...")
         {
-        }
-    }
-
-    public class FunctionDefinition
-    {
-        public DeclarationSpecifiers Specifiers { get; set; }
-        public Declarator Declarator { get; set; }
-        public List<Declaration> ParameterDeclarations { get; set; }
-        public Block Body { get; set; }
-    }
-
-    public class ArrayDeclarator : Declarator
-    {
-        public Expression LengthExpression { get; set; }
-        public TypeQualifiers TypeQualifiers { get; set; }
-        public bool LengthIsStatic { get; set; }
-
-        public override string DeclaredIdentifier {
-            get {
-                return (InnerDeclarator != null) ? InnerDeclarator.DeclaredIdentifier : "";
-            }
         }
     }
 

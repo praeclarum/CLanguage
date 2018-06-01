@@ -13,9 +13,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Ast\" />
-    <Folder Include="Types\" />
     <Folder Include="Interpreter\" />
     <Folder Include="Parser\" />
+    <Folder Include="Syntax\" />
+    <Folder Include="Types\" />
   </ItemGroup>
 </Project>

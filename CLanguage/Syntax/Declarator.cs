@@ -31,6 +31,19 @@ namespace CLanguage.Syntax
         }
     }
 
+    public class ArrayDeclarator : Declarator
+    {
+        public Expression LengthExpression { get; set; }
+        public TypeQualifiers TypeQualifiers { get; set; }
+        public bool LengthIsStatic { get; set; }
+
+        public override string DeclaredIdentifier {
+            get {
+                return (InnerDeclarator != null) ? InnerDeclarator.DeclaredIdentifier : "";
+            }
+        }
+    }
+
     public class FunctionDeclarator : Declarator
     {
         public List<ParameterDecl> Parameters { get; set; }
@@ -75,5 +88,4 @@ namespace CLanguage.Syntax
             InnerDeclarator = decl;
         }
     }
-
 }
