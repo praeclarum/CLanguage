@@ -17,8 +17,9 @@ namespace CLanguage.Tests
         ArduinoTestMachineInfo.TestArduino Run (string code)
         {
             var machine = new ArduinoTestMachineInfo ();
-            var i = CLanguageService.CreateInterpreter (code, machine, new TestPrinter ());
-            i.Reset ("setup");
+            var fullCode = code + "\n\nvoid main() { setup(); while(1){loop();}}";
+            var i = CLanguageService.CreateInterpreter (fullCode, machine, new TestPrinter ());
+            i.Reset ("main");
             i.Step ();
             return machine.Arduino;
         }
@@ -94,6 +95,25 @@ void loop() {
 }
 ";
             var arduino = Run (code);
+        }
+
+        [TestMethod]
+        public void DigitalRead ()
+        {
+            var code = @"
+void setup() {
+  pinMode(2, INPUT);
+  pinMode(3, OUTPUT);
+}
+
+void loop() {
+  int sensorValue = digitalRead(2);
+  digitalWrite(3, sensorValue);
+}
+";
+            var arduino = Run (code);
+            Assert.AreEqual (0, arduino.Pins[2].Mode);
+            Assert.AreEqual (1, arduino.Pins[3].Mode);
         }
 
         public const string FadeCode = @"

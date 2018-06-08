@@ -55,6 +55,11 @@ namespace CLanguage.Interpreter
             function.Init (this);
         }
 
+        public void Push (ValueType value)
+        {
+            Stack[SP++] = value;
+        }
+
         public void Return ()
         {
             FP--;

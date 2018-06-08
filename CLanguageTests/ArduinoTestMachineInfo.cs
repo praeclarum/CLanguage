@@ -33,13 +33,14 @@ namespace CLanguage.Tests
 //struct SerialClass Serial;
 ";
 
-            InternalFunctions.Add (new InternalFunction (this, "void pinMode (int pin, int mode)", Arduino.PinMode));
-            InternalFunctions.Add (new InternalFunction (this, "void digitalWrite (int pin, int value)"));
-            InternalFunctions.Add (new InternalFunction (this, "void analogWrite (int pin, int value)"));
-            InternalFunctions.Add (new InternalFunction (this, "void delay (unsigned long ms)"));
-            InternalFunctions.Add (new InternalFunction (this, "void tone (int pin, int note, int duration)"));
-            InternalFunctions.Add (new InternalFunction (this, "void assertAreEqual (int expected, int actual)", AssertAreEqual));
-            //InternalFunctions.Add (new InternalFunction (this, "void SerialClass::setup (int baud)", Arduino.SerialSetup));
+            AddInternalFunction ("void pinMode (int pin, int mode)", Arduino.PinMode);
+            AddInternalFunction ("void digitalWrite (int pin, int value)", Arduino.DigitalWrite);
+            AddInternalFunction ("int digitalRead (int pin)", Arduino.DigitalRead);
+            AddInternalFunction ("void analogWrite (int pin, int value)");
+            AddInternalFunction ("void delay (unsigned long ms)");
+            AddInternalFunction ("void tone (int pin, int note, int duration)");
+            AddInternalFunction ("void assertAreEqual (int expected, int actual)", AssertAreEqual);
+            //AddInternalFunction ("void SerialClass::setup (int baud)", Arduino.SerialSetup);
 		}
 
 		static void AssertAreEqual (CInterpreter state)
@@ -60,6 +61,20 @@ namespace CLanguage.Tests
                 Pins[pin].Mode = mode;
             }
 
+            public void DigitalRead (CInterpreter state)
+            {
+                var pin = state.ActiveFrame.Args[0];
+                var value = Pins[pin].DigitalValue;
+                state.Push (value);
+            }
+
+            public void DigitalWrite (CInterpreter state)
+            {
+                var pin = state.ActiveFrame.Args[0];
+                var value = state.ActiveFrame.Args[1];
+                Pins[pin].DigitalValue = value;
+            }
+
             public void SerialSetup (CInterpreter state)
             {
             }
@@ -68,6 +83,7 @@ namespace CLanguage.Tests
             {
                 public int Index;
                 public int Mode;
+                public int DigitalValue;
             }
         }
 	}

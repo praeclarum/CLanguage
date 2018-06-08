@@ -30,6 +30,11 @@ namespace CLanguage
 			HeaderCode = "";
 		}
 
+        public void AddInternalFunction (string prototype, InternalFunctionAction action = null)
+        {
+            InternalFunctions.Add (new InternalFunction (this, prototype, action));
+        }
+
         public static readonly MachineInfo Windows32 = new MachineInfo
         {
             CharSize = 1,
