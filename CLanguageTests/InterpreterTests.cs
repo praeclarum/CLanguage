@@ -204,6 +204,21 @@ void main () {
             i.Reset ("main");
             i.Step ();
         }
+
+        [TestMethod]
+        public void AddressOfGlobal ()
+        {
+            var i = Compile (@"
+int a = 0;
+void main () {
+    int *pa = &a;
+    assertAreEqual (0, *pa);
+    a = *pa + 1;
+    assertAreEqual (1, *pa);
+}");
+            i.Reset ("main");
+            i.Step ();
+        }
 	}
 }
 

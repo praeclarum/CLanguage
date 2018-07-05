@@ -59,6 +59,8 @@ namespace CLanguage.Interpreter
 
 				var i = Instructions[ip];
 
+                Console.WriteLine (i);
+
 				switch (i.Op) {
 				case OpCode.Dup:
 					state.Stack[state.SP] = state.Stack[state.SP - 1];
@@ -109,7 +111,7 @@ namespace CLanguage.Interpreter
 					ip++;
 					break;
                 case OpCode.LoadMemoryIndirect:
-                    state.Stack[state.SP] = state.Stack[state.Stack[state.SP]];
+                    state.Stack[state.SP - 1] = state.Stack[state.Stack[state.SP - 1]];
                     ip++;
                     break;
 				case OpCode.StoreMemory:

@@ -15,14 +15,20 @@ namespace CLanguage.Syntax
 
         public override CType GetEvaluatedCType (EmitContext ec)
         {
-            return InnerExpression.GetEvaluatedCType (ec);
+            var it = InnerExpression.GetEvaluatedCType (ec);
+            if (it is CPointerType pointerType) {
+                return pointerType.InnerType;
+            }
+            else {
+                ec.Report.Error (0, $"Cannot dereference values of type `{it}`.");
+                return CBasicType.SignedInt;
+            }
         }
 
         protected override void DoEmit (EmitContext ec)
         {
             InnerExpression.Emit (ec);
-            ec.Emit (OpCode.LoadMemory, 0);
-            throw new NotImplementedException ();
+            ec.Emit (OpCode.LoadMemoryIndirect);
         }
     }
 }

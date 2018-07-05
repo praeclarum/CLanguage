@@ -38,12 +38,8 @@ namespace CLanguage.Syntax
 					ec.Emit (OpCode.LoadFunction, variable.Index);
 				}
 				else {
-                    if (variable.VariableType is CBasicType basicType) {
-
-                        var size = basicType.GetSize (ec);
-                        if (size > 4 || basicType.Equals (CBasicType.Double)) {
-                            throw new NotSupportedException ("Cannot evaluate variable type '" + variable.VariableType + "'");
-                        }
+                    if (variable.VariableType is CBasicType ||
+                        variable.VariableType is CPointerType) {
 
                         if (variable.Scope == VariableScope.Arg) {
                             ec.Emit (OpCode.LoadArg, variable.Index);
@@ -57,9 +53,6 @@ namespace CLanguage.Syntax
                         else {
                             throw new NotSupportedException ("Cannot evaluate variable scope '" + variable.Scope + "'");
                         }
-                    }
-                    else if (variable.VariableType is CPointerType pointerType) {
-                        throw new NotSupportedException ("Cannot evaluate pointer variable types '" + variable.VariableType + "'");
                     }
                     else if (variable.VariableType is CArrayType arrayType) {
                         ec.Emit (OpCode.LoadValue, variable.Index);
