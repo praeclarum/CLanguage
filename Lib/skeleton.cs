@@ -346,7 +346,7 @@ t        if (debug != null) debug.shift(yyStates[yyTop], yyState);
 .	 }
 .}
 .// %token constants
-. class Token {
+.public class Token {
  tokens public const int
 . }
 . namespace yyParser {

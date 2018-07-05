@@ -2655,7 +2655,7 @@ namespace yydebug {
 	 }
 }
 // %token constants
- class Token {
+public class Token {
   public const int IDENTIFIER = 257;
   public const int CONSTANT = 258;
   public const int STRING_LITERAL = 259;

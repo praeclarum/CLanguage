@@ -38,7 +38,6 @@ namespace CLanguage.Tests
 		public void ReturnConstant ()
 		{
 			var exe = Compile (@"int f () { return 42; }");
-			Assert.AreEqual (exe.Functions.Count, exe.MachineInfo.InternalFunctions.Count + 1);
 			var f = exe.Functions.OfType<CompiledFunction> ().First (x => x.Name == "f");
 			Assert.AreEqual (f.Instructions.Count, 2);
 
@@ -50,7 +49,6 @@ namespace CLanguage.Tests
 		public void ReturnParamExpr ()
 		{
 			var exe = Compile (@"int f (int i) { return i + 42; }");
-			Assert.AreEqual (exe.Functions.Count, exe.MachineInfo.InternalFunctions.Count + 1);
 			var f = exe.Functions.OfType<CompiledFunction> ().First (x => x.Name == "f");
 			Assert.AreEqual (f.Instructions.Count, 4);
 
@@ -64,7 +62,6 @@ namespace CLanguage.Tests
 		public void ConditionalReturn ()
 		{
 			var exe = Compile (@"int f (int i) { if (i) return 0; else return 42; }");
-			Assert.AreEqual (exe.Functions.Count, exe.MachineInfo.InternalFunctions.Count + 1);
 			var f = exe.Functions.OfType<CompiledFunction> ().First (x => x.Name == "f");
 			Assert.AreEqual (f.Instructions.Count, 7);
 			Assert.AreEqual (f.Instructions[0].Op, OpCode.LoadArg);
@@ -104,14 +101,14 @@ void f () {
 		public void ArduinoBlink ()
 		{
 			var exe = Compile (ArduinoInterpreterTests.BlinkCode);
-			Assert.AreEqual (exe.Functions.Count, exe.MachineInfo.InternalFunctions.Count + 2);
+            Assert.IsTrue (exe.Functions.Exists (x => x.Name == "loop"));
 		}
 
 		[TestMethod]
 		public void ArduinoFade ()
 		{
 			var exe = Compile (ArduinoInterpreterTests.FadeCode);
-			Assert.AreEqual (exe.Functions.Count, exe.MachineInfo.InternalFunctions.Count + 2);
+            Assert.IsTrue (exe.Functions.Exists (x => x.Name == "loop"));
 		}
 
         [TestMethod]

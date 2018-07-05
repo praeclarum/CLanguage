@@ -53,9 +53,16 @@ namespace CLanguage.Interpreter
             //
             // Find Variables, Functions, Types
             //
+            var cinitBody = new Block ();
             foreach (var tu in tus) {
                 AddStatementDeclarations (tu);
+                cinitBody.Statements.AddRange (tu.InitStatements);
             }
+
+            //
+            // Generate a function to init globals
+            //
+            exe.Functions.Add (new CompiledFunction ("__cinit", CFunctionType.VoidProcedure, cinitBody));
 
             //
             // Link everything together
@@ -69,22 +76,20 @@ namespace CLanguage.Interpreter
             //
             // Compile functions
             //
-            foreach (var tu in tus) {
-                foreach (var f in exe.Functions.OfType<CompiledFunction> ()) {
-                    AddStatementDeclarations (f.Body);
+            foreach (var f in exe.Functions.OfType<CompiledFunction> ()) {
+                AddStatementDeclarations (f.Body);
 
-					var c = new FunctionContext (exe, f, context);
-					f.Body.Emit (c);
-					f.LocalVariables.AddRange (c.LocalVariables);
+				var c = new FunctionContext (exe, f, context);
+				f.Body.Emit (c);
+				f.LocalVariables.AddRange (c.LocalVariables);
 
-					// Make sure it returns
-					if (f.Body.Statements.Count == 0 || !f.Body.AlwaysReturns) {
-						if (f.FunctionType.ReturnType.IsVoid) {
-							c.Emit (OpCode.Return);
-						}
-						else {
-							context.Report.Error (161, "'" + f.Name + "' not all code paths return a value");
-						}
+				// Make sure it returns
+				if (f.Body.Statements.Count == 0 || !f.Body.AlwaysReturns) {
+					if (f.FunctionType.ReturnType.IsVoid) {
+						c.Emit (OpCode.Return);
+					}
+					else {
+						context.Report.Error (161, "'" + f.Name + "' not all code paths return a value");
 					}
 				}
 			}

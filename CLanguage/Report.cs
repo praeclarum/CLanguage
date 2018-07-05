@@ -122,6 +122,18 @@ namespace CLanguage
             }
         }
 
+        public class SavedPrinter : Printer
+        {
+            public readonly List<AbstractMessage> Messages = new List<AbstractMessage> ();
+
+            public override void Print (AbstractMessage msg)
+            {
+                base.Print (msg);
+
+                Messages.Add (msg);
+            }
+        }
+
         public class TextWriterPrinter : Printer
         {
             TextWriter output;
@@ -133,6 +145,8 @@ namespace CLanguage
 
             public override void Print (AbstractMessage msg)
             {
+                base.Print (msg);
+
                 if (!msg.Location.IsNull) {
                     output.Write (msg.Location.ToString ());
                     output.Write (" ");

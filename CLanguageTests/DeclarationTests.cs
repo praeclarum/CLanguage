@@ -26,7 +26,7 @@ namespace CLanguage.Tests
         List<BaseFunction> ParseFunctions (string code)
         {
             var exe = CLanguageService.Compile (code, MachineInfo.Windows32, new TestPrinter ());
-            return exe.Functions;
+            return exe.Functions.Where (x => x.Name != "__cinit").ToList ();
         }
 
 		[TestMethod]

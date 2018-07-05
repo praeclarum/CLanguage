@@ -8,24 +8,26 @@ namespace CLanguage.Tests
 	[TestClass]
 	public class InterpreterTests
 	{
-		CInterpreter Compile (string code)
+		CInterpreter Run (string code)
 		{
-            return CLanguageService.CreateInterpreter (code, new ArduinoTestMachineInfo (), printer: new TestPrinter ());
+            var fullCode = "void start() { __cinit(); main(); } " + code;
+            var i = CLanguageService.CreateInterpreter (fullCode, new ArduinoTestMachineInfo (), printer: new TestPrinter ());
+            i.Reset ("start");
+            i.Step ();
+            return i;
 		}
 
 		[TestMethod]
 		public void InfiniteRecursionThrows ()
 		{
 			try {
-				var i = Compile (@"
+				var i = Run (@"
 int f (int n) {
 	return f (n);
 }
 void main () {
 	f (1);
 }");
-				i.Reset ("main");
-				i.Step ();
 
 				Assert.Fail ("Expected ExecutionException but got nothing");
 			}
@@ -39,19 +41,17 @@ void main () {
 		[TestMethod]
 		public void InfiniteLoopStopsEventually ()
 		{
-			var i = Compile (@"
+			var i = Run (@"
 void main () {
 	while (true) {
 	}
 }");
-			i.Reset ("main");
-			i.Step ();
 		}
 
 		[TestMethod]
 		public void MutualRecursive ()
 		{
-			var i = Compile (@"
+			var i = Run (@"
 int m (int);
 
 int f (int n) {
@@ -79,14 +79,12 @@ void main () {
 	assertAreEqual (4, m (6));
 	assertAreEqual (4, m (7));
 }");
-			i.Reset ("main");
-			i.Step ();
 		}
 
 		[TestMethod]
 		public void Recursive ()
 		{
-			var i = Compile (@"
+			var i = Run (@"
 unsigned long fib (unsigned long n) {
 	if (n == 0 || n == 1) {
 		return n;
@@ -105,14 +103,12 @@ void main () {
 	assertAreEqual (8, fib (6));
 	assertAreEqual (13, fib (7));
 }");
-			i.Reset ("main");
-			i.Step ();
 		}
 
 		[TestMethod]
 		public void OverwriteArgs ()
 		{
-			var i = Compile (@"
+			var i = Run (@"
 int abs (int x) {
 	if (x < 0) x = -x;
 	return x;
@@ -122,14 +118,12 @@ void main () {
 	assertAreEqual (101, abs(-101));
 	assertAreEqual (101, abs(101));
 }");
-			i.Reset ("main");
-			i.Step ();
 		}
 
 		[TestMethod]
 		public void VoidFunctionCalls ()
 		{
-			var i = Compile (@"
+			var i = Run (@"
 int output = 0;
 void print (int v) {
 	output += v;
@@ -140,14 +134,12 @@ void main () {
 	print (3);
 	assertAreEqual (6, output);
 }");
-			i.Reset ("main");
-			i.Step ();
 		}
 
 		[TestMethod]
 		public void FunctionCallsWithValues ()
 		{
-			var i = Compile (@"
+			var i = Run (@"
 int mulMulDiv (long m1, long m2, long d) {
 	return (m1 * m2) / d;
 }
@@ -155,15 +147,13 @@ int mulMulDiv (long m1, long m2, long d) {
 void main () {
 	assertAreEqual (66, mulMulDiv (2, 100, 3));
 }");
-			i.Reset ("main");
-			i.Step ();
 		}
 
 
 		[TestMethod]
 		public void ForLoop ()
 		{
-			var i = Compile (@"
+			var i = Run (@"
 void main () {
 	int acc;
 	int i;
@@ -172,28 +162,36 @@ void main () {
 	}
 	assertAreEqual (11, acc);
 }");
-			i.Reset ("main");
-			i.Step ();
 		}
 
 		[TestMethod]
 		public void LocalVariableInitialization ()
 		{
-			var i = Compile (@"
+			var i = Run (@"
 void main () {
 	int a = 4;
 	int b = 8;
 	int c = a + b;
 	assertAreEqual (12, c);
 }");
-			i.Reset ("main");
-			i.Step ();
 		}
+
+        [TestMethod]
+        public void GlobalVariableInitialization ()
+        {
+            var i = Run (@"
+int a = 4;
+int b = 8;
+int c = a + b;
+void main () {
+    assertAreEqual (12, c);
+}");
+        }
 
         [TestMethod, Ignore]
         public void AddressOfLocal ()
         {
-            var i = Compile (@"
+            var i = Run (@"
 void main () {
     int a = 4;
     int *pa = &a;
@@ -201,14 +199,12 @@ void main () {
     a = *pa + 1;
     assertAreEqual (5, *pa);
 }");
-            i.Reset ("main");
-            i.Step ();
         }
 
         [TestMethod]
         public void AddressOfGlobal ()
         {
-            var i = Compile (@"
+            var i = Run (@"
 int a = 0;
 void main () {
     int *pa = &a;
@@ -216,64 +212,54 @@ void main () {
     a = *pa + 1;
     assertAreEqual (1, *pa);
 }");
-            i.Reset ("main");
-            i.Step ();
         }
 
         [TestMethod]
         public void PreDecrement ()
         {
-            var i = Compile (@"
+            var i = Run (@"
 void main () {
     int a = 100;
     assertAreEqual (99, --a);
 }");
-            i.Reset ("main");
-            i.Step ();
         }
 
         [TestMethod]
         public void PreIncrement ()
         {
-            var i = Compile (@"
+            var i = Run (@"
 void main () {
     int a = 100;
     assertAreEqual (101, ++a);
 }");
-            i.Reset ("main");
-            i.Step ();
         }
 
         [TestMethod]
         public void PostDecrement ()
         {
-            var i = Compile (@"
+            var i = Run (@"
 void main () {
     int a = 100;
     assertAreEqual (100, a--);
     assertAreEqual (99, a);
 }");
-            i.Reset ("main");
-            i.Step ();
         }
 
         [TestMethod]
         public void PostIncrement ()
         {
-            var i = Compile (@"
+            var i = Run (@"
 void main () {
     int a = 100;
     assertAreEqual (100, a++);
     assertAreEqual (101, a);
 }");
-            i.Reset ("main");
-            i.Step ();
         }
 
         [TestMethod]
         public void BoolAssignment ()
         {
-            var i = Compile (@"
+            var i = Run (@"
 void main () {
     bool a = false;
     assertAreEqual (false, a);
@@ -282,14 +268,12 @@ void main () {
     assertAreEqual (true, a);
     assertAreEqual ((bool)1, a);
 }");
-            i.Reset ("main");
-            i.Step ();
         }
 
         [TestMethod]
         public void BoolLoopEnd ()
         {
-            var i = Compile (@"
+            var i = Run (@"
 void main () {
     int i = 0;
     bool b = true;
@@ -300,8 +284,6 @@ void main () {
     assertAreEqual (false, b);
     assertAreEqual (10, i);
 }");
-            i.Reset ("main");
-            i.Step ();
         }
 	}
 }

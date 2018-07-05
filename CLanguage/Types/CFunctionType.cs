@@ -5,6 +5,8 @@ namespace CLanguage.Types
 {
     public class CFunctionType : CType
     {
+        public static readonly CFunctionType VoidProcedure = new CFunctionType (CType.Void);
+
         public class Parameter
         {
             public string Name { get; set; }
