@@ -113,5 +113,17 @@ void f () {
 			var exe = Compile (ArduinoInterpreterTests.FadeCode);
 			Assert.AreEqual (exe.Functions.Count, exe.MachineInfo.InternalFunctions.Count + 2);
 		}
+
+        [TestMethod]
+        public void CannotAssignToFuncalls ()
+        {
+            CompileWithErrors ("int foo() {return 1;} int main() { foo() = 42; return 0; }", 131);
+        }
+
+        [TestMethod]
+        public void CannotAssignToFunctions ()
+        {
+            CompileWithErrors ("int foo() {return 1;} int main() { foo = 42; return 0; }", 30, 1656);
+        }
 	}
 }
