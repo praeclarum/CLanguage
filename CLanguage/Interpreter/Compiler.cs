@@ -337,7 +337,10 @@ namespace CLanguage.Interpreter
                     }
 
                     var typeName = trueTs == null ? "int" : trueTs.Name;
-                    var type = typeName == "float" ? (CBasicType)CBasicType.Float : (typeName == "double" ? (CBasicType)CBasicType.Double : new CIntType (typeName, sign, size));
+                    var type = typeName == "float" ? (CBasicType)CBasicType.Float 
+                        : (typeName == "double" ? (CBasicType)CBasicType.Double 
+                           : (typeName == "bool" ? (CBasicType)CBasicType.Bool 
+                              : new CIntType (typeName, sign, size)));
                     type.TypeQualifiers = specs.TypeQualifiers;
                     return type;
                 }

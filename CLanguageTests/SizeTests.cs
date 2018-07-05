@@ -42,6 +42,7 @@ namespace CLanguage.Tests
 {"double a;", 8},
 {"float a;", 4},
 {"long double a;", 8},
+{"bool a;", 1},
             };
             foreach (var t in tests)
             {

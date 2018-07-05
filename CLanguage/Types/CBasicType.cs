@@ -40,6 +40,7 @@ namespace CLanguage.Types
         public static readonly CIntType SignedLongLongInt = new CIntType("int", Signedness.Signed, "long long");
         public static readonly CFloatType Float = new CFloatType("float", 32);
         public static readonly CFloatType Double = new CFloatType("double", 64);
+        public static readonly CBoolType Bool = new CBoolType ();
 
         /// <summary>
         /// Section 6.3.1.1 (page 51) of N1570
