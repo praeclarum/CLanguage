@@ -113,19 +113,17 @@ namespace CLanguage.Interpreter
                         var ctype = MakeCType (multi.Specifiers, idecl.Declarator);
                         var name = idecl.Declarator.DeclaredIdentifier;
 
-                        if (ctype is CFunctionType && !HasStronglyBoundPointer (idecl.Declarator)) {
-                            var ftype = (CFunctionType)ctype;
+                        if (ctype is CFunctionType ftype && !HasStronglyBoundPointer (idecl.Declarator)) {
                             var f = new CompiledFunction (name, ftype);
                             block.Functions.Add (f);
                         }
                         else {
-                            if ((ctype is CArrayType) &&
-                                (((CArrayType)ctype).LengthExpression == null) &&
+                            if ((ctype is CArrayType atype) &&
+                                (atype.LengthExpression == null) &&
                                 (idecl.Initializer != null)) {
-                                if (idecl.Initializer is StructuredInitializer) {
-                                    var atype = (CArrayType)ctype;
+                                if (idecl.Initializer is StructuredInitializer structInit) {
                                     var len = 0;
-                                    foreach (var i in ((StructuredInitializer)idecl.Initializer).Initializers) {
+                                    foreach (var i in structInit.Initializers) {
                                         if (i.Designation == null) {
                                             len++;
                                         }
@@ -156,10 +154,11 @@ namespace CLanguage.Interpreter
                 }
             }
             else if (statement is FunctionDefinition fdef) {
-                var ftype = (CFunctionType)MakeCType (fdef.Specifiers, fdef.Declarator);
-                var name = fdef.Declarator.DeclaredIdentifier;
-                var f = new CompiledFunction (name, ftype, fdef.Body);
-                block.Functions.Add (f);
+                if (MakeCType (fdef.Specifiers, fdef.Declarator) is CFunctionType ftype) {
+                    var name = fdef.Declarator.DeclaredIdentifier;
+                    var f = new CompiledFunction (name, ftype, fdef.Body);
+                    block.Functions.Add (f);
+                }
             }
             else if (statement is ForStatement fors) {
                 AddStatementDeclarations (fors.InitBlock);
