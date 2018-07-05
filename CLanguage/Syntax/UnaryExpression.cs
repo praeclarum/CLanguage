@@ -35,25 +35,54 @@ namespace CLanguage.Syntax
 
         protected override void DoEmit(EmitContext ec)
         {
-			var aType = (CBasicType)GetEvaluatedCType (ec);
+            switch (Op) {
+                case Unop.PreIncrement: {
+                        var ie = new AssignExpression (Right, new BinaryExpression (Right, Binop.Add, ConstantExpression.One));
+                        ie.Emit (ec);
+                    }
+                    break;
+                case Unop.PreDecrement: {
+                        var ie = new AssignExpression (Right, new BinaryExpression (Right, Binop.Add, ConstantExpression.NegativeOne));
+                        ie.Emit (ec);
+                    }
+                    break;
+                case Unop.PostIncrement: {
+                        Right.Emit (ec);
+                        var ie = new AssignExpression (Right, new BinaryExpression (Right, Binop.Add, ConstantExpression.One));
+                        ie.Emit (ec);
+                        ec.Emit (OpCode.Pop);
+                    }
+                    break;
+                case Unop.PostDecrement: {
+                        Right.Emit (ec);
+                        var ie = new AssignExpression (Right, new BinaryExpression (Right, Binop.Add, ConstantExpression.NegativeOne));
+                        ie.Emit (ec);
+                        ec.Emit (OpCode.Pop);
+                    }
+                    break;
+                default: {
+                        var aType = (CBasicType)GetEvaluatedCType (ec);
 
-			Right.Emit (ec);
-			ec.EmitCast (Right.GetEvaluatedCType (ec), aType);
+                        Right.Emit (ec);
+                        ec.EmitCast (Right.GetEvaluatedCType (ec), aType);
 
-			var ioff = GetInstructionOffset (aType, ec);
+                        var ioff = GetInstructionOffset (aType, ec);
 
-			switch (Op) {
-			case Unop.None:
-				break;
-			case Unop.Negate:
-				ec.Emit ((OpCode)(OpCode.NegateInt16 + ioff));
-				break;
-			case Unop.Not:
-				ec.Emit ((OpCode)(OpCode.NotInt16 + ioff));
-				break;
-			default:
-				throw new NotSupportedException ("Unsupported unary operator '" + Op + "'");
-			}
+                        switch (Op) {
+                            case Unop.None:
+                                break;
+                            case Unop.Negate:
+                                ec.Emit ((OpCode)(OpCode.NegateInt16 + ioff));
+                                break;
+                            case Unop.Not:
+                                ec.Emit ((OpCode)(OpCode.NotInt16 + ioff));
+                                break;
+                            default:
+                                throw new NotSupportedException ("Unsupported unary operator '" + Op + "'");
+                        }
+                    }
+                    break;
+            }
 		}
 
         public override string ToString()

@@ -190,7 +190,7 @@ void main () {
 			i.Step ();
 		}
 
-        [TestMethod]
+        [TestMethod, Ignore]
         public void AddressOfLocal ()
         {
             var i = Compile (@"
@@ -215,6 +215,56 @@ void main () {
     assertAreEqual (0, *pa);
     a = *pa + 1;
     assertAreEqual (1, *pa);
+}");
+            i.Reset ("main");
+            i.Step ();
+        }
+
+        [TestMethod]
+        public void PreDecrement ()
+        {
+            var i = Compile (@"
+void main () {
+    int a = 100;
+    assertAreEqual (99, --a);
+}");
+            i.Reset ("main");
+            i.Step ();
+        }
+
+        [TestMethod]
+        public void PreIncrement ()
+        {
+            var i = Compile (@"
+void main () {
+    int a = 100;
+    assertAreEqual (101, ++a);
+}");
+            i.Reset ("main");
+            i.Step ();
+        }
+
+        [TestMethod]
+        public void PostDecrement ()
+        {
+            var i = Compile (@"
+void main () {
+    int a = 100;
+    assertAreEqual (100, a--);
+    assertAreEqual (99, a);
+}");
+            i.Reset ("main");
+            i.Step ();
+        }
+
+        [TestMethod]
+        public void PostIncrement ()
+        {
+            var i = Compile (@"
+void main () {
+    int a = 100;
+    assertAreEqual (100, a++);
+    assertAreEqual (101, a);
 }");
             i.Reset ("main");
             i.Step ();

@@ -59,7 +59,7 @@ namespace CLanguage.Interpreter
 
 				var i = Instructions[ip];
 
-                Console.WriteLine (i);
+                //Console.WriteLine (i);
 
 				switch (i.Op) {
 				case OpCode.Dup:

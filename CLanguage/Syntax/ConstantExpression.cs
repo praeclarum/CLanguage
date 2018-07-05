@@ -16,7 +16,9 @@ namespace CLanguage.Syntax
 		public ValueType EmitValue { get; private set; }
         public CType ConstantType { get; private set; }
 
-        public readonly static ConstantExpression Zero = new ConstantExpression(0);
+        public readonly static ConstantExpression Zero = new ConstantExpression (0);
+        public readonly static ConstantExpression One = new ConstantExpression (1);
+        public readonly static ConstantExpression NegativeOne = new ConstantExpression (-1);
 
         public ConstantExpression(object val, CType type)
 			: this (val)
