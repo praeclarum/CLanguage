@@ -15,6 +15,8 @@ namespace CLanguage.Syntax
 
         public IfStatement(Expression condition, Statement trueStatement, Statement falseStatement, Location loc)
         {
+            if (condition == null) throw new ArgumentNullException (nameof (condition));
+            if (trueStatement == null) throw new ArgumentNullException (nameof (trueStatement));
             Condition = condition;
             TrueStatement = trueStatement;
             FalseStatement = falseStatement;
@@ -23,6 +25,8 @@ namespace CLanguage.Syntax
 
         public IfStatement(Expression condition, Statement trueStatement, Location loc)
         {
+            if (condition == null) throw new ArgumentNullException (nameof (condition));
+            if (trueStatement == null) throw new ArgumentNullException (nameof (trueStatement));
             Condition = condition;
             TrueStatement = trueStatement;
             FalseStatement = null;
