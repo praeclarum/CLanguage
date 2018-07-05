@@ -116,11 +116,11 @@ unary_expression
 	}
 	| '&' cast_expression
 	{
-		throw new NotSupportedException ("Syntax: '&' cast_expression");
+		$$ = new AddressOfExpression((Expression)$2);
 	}
 	| '*' cast_expression
 	{
-		throw new NotSupportedException ("Syntax: '*' cast_expression");
+        $$ = new DereferenceExpression((Expression)$2);
 	}
 	| unary_operator cast_expression
 	{
@@ -128,11 +128,11 @@ unary_expression
 	}
 	| SIZEOF unary_expression
 	{
-		throw new NotSupportedException ("Syntax: SIZEOF unary_expression");
+		$$ = new SizeOfExpression((Expression)$2);
 	}
 	| SIZEOF '(' type_name ')'
 	{
-		throw new NotSupportedException ("Syntax: SIZEOF '(' type_name ')'");
+		$$ = new SizeOfTypeExpression((TypeName)$3);
 	}
 	;
 

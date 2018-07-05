@@ -239,7 +239,7 @@ namespace CLanguage.Parser
                     _lastR = r;
                 }
             }
-            else if (r == '!' || r == '%' || r == ',' || r == ':' || r == ';' || r == '?' || r == '(' || r == ')' || r == '{' || r == '}' || r == '[' || r == ']')
+            else if (r == '&' || r == '!' || r == '%' || r == ',' || r == ':' || r == ';' || r == '?' || r == '(' || r == ')' || r == '{' || r == '}' || r == '[' || r == ']')
             {
                 _token = r;
                 _value = null;
@@ -389,7 +389,7 @@ namespace CLanguage.Parser
             }
             else
             {
-                throw new NotImplementedException();
+                throw new NotSupportedException ($"'{(char)r}' is not supported");
             }
 
             return true;

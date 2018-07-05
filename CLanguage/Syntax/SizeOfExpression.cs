@@ -11,10 +11,9 @@ namespace CLanguage.Syntax
     {
         public Expression Query { get; private set; }
 
-        public SizeOfExpression(Expression query, Location loc)
+        public SizeOfExpression(Expression query)
         {
             Query = query;
-            Location = loc;
         }
 
 		public override CType GetEvaluatedCType (EmitContext ec)

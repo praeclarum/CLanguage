@@ -189,6 +189,21 @@ void main () {
 			i.Reset ("main");
 			i.Step ();
 		}
+
+        [TestMethod]
+        public void AddressOfLocal ()
+        {
+            var i = Compile (@"
+void main () {
+    int a = 4;
+    int *pa = &a;
+    assertAreEqual (4, *pa);
+    a = *pa + 1;
+    assertAreEqual (5, *pa);
+}");
+            i.Reset ("main");
+            i.Step ();
+        }
 	}
 }
 

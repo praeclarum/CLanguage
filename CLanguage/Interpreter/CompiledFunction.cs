@@ -108,6 +108,10 @@ namespace CLanguage.Interpreter
 					state.SP++;
 					ip++;
 					break;
+                case OpCode.LoadMemoryIndirect:
+                    state.Stack[state.SP] = state.Stack[state.Stack[state.SP]];
+                    ip++;
+                    break;
 				case OpCode.StoreMemory:
 					state.Stack [i.X] = state.Stack [state.SP - 1];
 					state.SP--;

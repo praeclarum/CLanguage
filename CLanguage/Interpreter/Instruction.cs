@@ -65,6 +65,7 @@ namespace CLanguage.Interpreter
 		LoadArg,
 		LoadLocal,
 		LoadMemory,
+        LoadMemoryIndirect,
 		StoreArg,
 		StoreLocal,
 		StoreMemory,

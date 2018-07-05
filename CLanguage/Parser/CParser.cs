@@ -615,13 +615,13 @@ case 19:
 case 20:
 #line 120 "CParser.jay"
   {
-		throw new NotSupportedException ("Syntax: '&' cast_expression");
+		yyVal = new AddressOfExpression((Expression)yyVals[0+yyTop]);
 	}
   break;
 case 21:
 #line 124 "CParser.jay"
   {
-		throw new NotSupportedException ("Syntax: '*' cast_expression");
+        yyVal = new DereferenceExpression((Expression)yyVals[0+yyTop]);
 	}
   break;
 case 22:
@@ -633,13 +633,13 @@ case 22:
 case 23:
 #line 132 "CParser.jay"
   {
-		throw new NotSupportedException ("Syntax: SIZEOF unary_expression");
+		yyVal = new SizeOfExpression((Expression)yyVals[0+yyTop]);
 	}
   break;
 case 24:
 #line 136 "CParser.jay"
   {
-		throw new NotSupportedException ("Syntax: SIZEOF '(' type_name ')'");
+		yyVal = new SizeOfTypeExpression((TypeName)yyVals[-1+yyTop]);
 	}
   break;
 case 25:

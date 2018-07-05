@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Text;
 using CLanguage.Interpreter;
 
@@ -12,20 +13,17 @@ namespace CLanguage.Types
 
         public static readonly CVoidType Void = new CVoidType ();
 
-        public virtual bool IsIntegral {
-            get {
-                return false;
-            }
-        }
+        public virtual bool IsIntegral => false;
+
+        public virtual bool IsVoid => false;
+
+        readonly Lazy<CPointerType> pointer;
+
+        public CPointerType Pointer => pointer.Value;
 
         public CType ()
         {
-        }
-
-        public virtual bool IsVoid {
-            get {
-                return false;
-            }
+            pointer = new Lazy<CPointerType> (() => new CPointerType (this));
         }
     }
 }

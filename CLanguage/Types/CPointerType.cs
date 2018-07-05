@@ -22,7 +22,18 @@ namespace CLanguage.Types
         {
             return "(Pointer " + InnerType + ")";
         }
+
+        public override bool Equals (object obj)
+        {
+            return obj is CPointerType o && InnerType.Equals (o.InnerType);
+        }
+
+        public override int GetHashCode ()
+        {
+            int hash = 17;
+            hash = hash * 37 + InnerType.GetHashCode ();
+            hash = hash * 37 + 1;
+            return hash;
+        }
     }
-
-
 }

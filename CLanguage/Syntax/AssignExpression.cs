@@ -32,9 +32,11 @@ namespace CLanguage.Syntax
 
 			if (Left is VariableExpression) {
 
-				var v = ec.ResolveVariable (((VariableExpression)Left).VariableName);
+                string variableName = ((VariableExpression)Left).VariableName;
+                var v = ec.ResolveVariable (variableName);
 
 				if (v == null) {
+                    ec.Report.Error (103, $"The name `{variableName}` does not exist in the current context.");
 					ec.Emit (OpCode.Pop);
 				} else if (v.Scope == VariableScope.Global) {
 					ec.Emit (OpCode.StoreMemory, v.Index);

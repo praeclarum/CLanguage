@@ -58,6 +58,9 @@ namespace CLanguage.Syntax
                             throw new NotSupportedException ("Cannot evaluate variable scope '" + variable.Scope + "'");
                         }
                     }
+                    else if (variable.VariableType is CPointerType pointerType) {
+                        throw new NotSupportedException ("Cannot evaluate pointer variable types '" + variable.VariableType + "'");
+                    }
                     else if (variable.VariableType is CArrayType arrayType) {
                         ec.Emit (OpCode.LoadValue, variable.Index);
                     }
@@ -67,8 +70,37 @@ namespace CLanguage.Syntax
 				}
 			}
 			else {
+                ec.Report.Error (103, $"The name `{VariableName}` does not exist in the current context.");
 				ec.Emit (OpCode.LoadValue, 0);
 			}
+        }
+
+        protected override void DoEmitPointer (EmitContext ec)
+        {
+            var variable = ec.ResolveVariable (VariableName);
+
+            if (variable != null) {
+
+                if (variable.Scope == VariableScope.Function) {
+                    ec.Emit (OpCode.LoadValue, variable.Index);
+                }
+                else if (variable.Scope == VariableScope.Arg) {
+                    ec.Emit (OpCode.LoadValue, variable.Index);
+                }
+                else if (variable.Scope == VariableScope.Global) {
+                    ec.Emit (OpCode.LoadValue, variable.Index);
+                }
+                else if (variable.Scope == VariableScope.Local) {
+                    ec.Emit (OpCode.LoadValue, variable.Index);
+                }
+                else {
+                    throw new NotSupportedException ("Cannot get address of variable scope '" + variable.Scope + "'");
+                }
+            }
+            else {
+                ec.Report.Error (103, $"The name `{VariableName}` does not exist in the current context.");
+                ec.Emit (OpCode.LoadValue, 0);
+            }
         }
 
         public override string ToString()

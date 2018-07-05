@@ -18,9 +18,16 @@ namespace CLanguage.Syntax
             DoEmit(ec);
         }
 
+        public void EmitPointer (EmitContext ec)
+        {
+            DoEmitPointer (ec);
+        }
+
 		public abstract CType GetEvaluatedCType (EmitContext ec);
 
         protected abstract void DoEmit(EmitContext ec);
+        protected virtual void DoEmitPointer (EmitContext ec) =>
+            throw new NotSupportedException ($"Cannot get address of {this.GetType().Name} `{this}`");
 
 		protected static int GetInstructionOffset (CBasicType aType, EmitContext ec)
 		{

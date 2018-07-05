@@ -26,7 +26,16 @@ namespace CLanguage.Types
         {
             return "void";
         }
+
+        public override bool Equals (object obj)
+        {
+            return obj is CVoidType;
+        }
+
+        public override int GetHashCode ()
+        {
+            int hash = 17;
+            return hash;
+        }
     }
-
-
 }
