@@ -121,273 +121,254 @@ namespace CLanguage.Parser
             // Make sense of it
             //
             var ch = (char)r;
-            if (ch == '_' || char.IsLetter(ch))
-            {
+            if (ch == '_' || char.IsLetter (ch)) {
                 _chbuf[0] = ch;
                 _chbuflen = 0;
-                while (ch == '_' || char.IsLetter(ch) || char.IsDigit(ch))
-                {
+                while (ch == '_' || char.IsLetter (ch) || char.IsDigit (ch)) {
                     _chbuf[_chbuflen++] = ch;
-                    r = _pp.Read();
+                    r = _pp.Read ();
                     ch = (char)r;
                 }
                 _lastR = r;
 
-                var id = new string(_chbuf, 0, _chbuflen);
+                var id = new string (_chbuf, 0, _chbuflen);
                 _value = id;
 
                 var tok = 0;
-                if (_kwTokens.TryGetValue(id, out tok))
-                {
+                if (_kwTokens.TryGetValue (id, out tok)) {
                     _token = tok;
                 }
-                else
-                {
-                    if (IsTypedef != null && IsTypedef(id))
-                    {
+                else {
+                    if (IsTypedef != null && IsTypedef (id)) {
                         _token = Token.TYPE_NAME;
                     }
-                    else
-                    {
+                    else {
                         _token = Token.IDENTIFIER;
                     }
                 }
             }
-            else if (char.IsDigit(ch))
-            {
+            else if (char.IsDigit (ch)) {
                 var onlydigits = true;
                 var islong = false;
                 var isunsigned = false;
                 var isfloat = false;
                 _chbuf[0] = ch;
                 _chbuflen = 0;
-                while (ch == '.' || char.IsDigit(ch) || ch == 'E' || ch == 'e' || ch == 'f' || ch == 'F' || ch == 'u' || ch == 'U' || ch == 'l' || ch == 'L')
-                {
-                    if (ch == 'l' || ch == 'L')
-                    {
+                while (ch == '.' || char.IsDigit (ch) || ch == 'E' || ch == 'e' || ch == 'f' || ch == 'F' || ch == 'u' || ch == 'U' || ch == 'l' || ch == 'L') {
+                    if (ch == 'l' || ch == 'L') {
                         islong = true;
                     }
-                    else if (ch == 'u' || ch == 'U')
-                    {
+                    else if (ch == 'u' || ch == 'U') {
                         isunsigned = true;
                     }
-                    else if (ch == 'f' || ch == 'F')
-                    {
+                    else if (ch == 'f' || ch == 'F') {
                         isfloat = true;
                     }
-                    else
-                    {
-                        onlydigits = onlydigits & char.IsDigit(ch);
+                    else {
+                        onlydigits = onlydigits & char.IsDigit (ch);
                         _chbuf[_chbuflen++] = ch;
                     }
-                    r = _pp.Read();
+                    r = _pp.Read ();
                     ch = (char)r;
                 }
                 _lastR = r;
 
-                var vals = new string(_chbuf, 0, _chbuflen);
-                if (onlydigits)
-                {
-                    if (islong)
-                    {
-                        if (isunsigned)
-                        {
-                            _value = ulong.Parse(vals);
+                var vals = new string (_chbuf, 0, _chbuflen);
+                if (onlydigits) {
+                    if (islong) {
+                        if (isunsigned) {
+                            _value = ulong.Parse (vals);
                         }
-                        else
-                        {
-                            _value = long.Parse(vals);
+                        else {
+                            _value = long.Parse (vals);
                         }
                     }
-                    else
-                    {
-                        if (isunsigned)
-                        {
-                            _value = uint.Parse(vals);
+                    else {
+                        if (isunsigned) {
+                            _value = uint.Parse (vals);
                         }
-                        else
-                        {
-                            _value = int.Parse(vals);
+                        else {
+                            _value = int.Parse (vals);
                         }
                     }
                 }
-                else
-                {
-                    if (isfloat)
-                    {
-                        _value = float.Parse(vals);
+                else {
+                    if (isfloat) {
+                        _value = float.Parse (vals);
                     }
-                    else
-                    {
-                        _value = double.Parse(vals);
+                    else {
+                        _value = double.Parse (vals);
                     }
                 }
 
                 _token = Token.CONSTANT;
             }
-            else if (r == '=')
-            {
-                r = _pp.Read();
-                if (r == '=')
-                {
+            else if (r == '=') {
+                r = _pp.Read ();
+                if (r == '=') {
                     _token = Token.EQ_OP;
                     _value = null;
-                    _lastR = _pp.Read();
+                    _lastR = _pp.Read ();
                 }
-                else
-                {
+                else {
                     _token = '=';
                     _value = null;
                     _lastR = r;
                 }
             }
-            else if (r == '&' || r == '!' || r == '%' || r == ',' || r == ':' || r == ';' || r == '?' || r == '(' || r == ')' || r == '{' || r == '}' || r == '[' || r == ']')
-            {
+            else if (r == '&' || r == '!' || r == '%' || r == ',' || r == ':' || r == ';' || r == '?' || r == '(' || r == ')' || r == '{' || r == '}' || r == '[' || r == ']') {
                 _token = r;
                 _value = null;
-                _lastR = _pp.Read();
+                _lastR = _pp.Read ();
             }
-            else if (r == '.')
-            {
-                var nr = _pp.Read();
+            else if (r == '.') {
+                var nr = _pp.Read ();
 
-                if (nr == '.' && _pp.Peek() == '.')
-                {
-                    throw new NotImplementedException();
+                if (nr == '.' && _pp.Peek () == '.') {
+                    throw new NotImplementedException ();
                 }
-                else
-                {
+                else {
                     _token = r;
                     _value = null;
                     _lastR = nr;
                 }
             }
-            else if (r == '*' || r == '/')
-            {
-                var nr = _pp.Read();
+            else if (r == '*' || r == '/') {
+                var nr = _pp.Read ();
 
-                if (nr == '=')
-                {
+                if (nr == '=') {
                     _token = (r == '*') ? Token.MUL_ASSIGN : Token.DIV_ASSIGN;
                     _value = null;
                     _lastR = nr;
                 }
-                else
-                {
+                else {
                     _token = r;
                     _value = null;
                     _lastR = nr;
                 }
             }
-            else if (r == '|')
-            {
-                var nr = _pp.Read();
+            else if (r == '|') {
+                var nr = _pp.Read ();
 
-                if (nr == '|')
-                {
-                    nr = _pp.Read();
+                if (nr == '|') {
+                    nr = _pp.Read ();
 
-                    if (nr == '=')
-                    {
-                        throw new NotImplementedException();
+                    if (nr == '=') {
+                        throw new NotImplementedException ();
                     }
-                    else
-                    {
+                    else {
                         _token = Token.OR_OP;
                         _value = null;
                         _lastR = nr;
                     }
                 }
-                else if (nr == '=')
-                {
-                    throw new NotImplementedException();
+                else if (nr == '=') {
+                    throw new NotImplementedException ();
                 }
-                else
-                {
+                else {
                     _token = r;
                     _value = null;
                     _lastR = nr;
                 }
             }
-            else if (r == '+')
-            {
-                var nr = _pp.Read();
+            else if (r == '+') {
+                var nr = _pp.Read ();
 
-                if (nr == '=')
-                {
+                if (nr == '=') {
                     _token = Token.ADD_ASSIGN;
                     _value = null;
-                    _lastR = _pp.Read();
+                    _lastR = _pp.Read ();
                 }
-                else if (nr == '+')
-                {
+                else if (nr == '+') {
                     _token = Token.INC_OP;
                     _value = null;
-                    _lastR = _pp.Read();
+                    _lastR = _pp.Read ();
                 }
-                else
-                {
+                else {
                     _token = r;
                     _value = null;
                     _lastR = nr;
                 }
             }
-            else if (r == '-')
-            {
-                var nr = _pp.Read();
+            else if (r == '-') {
+                var nr = _pp.Read ();
 
-                if (nr == '=')
-                {
+                if (nr == '=') {
                     _token = Token.SUB_ASSIGN;
                     _value = null;
-                    _lastR = _pp.Read();
+                    _lastR = _pp.Read ();
                 }
-                else if (nr == '-')
-                {
+                else if (nr == '-') {
                     _token = Token.DEC_OP;
                     _value = null;
-                    _lastR = _pp.Read();
+                    _lastR = _pp.Read ();
                 }
-                else
-                {
+                else {
                     _token = r;
                     _value = null;
                     _lastR = nr;
                 }
             }
-            else if (r == '<')
-            {
-                var nr = _pp.Read();
+            else if (r == '<') {
+                var nr = _pp.Read ();
 
-                if (nr == '=')
-                {
+                if (nr == '=') {
                     _token = Token.LE_OP;
                     _value = null;
-                    _lastR = _pp.Read();
+                    _lastR = _pp.Read ();
                 }
-                else
-                {
+                else {
                     _token = r;
                     _value = null;
                     _lastR = nr;
                 }
             }
-            else if (r == '>')
-            {
-                var nr = _pp.Read();
+            else if (r == '>') {
+                var nr = _pp.Read ();
 
-                if (nr == '=')
-                {
+                if (nr == '=') {
                     _token = Token.GE_OP;
                     _value = null;
-                    _lastR = _pp.Read();
+                    _lastR = _pp.Read ();
                 }
-                else
-                {
+                else {
                     _token = r;
                     _value = null;
                     _lastR = nr;
                 }
+            }
+            else if (r == '\"') {
+                _chbuflen = 0;
+                r = _pp.Read ();
+                ch = (char)r;
+                var done = r < 0 || ch == '\"';
+                while (!done && _chbuflen + 1 < _chbuf.Length) {                    
+                    _chbuf[_chbuflen++] = ch;
+                    r = _pp.Read ();
+                    ch = (char)r;
+                    done = r < 0 || ch == '\"';
+                }
+
+                _lastR = _pp.Read ();
+
+                _token = Token.STRING_LITERAL;
+                _value = new string (_chbuf, 0, _chbuflen);
+            }
+            else if (r == '\'') {
+                _chbuflen = 0;
+                r = _pp.Read ();
+                ch = (char)r;
+                var done = r < 0 || ch == '\'';
+                while (!done && _chbuflen + 1 < _chbuf.Length) {
+                    _chbuf[_chbuflen++] = ch;
+                    r = _pp.Read ();
+                    ch = (char)r;
+                    done = r < 0 || ch == '\'';
+                }
+
+                _lastR = _pp.Read ();
+                _token = Token.CONSTANT;
+                _value = _chbuf[0];
             }
             else
             {

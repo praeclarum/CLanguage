@@ -118,7 +118,7 @@ namespace CLanguage.Syntax
 							ec.Emit (OpCode.LoadValue, (ValueType)(int)EmitValue);
 							break;
 						default:
-							throw new NotSupportedException ("Constants with type '" + ConstantType + "'");
+							throw new NotSupportedException ("Signed integral constants with type '" + ConstantType + "'");
 						}
 					}
 					else {
@@ -133,15 +133,15 @@ namespace CLanguage.Syntax
 							ec.Emit (OpCode.LoadValue, (ValueType)(uint)EmitValue);
 							break;
 						default:
-							throw new NotSupportedException ("Constants with type '" + ConstantType + "'");
+							throw new NotSupportedException ("Unsigned integral constants with type '" + ConstantType + "'");
 						}
 					}
 				}
 				else {
-					throw new NotSupportedException ("Constants with type '" + ConstantType + "'");
+					throw new NotSupportedException ("Non-integral constants with type '" + ConstantType + "'");
 				}
 			} else {
-				throw new NotSupportedException ("Constants with type '" + ConstantType + "'");
+				throw new NotSupportedException ("Non-basic constants with type '" + ConstantType + "'");
 			}
         }
 
