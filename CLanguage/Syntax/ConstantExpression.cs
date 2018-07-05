@@ -100,47 +100,49 @@ namespace CLanguage.Syntax
 
         protected override void DoEmit (EmitContext ec)
         {
-			var basicType = ConstantType as CBasicType;
+            if (ConstantType is CBasicType basicType) {
 
-			if (basicType != null) {
-
-				if (basicType.IsIntegral) {
-					var size = basicType.GetSize (ec);
-					if (basicType.Signedness == Signedness.Signed) {
-						switch (size) {
-						case 1:
-							ec.Emit (OpCode.LoadValue, (ValueType)(sbyte)EmitValue);
-							break;
-						case 2:
-							ec.Emit (OpCode.LoadValue, (ValueType)(short)EmitValue);
-							break;
-						case 4:
-							ec.Emit (OpCode.LoadValue, (ValueType)(int)EmitValue);
-							break;
-						default:
-							throw new NotSupportedException ("Signed integral constants with type '" + ConstantType + "'");
-						}
-					}
-					else {
-						switch (size) {
-						case 1:
-							ec.Emit (OpCode.LoadValue, (ValueType)(byte)EmitValue);
-							break;
-						case 2:
-							ec.Emit (OpCode.LoadValue, (ValueType)(ushort)EmitValue);
-							break;
-						case 4:
-							ec.Emit (OpCode.LoadValue, (ValueType)(uint)EmitValue);
-							break;
-						default:
-							throw new NotSupportedException ("Unsigned integral constants with type '" + ConstantType + "'");
-						}
-					}
-				}
-				else {
-					throw new NotSupportedException ("Non-integral constants with type '" + ConstantType + "'");
-				}
-			} else {
+                if (basicType.IsIntegral) {
+                    var size = basicType.GetSize (ec);
+                    if (basicType.Signedness == Signedness.Signed) {
+                        switch (size) {
+                            case 1:
+                                ec.Emit (OpCode.LoadValue, (ValueType)(sbyte)EmitValue);
+                                break;
+                            case 2:
+                                ec.Emit (OpCode.LoadValue, (ValueType)(short)EmitValue);
+                                break;
+                            case 4:
+                                ec.Emit (OpCode.LoadValue, (ValueType)(int)EmitValue);
+                                break;
+                            default:
+                                throw new NotSupportedException ("Signed integral constants with type '" + ConstantType + "'");
+                        }
+                    }
+                    else {
+                        switch (size) {
+                            case 1:
+                                ec.Emit (OpCode.LoadValue, (ValueType)(byte)EmitValue);
+                                break;
+                            case 2:
+                                ec.Emit (OpCode.LoadValue, (ValueType)(ushort)EmitValue);
+                                break;
+                            case 4:
+                                ec.Emit (OpCode.LoadValue, (ValueType)(uint)EmitValue);
+                                break;
+                            default:
+                                throw new NotSupportedException ("Unsigned integral constants with type '" + ConstantType + "'");
+                        }
+                    }
+                }
+                else {
+                    throw new NotSupportedException ("Non-integral constants with type '" + ConstantType + "'");
+                }
+            }
+            else if (Value is string vs) {
+                ec.Emit (OpCode.LoadValue, ec.GetConstantMemory (vs));
+            }
+            else {
 				throw new NotSupportedException ("Non-basic constants with type '" + ConstantType + "'");
 			}
         }

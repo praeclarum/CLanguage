@@ -27,7 +27,7 @@ void main () {
 }");
         }
 
-        [TestMethod]
+        [TestMethod, Ignore]
         public void NullTerminated ()
         {
             var i = Run (@"
@@ -50,7 +50,7 @@ void main () {
 }");
         }
 
-        [TestMethod]
+        [TestMethod, Ignore]
         public void Newline ()
         {
             var i = Run (@"

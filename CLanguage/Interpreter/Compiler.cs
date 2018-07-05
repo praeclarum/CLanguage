@@ -356,7 +356,6 @@ namespace CLanguage.Interpreter
             throw new NotImplementedException ();
         }
 
-
         class FunctionContext : EmitContext
         {
 			Executable exe;
@@ -462,6 +461,11 @@ namespace CLanguage.Interpreter
 			{
 				fexe.Instructions.Add (instruction);
 			}
+
+            public override int GetConstantMemory (string stringConstant)
+            {
+                return exe.GetConstantMemory (stringConstant);
+            }
         }
     }
 }

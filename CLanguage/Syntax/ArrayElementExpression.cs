@@ -41,8 +41,7 @@ namespace CLanguage.Syntax
             ec.Emit (OpCode.LoadValue, GetEvaluatedCType (ec).GetSize (ec));
             ec.Emit (OpCode.MultiplyInt32);
             ec.Emit (OpCode.AddInt32);
-            ec.Emit (OpCode.LoadMemory);
-            throw new NotImplementedException ();
+            ec.Emit (OpCode.LoadMemoryIndirect);
         }
 
         public override string ToString ()
