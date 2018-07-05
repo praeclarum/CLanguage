@@ -28,7 +28,7 @@ namespace CLanguage.Parser
 
 %token TYPEDEF EXTERN STATIC AUTO REGISTER INLINE RESTRICT
 %token CHAR SHORT INT LONG SIGNED UNSIGNED FLOAT DOUBLE CONST VOLATILE VOID
-%token BOOL COMPLEX IMAGINARY
+%token BOOL COMPLEX IMAGINARY TRUE FALSE
 %token STRUCT CLASS UNION ENUM ELLIPSIS
 
 %token CASE DEFAULT IF ELSE SWITCH WHILE DO FOR GOTO CONTINUE BREAK RETURN
@@ -40,6 +40,8 @@ primary_expression
 	: IDENTIFIER			{ $$ = new VariableExpression(($1).ToString()); }
 	| CONSTANT				{ $$ = new ConstantExpression($1); }
 	| STRING_LITERAL		{ $$ = new ConstantExpression($1); }
+    | TRUE                  { $$ = ConstantExpression.True; }
+    | FALSE                 { $$ = ConstantExpression.False; }
 	| '(' expression ')'	{ $$ = $2; }
 	;
 

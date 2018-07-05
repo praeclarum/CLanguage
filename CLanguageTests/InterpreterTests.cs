@@ -269,6 +269,40 @@ void main () {
             i.Reset ("main");
             i.Step ();
         }
+
+        [TestMethod]
+        public void BoolAssignment ()
+        {
+            var i = Compile (@"
+void main () {
+    bool a = false;
+    assertAreEqual (false, a);
+    assertAreEqual ((bool)0, a);
+    a = true;
+    assertAreEqual (true, a);
+    assertAreEqual ((bool)1, a);
+}");
+            i.Reset ("main");
+            i.Step ();
+        }
+
+        [TestMethod]
+        public void BoolLoopEnd ()
+        {
+            var i = Compile (@"
+void main () {
+    int i = 0;
+    bool b = true;
+    while (b) {
+        i++;
+        b = i < 10;
+    }    
+    assertAreEqual (false, b);
+    assertAreEqual (10, i);
+}");
+            i.Reset ("main");
+            i.Step ();
+        }
 	}
 }
 

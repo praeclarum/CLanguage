@@ -19,6 +19,8 @@ namespace CLanguage.Syntax
         public readonly static ConstantExpression Zero = new ConstantExpression (0);
         public readonly static ConstantExpression One = new ConstantExpression (1);
         public readonly static ConstantExpression NegativeOne = new ConstantExpression (-1);
+        public readonly static ConstantExpression True = new ConstantExpression (true);
+        public readonly static ConstantExpression False = new ConstantExpression (false);
 
         public ConstantExpression(object val, CType type)
 			: this (val)
@@ -34,6 +36,10 @@ namespace CLanguage.Syntax
             if (Value is string)
             {
                 ConstantType = CPointerType.PointerToConstChar;
+            }
+            else if (Value is bool) {
+                ConstantType = CBasicType.Bool;
+                EmitValue = (byte)((bool)Value ? 1 : 0);
             }
             else if (Value is byte)
             {

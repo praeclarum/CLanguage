@@ -70,6 +70,8 @@ namespace CLanguage.Parser
             { "else", Token.ELSE },
             { "for", Token.FOR },
             { "while", Token.WHILE },
+            { "true", Token.TRUE },
+            { "false", Token.FALSE },
         };
 
         public bool advance()
