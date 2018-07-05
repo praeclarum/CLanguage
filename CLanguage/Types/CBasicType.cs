@@ -3,7 +3,7 @@ using CLanguage.Interpreter;
 
 namespace CLanguage.Types
 {
-    public class CBasicType : CType
+    public abstract class CBasicType : CType
     {
         public string Name { get; private set; }
         public Signedness Signedness { get; private set; }
@@ -27,66 +27,19 @@ namespace CLanguage.Types
             return Name.GetHashCode() + Size.GetHashCode() + Signedness.GetHashCode();
         }
 
-        public override bool IsIntegral
-        {
-            get
-            {
-                return Name == "int" || Name == "char";
-            }
-        }
-
-        public static readonly CBasicType ConstChar = new CBasicType("char", Signedness.Unsigned, "") { TypeQualifiers = TypeQualifiers.Const };
-        public static readonly CBasicType UnsignedChar = new CBasicType("char", Signedness.Unsigned, "");
-        public static readonly CBasicType SignedChar = new CBasicType("char", Signedness.Signed, "");
-        public static readonly CBasicType UnsignedShortInt = new CBasicType("int", Signedness.Unsigned, "short");
-        public static readonly CBasicType SignedShortInt = new CBasicType("int", Signedness.Signed, "short");
-        public static readonly CBasicType UnsignedInt = new CBasicType("int", Signedness.Unsigned, "");
-        public static readonly CBasicType SignedInt = new CBasicType("int", Signedness.Signed, "");
-        public static readonly CBasicType UnsignedLongInt = new CBasicType("int", Signedness.Unsigned, "long");
-        public static readonly CBasicType SignedLongInt = new CBasicType("int", Signedness.Signed, "long");
-        public static readonly CBasicType UnsignedLongLongInt = new CBasicType("int", Signedness.Unsigned, "long long");
-        public static readonly CBasicType SignedLongLongInt = new CBasicType("int", Signedness.Signed, "long long");
-        public static readonly CBasicType Float = new CBasicType("float", Signedness.Signed, "");
-        public static readonly CBasicType Double = new CBasicType("double", Signedness.Signed, "");
-
-        public override int GetSize(EmitContext c)
-        {
-            if (Name == "char")
-            {
-                return c.MachineInfo.CharSize;
-            }
-            else if (Name == "int")
-            {
-                if (Size == "short")
-                {
-                    return c.MachineInfo.ShortIntSize;
-                }
-                else if (Size == "long")
-                {
-                    return c.MachineInfo.LongIntSize;
-                }
-                else if (Size == "long long")
-                {
-                    return c.MachineInfo.LongLongIntSize;
-                }
-                else
-                {
-                    return c.MachineInfo.IntSize;
-                }
-            }
-            else if (Name == "float")
-            {
-                return c.MachineInfo.FloatSize;
-            }
-            else if (Name == "double")
-            {
-                return c.MachineInfo.DoubleSize;
-            }
-            else
-            {
-                throw new NotSupportedException(this.ToString());
-            }
-        }
+        public static readonly CIntType ConstChar = new CIntType("char", Signedness.Unsigned, "") { TypeQualifiers = TypeQualifiers.Const };
+        public static readonly CIntType UnsignedChar = new CIntType("char", Signedness.Unsigned, "");
+        public static readonly CIntType SignedChar = new CIntType("char", Signedness.Signed, "");
+        public static readonly CIntType UnsignedShortInt = new CIntType("int", Signedness.Unsigned, "short");
+        public static readonly CIntType SignedShortInt = new CIntType("int", Signedness.Signed, "short");
+        public static readonly CIntType UnsignedInt = new CIntType("int", Signedness.Unsigned, "");
+        public static readonly CIntType SignedInt = new CIntType("int", Signedness.Signed, "");
+        public static readonly CIntType UnsignedLongInt = new CIntType("int", Signedness.Unsigned, "long");
+        public static readonly CIntType SignedLongInt = new CIntType("int", Signedness.Signed, "long");
+        public static readonly CIntType UnsignedLongLongInt = new CIntType("int", Signedness.Unsigned, "long long");
+        public static readonly CIntType SignedLongLongInt = new CIntType("int", Signedness.Signed, "long long");
+        public static readonly CFloatType Float = new CFloatType("float", 32);
+        public static readonly CFloatType Double = new CFloatType("double", 64);
 
         /// <summary>
         /// Section 6.3.1.1 (page 51) of N1570
@@ -188,7 +141,7 @@ namespace CLanguage.Types
                             }
                             else
                             {
-                                return new CBasicType(p2.Name, Signedness.Unsigned, p2.Size);
+                                return new CIntType(p2.Name, Signedness.Unsigned, p2.Size);
                             }
                         }
                     }
@@ -207,7 +160,7 @@ namespace CLanguage.Types
                             }
                             else
                             {
-                                return new CBasicType(p1.Name, Signedness.Unsigned, p1.Size);
+                                return new CIntType(p1.Name, Signedness.Unsigned, p1.Size);
                             }
                         }
                     }

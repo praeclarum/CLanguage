@@ -85,7 +85,6 @@ namespace CLanguage.Tests
             Assert.AreEqual("int", red.Name);
             Assert.AreEqual("long", brown.Size);
             Assert.AreEqual("int", brown.Name);
-            Assert.AreEqual("long", black.Size);
             Assert.AreEqual("double", black.Name);
         }
 
