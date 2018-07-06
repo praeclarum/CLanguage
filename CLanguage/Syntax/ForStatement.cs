@@ -17,7 +17,9 @@ namespace CLanguage.Syntax
         public ForStatement (Statement initStatement, Expression continueExpr, Statement body)
         {
             InitBlock = new Block ();
-            InitBlock.Statements.Add (initStatement);
+            if (initStatement != null) {
+                InitBlock.Statements.Add (initStatement);
+            }
             ContinueExpression = continueExpr;
             LoopBody = body;
         }
@@ -25,7 +27,9 @@ namespace CLanguage.Syntax
         public ForStatement (Statement initStatement, Expression continueExpr, Expression nextExpr, Statement body)
         {
             InitBlock = new Block ();
-            InitBlock.Statements.Add (initStatement);
+            if (initStatement != null) {
+                InitBlock.Statements.Add (initStatement);
+            }
             ContinueExpression = continueExpr;
             NextExpression = nextExpr;
             LoopBody = body;
@@ -34,7 +38,9 @@ namespace CLanguage.Syntax
 	    public ForStatement(Statement initStatement, Expression continueExpr, Statement body, Block parent, Location startLoc, Location endLoc)
         {
             InitBlock = new Block(startLoc, endLoc);
-			InitBlock.Statements.Add (initStatement);
+            if (initStatement != null) {
+                InitBlock.Statements.Add (initStatement);
+            }
             ContinueExpression = continueExpr;
             LoopBody = body;
         }
@@ -42,7 +48,9 @@ namespace CLanguage.Syntax
 		public ForStatement(Statement initStatement, Expression continueExpr, Expression nextExpr, Statement body, Block parent, Location startLoc, Location endLoc)
         {
             InitBlock = new Block(startLoc, endLoc);
-			InitBlock.Statements.Add (initStatement);
+            if (initStatement != null) {
+                InitBlock.Statements.Add (initStatement);
+            }
             ContinueExpression = continueExpr;
             NextExpression = nextExpr;
             LoopBody = body;

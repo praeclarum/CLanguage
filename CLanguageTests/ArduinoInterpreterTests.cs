@@ -184,7 +184,7 @@ void loop() {
             var arduino = Run (code);
         }
 
-        [TestMethod, Ignore]
+        [TestMethod]
         public void Calibration ()
         {
             var code = @"
@@ -204,7 +204,7 @@ void setup() {
   digitalWrite(13, HIGH);
 
   // calibrate during the first five seconds 
-  while (millis() < 5000) {
+  while (millis() < 1) {
     sensorValue = analogRead(sensorPin);
 
     // record the maximum sensor value

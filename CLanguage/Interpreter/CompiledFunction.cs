@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using CLanguage.Syntax;
 using CLanguage.Types;
@@ -59,7 +60,7 @@ namespace CLanguage.Interpreter
 
 				var i = Instructions[ip];
 
-                //Console.WriteLine (i);
+                //Debug.WriteLine (i);
 
 				switch (i.Op) {
 				case OpCode.Dup:

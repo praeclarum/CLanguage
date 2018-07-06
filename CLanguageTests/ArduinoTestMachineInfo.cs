@@ -2,6 +2,7 @@ using System;
 using CLanguage.Interpreter;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
+using System.Diagnostics;
 
 namespace CLanguage.Tests
 {
@@ -26,8 +27,12 @@ namespace CLanguage.Tests
 #define INPUT 0
 #define INPUT_PULLUP 2
 #define OUTPUT 1
-#define true 1
-#define false 0
+#define A0 0
+#define A1 1
+#define A2 2
+#define A3 3
+#define A4 4
+#define A5 5
 //struct SerialClass {
 //};
 //struct SerialClass Serial;
@@ -37,9 +42,13 @@ namespace CLanguage.Tests
             AddInternalFunction ("void digitalWrite (int pin, int value)", Arduino.DigitalWrite);
             AddInternalFunction ("int digitalRead (int pin)", Arduino.DigitalRead);
             AddInternalFunction ("void analogWrite (int pin, int value)");
+            AddInternalFunction ("int analogRead (int pin)", Arduino.AnalogRead);
+            AddInternalFunction ("int map (int value, int fromLow, int fromHigh, int toLow, int toHigh)", Arduino.Map);
+            AddInternalFunction ("int constrain (int x, int a, int b)", Arduino.Constrain);
             AddInternalFunction ("void delay (unsigned long ms)");
             AddInternalFunction ("void tone (int pin, int note, int duration)");
             AddInternalFunction ("void assertAreEqual (int expected, int actual)", AssertAreEqual);
+            AddInternalFunction ("long millis ()", Arduino.Millis);
             //AddInternalFunction ("void SerialClass::setup (int baud)", Arduino.SerialSetup);
 		}
 
@@ -52,13 +61,40 @@ namespace CLanguage.Tests
 
         public class TestArduino
         {
+            readonly Stopwatch stopwatch = new Stopwatch ();
+
             public Pin[] Pins = Enumerable.Range (0, 32).Select (x => new Pin { Index = x }).ToArray ();
+
+            public TestArduino ()
+            {
+                stopwatch.Start ();
+            }
+
+            public void Millis (CInterpreter state)
+            {
+                state.Push ((int)stopwatch.ElapsedMilliseconds);
+            }
+
+            public void Map (CInterpreter state)
+            {
+                state.Push (0);
+            }
+
+            public void Constrain (CInterpreter state)
+            {
+                state.Push (0);
+            }
 
             public void PinMode (CInterpreter state)
             {
                 var pin = state.ActiveFrame.Args[0];
                 var mode = state.ActiveFrame.Args[1];
                 Pins[pin].Mode = mode;
+            }
+
+            public void AnalogRead (CInterpreter state)
+            {
+                state.Push (0);
             }
 
             public void DigitalRead (CInterpreter state)
