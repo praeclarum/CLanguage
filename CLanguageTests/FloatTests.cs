@@ -49,7 +49,6 @@ void main () {
             AssertEqual (10.0f - 3.01f, "10.0f-3.01f");
             AssertEqual (10.0f * 3.01f, "10.0f*3.01f");
             AssertEqual (10.0f / 3.01f, "10.0f/3.01f");
-            AssertEqual (10.0f % 3.01f, "10.0f%3.01f");
         }
 
         [TestMethod]
@@ -59,7 +58,6 @@ void main () {
             AssertEqual (10.0 - 3.01, "10.0-3.01");
             AssertEqual (10.0 * 3.01, "10.0*3.01");
             AssertEqual (10.0 / 3.01, "10.0/3.01");
-            AssertEqual (10.0 % 3.01, "10.0%3.01");
         }
 
         [TestMethod]
@@ -70,7 +68,20 @@ void main () {
             AssertTrue (10.0 == 3.01, "10.0==3.01");
             AssertTrue (10.0 <= 3.01, "10.0<=3.01");
             AssertTrue (10.0 >= 3.01, "10.0>=3.01");
+            AssertTrue (10.0 <= 10.0, "10.0<=10.0");
+            AssertTrue (10.0 >= 10.0, "10.0>=10.0");
         }
 
+        [TestMethod]
+        public void FloatLogic ()
+        {
+            AssertTrue (10.0f < 3.01f, "10.0f<3.01f");
+            AssertTrue (10.0f > 3.01f, "10.0f>3.01f");
+            AssertTrue (10.0f == 3.01f, "10.0f==3.01f");
+            AssertTrue (10.0f <= 3.01f, "10.0f<=3.01f");
+            AssertTrue (10.0f >= 3.01f, "10.0f>=3.01f");
+            AssertTrue (10.0f <= 10.0f, "10.0f<=10.0f");
+            AssertTrue (10.0f >= 10.0f, "10.0f>=10.0f");
+        }
     }
 }

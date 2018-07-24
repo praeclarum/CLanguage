@@ -66,7 +66,7 @@ namespace CLanguage.Tests
         {
             var expected = state.ActiveFrame.Args[0];
             var actual = state.ActiveFrame.Args[1];
-            Assert.AreEqual ((float)expected, (float)actual, 1.0e-12);
+            Assert.AreEqual ((float)expected, (float)actual, 1.0e-6);
         }
 
         static void AssertDoublesAreEqual (CInterpreter state)
