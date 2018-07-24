@@ -22,12 +22,45 @@ namespace CLanguage.Syntax
 		{
             var targetType = Left.GetEvaluatedCType (ec);
 
-            throw new NotImplementedException("Member access on " + targetType.GetType ());
+            if (targetType is CStructType structType) {
+
+                var member = structType.Members.FirstOrDefault (x => x.Name == MemberName);
+                if (member == null) {
+                    ec.Report.Error (1061, "Struct '{0}' does not contain a defintion for '{1}'", structType.Name, MemberName);
+                    return CBasicType.SignedInt;
+                }
+
+                return member.MemberType;
+            }
+            else {
+                throw new NotImplementedException ("Member type on " + targetType.GetType ().Name);
+            }
         }
 
         protected override void DoEmit(EmitContext ec)
         {
-            throw new NotImplementedException();
+            var targetType = Left.GetEvaluatedCType (ec);
+
+            if (targetType is CStructType structType) {
+
+                var member = structType.Members.FirstOrDefault (x => x.Name == MemberName);
+
+                if (member == null) {
+                    ec.Report.Error (1061, "Struct '{0}' does not contain a definition for '{1}'", structType.Name, MemberName);
+                }
+                else {
+                    if (member.MemberType is CFunctionType functionType) {
+                        Left.EmitPointer (ec);
+                        ec.Emit (OpCode.LoadFunction, 0);
+                    }
+                    else {
+                        throw new NotSupportedException ("Member field access on struct " + structType.Name);
+                    }
+                }
+            }
+            else {
+                throw new NotSupportedException ("Member access on " + targetType.GetType ().Name);
+            }
         }
 
         public override string ToString()

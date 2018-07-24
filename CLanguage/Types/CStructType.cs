@@ -17,8 +17,7 @@ namespace CLanguage.Types
         {
             var s = 0;
             foreach (var m in Members) {
-                if (m is CStructField f)
-                    s += f.FieldType.GetSize (c);
+                s += m.MemberType.GetSize (c);
             }
             return s;
         }

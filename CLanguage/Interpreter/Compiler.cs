@@ -367,6 +367,9 @@ namespace CLanguage.Interpreter
                 if (structTs.Body != null) {
                     var st = new CStructType ();
                     st.Name = structTs.Name;
+                    foreach (var s in structTs.Body.Statements) {
+                        AddStructMember (st, s, block);
+                    }
                     return st;
                 }
                 else {
@@ -386,6 +389,27 @@ namespace CLanguage.Interpreter
             // Rest
             //
             throw new NotImplementedException ();
+        }
+
+        void AddStructMember (CStructType st, Statement s, Block block)
+        {
+            if (s is MultiDeclaratorStatement multi) {
+                if (multi.InitDeclarators != null) {
+                    foreach (var i in multi.InitDeclarators) {
+                        var type = MakeCType (multi.Specifiers, i.Declarator, block);
+                        if (type is CFunctionType functionType) {
+                            var name = i.Declarator.DeclaredIdentifier;
+                            st.Members.Add (new CStructMethod { Name = name, MemberType = type });
+                        }
+                        else {
+                            throw new NotSupportedException ($"Cannot add `{i}` to struct");
+                        }
+                    }
+                }
+            }
+            else {
+                throw new NotSupportedException ($"Cannot add statement `{s}` to struct");
+            }
         }
 
         class FunctionContext : EmitContext

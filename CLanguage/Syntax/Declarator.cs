@@ -58,6 +58,11 @@ namespace CLanguage.Syntax
                 return (InnerDeclarator != null) ? InnerDeclarator.DeclaredIdentifier : "";
             }
         }
+
+        public override string ToString ()
+        {
+            return DeclaredIdentifier + "(" + string.Join (", ", Parameters) + ")";
+        }
     }
 
     public class Pointer

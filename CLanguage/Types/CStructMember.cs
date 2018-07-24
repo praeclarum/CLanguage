@@ -2,11 +2,15 @@
 {
     public abstract class CStructMember
     {
+        public string Name { get; set; }
+        public CType MemberType { get; set; }
     }
 
     public class CStructField : CStructMember
     {
-        public CType FieldType { get; set; }
-        public string Name { get; set; }
+    }
+
+    public class CStructMethod : CStructMember
+    {
     }
 }

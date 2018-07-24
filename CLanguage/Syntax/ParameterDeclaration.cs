@@ -29,6 +29,11 @@ namespace CLanguage.Syntax
             Name = dec.DeclaredIdentifier;
             Declarator = dec;
         }
+
+        public override string ToString ()
+        {
+            return DeclarationSpecifiers + " " + Declarator;
+        }
     }
 
     public class VarParameter : ParameterDeclaration

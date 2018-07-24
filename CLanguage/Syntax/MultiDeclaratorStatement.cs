@@ -43,6 +43,10 @@ namespace CLanguage.Syntax
         {
             TypeSpecifiers = new List<TypeSpecifier> ();
         }
+        public override string ToString ()
+        {
+            return string.Join (" ", TypeSpecifiers);
+        }
     }
 
     public class InitDeclarator

@@ -17,6 +17,22 @@ namespace CLanguage
         [FieldOffset (8)]
         public ValueType Type;
 
+        public override string ToString ()
+        {
+            switch (Type) {
+                case ValueType.Int32:
+                    return Int32Value.ToString ();
+                case ValueType.Int64:
+                    return Int64Value.ToString ();
+                case ValueType.Float32:
+                    return Float32Value.ToString ();
+                case ValueType.Float64:
+                    return Float64Value.ToString ();
+                default:
+                    return "";
+            }
+        }
+
         public static implicit operator Value (float v)
         {
             return new Value {

@@ -33,7 +33,13 @@ namespace CLanguage.Tests
 #define A3 3
 #define A4 4
 #define A5 5
+#define DEC 10
+#define HEX 16
+#define OCT 8
+#define BIN 2
 struct SerialClass {
+    void begin(int baud);
+    void println(int value, int bas);
 };
 struct SerialClass Serial;
 ";
