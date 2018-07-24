@@ -48,6 +48,9 @@ namespace CLanguage.Tests
             AddInternalFunction ("void delay (unsigned long ms)");
             AddInternalFunction ("void tone (int pin, int note, int duration)");
             AddInternalFunction ("void assertAreEqual (int expected, int actual)", AssertAreEqual);
+            AddInternalFunction ("void assertBoolsAreEqual (bool expected, bool actual)", AssertBoolsAreEqual);
+            AddInternalFunction ("void assertFloatsAreEqual (float expected, float actual)", AssertFloatsAreEqual);
+            AddInternalFunction ("void assertDoublesAreEqual (double expected, double actual)", AssertDoublesAreEqual);
             AddInternalFunction ("long millis ()", Arduino.Millis);
             //AddInternalFunction ("void SerialClass::setup (int baud)", Arduino.SerialSetup);
 		}
@@ -56,8 +59,29 @@ namespace CLanguage.Tests
 		{
 			var expected = state.ActiveFrame.Args[0];
 			var actual = state.ActiveFrame.Args[1];
-            Assert.AreEqual (expected, actual);
+            Assert.AreEqual ((int)expected, (int)actual);
 		}
+
+        static void AssertFloatsAreEqual (CInterpreter state)
+        {
+            var expected = state.ActiveFrame.Args[0];
+            var actual = state.ActiveFrame.Args[1];
+            Assert.AreEqual ((float)expected, (float)actual, 1.0e-12);
+        }
+
+        static void AssertDoublesAreEqual (CInterpreter state)
+        {
+            var expected = state.ActiveFrame.Args[0];
+            var actual = state.ActiveFrame.Args[1];
+            Assert.AreEqual ((double)expected, (double)actual, 1.0e-12);
+        }
+
+        static void AssertBoolsAreEqual (CInterpreter state)
+        {
+            var expected = state.ActiveFrame.Args[0];
+            var actual = state.ActiveFrame.Args[1];
+            Assert.AreEqual ((int)expected, (int)actual);
+        }
 
         public class TestArduino
         {

@@ -2,7 +2,6 @@ using System;
 using CLanguage.Syntax;
 using CLanguage.Interpreter;
 using CLanguage.Types;
-using ValueType = System.Int32;
 
 namespace CLanguage.Interpreter
 {
@@ -47,7 +46,7 @@ namespace CLanguage.Interpreter
                 var fromBasicType = fromType as CBasicType;
                 var toBasicType = toType as CBasicType;
 
-                if (fromBasicType != null && fromBasicType.IsIntegral && toBasicType != null && toBasicType.IsIntegral) {
+                if (fromBasicType != null && toBasicType != null) {
                     // This conversion is implicit with how the evaluator stores its stuff
                 }
                 else if (fromBasicType != null && fromBasicType.IsIntegral && toType is CPointerType) {
@@ -68,7 +67,7 @@ namespace CLanguage.Interpreter
         {
         }
 
-        public void Emit (OpCode op, ValueType x)
+        public void Emit (OpCode op, Value x)
         {
             Emit (new Instruction (op, x));
         }

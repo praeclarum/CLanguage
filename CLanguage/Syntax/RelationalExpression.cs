@@ -44,24 +44,24 @@ namespace CLanguage.Syntax
 
 			switch (Op) {
 			case RelationalOp.Equals:
-				ec.Emit ((OpCode)(OpCode.EqualToInt16 + ioff));
+				ec.Emit ((OpCode)(OpCode.EqualToInt8 + ioff));
 				break;
 			case RelationalOp.NotEquals:
-				ec.Emit ((OpCode)(OpCode.EqualToInt16 + ioff));
+				ec.Emit ((OpCode)(OpCode.EqualToInt8 + ioff));
 				ec.Emit (OpCode.LogicalNot);
 				break;
 			case RelationalOp.LessThan:
-				ec.Emit ((OpCode)(OpCode.LessThanInt16 + ioff));
+				ec.Emit ((OpCode)(OpCode.LessThanInt8 + ioff));
 				break;
 			case RelationalOp.LessThanOrEqual:
-				ec.Emit ((OpCode)(OpCode.GreaterThanInt16 + ioff));
+				ec.Emit ((OpCode)(OpCode.GreaterThanInt8 + ioff));
 				ec.Emit (OpCode.LogicalNot);
 				break;
 			case RelationalOp.GreaterThan:
-				ec.Emit ((OpCode)(OpCode.GreaterThanInt16 + ioff));
+				ec.Emit ((OpCode)(OpCode.GreaterThanInt8 + ioff));
 				break;
 			case RelationalOp.GreaterThanOrEqual:
-				ec.Emit ((OpCode)(OpCode.LessThanInt16 + ioff));
+				ec.Emit ((OpCode)(OpCode.LessThanInt8 + ioff));
 				ec.Emit (OpCode.LogicalNot);
 				break;
 			default:

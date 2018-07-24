@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using CLanguage.Syntax;
-using ValueType = System.Int32;
 
 namespace CLanguage.Interpreter
 {

@@ -51,7 +51,7 @@ namespace CLanguage.Syntax
                 }
                 else if (v.Scope == VariableScope.Function) {
                     ec.Emit (OpCode.Pop);
-                    ec.Report.Error (1656, $"Cannot addign to `{variableName}` because it is a function");
+                    ec.Report.Error (1656, $"Cannot assign to `{variableName}` because it is a function");
                 }
                 else {
                     throw new NotSupportedException ("Assigning to scope '" + v.Scope + "'");

@@ -31,27 +31,30 @@ namespace CLanguage.Syntax
 
 		protected static int GetInstructionOffset (CBasicType aType, EmitContext ec)
 		{
-			if (!aType.IsIntegral) {
-				throw new NotSupportedException ("Arithmetic on type '" + aType + "'");
-			}
-
-			var ioff = 0;
 			var size = aType.GetSize (ec);
-			if (size == 2) {
-				ioff = 0;
-			}
-			else if (size == 4) {
-				ioff = 2;
-			}
-			else {
-				throw new NotSupportedException ("Arithmetic on type '" + aType + "'");
-			}
 
-			if (aType.Signedness == Signedness.Unsigned) {
-				ioff += 1;
-			}
+            if (aType.IsIntegral) {
+                switch (size) {
+                    case 1:
+                        return aType.Signedness == Signedness.Signed ? 0 : 1;
+                    case 2:
+                        return aType.Signedness == Signedness.Signed ? 2 : 3;
+                    case 4:
+                        return aType.Signedness == Signedness.Signed ? 4 : 5;
+                    case 8:
+                        return aType.Signedness == Signedness.Signed ? 6 : 7;
+                }
+            }
+            else {
+                switch (size) {
+                    case 4:
+                        return 8;
+                    case 8:
+                        return 9;
+                }
+            }
 
-			return ioff;
+			throw new NotSupportedException ("Arithmetic on type '" + aType + "'");
 		}
 
 		protected static CBasicType GetPromotedType (Expression expr, string op, EmitContext ec)

@@ -53,8 +53,8 @@ namespace CLanguage.Interpreter
 
 			var done = false;
 
-			var a = 0;
-			var b = 0;
+            Value a = new Value ();
+            Value b = new Value ();
 
 			while (!done && ip < Instructions.Count && state.RemainingTime > 0) {
 
@@ -252,6 +252,20 @@ namespace CLanguage.Interpreter
 					state.SP--;
 					ip++;
 					break;
+                case OpCode.DivideFloat32:
+                    a = state.Stack[state.SP - 2];
+                    b = state.Stack[state.SP - 1];
+                    state.Stack[state.SP - 2] = ((float)a / (float)b);
+                    state.SP--;
+                    ip++;
+                    break;
+                case OpCode.DivideFloat64:
+                    a = state.Stack[state.SP - 2];
+                    b = state.Stack[state.SP - 1];
+                    state.Stack[state.SP - 2] = ((double)a / (double)b);
+                    state.SP--;
+                    ip++;
+                    break;
 				case OpCode.EqualToInt16:
 					a = state.Stack[state.SP - 2];
 					b = state.Stack[state.SP - 1];
@@ -308,6 +322,20 @@ namespace CLanguage.Interpreter
 					state.SP--;
 					ip++;
 					break;
+                case OpCode.LessThanFloat32:
+                    a = state.Stack[state.SP - 2];
+                    b = state.Stack[state.SP - 1];
+                    state.Stack[state.SP - 2] = ((float)a < (float)b) ? 1 : 0;
+                    state.SP--;
+                    ip++;
+                    break;
+                case OpCode.LessThanFloat64:
+                    a = state.Stack[state.SP - 2];
+                    b = state.Stack[state.SP - 1];
+                    state.Stack[state.SP - 2] = ((double)a < (double)b) ? 1 : 0;
+                    state.SP--;
+                    ip++;
+                    break;
 				case OpCode.GreaterThanInt16:
 					a = state.Stack[state.SP - 2];
 					b = state.Stack[state.SP - 1];

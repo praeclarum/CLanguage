@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using ValueType = System.Int32;
-
 using CLanguage.Syntax;
 using CLanguage.Types;
 using CLanguage.Parser;

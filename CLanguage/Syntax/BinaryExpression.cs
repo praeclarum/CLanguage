@@ -51,19 +51,19 @@ namespace CLanguage.Syntax
 
 			switch (Op) {
 			case Binop.Add:
-				ec.Emit ((OpCode)(OpCode.AddInt16 + ioff));
+				ec.Emit ((OpCode)(OpCode.AddInt8 + ioff));
 				break;
 			case Binop.Subtract:
-				ec.Emit ((OpCode)(OpCode.SubtractInt16 + ioff));
+				ec.Emit ((OpCode)(OpCode.SubtractInt8 + ioff));
 				break;
 			case Binop.Multiply:
-				ec.Emit ((OpCode)(OpCode.MultiplyInt16 + ioff));
+				ec.Emit ((OpCode)(OpCode.MultiplyInt8 + ioff));
 				break;
 			case Binop.Divide:
-				ec.Emit ((OpCode)(OpCode.DivideInt16 + ioff));
+				ec.Emit ((OpCode)(OpCode.DivideInt8 + ioff));
 				break;
 			case Binop.Mod:
-				ec.Emit ((OpCode)(OpCode.ModuloInt16 + ioff));
+				ec.Emit ((OpCode)(OpCode.ModuloInt8 + ioff));
 				break;
 			default:
 				throw new NotSupportedException ("Unsupported binary operator '" + Op + "'");

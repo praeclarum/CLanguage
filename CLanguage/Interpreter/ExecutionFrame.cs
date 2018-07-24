@@ -1,5 +1,4 @@
 ﻿
-using ValueType = System.Int32;
 
 namespace CLanguage.Interpreter
 {
@@ -7,20 +6,20 @@ namespace CLanguage.Interpreter
     {
         public int IP { get; set; }
         public BaseFunction Function { get; set; }
-        public ValueType[] Args { get; private set; }
-        public ValueType[] Locals { get; private set; }
+        public Value[] Args { get; private set; }
+        public Value[] Locals { get; private set; }
 
         public void AllocateArgs (int count)
         {
             if (Args == null || Args.Length < count) {
-                Args = new ValueType[count];
+                Args = new Value[count];
             }
         }
 
         public void AllocateLocals (int count)
         {
             if (Locals == null || Locals.Length < count) {
-                Locals = new ValueType[count];
+                Locals = new Value[count];
             }
         }
     }

@@ -72,10 +72,10 @@ namespace CLanguage.Syntax
                             case Unop.None:
                                 break;
                             case Unop.Negate:
-                                ec.Emit ((OpCode)(OpCode.NegateInt16 + ioff));
+                                ec.Emit ((OpCode)(OpCode.NegateInt8 + ioff));
                                 break;
                             case Unop.Not:
-                                ec.Emit ((OpCode)(OpCode.NotInt16 + ioff));
+                                ec.Emit ((OpCode)(OpCode.NotInt8 + ioff));
                                 break;
                             default:
                                 throw new NotSupportedException ("Unsupported unary operator '" + Op + "'");

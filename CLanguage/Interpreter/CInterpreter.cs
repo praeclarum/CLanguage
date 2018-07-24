@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using ValueType = System.Int32;
-
 namespace CLanguage.Interpreter
 {
     public class CInterpreter
@@ -12,7 +10,7 @@ namespace CLanguage.Interpreter
 		Executable exe;
         BaseFunction entrypoint;
 
-        public readonly ValueType[] Stack;
+        public readonly Value[] Stack;
         public int SP;
         readonly ExecutionFrame[] Frames;
         int FP;
@@ -27,7 +25,7 @@ namespace CLanguage.Interpreter
         public CInterpreter (Executable exe, int maxStack = 1024, int maxFrames = 24)
         {
             this.exe = exe;
-            Stack = new ValueType[maxStack];
+            Stack = new Value[maxStack];
             Frames = (from i in Enumerable.Range (0, maxFrames) select new ExecutionFrame ()).ToArray ();
         }
 
@@ -55,7 +53,7 @@ namespace CLanguage.Interpreter
             function.Init (this);
         }
 
-        public void Push (ValueType value)
+        public void Push (Value value)
         {
             Stack[SP++] = value;
         }
