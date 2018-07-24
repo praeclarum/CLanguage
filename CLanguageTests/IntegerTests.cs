@@ -2,6 +2,7 @@ using System;
 using CLanguage.Interpreter;
 using CLanguage.Types;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Linq;
 
 namespace CLanguage.Tests
 {
@@ -17,7 +18,7 @@ namespace CLanguage.Tests
 			compiler.AddCode ("test.c", type + " v;");
 			var exe = compiler.Compile ();
 
-			var ty = exe.Globals[1].VariableType;
+            var ty = exe.Globals.First (x => x.Name == "v").VariableType;
 			Assert.IsInstanceOfType (ty, typeof(CBasicType));
 			var bty = (CBasicType)ty;
 			Assert.IsTrue (bty.IsIntegral);
@@ -36,9 +37,9 @@ namespace CLanguage.Tests
             compiler.AddCode ("test.c", type1 + " v1; " + type2 + " v2;");
 			var exe = compiler.Compile ();
 
-			var ty1 = exe.Globals[1].VariableType;
+            var ty1 = exe.Globals.First (x => x.Name == "v1").VariableType;
 			Assert.IsInstanceOfType (ty1, typeof(CBasicType));
-			var ty2 = exe.Globals[2].VariableType;
+            var ty2 = exe.Globals.First (x => x.Name == "v2").VariableType;
 			Assert.IsInstanceOfType (ty2, typeof(CBasicType));
 
 			var bty1 = (CBasicType)ty1;

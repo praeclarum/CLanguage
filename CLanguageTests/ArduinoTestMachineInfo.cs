@@ -33,9 +33,9 @@ namespace CLanguage.Tests
 #define A3 3
 #define A4 4
 #define A5 5
-//struct SerialClass {
-//};
-//struct SerialClass Serial;
+struct SerialClass {
+};
+struct SerialClass Serial;
 ";
 
             AddInternalFunction ("void pinMode (int pin, int mode)", Arduino.PinMode);
