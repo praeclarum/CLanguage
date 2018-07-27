@@ -40,8 +40,10 @@ namespace CLanguage.Tests
 #define BIN 2
 struct SerialClass {
     void begin(int baud);
+    void print(const char *value);
     void println(int value, int bas);
     void println(int value);
+    void println(const char *value);
 };
 struct SerialClass Serial;
 ";
@@ -61,8 +63,10 @@ struct SerialClass Serial;
             AddInternalFunction ("void assertDoublesAreEqual (double expected, double actual)", AssertDoublesAreEqual);
             AddInternalFunction ("long millis ()", Arduino.Millis);
             AddInternalFunction ("void SerialClass::begin (int baud)", Arduino.SerialBegin);
+            AddInternalFunction ("void SerialClass::print (const char *value)", Arduino.SerialPrintlnI);
             AddInternalFunction ("void SerialClass::println (int value, int base)", Arduino.SerialPrintlnII);
             AddInternalFunction ("void SerialClass::println (int value)", Arduino.SerialPrintlnI);
+            AddInternalFunction ("void SerialClass::println (const char *value)", Arduino.SerialPrintlnI);
 		}
 
 		static void AssertAreEqual (CInterpreter state)

@@ -313,6 +313,48 @@ namespace CLanguage.Interpreter
                         state.SP--;
                         ip++;
                         break;
+                    case OpCode.ModuloInt16:
+                        a = state.Stack[state.SP - 2];
+                        b = state.Stack[state.SP - 1];
+                        state.Stack[state.SP - 2] = ((short)a % (short)b);
+                        state.SP--;
+                        ip++;
+                        break;
+                    case OpCode.ModuloUInt16:
+                        a = state.Stack[state.SP - 2];
+                        b = state.Stack[state.SP - 1];
+                        state.Stack[state.SP - 2] = ((ushort)a % (ushort)b);
+                        state.SP--;
+                        ip++;
+                        break;
+                    case OpCode.ModuloInt32:
+                        a = state.Stack[state.SP - 2];
+                        b = state.Stack[state.SP - 1];
+                        state.Stack[state.SP - 2] = ((int)a % (int)b);
+                        state.SP--;
+                        ip++;
+                        break;
+                    case OpCode.ModuloUInt32:
+                        a = state.Stack[state.SP - 2];
+                        b = state.Stack[state.SP - 1];
+                        state.Stack[state.SP - 2] = (Value)((uint)a % (uint)b);
+                        state.SP--;
+                        ip++;
+                        break;
+                    case OpCode.ModuloFloat32:
+                        a = state.Stack[state.SP - 2];
+                        b = state.Stack[state.SP - 1];
+                        state.Stack[state.SP - 2] = ((float)a % (float)b);
+                        state.SP--;
+                        ip++;
+                        break;
+                    case OpCode.ModuloFloat64:
+                        a = state.Stack[state.SP - 2];
+                        b = state.Stack[state.SP - 1];
+                        state.Stack[state.SP - 2] = ((double)a % (double)b);
+                        state.SP--;
+                        ip++;
+                        break;
                     case OpCode.EqualToInt16:
                         a = state.Stack[state.SP - 2];
                         b = state.Stack[state.SP - 1];

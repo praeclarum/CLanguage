@@ -28,7 +28,7 @@ namespace CLanguage.Types
 
         public virtual bool CanCastTo (CType otherType)
         {
-            return false;
+            return Equals (otherType);
         }
     }
 }
