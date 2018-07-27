@@ -242,7 +242,7 @@ namespace CLanguage.Parser
                     _lastR = r;
                 }
             }
-            else if (r == '&' || r == '%' || r == ',' || r == ';' || r == '?' || r == '(' || r == ')' || r == '{' || r == '}' || r == '[' || r == ']') {
+            else if (r == '%' || r == ',' || r == ';' || r == '?' || r == '(' || r == ')' || r == '{' || r == '}' || r == '[' || r == ']') {
                 _token = r;
                 _value = null;
                 _lastR = _pp.Read ();
@@ -266,6 +266,30 @@ namespace CLanguage.Parser
                     _token = (r == '*') ? Token.MUL_ASSIGN : Token.DIV_ASSIGN;
                     _value = null;
                     _lastR = nr;
+                }
+                else {
+                    _token = r;
+                    _value = null;
+                    _lastR = nr;
+                }
+            }
+            else if (r == '&') {
+                var nr = _pp.Read ();
+
+                if (nr == '&') {
+                    nr = _pp.Read ();
+
+                    if (nr == '=') {
+                        throw new NotImplementedException ();
+                    }
+                    else {
+                        _token = Token.AND_OP;
+                        _value = null;
+                        _lastR = nr;
+                    }
+                }
+                else if (nr == '=') {
+                    throw new NotImplementedException ();
                 }
                 else {
                     _token = r;
