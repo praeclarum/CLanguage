@@ -80,7 +80,7 @@ void loop() {
             Assert.AreEqual (1, arduino.Pins[13].Mode);
         }
 
-        [TestMethod, Ignore]
+        [TestMethod]
         public void DigitalReadSerial ()
         {
             var code = @"

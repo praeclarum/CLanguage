@@ -23,6 +23,12 @@ namespace CLanguage.Interpreter
             Instructions = new List<Instruction> ();
         }
 
+        public CompiledFunction (string name, string nameContext, CFunctionType functionType, Block body = null)
+            : this (name, functionType, body)
+        {
+            NameContext = nameContext;
+        }
+
         public override string ToString ()
         {
             return Name;

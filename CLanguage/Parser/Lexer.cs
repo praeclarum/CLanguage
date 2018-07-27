@@ -216,7 +216,20 @@ namespace CLanguage.Parser
                     _lastR = r;
                 }
             }
-            else if (r == '&' || r == '!' || r == '%' || r == ',' || r == ':' || r == ';' || r == '?' || r == '(' || r == ')' || r == '{' || r == '}' || r == '[' || r == ']') {
+            else if (r == ':') {
+                r = _pp.Read ();
+                if (r == ':') {
+                    _token = Token.COLONCOLON;
+                    _value = null;
+                    _lastR = _pp.Read ();
+                }
+                else {
+                    _token = ':';
+                    _value = null;
+                    _lastR = r;
+                }
+            }
+            else if (r == '&' || r == '!' || r == '%' || r == ',' || r == ';' || r == '?' || r == '(' || r == ')' || r == '{' || r == '}' || r == '[' || r == ']') {
                 _token = r;
                 _value = null;
                 _lastR = _pp.Read ();

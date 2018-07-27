@@ -118,7 +118,9 @@ namespace CLanguage.Interpreter
                             var name = idecl.Declarator.DeclaredIdentifier;
 
                             if (ctype is CFunctionType ftype && !HasStronglyBoundPointer (idecl.Declarator)) {
-                                var f = new CompiledFunction (name, ftype);
+                                var nameContext = (idecl.Declarator.InnerDeclarator is IdentifierDeclarator ndecl && ndecl.Identifiers.Count > 0) ?
+                                    string.Join ("::", ndecl.Identifiers) : "";
+                                var f = new CompiledFunction (name, nameContext, ftype);
                                 block.Functions.Add (f);
                             }
                             else {
@@ -409,118 +411,6 @@ namespace CLanguage.Interpreter
             }
             else {
                 throw new NotSupportedException ($"Cannot add statement `{s}` to struct");
-            }
-        }
-
-        class FunctionContext : EmitContext
-        {
-			Executable exe;
-			CompiledFunction fexe;
-			EmitContext context;
-
-			class BlockLocals
-			{
-				public int StartIndex;
-				public int Length;
-			}
-			List<Block> blocks;
-			Dictionary<Block, BlockLocals> blockLocals;
-			List<CompiledVariable> allLocals;
-
-			public IEnumerable<CompiledVariable> LocalVariables { get { return allLocals; } }
-
-			public FunctionContext (Executable exe, CompiledFunction fexe, EmitContext context)
-                : base (context.MachineInfo, context.Report, fexe)
-            {
-				this.exe = exe;
-				this.fexe = fexe;
-				this.context = context;
-				blocks = new List<Block> ();
-				blockLocals = new Dictionary<Block, BlockLocals> ();
-                allLocals = new List<CompiledVariable> ();
-            }
-
-            public override ResolvedVariable ResolveVariable (string name)
-			{
-				//
-				// Look for function parameters
-				//
-                for (var i = 0; i < fexe.FunctionType.Parameters.Count; i++) {
-                    if (fexe.FunctionType.Parameters[i].Name == name) {
-                        return new ResolvedVariable (VariableScope.Arg, i, fexe.FunctionType.Parameters[i].ParameterType);
-					}
-				}
-
-				//
-				// Look for locals
-				//
-				foreach (var b in blocks.Reverse<Block> ()) {
-					var blocals = blockLocals[b];
-					for (var i = 0; i < blocals.Length; i++) {
-						var j = blocals.StartIndex + i;
-						if (allLocals[j].Name == name) {
-							return new ResolvedVariable (VariableScope.Local, j, allLocals[j].VariableType);
-						}
-					}
-				}
-
-				//
-				// Look for global variables
-				//
-				for (var i = 0; i < exe.Globals.Count; i++) {
-					if (exe.Globals[i].Name == name) {
-						return new ResolvedVariable (VariableScope.Global, i, exe.Globals[i].VariableType);
-					}
-				}
-
-				//
-				// Look for functions
-				//
-				for (var i = 0; i < exe.Functions.Count; i++) {
-					var f = exe.Functions[i];
-					if (f.Name == name) {
-						return new ResolvedVariable (f, i);
-					}
-				}
-
-				context.Report.Error (103, "The name '" + name + "' does not exist in the current context");
-				return null;
-			}
-
-			public override void BeginBlock (Block b)
-			{
-				blocks.Add (b);
-				var locs = new BlockLocals {
-					StartIndex = allLocals.Count,
-					Length = b.Variables.Count,
-				};
-				blockLocals[b] = locs;
-				allLocals.AddRange (b.Variables);
-			}
-
-			public override void EndBlock ()
-			{
-				blocks.RemoveAt (blocks.Count - 1);
-			}
-
-			public override Label DefineLabel ()
-			{
-				return new Label ();
-			}
-
-            public override void EmitLabel(Label l)
-            {
-				l.Index = fexe.Instructions.Count;
-            }
-
-			public override void Emit (Instruction instruction)
-			{
-				fexe.Instructions.Add (instruction);
-			}
-
-            public override int GetConstantMemory (string stringConstant)
-            {
-                return exe.GetConstantMemory (stringConstant);
             }
         }
     }

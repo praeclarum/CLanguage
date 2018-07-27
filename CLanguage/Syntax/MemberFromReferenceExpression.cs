@@ -49,7 +49,8 @@ namespace CLanguage.Syntax
                     ec.Report.Error (1061, "Struct '{0}' does not contain a definition for '{1}'", structType.Name, MemberName);
                 }
                 else {
-                    if (member.MemberType is CFunctionType functionType) {
+                    if (member is CStructMethod method && member.MemberType is CFunctionType functionType) {
+                        var res = ec.ResolveMethodFunction (structType, method);
                         Left.EmitPointer (ec);
                         ec.Emit (OpCode.LoadFunction, 0);
                     }

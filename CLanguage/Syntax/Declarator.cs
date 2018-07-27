@@ -19,6 +19,8 @@ namespace CLanguage.Syntax
     {
         public string Identifier { get; private set; }
 
+        public List<string> Identifiers { get; } = new List<string> ();
+
         public override string DeclaredIdentifier {
             get {
                 return Identifier;
@@ -28,6 +30,13 @@ namespace CLanguage.Syntax
         public IdentifierDeclarator (string id)
         {
             Identifier = id;
+        }
+
+        public IdentifierDeclarator Push (string id)
+        {
+            Identifiers.Add (Identifier);
+            Identifier = id;
+            return this;
         }
 
         public override string ToString ()

@@ -58,7 +58,7 @@ struct SerialClass Serial;
             AddInternalFunction ("void assertFloatsAreEqual (float expected, float actual)", AssertFloatsAreEqual);
             AddInternalFunction ("void assertDoublesAreEqual (double expected, double actual)", AssertDoublesAreEqual);
             AddInternalFunction ("long millis ()", Arduino.Millis);
-            //AddInternalFunction ("void SerialClass::setup (int baud)", Arduino.SerialSetup);
+            AddInternalFunction ("void SerialClass::begin (int baud)", Arduino.SerialSetup);
 		}
 
 		static void AssertAreEqual (CInterpreter state)

@@ -28,6 +28,11 @@ namespace CLanguage.Interpreter
             return null;
         }
 
+        public virtual ResolvedVariable ResolveMethodFunction (CStructType structType, CStructMethod method)
+        {
+            return null;
+        }
+
         public virtual void BeginBlock (Block b) { }
         public virtual void EndBlock () { }
 

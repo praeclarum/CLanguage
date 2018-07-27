@@ -24,6 +24,7 @@ namespace CLanguage.Interpreter
             }
 			var f = tu.Functions[0];
 			Name = f.Name;
+            NameContext = f.NameContext;
 			FunctionType = f.FunctionType;
 
 			Action = action;
