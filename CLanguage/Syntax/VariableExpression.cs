@@ -19,7 +19,7 @@ namespace CLanguage.Syntax
 
 		public override CType GetEvaluatedCType (EmitContext ec)
 		{
-			var v = ec.ResolveVariable (VariableName);
+			var v = ec.ResolveVariable (VariableName, null);
 			if (v != null) {
 				return v.VariableType;
 			}
@@ -30,7 +30,7 @@ namespace CLanguage.Syntax
 
         protected override void DoEmit(EmitContext ec)
         {
-			var variable = ec.ResolveVariable (VariableName);
+			var variable = ec.ResolveVariable (VariableName, null);
 
 			if (variable != null) {
 
@@ -70,25 +70,10 @@ namespace CLanguage.Syntax
 
         protected override void DoEmitPointer (EmitContext ec)
         {
-            var variable = ec.ResolveVariable (VariableName);
+            var res = ec.ResolveVariable (VariableName, null);
 
-            if (variable != null) {
-
-                if (variable.Scope == VariableScope.Function) {
-                    ec.Emit (OpCode.LoadValue, variable.Index);
-                }
-                else if (variable.Scope == VariableScope.Arg) {
-                    ec.Emit (OpCode.LoadValue, variable.Index);
-                }
-                else if (variable.Scope == VariableScope.Global) {
-                    ec.Emit (OpCode.LoadValue, variable.Index);
-                }
-                else if (variable.Scope == VariableScope.Local) {
-                    ec.Emit (OpCode.LoadValue, variable.Index);
-                }
-                else {
-                    throw new NotSupportedException ("Cannot get address of variable scope '" + variable.Scope + "'");
-                }
+            if (res != null) {
+                res.Emit (ec);
             }
             else {
                 ec.Report.Error (103, $"The name `{VariableName}` does not exist in the current context.");

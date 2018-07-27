@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using CLanguage.Interpreter;
 
 namespace CLanguage.Types
@@ -50,6 +51,38 @@ namespace CLanguage.Types
             }
             s += "))";
             return s;
+        }
+
+        public bool ParameterTypesMatchArgs (CType[] argTypes)
+        {
+            if (Parameters.Count != argTypes.Length)
+                return false;
+
+            for (var i = 0; i < Parameters.Count; i++) {
+                var ft = argTypes[i];
+                var tt = Parameters[i].ParameterType;
+
+                if (!ft.CanCastTo (tt))
+                    return false;
+            }
+
+            return true;
+        }
+
+        public bool ParameterTypesEqual (CFunctionType otherType)
+        {
+            if (Parameters.Count != otherType.Parameters.Count)
+                return false;
+
+            for (var i = 0; i < Parameters.Count; i++) {
+                var ft = otherType.Parameters[i].ParameterType;
+                var tt = Parameters[i].ParameterType;
+
+                if (!ft.Equals (tt))
+                    return false;
+            }
+
+            return true;
         }
     }
 

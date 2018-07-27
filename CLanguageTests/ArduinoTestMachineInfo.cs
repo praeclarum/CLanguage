@@ -40,6 +40,7 @@ namespace CLanguage.Tests
 struct SerialClass {
     void begin(int baud);
     void println(int value, int bas);
+    void println(int value);
 };
 struct SerialClass Serial;
 ";
@@ -60,6 +61,7 @@ struct SerialClass Serial;
             AddInternalFunction ("long millis ()", Arduino.Millis);
             AddInternalFunction ("void SerialClass::begin (int baud)", Arduino.SerialBegin);
             AddInternalFunction ("void SerialClass::println (int value, int base)", Arduino.SerialPrintlnII);
+            AddInternalFunction ("void SerialClass::println (int value)", Arduino.SerialPrintlnI);
 		}
 
 		static void AssertAreEqual (CInterpreter state)
@@ -125,7 +127,9 @@ struct SerialClass Serial;
 
             public void AnalogRead (CInterpreter state)
             {
-                state.Push (0);
+                var pin = state.ActiveFrame.Args[0];
+                var value = Pins[pin].AnalogValue;
+                state.Push (value);
             }
 
             public void DigitalRead (CInterpreter state)
@@ -150,11 +154,16 @@ struct SerialClass Serial;
             {
             }
 
+            public void SerialPrintlnI (CInterpreter state)
+            {
+            }
+
             public class Pin
             {
                 public int Index;
                 public int Mode;
                 public int DigitalValue;
+                public int AnalogValue = 42;
             }
         }
 	}

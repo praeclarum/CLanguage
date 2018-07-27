@@ -34,7 +34,7 @@ namespace CLanguage.Interpreter
             allLocals = new List<CompiledVariable> ();
         }
 
-        public override ResolvedVariable ResolveVariable (string name)
+        public override ResolvedVariable ResolveVariable (string name, CType[] argTypes)
         {
             //
             // Look for function parameters
@@ -83,14 +83,15 @@ namespace CLanguage.Interpreter
 
         public override ResolvedVariable ResolveMethodFunction (CStructType structType, CStructMethod method)
         {
-            var ftype = method.MemberType;
+            if (method.MemberType is CFunctionType ftype) {
 
-            var nameContext = structType.Name;
+                var nameContext = structType.Name;
 
-            for (var i = 0; i < exe.Functions.Count; i++) {
-                var f = exe.Functions[i];
-                if (f.NameContext == nameContext && f.Name == method.Name) {
-                    return new ResolvedVariable (f, i);
+                for (var i = 0; i < exe.Functions.Count; i++) {
+                    var f = exe.Functions[i];
+                    if (f.NameContext == nameContext && f.Name == method.Name && f.FunctionType.ParameterTypesEqual (ftype)) {
+                        return new ResolvedVariable (f, i);
+                    }
                 }
             }
 

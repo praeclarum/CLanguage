@@ -23,7 +23,7 @@ namespace CLanguage.Interpreter
             FunctionDecl = fdecl;
         }
 
-        public virtual ResolvedVariable ResolveVariable (string name)
+        public virtual ResolvedVariable ResolveVariable (string name, CType[] argTypes)
         {
             return null;
         }

@@ -34,7 +34,7 @@ namespace CLanguage.Syntax
                 ec.Emit (OpCode.Dup);
 
                 string variableName = ((VariableExpression)Left).VariableName;
-                var v = ec.ResolveVariable (variableName);
+                var v = ec.ResolveVariable (variableName, null);
 
                 if (v == null) {
                     ec.Emit (OpCode.Pop);

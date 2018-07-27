@@ -174,6 +174,11 @@ namespace CLanguage.Types
             return false;
         }
 
+        public override bool CanCastTo (CType otherType)
+        {
+            return otherType is CBasicType;
+        }
+
         public override string ToString()
         {
             if (IsIntegral)

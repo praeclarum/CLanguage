@@ -25,5 +25,10 @@ namespace CLanguage.Types
         {
             pointer = new Lazy<CPointerType> (() => new CPointerType (this));
         }
+
+        public virtual bool CanCastTo (CType otherType)
+        {
+            return false;
+        }
     }
 }

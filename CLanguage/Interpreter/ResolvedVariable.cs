@@ -1,4 +1,5 @@
-﻿using CLanguage.Types;
+﻿using System;
+using CLanguage.Types;
 
 namespace CLanguage.Interpreter
 {
@@ -22,6 +23,25 @@ namespace CLanguage.Interpreter
             Function = function;
             Index = index;
             VariableType = Function.FunctionType;
+        }
+
+        public void Emit (EmitContext ec)
+        {
+            if (Scope == VariableScope.Function) {
+                ec.Emit (OpCode.LoadValue, Index);
+            }
+            else if (Scope == VariableScope.Arg) {
+                ec.Emit (OpCode.LoadValue, Index);
+            }
+            else if (Scope == VariableScope.Global) {
+                ec.Emit (OpCode.LoadValue, Index);
+            }
+            else if (Scope == VariableScope.Local) {
+                ec.Emit (OpCode.LoadValue, Index);
+            }
+            else {
+                throw new NotSupportedException ("Cannot get address of variable scope '" + Scope + "'");
+            }
         }
     }
 
