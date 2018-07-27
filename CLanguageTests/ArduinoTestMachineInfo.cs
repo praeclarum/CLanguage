@@ -3,6 +3,7 @@ using CLanguage.Interpreter;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
 using System.Diagnostics;
+using System.IO;
 
 namespace CLanguage.Tests
 {
@@ -98,6 +99,8 @@ struct SerialClass Serial;
 
             public Pin[] Pins = Enumerable.Range (0, 32).Select (x => new Pin { Index = x }).ToArray ();
 
+            public StringWriter SerialOut = new StringWriter ();
+
             public TestArduino ()
             {
                 stopwatch.Start ();
@@ -152,10 +155,14 @@ struct SerialClass Serial;
 
             public void SerialPrintlnII (CInterpreter state)
             {
+                var v = state.ActiveFrame.Args[0];
+                SerialOut.WriteLine (v);
             }
 
             public void SerialPrintlnI (CInterpreter state)
             {
+                var v = state.ActiveFrame.Args[0];
+                SerialOut.WriteLine (v);
             }
 
             public class Pin

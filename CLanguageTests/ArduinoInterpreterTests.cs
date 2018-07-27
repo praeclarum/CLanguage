@@ -94,6 +94,7 @@ void loop() {
   delay(1);
 }";
             var arduino = Run (code);
+            Assert.AreEqual ("42", arduino.SerialOut.ToString ().Split ("\n").First ().Trim ());
         }
 
         [TestMethod]
@@ -111,6 +112,7 @@ void loop() {
 }
 ";
             var arduino = Run (code);
+            Assert.AreEqual ("0", arduino.SerialOut.ToString ().Split ("\n").First ().Trim ());
         }
 
         [TestMethod]
