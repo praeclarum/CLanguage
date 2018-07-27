@@ -58,7 +58,8 @@ struct SerialClass Serial;
             AddInternalFunction ("void assertFloatsAreEqual (float expected, float actual)", AssertFloatsAreEqual);
             AddInternalFunction ("void assertDoublesAreEqual (double expected, double actual)", AssertDoublesAreEqual);
             AddInternalFunction ("long millis ()", Arduino.Millis);
-            AddInternalFunction ("void SerialClass::begin (int baud)", Arduino.SerialSetup);
+            AddInternalFunction ("void SerialClass::begin (int baud)", Arduino.SerialBegin);
+            AddInternalFunction ("void SerialClass::println (int value, int base)", Arduino.SerialPrintlnII);
 		}
 
 		static void AssertAreEqual (CInterpreter state)
@@ -141,7 +142,11 @@ struct SerialClass Serial;
                 Pins[pin].DigitalValue = value;
             }
 
-            public void SerialSetup (CInterpreter state)
+            public void SerialBegin (CInterpreter state)
+            {
+            }
+
+            public void SerialPrintlnII (CInterpreter state)
             {
             }
 

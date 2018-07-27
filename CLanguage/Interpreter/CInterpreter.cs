@@ -42,7 +42,8 @@ namespace CLanguage.Interpreter
 
             var frame = ActiveFrame;
 
-            var nargs = function.FunctionType.Parameters.Count;
+            var functionType = function.FunctionType;
+            var nargs = functionType.Parameters.Count + (functionType.IsInstance ? 1 : 0);
             frame.AllocateArgs (nargs);
             var args = frame.Args;
             for (var i = nargs - 1; i >= 0; i--) {

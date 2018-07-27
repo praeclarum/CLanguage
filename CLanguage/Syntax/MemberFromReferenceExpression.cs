@@ -51,8 +51,10 @@ namespace CLanguage.Syntax
                 else {
                     if (member is CStructMethod method && member.MemberType is CFunctionType functionType) {
                         var res = ec.ResolveMethodFunction (structType, method);
-                        Left.EmitPointer (ec);
-                        ec.Emit (OpCode.LoadFunction, 0);
+                        if (res != null) {
+                            Left.EmitPointer (ec);
+                            ec.Emit (OpCode.LoadFunction, res.Index);
+                        }
                     }
                     else {
                         throw new NotSupportedException ("Member field access on struct " + structType.Name);

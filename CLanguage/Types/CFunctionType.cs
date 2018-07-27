@@ -5,7 +5,7 @@ namespace CLanguage.Types
 {
     public class CFunctionType : CType
     {
-        public static readonly CFunctionType VoidProcedure = new CFunctionType (CType.Void);
+        public static readonly CFunctionType VoidProcedure = new CFunctionType (CType.Void, isInstance: false);
 
         public class Parameter
         {
@@ -24,11 +24,13 @@ namespace CLanguage.Types
 
         public CType ReturnType { get; private set; }
         public List<Parameter> Parameters { get; private set; }
+        public bool IsInstance { get; private set; }
 
-        public CFunctionType(CType returnType)
+        public CFunctionType(CType returnType, bool isInstance)
         {
             ReturnType = returnType;
             Parameters = new List<Parameter>();
+            IsInstance = isInstance;
         }
 
         public override int GetSize(EmitContext c)

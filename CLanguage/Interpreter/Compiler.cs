@@ -118,8 +118,8 @@ namespace CLanguage.Interpreter
                             var name = idecl.Declarator.DeclaredIdentifier;
 
                             if (ctype is CFunctionType ftype && !HasStronglyBoundPointer (idecl.Declarator)) {
-                                var nameContext = (idecl.Declarator.InnerDeclarator is IdentifierDeclarator ndecl && ndecl.Identifiers.Count > 0) ?
-                                    string.Join ("::", ndecl.Identifiers) : "";
+                                var nameContext = (idecl.Declarator.InnerDeclarator is IdentifierDeclarator ndecl && ndecl.Context.Count > 0) ?
+                                    string.Join ("::", ndecl.Context) : "";
                                 var f = new CompiledFunction (name, nameContext, ftype);
                                 block.Functions.Add (f);
                             }
@@ -299,22 +299,22 @@ namespace CLanguage.Interpreter
             return type;
         }
 
-        private CType MakeCFunctionType (CType type, Declarator decl, Block block)
+        CType MakeCFunctionType (CType returnType, Declarator decl, Block block)
         {
             var fdecl = (FunctionDeclarator)decl;
 
+            bool isInstance = decl.InnerDeclarator is IdentifierDeclarator ident && ident.Context.Count > 0;
+
             var name = decl.DeclaredIdentifier;
-            var returnType = type;
-            var ftype = new CFunctionType (returnType);
+            var ftype = new CFunctionType (returnType, isInstance);
             foreach (var pdecl in fdecl.Parameters) {
                 var pt = MakeCType (pdecl.DeclarationSpecifiers, pdecl.Declarator, block);
                 if (!pt.IsVoid) {
                     ftype.Parameters.Add (new CFunctionType.Parameter (pdecl.Name, pt));
                 }
             }
-            type = ftype;
 
-            type = MakeCType (type, fdecl.InnerDeclarator, block);
+            var type = MakeCType (ftype, fdecl.InnerDeclarator, block);
 
             return type;
         }
