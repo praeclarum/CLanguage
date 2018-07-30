@@ -29,9 +29,12 @@ namespace CLanguage.Interpreter
             Frames = (from i in Enumerable.Range (0, maxFrames) select new ExecutionFrame ()).ToArray ();
         }
 
-        public void Call (int functionAddress)
+        public void Call (Value functionAddress)
         {
-            Call (exe.Functions[functionAddress]);
+            if (functionAddress.Type != ValueType.FunctionPointer) {
+                throw new Exception ($"Cannot call {functionAddress.Type}");
+            }
+            Call (exe.Functions[functionAddress.PointerValue.Index]);
         }
 
         public void Call (BaseFunction function)

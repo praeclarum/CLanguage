@@ -101,24 +101,23 @@ namespace CLanguage.Interpreter
                         state.Return ();
                         done = true;
                         break;
-                    case OpCode.LoadFunction:
-                        state.Stack[state.SP] = i.X;
-                        state.SP++;
-                        ip++;
-                        break;
                     case OpCode.LoadValue:
                         state.Stack[state.SP] = i.X;
                         state.SP++;
                         ip++;
                         break;
-                    case OpCode.LoadMemory:
+                    case OpCode.LoadGlobal:
                         state.Stack[state.SP] = state.Stack[i.X];
                         state.SP++;
                         ip++;
                         break;
-                    case OpCode.LoadMemoryIndirect:
-                        state.Stack[state.SP - 1] = state.Stack[state.Stack[state.SP - 1]];
-                        ip++;
+                    case OpCode.LoadMemoryIndirect: {
+                            var p = state.Stack[state.SP - 1];
+                            if (!p.IsPointer)
+                                throw new InvalidOperationException ($"Cannot dereference {p.Type}");
+                            state.Stack[state.SP - 1] = state.Stack[p.PointerValue.Index];
+                            ip++;
+                        }
                         break;
                     case OpCode.StoreMemory:
                         state.Stack[i.X] = state.Stack[state.SP - 1];
@@ -142,6 +141,13 @@ namespace CLanguage.Interpreter
                         break;
                     case OpCode.StoreLocal:
                         locals[i.X] = state.Stack[state.SP - 1];
+                        state.SP--;
+                        ip++;
+                        break;
+                    case OpCode.OffsetPointer:
+                        a = state.Stack[state.SP - 2];
+                        b = state.Stack[state.SP - 1];
+                        state.Stack[state.SP - 2] = a.OffsetPointer (b);
                         state.SP--;
                         ip++;
                         break;

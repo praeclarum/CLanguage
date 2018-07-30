@@ -87,7 +87,7 @@ namespace CLanguage.Interpreter
             Emit (op, 0);
         }
 
-        public virtual int GetConstantMemory (string stringConstant)
+        public virtual Value GetConstantMemory (string stringConstant)
         {
             throw new NotSupportedException ("Cannot get constant memory from this context");
         }

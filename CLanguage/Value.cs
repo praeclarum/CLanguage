@@ -14,8 +14,12 @@ namespace CLanguage
         public System.Single Float32Value;
         [FieldOffset (0)]
         public System.Int32 Int32Value;
+        [FieldOffset (0)]
+        public ValuePointer PointerValue;
         [FieldOffset (8)]
         public ValueType Type;
+
+        public bool IsPointer => Type == ValueType.FunctionPointer || Type == ValueType.GlobalPointer || Type == ValueType.ArgPointer || Type == ValueType.LocalPointer;
 
         public override string ToString ()
         {
@@ -28,6 +32,11 @@ namespace CLanguage
                     return Float32Value.ToString ();
                 case ValueType.Float64:
                     return Float64Value.ToString ();
+                case ValueType.FunctionPointer:
+                case ValueType.GlobalPointer:
+                case ValueType.ArgPointer:
+                case ValueType.LocalPointer:
+                    return PointerValue.ToString ();
                 default:
                     return "";
             }
@@ -124,6 +133,11 @@ namespace CLanguage
                     return (float)v.Float32Value;
                 case ValueType.Float64:
                     return (float)v.Float64Value;
+                case ValueType.FunctionPointer:
+                case ValueType.GlobalPointer:
+                case ValueType.ArgPointer:
+                case ValueType.LocalPointer:
+                    return (float)v.PointerValue.Int32Value;
                 default:
                     return 0;
             }
@@ -140,6 +154,11 @@ namespace CLanguage
                     return (double)v.Float32Value;
                 case ValueType.Float64:
                     return (double)v.Float64Value;
+                case ValueType.FunctionPointer:
+                case ValueType.GlobalPointer:
+                case ValueType.ArgPointer:
+                case ValueType.LocalPointer:
+                    return (double)v.PointerValue.Int32Value;
                 default:
                     return 0;
             }
@@ -156,8 +175,29 @@ namespace CLanguage
                     return (ulong)v.Float32Value;
                 case ValueType.Float64:
                     return (ulong)v.Float64Value;
+                case ValueType.FunctionPointer:
+                case ValueType.GlobalPointer:
+                case ValueType.ArgPointer:
+                case ValueType.LocalPointer:
+                    return (ulong)v.PointerValue.Int32Value;
                 default:
                     return 0;
+            }
+        }
+
+        public Value OffsetPointer (Value offset)
+        {
+            if (IsPointer) {
+                return new Value {
+                    Type = this.Type,
+                    PointerValue = new ValuePointer {
+                        Index = this.PointerValue.Index,
+                        Offset = (ushort)(this.PointerValue.Offset + (int)offset),
+                    }
+                };
+            }
+            else {
+                return (int)this + (int)offset;
             }
         }
 
@@ -172,6 +212,11 @@ namespace CLanguage
                     return (long)v.Float32Value;
                 case ValueType.Float64:
                     return (long)v.Float64Value;
+                case ValueType.FunctionPointer:
+                case ValueType.GlobalPointer:
+                case ValueType.ArgPointer:
+                case ValueType.LocalPointer:
+                    return (long)v.PointerValue.Int32Value;
                 default:
                     return 0;
             }
@@ -188,6 +233,11 @@ namespace CLanguage
                     return (uint)v.Float32Value;
                 case ValueType.Float64:
                     return (uint)v.Float64Value;
+                case ValueType.FunctionPointer:
+                case ValueType.GlobalPointer:
+                case ValueType.ArgPointer:
+                case ValueType.LocalPointer:
+                    return (uint)v.PointerValue.Int32Value;
                 default:
                     return 0;
             }
@@ -204,6 +254,11 @@ namespace CLanguage
                     return (int)v.Float32Value;
                 case ValueType.Float64:
                     return (int)v.Float64Value;
+                case ValueType.FunctionPointer:
+                case ValueType.GlobalPointer:
+                case ValueType.ArgPointer:
+                case ValueType.LocalPointer:
+                    return v.PointerValue.Int32Value;
                 default:
                     return 0;
             }
@@ -220,6 +275,11 @@ namespace CLanguage
                     return (ushort)v.Float32Value;
                 case ValueType.Float64:
                     return (ushort)v.Float64Value;
+                case ValueType.FunctionPointer:
+                case ValueType.GlobalPointer:
+                case ValueType.ArgPointer:
+                case ValueType.LocalPointer:
+                    return (ushort)v.PointerValue.Int32Value;
                 default:
                     return 0;
             }
@@ -236,6 +296,11 @@ namespace CLanguage
                     return (short)v.Float32Value;
                 case ValueType.Float64:
                     return (short)v.Float64Value;
+                case ValueType.FunctionPointer:
+                case ValueType.GlobalPointer:
+                case ValueType.ArgPointer:
+                case ValueType.LocalPointer:
+                    return (short)v.PointerValue.Int32Value;
                 default:
                     return 0;
             }
@@ -252,6 +317,11 @@ namespace CLanguage
                     return (byte)v.Float32Value;
                 case ValueType.Float64:
                     return (byte)v.Float64Value;
+                case ValueType.FunctionPointer:
+                case ValueType.GlobalPointer:
+                case ValueType.ArgPointer:
+                case ValueType.LocalPointer:
+                    return (byte)v.PointerValue.Int32Value;
                 default:
                     return 0;
             }
@@ -268,17 +338,53 @@ namespace CLanguage
                     return (sbyte)v.Float32Value;
                 case ValueType.Float64:
                     return (sbyte)v.Float64Value;
+                case ValueType.FunctionPointer:
+                case ValueType.GlobalPointer:
+                case ValueType.ArgPointer:
+                case ValueType.LocalPointer:
+                    return (sbyte)v.PointerValue.Int32Value;
                 default:
                     return 0;
             }
         }
+
+        public static Value FunctionPointer (int index, int offset = 0) => new Value {
+            Type = ValueType.FunctionPointer,
+            PointerValue = new ValuePointer { Index = (ushort)index, Offset = (ushort)offset },
+        };
+        public static Value GlobalPointer (int index, int offset = 0) => new Value {
+            Type = ValueType.GlobalPointer,
+            PointerValue = new ValuePointer { Index = (ushort)index, Offset = (ushort)offset },
+        };
+        public static Value ArgPointer (int index, int offset = 0) => new Value {
+            Type = ValueType.ArgPointer,
+            PointerValue = new ValuePointer { Index = (ushort)index, Offset = (ushort)offset },
+        };
+        public static Value LocalPointer (int index, int offset = 0) => new Value {
+            Type = ValueType.LocalPointer,
+            PointerValue = new ValuePointer { Index = (ushort)index, Offset = (ushort)offset },
+        };
+    }
+
+    public struct ValuePointer
+    {
+        public ushort Index;
+        public ushort Offset;
+
+        public int Int32Value => ((int)Index) << 16 | Offset;
     }
 
     public enum ValueType
     {
         Int32,
         Int64,
+
         Float32,
         Float64,
+
+        FunctionPointer,
+        GlobalPointer,
+        ArgPointer,
+        LocalPointer,
     }
 }

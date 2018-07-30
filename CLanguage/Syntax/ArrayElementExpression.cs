@@ -40,7 +40,7 @@ namespace CLanguage.Syntax
             ElementIndex.Emit (ec);
             ec.Emit (OpCode.LoadValue, GetEvaluatedCType (ec).GetSize (ec));
             ec.Emit (OpCode.MultiplyInt32);
-            ec.Emit (OpCode.AddInt32);
+            ec.Emit (OpCode.OffsetPointer);
             ec.Emit (OpCode.LoadMemoryIndirect);
         }
 

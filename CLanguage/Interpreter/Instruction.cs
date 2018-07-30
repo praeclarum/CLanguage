@@ -57,12 +57,11 @@ namespace CLanguage.Interpreter
 
 		#region Memory
 
-		LoadFunction,
 		LoadValue,
 
 		LoadArg,
 		LoadLocal,
-		LoadMemory,
+		LoadGlobal,
         LoadMemoryIndirect,
 		StoreArg,
 		StoreLocal,
@@ -71,6 +70,8 @@ namespace CLanguage.Interpreter
 		#endregion
 
 		#region Arithmetic
+
+        OffsetPointer,
 
         AddInt8,
         AddUInt8,

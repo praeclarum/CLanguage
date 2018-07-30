@@ -22,12 +22,12 @@ namespace CLanguage.Interpreter
 			Functions.AddRange (machineInfo.InternalFunctions.Cast<BaseFunction> ());
 		}
 
-        public int GetConstantMemory (string stringConstant)
+        public Value GetConstantMemory (string stringConstant)
         {
             var index = Globals.Count;
             var v = new CompiledVariable ("__c" + Globals.Count, Types.CPointerType.PointerToConstChar);
             Globals.Add (v);
-            return index;
+            return Value.GlobalPointer (index);
         }
     }
 }

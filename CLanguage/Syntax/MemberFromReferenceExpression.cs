@@ -53,7 +53,7 @@ namespace CLanguage.Syntax
                         var res = ec.ResolveMethodFunction (structType, method);
                         if (res != null) {
                             Left.EmitPointer (ec);
-                            ec.Emit (OpCode.LoadFunction, res.Index);
+                            ec.Emit (OpCode.LoadValue, Value.FunctionPointer (res.Index));
                         }
                     }
                     else {

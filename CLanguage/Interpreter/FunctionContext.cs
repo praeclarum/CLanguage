@@ -130,7 +130,7 @@ namespace CLanguage.Interpreter
             fexe.Instructions.Add (instruction);
         }
 
-        public override int GetConstantMemory (string stringConstant)
+        public override Value GetConstantMemory (string stringConstant)
         {
             return exe.GetConstantMemory (stringConstant);
         }

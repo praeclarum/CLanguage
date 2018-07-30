@@ -28,16 +28,16 @@ namespace CLanguage.Interpreter
         public void Emit (EmitContext ec)
         {
             if (Scope == VariableScope.Function) {
-                ec.Emit (OpCode.LoadValue, Index);
+                ec.Emit (OpCode.LoadValue, Value.FunctionPointer (Index));
             }
             else if (Scope == VariableScope.Arg) {
-                ec.Emit (OpCode.LoadValue, Index);
+                ec.Emit (OpCode.LoadValue, Value.ArgPointer (Index));
             }
             else if (Scope == VariableScope.Global) {
-                ec.Emit (OpCode.LoadValue, Index);
+                ec.Emit (OpCode.LoadValue, Value.GlobalPointer (Index));
             }
             else if (Scope == VariableScope.Local) {
-                ec.Emit (OpCode.LoadValue, Index);
+                ec.Emit (OpCode.LoadValue, Value.LocalPointer (Index));
             }
             else {
                 throw new NotSupportedException ("Cannot get address of variable scope '" + Scope + "'");

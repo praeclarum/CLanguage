@@ -35,7 +35,7 @@ namespace CLanguage.Syntax
 			if (variable != null) {
 
 				if (variable.Scope == VariableScope.Function) {
-					ec.Emit (OpCode.LoadFunction, variable.Index);
+                    ec.Emit (OpCode.LoadValue, Value.FunctionPointer (variable.Index));
 				}
 				else {
                     if (variable.VariableType is CBasicType ||
@@ -45,7 +45,7 @@ namespace CLanguage.Syntax
                             ec.Emit (OpCode.LoadArg, variable.Index);
                         }
                         else if (variable.Scope == VariableScope.Global) {
-                            ec.Emit (OpCode.LoadMemory, variable.Index);
+                            ec.Emit (OpCode.LoadGlobal, variable.Index);
                         }
                         else if (variable.Scope == VariableScope.Local) {
                             ec.Emit (OpCode.LoadLocal, variable.Index);
@@ -55,7 +55,19 @@ namespace CLanguage.Syntax
                         }
                     }
                     else if (variable.VariableType is CArrayType arrayType) {
-                        ec.Emit (OpCode.LoadValue, variable.Index);
+
+                        if (variable.Scope == VariableScope.Arg) {
+                            ec.Emit (OpCode.LoadValue, Value.ArgPointer (variable.Index));
+                        }
+                        else if (variable.Scope == VariableScope.Global) {
+                            ec.Emit (OpCode.LoadValue, Value.GlobalPointer (variable.Index));
+                        }
+                        else if (variable.Scope == VariableScope.Local) {
+                            ec.Emit (OpCode.LoadValue, Value.LocalPointer (variable.Index));
+                        }
+                        else {
+                            throw new NotSupportedException ("Cannot evaluate array variable scope '" + variable.Scope + "'");
+                        }
                     }
 					else {
 						throw new NotSupportedException ("Cannot evaluate variable type '" + variable.VariableType + "'");
