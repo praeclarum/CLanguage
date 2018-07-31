@@ -46,26 +46,45 @@ namespace CLanguage.Interpreter
 		Pop,
 		Dup,
 
-		Jump,
+        #region Control
+
+        Jump,
 		BranchIfFalse,
 		Call,
 		Return,
 
-		#region Conversion
+        #endregion
+
+        #region Conversion
+
+        ConvertInt8,
+        ConvertUInt8,
+        ConvertInt16,
+        ConvertUInt16,
+        ConvertInt32,
+        ConvertUInt32,
+        ConvertInt64,
+        ConvertUInt64,
+        ConvertFloat32,
+        ConvertFloat64,
 
 		#endregion
 
 		#region Memory
 
-		LoadValue,
+		LoadConstant,
 
 		LoadArg,
 		LoadLocal,
 		LoadGlobal,
-        LoadMemoryIndirect,
-		StoreArg,
+
+        LoadPointer,
+		
+        StoreArg,
 		StoreLocal,
-		StoreMemory,
+		StoreGlobal,
+
+        StorePointer,
 
 		#endregion
 
@@ -127,7 +146,6 @@ namespace CLanguage.Interpreter
         ModuloUInt64,
         ModuloFloat32,
         ModuloFloat64,
-
 
 		#endregion
 

@@ -46,14 +46,14 @@ namespace CLanguage.Interpreter
             var frame = ActiveFrame;
 
             var functionType = function.FunctionType;
-            var nargs = functionType.Parameters.Count + (functionType.IsInstance ? 1 : 0);
-            frame.AllocateArgs (nargs);
+            var nargValues = (functionType.Parameters.Count == 0 ? 0 : (functionType.Parameters.Sum(x => x.ParameterType.NumValues)))
+                + (functionType.IsInstance ? 1 : 0);
+            frame.AllocateArgs (nargValues);
             var args = frame.Args;
-            for (var i = nargs - 1; i >= 0; i--) {
+            for (var i = nargValues - 1; i >= 0; i--) {
                 args[i] = Stack[SP - 1];
                 SP--;
             }
-
             function.Init (this);
         }
 

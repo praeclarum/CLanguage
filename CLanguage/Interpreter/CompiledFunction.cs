@@ -101,7 +101,7 @@ namespace CLanguage.Interpreter
                         state.Return ();
                         done = true;
                         break;
-                    case OpCode.LoadValue:
+                    case OpCode.LoadConstant:
                         state.Stack[state.SP] = i.X;
                         state.SP++;
                         ip++;
@@ -111,7 +111,7 @@ namespace CLanguage.Interpreter
                         state.SP++;
                         ip++;
                         break;
-                    case OpCode.LoadMemoryIndirect: {
+                    case OpCode.LoadPointer: {
                             var p = state.Stack[state.SP - 1];
                             if (!p.IsPointer)
                                 throw new InvalidOperationException ($"Cannot dereference {p.Type}");
@@ -119,7 +119,7 @@ namespace CLanguage.Interpreter
                             ip++;
                         }
                         break;
-                    case OpCode.StoreMemory:
+                    case OpCode.StoreGlobal:
                         state.Stack[i.X] = state.Stack[state.SP - 1];
                         state.SP--;
                         ip++;

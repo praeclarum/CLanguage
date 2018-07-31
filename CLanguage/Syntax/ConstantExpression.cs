@@ -103,13 +103,13 @@ namespace CLanguage.Syntax
                 if (intType.Signedness == Signedness.Signed) {
                     switch (size) {
                         case 1:
-                            ec.Emit (OpCode.LoadValue, (Value)(sbyte)EmitValue);
+                            ec.Emit (OpCode.LoadConstant, (Value)(sbyte)EmitValue);
                             break;
                         case 2:
-                            ec.Emit (OpCode.LoadValue, (Value)(short)EmitValue);
+                            ec.Emit (OpCode.LoadConstant, (Value)(short)EmitValue);
                             break;
                         case 4:
-                            ec.Emit (OpCode.LoadValue, (Value)(int)EmitValue);
+                            ec.Emit (OpCode.LoadConstant, (Value)(int)EmitValue);
                             break;
                         default:
                             throw new NotSupportedException ("Signed integral constants with type '" + ConstantType + "'");
@@ -118,13 +118,13 @@ namespace CLanguage.Syntax
                 else {
                     switch (size) {
                         case 1:
-                            ec.Emit (OpCode.LoadValue, (Value)(byte)EmitValue);
+                            ec.Emit (OpCode.LoadConstant, (Value)(byte)EmitValue);
                             break;
                         case 2:
-                            ec.Emit (OpCode.LoadValue, (Value)(ushort)EmitValue);
+                            ec.Emit (OpCode.LoadConstant, (Value)(ushort)EmitValue);
                             break;
                         case 4:
-                            ec.Emit (OpCode.LoadValue, (Value)(uint)EmitValue);
+                            ec.Emit (OpCode.LoadConstant, (Value)(uint)EmitValue);
                             break;
                         default:
                             throw new NotSupportedException ("Unsigned integral constants with type '" + ConstantType + "'");
@@ -132,13 +132,13 @@ namespace CLanguage.Syntax
                 }
             }
             else if (ConstantType is CBoolType boolType) {
-                ec.Emit (OpCode.LoadValue, EmitValue);
+                ec.Emit (OpCode.LoadConstant, EmitValue);
             }
             else if (ConstantType is CFloatType floatType) {
-                ec.Emit (OpCode.LoadValue, EmitValue);
+                ec.Emit (OpCode.LoadConstant, EmitValue);
             }
             else if (Value is string vs) {
-                ec.Emit (OpCode.LoadValue, ec.GetConstantMemory (vs));
+                ec.Emit (OpCode.LoadConstant, ec.GetConstantMemory (vs));
             }
             else {
 				throw new NotSupportedException ("Non-basic constants with type '" + ConstantType + "'");

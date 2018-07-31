@@ -41,7 +41,7 @@ namespace CLanguage.Syntax
                     ec.Report.Error (103, $"The name `{variableName}` does not exist in the current context.");
                 }
                 else if (v.Scope == VariableScope.Global) {
-                    ec.Emit (OpCode.StoreMemory, v.Index);
+                    ec.Emit (OpCode.StoreGlobal, v.Index);
                 }
                 else if (v.Scope == VariableScope.Local) {
                     ec.Emit (OpCode.StoreLocal, v.Index);

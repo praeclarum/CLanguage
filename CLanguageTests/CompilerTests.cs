@@ -41,7 +41,7 @@ namespace CLanguage.Tests
 			var f = exe.Functions.OfType<CompiledFunction> ().First (x => x.Name == "f");
 			Assert.AreEqual (f.Instructions.Count, 2);
 
-			Assert.AreEqual (f.Instructions[0].Op, OpCode.LoadValue);
+			Assert.AreEqual (f.Instructions[0].Op, OpCode.LoadConstant);
 			Assert.AreEqual (f.Instructions[1].Op, OpCode.Return);
 		}
 
@@ -53,7 +53,7 @@ namespace CLanguage.Tests
 			Assert.AreEqual (f.Instructions.Count, 4);
 
 			Assert.AreEqual (f.Instructions[0].Op, OpCode.LoadArg);
-			Assert.AreEqual (f.Instructions[1].Op, OpCode.LoadValue);
+			Assert.AreEqual (f.Instructions[1].Op, OpCode.LoadConstant);
 			Assert.AreEqual (f.Instructions[2].Op, OpCode.AddInt16);
 			Assert.AreEqual (f.Instructions[3].Op, OpCode.Return);
 		}
@@ -66,10 +66,10 @@ namespace CLanguage.Tests
 			Assert.AreEqual (f.Instructions.Count, 7);
 			Assert.AreEqual (f.Instructions[0].Op, OpCode.LoadArg);
 			Assert.AreEqual (f.Instructions[1].Op, OpCode.BranchIfFalse);
-			Assert.AreEqual (f.Instructions[2].Op, OpCode.LoadValue);
+			Assert.AreEqual (f.Instructions[2].Op, OpCode.LoadConstant);
 			Assert.AreEqual (f.Instructions[3].Op, OpCode.Return);
 			Assert.AreEqual (f.Instructions[4].Op, OpCode.Jump);
-			Assert.AreEqual (f.Instructions[5].Op, OpCode.LoadValue);
+			Assert.AreEqual (f.Instructions[5].Op, OpCode.LoadConstant);
 			Assert.AreEqual (f.Instructions[6].Op, OpCode.Return);
 		}
 

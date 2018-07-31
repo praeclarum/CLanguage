@@ -28,7 +28,7 @@ namespace CLanguage.Syntax
         protected override void DoEmit (EmitContext ec)
         {
             InnerExpression.Emit (ec);
-            ec.Emit (OpCode.LoadMemoryIndirect);
+            ec.Emit (OpCode.LoadPointer);
         }
     }
 }

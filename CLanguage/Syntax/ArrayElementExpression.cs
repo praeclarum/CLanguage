@@ -38,10 +38,10 @@ namespace CLanguage.Syntax
         {
             Array.Emit (ec);
             ElementIndex.Emit (ec);
-            ec.Emit (OpCode.LoadValue, GetEvaluatedCType (ec).GetByteSize (ec));
+            ec.Emit (OpCode.LoadConstant, GetEvaluatedCType (ec).GetByteSize (ec));
             ec.Emit (OpCode.MultiplyInt32);
             ec.Emit (OpCode.OffsetPointer);
-            ec.Emit (OpCode.LoadMemoryIndirect);
+            ec.Emit (OpCode.LoadPointer);
         }
 
         public override string ToString ()

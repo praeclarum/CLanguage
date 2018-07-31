@@ -79,7 +79,7 @@ namespace CLanguage.Syntax
             ec.Emit (OpCode.Call, type.Parameters.Count);
 
 			if (type.ReturnType.IsVoid) {
-				ec.Emit (OpCode.LoadValue, 0); // Expressions should leave something on the stack
+				ec.Emit (OpCode.LoadConstant, 0); // Expressions should leave something on the stack
 			}
         }
 
@@ -114,7 +114,7 @@ namespace CLanguage.Syntax
                                     CType = res.Function?.FunctionType,
                                     Emit = nec => {
                                         memr.Left.EmitPointer (nec);
-                                        nec.Emit (OpCode.LoadValue, Value.FunctionPointer (res.Index));
+                                        nec.Emit (OpCode.LoadConstant, Value.FunctionPointer (res.Index));
                                     },
                                 };
                             }

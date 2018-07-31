@@ -35,7 +35,7 @@ namespace CLanguage.Syntax
 			if (variable != null) {
 
 				if (variable.Scope == VariableScope.Function) {
-                    ec.Emit (OpCode.LoadValue, Value.FunctionPointer (variable.Index));
+                    ec.Emit (OpCode.LoadConstant, Value.FunctionPointer (variable.Index));
 				}
 				else {
                     if (variable.VariableType is CBasicType ||
@@ -57,13 +57,13 @@ namespace CLanguage.Syntax
                     else if (variable.VariableType is CArrayType arrayType) {
 
                         if (variable.Scope == VariableScope.Arg) {
-                            ec.Emit (OpCode.LoadValue, Value.ArgPointer (variable.Index));
+                            ec.Emit (OpCode.LoadConstant, Value.ArgPointer (variable.Index));
                         }
                         else if (variable.Scope == VariableScope.Global) {
-                            ec.Emit (OpCode.LoadValue, Value.GlobalPointer (variable.Index));
+                            ec.Emit (OpCode.LoadConstant, Value.GlobalPointer (variable.Index));
                         }
                         else if (variable.Scope == VariableScope.Local) {
-                            ec.Emit (OpCode.LoadValue, Value.LocalPointer (variable.Index));
+                            ec.Emit (OpCode.LoadConstant, Value.LocalPointer (variable.Index));
                         }
                         else {
                             throw new NotSupportedException ("Cannot evaluate array variable scope '" + variable.Scope + "'");
@@ -76,7 +76,7 @@ namespace CLanguage.Syntax
 			}
 			else {
                 ec.Report.Error (103, $"The name `{VariableName}` does not exist in the current context.");
-				ec.Emit (OpCode.LoadValue, 0);
+				ec.Emit (OpCode.LoadConstant, 0);
 			}
         }
 
@@ -89,7 +89,7 @@ namespace CLanguage.Syntax
             }
             else {
                 ec.Report.Error (103, $"The name `{VariableName}` does not exist in the current context.");
-                ec.Emit (OpCode.LoadValue, 0);
+                ec.Emit (OpCode.LoadConstant, 0);
             }
         }
 
