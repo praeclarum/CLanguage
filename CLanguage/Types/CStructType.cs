@@ -13,6 +13,16 @@ namespace CLanguage.Types
         {
         }
 
+        public override int NumValues {
+            get {
+                var s = 0;
+                foreach (var m in Members) {
+                    s += m.MemberType.NumValues;
+                }
+                return s;
+            }
+        }
+
         public override int GetByteSize (EmitContext c)
         {
             var s = 0;

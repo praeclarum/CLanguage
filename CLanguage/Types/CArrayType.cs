@@ -15,6 +15,14 @@ namespace CLanguage.Types
             Length = length;
         }
 
+        public override int NumValues {
+            get {
+                if (Length == null) return 1;
+                var innerSize = ElementType.NumValues;
+                return Length.Value * innerSize;
+            }
+        }
+
         public override int GetByteSize (EmitContext c)
         {
             if (Length == null) return c.MachineInfo.PointerSize;

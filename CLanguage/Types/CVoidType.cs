@@ -16,6 +16,8 @@ namespace CLanguage.Types
             }
         }
 
+        public override int NumValues => 0;
+
         public override int GetByteSize(EmitContext c)
         {
             c.Report.Error(2070, "'void': illegal sizeof operand");

@@ -34,6 +34,8 @@ namespace CLanguage.Types
             IsInstance = isInstance;
         }
 
+        public override int NumValues => 1;
+
         public override int GetByteSize(EmitContext c)
         {
             return c.MachineInfo.PointerSize;
@@ -85,6 +87,4 @@ namespace CLanguage.Types
             return true;
         }
     }
-
-
 }

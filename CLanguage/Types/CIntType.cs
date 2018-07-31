@@ -12,6 +12,8 @@ namespace CLanguage.Types
         {
         }
 
+        public override int NumValues => 1;
+
         public override int GetByteSize (EmitContext c)
         {
             if (Name == "char") {

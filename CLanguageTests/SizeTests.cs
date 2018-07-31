@@ -51,7 +51,8 @@ namespace CLanguage.Tests
 
                 var type = ParseType(code);
 
-                Assert.AreEqual(size, type.GetByteSize(_c));
+                Assert.AreEqual (size, type.GetByteSize(_c));
+                Assert.AreEqual (1, type.NumValues);
             }
         }
 
@@ -83,11 +84,12 @@ namespace CLanguage.Tests
                 var type = ParseType(code);
 
                 Assert.AreEqual(size, type.GetByteSize(_c));
+                Assert.AreEqual (1, type.NumValues);
             }
         }
 
 		[TestMethod]
-        public void ArraySizes()
+        public void ArrayByteSizes()
         {
             var tests = new Dictionary<string, int> {
 {"char a[42];", 42},
@@ -120,6 +122,27 @@ namespace CLanguage.Tests
             }
         }
 
+        [TestMethod]
+        public void ArrayNumValues ()
+        {
+            var tests = new Dictionary<string, int> {
+{"char a[42];", 42},
+{"char a[42][12];", 504},
+{"char *a[42];", 42},
+{"char *a[42][12];", 504},
+{"int a[42];", 42},
+{"int a[42][12];", 504},
+{"int *a[42];", 42},
+{"int *a[42][12];", 504},
+            };
+            foreach (var t in tests) {
+                var code = t.Key;
+                var size = t.Value;
 
+                var type = ParseType (code);
+
+                Assert.AreEqual (size, type.NumValues);
+            }
+        }
     }
 }
