@@ -51,7 +51,7 @@ namespace CLanguage.Tests
 
                 var type = ParseType(code);
 
-                Assert.AreEqual(size, type.GetSize(_c));
+                Assert.AreEqual(size, type.GetByteSize(_c));
             }
         }
 
@@ -82,7 +82,7 @@ namespace CLanguage.Tests
 
                 var type = ParseType(code);
 
-                Assert.AreEqual(size, type.GetSize(_c));
+                Assert.AreEqual(size, type.GetByteSize(_c));
             }
         }
 
@@ -116,7 +116,7 @@ namespace CLanguage.Tests
 
                 var type = ParseType(code);
 
-                Assert.AreEqual(size, type.GetSize(_c));
+                Assert.AreEqual(size, type.GetByteSize(_c));
             }
         }
 

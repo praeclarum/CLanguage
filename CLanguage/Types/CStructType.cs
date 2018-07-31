@@ -13,11 +13,11 @@ namespace CLanguage.Types
         {
         }
 
-        public override int GetSize (EmitContext c)
+        public override int GetByteSize (EmitContext c)
         {
             var s = 0;
             foreach (var m in Members) {
-                s += m.MemberType.GetSize (c);
+                s += m.MemberType.GetByteSize (c);
             }
             return s;
         }

@@ -13,7 +13,7 @@ namespace CLanguage.Types
             Bits = bits;
         }
 
-        public override int GetSize (EmitContext c)
+        public override int GetByteSize (EmitContext c)
         {
             return Bits / 8;
         }

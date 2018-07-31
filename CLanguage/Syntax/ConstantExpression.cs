@@ -99,7 +99,7 @@ namespace CLanguage.Syntax
         protected override void DoEmit (EmitContext ec)
         {
             if (ConstantType is CIntType intType) {
-                var size = intType.GetSize (ec);
+                var size = intType.GetByteSize (ec);
                 if (intType.Signedness == Signedness.Signed) {
                     switch (size) {
                         case 1:

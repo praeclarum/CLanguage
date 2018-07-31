@@ -25,7 +25,7 @@ namespace CLanguage.Tests
 			var pty = bty.IntegerPromote (context);
 
 			Assert.AreEqual (pty.Signedness, signedness);
-			Assert.AreEqual (pty.GetSize (context), resultBytes);
+			Assert.AreEqual (pty.GetByteSize (context), resultBytes);
 		}
 
 		void TestArithmetic (MachineInfo mi, string type1, string type2, CBasicType result)
@@ -52,9 +52,9 @@ namespace CLanguage.Tests
 			var aty2 = bty2.ArithmeticConvert (bty1, context);
 
 			Assert.AreEqual (aty1.Signedness, result.Signedness);
-			Assert.AreEqual (aty1.GetSize (context), result.GetSize (context));
+			Assert.AreEqual (aty1.GetByteSize (context), result.GetByteSize (context));
 			Assert.AreEqual (aty2.Signedness, result.Signedness);
-			Assert.AreEqual (aty2.GetSize (context), result.GetSize (context));
+			Assert.AreEqual (aty2.GetByteSize (context), result.GetByteSize (context));
 		}
 
 		[TestMethod]

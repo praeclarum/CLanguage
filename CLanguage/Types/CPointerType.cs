@@ -13,7 +13,7 @@ namespace CLanguage.Types
 
         public static readonly CPointerType PointerToConstChar = new CPointerType(CBasicType.ConstChar);
 
-        public override int GetSize(EmitContext c)
+        public override int GetByteSize(EmitContext c)
         {
             return c.MachineInfo.PointerSize;
         }

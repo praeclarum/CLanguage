@@ -55,7 +55,7 @@ namespace CLanguage.Types
         {
             if (IsIntegral)
             {
-                var size = GetSize(context);
+                var size = GetByteSize(context);
                 var intSize = context.MachineInfo.IntSize;
                 if (size < intSize)
                 {
@@ -115,10 +115,10 @@ namespace CLanguage.Types
             {
 
                 var p1 = IntegerPromote(context);
-                var size1 = p1.GetSize(context);
+                var size1 = p1.GetByteSize(context);
 
                 var p2 = otherBasicType.IntegerPromote(context);
-                var size2 = p2.GetSize(context);
+                var size2 = p2.GetByteSize(context);
 
                 if (p1.Signedness == p2.Signedness)
                 {

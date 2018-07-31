@@ -125,7 +125,7 @@ namespace CLanguage.Interpreter
                             }
                             else {
                                 if ((ctype is CArrayType atype) &&
-                                    (atype.LengthExpression == null) &&
+                                    (atype.Length == null) &&
                                     (idecl.Initializer != null)) {
                                     if (idecl.Initializer is StructuredInitializer structInit) {
                                         var len = 0;
@@ -140,7 +140,7 @@ namespace CLanguage.Interpreter
                                                 }
                                             }
                                         }
-                                        atype.LengthExpression = new ConstantExpression (len);
+                                        atype = new CArrayType (atype.ElementType, len);
                                     }
                                     else {
                                         //Report.Error();
@@ -278,7 +278,15 @@ namespace CLanguage.Interpreter
                 var adecl = (ArrayDeclarator)decl;
 
                 while (adecl != null) {
-                    type = new CArrayType (type, adecl.LengthExpression);
+                    int? len = null;
+                    if (adecl.LengthExpression is ConstantExpression clen) {
+                        len = clen.EmitValue.Int32Value;
+                    }
+                    else {
+                        context.Report.Error (2057, "Expected constant expression");
+                        len = 0;
+                    }
+                    type = new CArrayType (type, len);
                     adecl = adecl.InnerDeclarator as ArrayDeclarator;
                     if (adecl != null && adecl.InnerDeclarator != null) {
                         if (adecl.InnerDeclarator is IdentifierDeclarator) {

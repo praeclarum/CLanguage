@@ -36,25 +36,25 @@ namespace CLanguage.Tests
             }
 
             var charV = ParseVariable ("char v;");
-            Assert.AreEqual (charV.VariableType.GetSize (ec), 1);
+            Assert.AreEqual (charV.VariableType.GetByteSize (ec), 1);
 
             var intV = ParseVariable ("int v;");
-            Assert.AreEqual (intV.VariableType.GetSize (ec), 2);
+            Assert.AreEqual (intV.VariableType.GetByteSize (ec), 2);
 
             var shortIntV = ParseVariable ("short int v;");
-            Assert.AreEqual (shortIntV.VariableType.GetSize (ec), 2);
+            Assert.AreEqual (shortIntV.VariableType.GetByteSize (ec), 2);
 
             var unsignedLongV = ParseVariable ("unsigned long v;");
-            Assert.AreEqual (unsignedLongV.VariableType.GetSize (ec), 4);
+            Assert.AreEqual (unsignedLongV.VariableType.GetByteSize (ec), 4);
 
             var unsignedLongLongV = ParseVariable ("unsigned long long v;");
-            Assert.AreEqual (unsignedLongLongV.VariableType.GetSize (ec), 8);
+            Assert.AreEqual (unsignedLongLongV.VariableType.GetByteSize (ec), 8);
 
             var intPV = ParseVariable ("int *v;");
-            Assert.AreEqual (intPV.VariableType.GetSize (ec), 2);
+            Assert.AreEqual (intPV.VariableType.GetByteSize (ec), 2);
 
             var longPV = ParseVariable ("long *v;");
-            Assert.AreEqual (longPV.VariableType.GetSize (ec), 2);
+            Assert.AreEqual (longPV.VariableType.GetByteSize (ec), 2);
         }
 
         public const string BlinkCode = @"

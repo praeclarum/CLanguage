@@ -12,7 +12,7 @@ namespace CLanguage.Types
         {
         }
 
-        public override int GetSize (EmitContext c)
+        public override int GetByteSize (EmitContext c)
         {
             return c.MachineInfo.CharSize;
         }

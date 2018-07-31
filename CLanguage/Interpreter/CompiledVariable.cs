@@ -5,8 +5,8 @@ namespace CLanguage.Interpreter
 {
     public class CompiledVariable
     {
-        public string Name { get; private set; }
-        public CType VariableType { get; private set; }
+        public string Name { get; }
+        public CType VariableType { get; }
 
         public CompiledVariable (string name, CType type)
         {

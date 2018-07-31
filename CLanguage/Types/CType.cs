@@ -9,7 +9,8 @@ namespace CLanguage.Types
     {
         public TypeQualifiers TypeQualifiers { get; set; }
 
-        public abstract int GetSize (EmitContext c);
+        public abstract int GetByteSize (EmitContext c);
+        //public abstract int GetNumValues (EmitContext c);
 
         public static readonly CVoidType Void = new CVoidType ();
 

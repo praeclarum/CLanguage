@@ -6,51 +6,25 @@ namespace CLanguage.Types
 {
     public class CArrayType : CType
     {
-        public CType ElementType { get; private set; }
-        public Expression LengthExpression { get; set; }
+        public CType ElementType { get; }
+        public int? Length { get; }
 
-        public CArrayType(CType elementType, Expression lengthExpression)
+        public CArrayType (CType elementType, int? length)
         {
             ElementType = elementType;
-            LengthExpression = lengthExpression;
+            Length = length;
         }
 
-        public override int GetSize(EmitContext c)
+        public override int GetByteSize (EmitContext c)
         {
-            var innerSize = ElementType.GetSize(c);
-            if (LengthExpression == null)
-            {
-                c.Report.Error(2133, "unknown size");
-                return 0;
-            }
-            var lexp = LengthExpression;
-            if (lexp is ConstantExpression)
-            {
-                var cexp = (ConstantExpression)lexp;
-
-                if (cexp.ConstantType.IsIntegral)
-                {
-                    var length = Convert.ToInt32(cexp.Value);
-                    return length * innerSize;
-                }
-                else
-                {
-                    c.Report.Error(2058, LengthExpression.Location, "constant expression is not integral");
-                    return 0;
-                }
-            }
-            else
-            {
-                c.Report.Error(2057, LengthExpression.Location, "expected constant expression");
-                return 0;
-            }
+            if (Length == null) return c.MachineInfo.PointerSize;
+            var innerSize = ElementType.GetByteSize (c);
+            return Length.Value * innerSize;
         }
 
-        public override string ToString()
+        public override string ToString ()
         {
-            return string.Format("(Array {0} {1})", ElementType, LengthExpression);
+            return string.Format ("{0}[{1}]", ElementType, Length);
         }
     }
-
-
 }

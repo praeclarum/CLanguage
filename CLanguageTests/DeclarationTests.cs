@@ -230,8 +230,7 @@ namespace CLanguage.Tests
         {
             var vs = ParseVariables ("int cat[10];");
             var t = (CArrayType)vs[0].VariableType;
-            Assert.IsInstanceOfType(t.LengthExpression, typeof(ConstantExpression));
-            Assert.AreEqual(10, ((ConstantExpression)t.LengthExpression).Value);
+            Assert.AreEqual(10, t.Length.Value);
             Assert.IsInstanceOfType(t.ElementType, typeof(CBasicType));
         }
 
@@ -240,12 +239,10 @@ namespace CLanguage.Tests
         {
             var vs = ParseVariables ("double dog[5][12];");
             var a = (CArrayType)vs[0].VariableType;
-            Assert.IsInstanceOfType(a.LengthExpression, typeof(ConstantExpression));
-            Assert.AreEqual(5, ((ConstantExpression)a.LengthExpression).Value);
+            Assert.AreEqual(5, a.Length.Value);
 
             var a1 = (CArrayType)a.ElementType;
-            Assert.IsInstanceOfType(a1.LengthExpression, typeof(ConstantExpression));
-            Assert.AreEqual(12, ((ConstantExpression)a1.LengthExpression).Value);
+            Assert.AreEqual(12, a1.Length.Value);
 
             Assert.IsInstanceOfType(a1.ElementType, typeof(CBasicType));
             Assert.AreEqual("double", ((CBasicType)a1.ElementType).Name);
@@ -257,8 +254,7 @@ namespace CLanguage.Tests
             var vs = ParseVariables ("char *mice[10];");
             Assert.IsInstanceOfType(vs[0].VariableType, typeof(CArrayType));
             var a = (CArrayType)vs[0].VariableType;
-            Assert.IsInstanceOfType(a.LengthExpression, typeof(ConstantExpression));
-            Assert.AreEqual(10, ((ConstantExpression)a.LengthExpression).Value);
+            Assert.AreEqual(10, a.Length.Value);
 
             Assert.IsInstanceOfType(a.ElementType, typeof(CPointerType));
             var p = (CPointerType)a.ElementType;
@@ -276,8 +272,7 @@ namespace CLanguage.Tests
 
             Assert.IsInstanceOfType(p.InnerType, typeof(CArrayType));
             var a = (CArrayType)p.InnerType;
-            Assert.IsInstanceOfType(a.LengthExpression, typeof(ConstantExpression));
-            Assert.AreEqual(20, ((ConstantExpression)a.LengthExpression).Value);
+            Assert.AreEqual(20, a.Length.Value);
 
             Assert.IsInstanceOfType(a.ElementType, typeof(CBasicType));
             Assert.AreEqual("double", ((CBasicType)a.ElementType).Name);
@@ -289,8 +284,7 @@ namespace CLanguage.Tests
             var vs = ParseVariables ("int (*a[5])[42];");
             Assert.IsInstanceOfType(vs[0].VariableType, typeof(CArrayType));
             var a = (CArrayType)vs[0].VariableType;
-            Assert.IsInstanceOfType(a.LengthExpression, typeof(ConstantExpression));
-            Assert.AreEqual(5, ((ConstantExpression)a.LengthExpression).Value);
+            Assert.AreEqual(5, a.Length.Value);
 
             Assert.IsInstanceOfType(a.ElementType, typeof(CPointerType));
             var p = (CPointerType)a.ElementType;
@@ -309,8 +303,7 @@ namespace CLanguage.Tests
 
             Assert.IsInstanceOfType(p.InnerType, typeof(CArrayType));
             var a = (CArrayType)p.InnerType;
-            Assert.IsInstanceOfType(a.LengthExpression, typeof(ConstantExpression));
-            Assert.AreEqual(15, ((ConstantExpression)a.LengthExpression).Value);
+            Assert.AreEqual(15, a.Length.Value);
 
             Assert.IsInstanceOfType(a.ElementType, typeof(CPointerType));
             var p2 = (CPointerType)a.ElementType;

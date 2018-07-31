@@ -31,7 +31,7 @@ namespace CLanguage.Syntax
 
 		protected static int GetInstructionOffset (CBasicType aType, EmitContext ec)
 		{
-			var size = aType.GetSize (ec);
+			var size = aType.GetByteSize (ec);
 
             if (aType.IsIntegral) {
                 switch (size) {
