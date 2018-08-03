@@ -11,9 +11,21 @@ namespace CLanguage
         [FieldOffset (0)]
         public System.Int64 Int64Value;
         [FieldOffset (0)]
+        public System.UInt64 UInt64Value;
+        [FieldOffset (0)]
         public System.Single Float32Value;
         [FieldOffset (0)]
         public System.Int32 Int32Value;
+        [FieldOffset (0)]
+        public System.UInt32 UInt32Value;
+        [FieldOffset (0)]
+        public System.Int16 Int16Value;
+        [FieldOffset (0)]
+        public System.UInt16 UInt16Value;
+        [FieldOffset (0)]
+        public System.SByte Int8Value;
+        [FieldOffset (0)]
+        public System.Byte UInt8Value;
         [FieldOffset (0)]
         public System.Int32 PointerValue;
 
@@ -39,7 +51,7 @@ namespace CLanguage
         public static implicit operator Value (ulong v)
         {
             return new Value {
-                Int64Value = (long)v,
+                UInt64Value = v,
             };
         }
 
@@ -53,7 +65,7 @@ namespace CLanguage
         public static implicit operator Value (uint v)
         {
             return new Value {
-                Int32Value = (int)v,
+                UInt32Value = v,
             };
         }
 
@@ -67,241 +79,80 @@ namespace CLanguage
         public static implicit operator Value (ushort v)
         {
             return new Value {
-                Int32Value = v,
+                UInt16Value = v,
             };
         }
 
         public static implicit operator Value (short v)
         {
             return new Value {
-                Int32Value = v,
+                Int16Value = v,
             };
         }
 
         public static implicit operator Value (byte v)
         {
             return new Value {
-                Int32Value = v,
+                UInt8Value = v,
             };
         }
 
         public static implicit operator Value (sbyte v)
         {
             return new Value {
-                Int32Value = v,
+                Int8Value = v,
             };
         }
-        /*
-        public static implicit operator float (Value v)
+
+        public static explicit operator float (Value v)
         {
-            switch (v.Type) {
-                case ValueType.Int32:
-                    return (float)v.Int32Value;
-                case ValueType.Int64:
-                    return (float)v.Int64Value;
-                case ValueType.Float32:
-                    return (float)v.Float32Value;
-                case ValueType.Float64:
-                    return (float)v.Float64Value;
-                case ValueType.FunctionPointer:
-                case ValueType.GlobalPointer:
-                case ValueType.ArgPointer:
-                case ValueType.LocalPointer:
-                    return (float)v.PointerValue;
-                default:
-                    return 0;
-            }
+            return v.Float32Value;
         }
 
-        public static implicit operator double (Value v)
+        public static explicit operator double (Value v)
         {
-            switch (v.Type) {
-                case ValueType.Int32:
-                    return (double)v.Int32Value;
-                case ValueType.Int64:
-                    return (double)v.Int64Value;
-                case ValueType.Float32:
-                    return (double)v.Float32Value;
-                case ValueType.Float64:
-                    return (double)v.Float64Value;
-                case ValueType.FunctionPointer:
-                case ValueType.GlobalPointer:
-                case ValueType.ArgPointer:
-                case ValueType.LocalPointer:
-                    return (double)v.PointerValue;
-                default:
-                    return 0;
-            }
+            return v.Float64Value;
         }
 
-        public static implicit operator ulong (Value v)
+        public static explicit operator ulong (Value v)
         {
-            switch (v.Type) {
-                case ValueType.Int32:
-                    return (ulong)v.Int32Value;
-                case ValueType.Int64:
-                    return (ulong)v.Int64Value;
-                case ValueType.Float32:
-                    return (ulong)v.Float32Value;
-                case ValueType.Float64:
-                    return (ulong)v.Float64Value;
-                case ValueType.FunctionPointer:
-                case ValueType.GlobalPointer:
-                case ValueType.ArgPointer:
-                case ValueType.LocalPointer:
-                    return (ulong)v.PointerValue;
-                default:
-                    return 0;
-            }
+            return v.UInt64Value;
         }
 
-        public static implicit operator long (Value v)
+        public static explicit operator long (Value v)
         {
-            switch (v.Type) {
-                case ValueType.Int32:
-                    return (long)v.Int32Value;
-                case ValueType.Int64:
-                    return (long)v.Int64Value;
-                case ValueType.Float32:
-                    return (long)v.Float32Value;
-                case ValueType.Float64:
-                    return (long)v.Float64Value;
-                case ValueType.FunctionPointer:
-                case ValueType.GlobalPointer:
-                case ValueType.ArgPointer:
-                case ValueType.LocalPointer:
-                    return (long)v.PointerValue;
-                default:
-                    return 0;
-            }
+            return v.Int64Value;
         }
 
-        public static implicit operator uint (Value v)
+        public static explicit operator uint (Value v)
         {
-            switch (v.Type) {
-                case ValueType.Int32:
-                    return (uint)v.Int32Value;
-                case ValueType.Int64:
-                    return (uint)v.Int64Value;
-                case ValueType.Float32:
-                    return (uint)v.Float32Value;
-                case ValueType.Float64:
-                    return (uint)v.Float64Value;
-                case ValueType.FunctionPointer:
-                case ValueType.GlobalPointer:
-                case ValueType.ArgPointer:
-                case ValueType.LocalPointer:
-                    return (uint)v.PointerValue;
-                default:
-                    return 0;
-            }
+            return v.UInt32Value;
         }
 
-        public static implicit operator int (Value v)
+        public static explicit operator int (Value v)
         {
-            switch (v.Type) {
-                case ValueType.Int32:
-                    return v.Int32Value;
-                case ValueType.Int64:
-                    return (int)v.Int64Value;
-                case ValueType.Float32:
-                    return (int)v.Float32Value;
-                case ValueType.Float64:
-                    return (int)v.Float64Value;
-                case ValueType.FunctionPointer:
-                case ValueType.GlobalPointer:
-                case ValueType.ArgPointer:
-                case ValueType.LocalPointer:
-                    return v.PointerValue;
-                default:
-                    return 0;
-            }
+            return v.Int32Value;
         }
 
-        public static implicit operator ushort (Value v)
+        public static explicit operator ushort (Value v)
         {
-            switch (v.Type) {
-                case ValueType.Int32:
-                    return (ushort)v.Int32Value;
-                case ValueType.Int64:
-                    return (ushort)v.Int64Value;
-                case ValueType.Float32:
-                    return (ushort)v.Float32Value;
-                case ValueType.Float64:
-                    return (ushort)v.Float64Value;
-                case ValueType.FunctionPointer:
-                case ValueType.GlobalPointer:
-                case ValueType.ArgPointer:
-                case ValueType.LocalPointer:
-                    return (ushort)v.PointerValue;
-                default:
-                    return 0;
-            }
+            return v.UInt16Value;
         }
 
-        public static implicit operator short (Value v)
+        public static explicit operator short (Value v)
         {
-            switch (v.Type) {
-                case ValueType.Int32:
-                    return (short)v.Int32Value;
-                case ValueType.Int64:
-                    return (short)v.Int64Value;
-                case ValueType.Float32:
-                    return (short)v.Float32Value;
-                case ValueType.Float64:
-                    return (short)v.Float64Value;
-                case ValueType.FunctionPointer:
-                case ValueType.GlobalPointer:
-                case ValueType.ArgPointer:
-                case ValueType.LocalPointer:
-                    return (short)v.PointerValue;
-                default:
-                    return 0;
-            }
+            return v.Int16Value;
         }
 
-        public static implicit operator byte (Value v)
+        public static explicit operator byte (Value v)
         {
-            switch (v.Type) {
-                case ValueType.Int32:
-                    return (byte)v.Int32Value;
-                case ValueType.Int64:
-                    return (byte)v.Int64Value;
-                case ValueType.Float32:
-                    return (byte)v.Float32Value;
-                case ValueType.Float64:
-                    return (byte)v.Float64Value;
-                case ValueType.FunctionPointer:
-                case ValueType.GlobalPointer:
-                case ValueType.ArgPointer:
-                case ValueType.LocalPointer:
-                    return (byte)v.PointerValue;
-                default:
-                    return 0;
-            }
+            return v.UInt8Value;
         }
 
-        public static implicit operator sbyte (Value v)
+        public static explicit operator sbyte (Value v)
         {
-            switch (v.Type) {
-                case ValueType.Int32:
-                    return (sbyte)v.Int32Value;
-                case ValueType.Int64:
-                    return (sbyte)v.Int64Value;
-                case ValueType.Float32:
-                    return (sbyte)v.Float32Value;
-                case ValueType.Float64:
-                    return (sbyte)v.Float64Value;
-                case ValueType.FunctionPointer:
-                case ValueType.GlobalPointer:
-                case ValueType.ArgPointer:
-                case ValueType.LocalPointer:
-                    return (sbyte)v.PointerValue;
-                default:
-                    return 0;
-            }
+            return v.Int8Value;
         }
-        */
 
         public static Value FunctionPointer (int index, int offset = 0) => new Value {
             PointerValue = index + offset,

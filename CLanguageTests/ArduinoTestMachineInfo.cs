@@ -129,29 +129,29 @@ struct SerialClass Serial;
 
             public void PinMode (CInterpreter state)
             {
-                var pin = state.ReadArg(0);
-                var mode = state.ReadArg(1);
+                var pin = state.ReadArg(0).Int16Value;
+                var mode = state.ReadArg(1).Int16Value;
                 Pins[pin].Mode = mode;
             }
 
             public void AnalogRead (CInterpreter state)
             {
-                var pin = state.ReadArg(0);
+                var pin = state.ReadArg(0).Int16Value;
                 var value = Pins[pin].AnalogValue;
                 state.Push (value);
             }
 
             public void DigitalRead (CInterpreter state)
             {
-                var pin = state.ReadArg(0);
+                var pin = state.ReadArg(0).Int16Value;
                 var value = Pins[pin].DigitalValue;
                 state.Push (value);
             }
 
             public void DigitalWrite (CInterpreter state)
             {
-                var pin = state.ReadArg(0);
-                var value = state.ReadArg(1);
+                var pin = state.ReadArg(0).Int16Value;
+                var value = state.ReadArg(1).Int16Value;
                 Pins[pin].DigitalValue = value;
             }
 
@@ -161,31 +161,30 @@ struct SerialClass Serial;
 
             public void SerialPrintlnII (CInterpreter state)
             {
-                var v = state.ReadArg(0);
+                var v = state.ReadArg(0).Int16Value;
                 SerialOut.WriteLine (v);
             }
 
             public void SerialPrintlnI (CInterpreter state)
             {
-                var v = state.ReadArg(0);
+                var v = state.ReadArg(0).Int16Value;
                 SerialOut.WriteLine (v);
             }
 
             public void SerialPrintS (CInterpreter state)
             {
-                var p = state.ReadArg (0);
+                var p = state.ReadArg (0).PointerValue;
                 SerialOut.Write (ReadString (p, state));
             }
 
             public void SerialPrintlnS (CInterpreter state)
             {
-                var p = state.ReadArg (0);
+                var p = state.ReadArg (0).PointerValue;
                 SerialOut.WriteLine (ReadString (p, state));
             }
 
-            string ReadString (Value p, CInterpreter state)
+            string ReadString (int pi, CInterpreter state)
             {
-                var pi = (int)p.PointerValue;
                 var b = (byte)state.ReadMemory (pi);
                 var bytes = new List<byte> ();
                 while (b != 0) {
