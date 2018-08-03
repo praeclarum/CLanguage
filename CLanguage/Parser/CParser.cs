@@ -1321,25 +1321,25 @@ case 217:
 case 218:
 #line 873 "CParser.jay"
   {
-		yyVal = new ForStatement((Statement)yyVals[-3+yyTop], ((ExpressionStatement)yyVals[-2+yyTop]).Expression, (Statement)yyVals[0+yyTop], null, GetLocation(yyVals[-5+yyTop]), GetLocation(yyVals[0+yyTop]));
+		yyVal = new ForStatement((Statement)yyVals[-3+yyTop], ((ExpressionStatement)yyVals[-2+yyTop]).Expression, ((Statement)yyVals[0+yyTop]).ToBlock (), null, GetLocation(yyVals[-5+yyTop]), GetLocation(yyVals[0+yyTop]));
 	}
   break;
 case 219:
 #line 877 "CParser.jay"
   {
-		yyVal = new ForStatement((Statement)yyVals[-4+yyTop], ((ExpressionStatement)yyVals[-3+yyTop]).Expression, (Expression)yyVals[-2+yyTop], (Statement)yyVals[0+yyTop], null, GetLocation(yyVals[-6+yyTop]), GetLocation(yyVals[0+yyTop]));
+		yyVal = new ForStatement((Statement)yyVals[-4+yyTop], ((ExpressionStatement)yyVals[-3+yyTop]).Expression, (Expression)yyVals[-2+yyTop], ((Statement)yyVals[0+yyTop]).ToBlock (), null, GetLocation(yyVals[-6+yyTop]), GetLocation(yyVals[0+yyTop]));
 	}
   break;
 case 220:
 #line 881 "CParser.jay"
   {
-		yyVal = new ForStatement((Statement)yyVals[-3+yyTop], ((ExpressionStatement)yyVals[-2+yyTop]).Expression, (Statement)yyVals[0+yyTop]);
+		yyVal = new ForStatement((Statement)yyVals[-3+yyTop], ((ExpressionStatement)yyVals[-2+yyTop]).Expression, ((Statement)yyVals[0+yyTop]).ToBlock ());
 	}
   break;
 case 221:
 #line 885 "CParser.jay"
   {
-		yyVal = new ForStatement((Statement)yyVals[-4+yyTop], ((ExpressionStatement)yyVals[-3+yyTop]).Expression, (Expression)yyVals[-2+yyTop], (Statement)yyVals[0+yyTop]);
+        yyVal = new ForStatement((Statement)yyVals[-4+yyTop], ((ExpressionStatement)yyVals[-3+yyTop]).Expression, (Expression)yyVals[-2+yyTop], ((Statement)yyVals[0+yyTop]).ToBlock ());
 	}
   break;
 case 225:

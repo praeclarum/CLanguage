@@ -24,8 +24,39 @@ namespace CLanguage.Syntax
 			return Left.GetEvaluatedCType (ec);
         }
 
+        void DoEmitStructureAssignment (StructureExpression sexpr, EmitContext ec)
+        {
+            var type = GetEvaluatedCType (ec);
+
+            if (type is CArrayType arrayType) {
+
+                var numItemValues = arrayType.ElementType.NumValues;
+
+                Left.EmitPointer (ec);
+
+                for (int i = 0; i < sexpr.Items.Count; i++) {
+                    var item = sexpr.Items[i];
+                    ec.Emit (OpCode.Dup);
+                    ec.Emit (OpCode.LoadConstant, i * numItemValues);
+                    ec.Emit (OpCode.OffsetPointer);
+                    item.Expression.Emit (ec);
+                    ec.Emit (OpCode.StorePointer);
+                }
+
+                ec.Emit (OpCode.Pop);
+            }
+            else {
+                throw new NotSupportedException ($"Structured assignment of '{GetEvaluatedCType (ec)}' not supported");
+            }
+        }
+
         protected override void DoEmit(EmitContext ec)
         {
+            if (Right is StructureExpression sexpr) {
+                DoEmitStructureAssignment (sexpr, ec);
+                return;
+            }
+
             Right.Emit(ec);
 
             if (Left is VariableExpression) {

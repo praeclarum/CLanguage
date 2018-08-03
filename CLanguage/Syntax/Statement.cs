@@ -18,5 +18,14 @@ namespace CLanguage.Syntax
         protected abstract void DoEmit(EmitContext ec);
 
 		public abstract bool AlwaysReturns { get; }
+
+        public Block ToBlock ()
+        {
+            var b = this as Block;
+            if (b != null) return b;
+            b = new Block ();
+            b.AddStatement (this);
+            return b;
+        }
     }
 }

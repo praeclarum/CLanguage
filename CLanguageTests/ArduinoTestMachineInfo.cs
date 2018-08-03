@@ -40,6 +40,10 @@ namespace CLanguage.Tests
 #define HEX 16
 #define OCT 8
 #define BIN 2
+#define NOTE_C4 403
+#define NOTE_G3 307
+#define NOTE_A3 301
+#define NOTE_B3 302
 struct SerialClass {
     void begin(int baud);
     void print(const char *value);
@@ -59,6 +63,7 @@ struct SerialClass Serial;
             AddInternalFunction ("int constrain (int x, int a, int b)", Arduino.Constrain);
             AddInternalFunction ("void delay (unsigned long ms)");
             AddInternalFunction ("void tone (int pin, int note, int duration)");
+            AddInternalFunction ("void noTone (int pin)");
             AddInternalFunction ("void assertAreEqual (int expected, int actual)", AssertAreEqual);
             AddInternalFunction ("void assertBoolsAreEqual (bool expected, bool actual)", AssertBoolsAreEqual);
             AddInternalFunction ("void assertFloatsAreEqual (float expected, float actual)", AssertFloatsAreEqual);

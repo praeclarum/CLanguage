@@ -117,7 +117,7 @@ namespace CLanguage.Interpreter
                             }
                         }
                         else {
-                            var ctype = MakeCType (multi.Specifiers, idecl.Declarator, block);
+                            var ctype = MakeCType (multi.Specifiers, idecl.Declarator, idecl.Initializer, block);
                             var name = idecl.Declarator.DeclaredIdentifier;
 
                             if (ctype is CFunctionType ftype && !HasStronglyBoundPointer (idecl.Declarator)) {
@@ -172,7 +172,7 @@ namespace CLanguage.Interpreter
                 }
             }
             else if (statement is FunctionDefinition fdef) {
-                if (MakeCType (fdef.Specifiers, fdef.Declarator, block) is CFunctionType ftype) {
+                if (MakeCType (fdef.Specifiers, fdef.Declarator, null, block) is CFunctionType ftype) {
                     var name = fdef.Declarator.DeclaredIdentifier;
                     var f = new CompiledFunction (name, ftype, fdef.Body);
                     block.Functions.Add (f);
@@ -180,6 +180,7 @@ namespace CLanguage.Interpreter
             }
             else if (statement is ForStatement fors) {
                 AddStatementDeclarations (fors.InitBlock);
+                AddStatementDeclarations (fors.LoopBody);
             }
             else if (statement is Block subblock) {
                 AddStatementDeclarations (subblock);
@@ -236,13 +237,13 @@ namespace CLanguage.Interpreter
             else return HasStronglyBoundPointer (d.InnerDeclarator);
         }
 
-        CType MakeCType (DeclarationSpecifiers specs, Declarator decl, Block block)
+        CType MakeCType (DeclarationSpecifiers specs, Declarator decl, Initializer init, Block block)
         {
             var type = MakeCType (specs, block);
-            return MakeCType (type, decl, block);
+            return MakeCType (type, decl, init, block);
         }
 
-        CType MakeCType (CType type, Declarator decl, Block block)
+        CType MakeCType (CType type, Declarator decl, Initializer init, Block block)
         {
             if (decl is IdentifierDeclarator) {
                 // This is the name
@@ -252,7 +253,7 @@ namespace CLanguage.Interpreter
                 var isPointerToFunc = false;
 
                 if (pdecl.StrongBinding) {
-                    type = MakeCType (type, pdecl.InnerDeclarator, block);
+                    type = MakeCType (type, pdecl.InnerDeclarator, null, block);
                     isPointerToFunc = type is CFunctionType;
                 }
 
@@ -264,7 +265,7 @@ namespace CLanguage.Interpreter
                 }
 
                 if (!pdecl.StrongBinding) {
-                    type = MakeCType (type, pdecl.InnerDeclarator, block);
+                    type = MakeCType (type, pdecl.InnerDeclarator, null, block);
                 }
 
                 //
@@ -285,8 +286,13 @@ namespace CLanguage.Interpreter
                         len = clen.EmitValue.Int32Value;
                     }
                     else {
-                        context.Report.Error (2057, "Expected constant expression");
-                        len = 0;
+                        if (init is StructuredInitializer sinit) {
+                            len = sinit.Initializers.Count;
+                        }
+                        else {
+                            len = 0;
+                            context.Report.Error (2057, "Expected constant expression");
+                        }
                     }
                     type = new CArrayType (type, len);
                     adecl = adecl.InnerDeclarator as ArrayDeclarator;
@@ -294,7 +300,7 @@ namespace CLanguage.Interpreter
                         if (adecl.InnerDeclarator is IdentifierDeclarator) {
                         }
                         else if (!(adecl.InnerDeclarator is ArrayDeclarator)) {
-                            type = MakeCType (type, adecl.InnerDeclarator, block);
+                            type = MakeCType (type, adecl.InnerDeclarator, null, block);
                         }
                         else {
                             //throw new NotSupportedException("Unrecognized array syntax");
@@ -318,13 +324,13 @@ namespace CLanguage.Interpreter
             var name = decl.DeclaredIdentifier;
             var ftype = new CFunctionType (returnType, isInstance);
             foreach (var pdecl in fdecl.Parameters) {
-                var pt = MakeCType (pdecl.DeclarationSpecifiers, pdecl.Declarator, block);
+                var pt = MakeCType (pdecl.DeclarationSpecifiers, pdecl.Declarator, null, block);
                 if (!pt.IsVoid) {
                     ftype.AddParameter (pdecl.Name, pt);
                 }
             }
 
-            var type = MakeCType (ftype, fdecl.InnerDeclarator, block);
+            var type = MakeCType (ftype, fdecl.InnerDeclarator, null, block);
 
             return type;
         }
@@ -408,7 +414,7 @@ namespace CLanguage.Interpreter
             if (s is MultiDeclaratorStatement multi) {
                 if (multi.InitDeclarators != null) {
                     foreach (var i in multi.InitDeclarators) {
-                        var type = MakeCType (multi.Specifiers, i.Declarator, block);
+                        var type = MakeCType (multi.Specifiers, i.Declarator, i.Initializer, block);
                         if (type is CFunctionType functionType) {
                             var name = i.Declarator.DeclaredIdentifier;
                             st.Members.Add (new CStructMethod { Name = name, MemberType = type });

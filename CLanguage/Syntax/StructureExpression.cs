@@ -23,7 +23,12 @@ namespace CLanguage.Syntax
             Items = new List<Item>();
         }
 
-		public override CType GetEvaluatedCType (EmitContext ec)
+        public override string ToString ()
+        {
+            return "{ " + string.Join (", ", Items.Select (x => x.Expression.ToString ())) + " }";
+        }
+
+        public override CType GetEvaluatedCType (EmitContext ec)
 		{
 			return CType.Void;
         }

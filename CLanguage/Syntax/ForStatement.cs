@@ -12,9 +12,9 @@ namespace CLanguage.Syntax
         public Block InitBlock { get; private set; }
         public Expression ContinueExpression { get; private set; }
         public Expression NextExpression { get; private set; }
-        public Statement LoopBody { get; private set; }
+        public Block LoopBody { get; private set; }
 
-        public ForStatement (Statement initStatement, Expression continueExpr, Statement body)
+        public ForStatement (Statement initStatement, Expression continueExpr, Block body)
         {
             InitBlock = new Block ();
             if (initStatement != null) {
@@ -24,7 +24,7 @@ namespace CLanguage.Syntax
             LoopBody = body;
         }
 
-        public ForStatement (Statement initStatement, Expression continueExpr, Expression nextExpr, Statement body)
+        public ForStatement (Statement initStatement, Expression continueExpr, Expression nextExpr, Block body)
         {
             InitBlock = new Block ();
             if (initStatement != null) {
@@ -35,7 +35,7 @@ namespace CLanguage.Syntax
             LoopBody = body;
         }
 
-	    public ForStatement(Statement initStatement, Expression continueExpr, Statement body, Block parent, Location startLoc, Location endLoc)
+	    public ForStatement(Statement initStatement, Expression continueExpr, Block body, Block parent, Location startLoc, Location endLoc)
         {
             InitBlock = new Block(startLoc, endLoc);
             if (initStatement != null) {
@@ -45,7 +45,7 @@ namespace CLanguage.Syntax
             LoopBody = body;
         }
 
-		public ForStatement(Statement initStatement, Expression continueExpr, Expression nextExpr, Statement body, Block parent, Location startLoc, Location endLoc)
+		public ForStatement(Statement initStatement, Expression continueExpr, Expression nextExpr, Block body, Block parent, Location startLoc, Location endLoc)
         {
             InitBlock = new Block(startLoc, endLoc);
             if (initStatement != null) {
@@ -74,7 +74,8 @@ namespace CLanguage.Syntax
 			ec.EmitCastToBoolean (ContinueExpression.GetEvaluatedCType (ec));
 			ec.Emit (OpCode.BranchIfFalse, endLabel);
 
-			LoopBody.Emit (ec);
+            LoopBody.Emit (ec);
+
 			NextExpression.Emit (ec);
 			ec.Emit (OpCode.Pop);
 			ec.Emit (OpCode.Jump, contLabel);

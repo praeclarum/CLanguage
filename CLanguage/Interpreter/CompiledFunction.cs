@@ -66,7 +66,7 @@ namespace CLanguage.Interpreter
 
                 var i = Instructions[ip];
 
-                Debug.WriteLine (i);
+                //Debug.WriteLine (i);
 
                 switch (i.Op) {
                     case OpCode.Dup:
@@ -112,16 +112,29 @@ namespace CLanguage.Interpreter
                         state.SP++;
                         ip++;
                         break;
+                    case OpCode.LoadPointer:
+                        a = state.Stack[state.SP - 1];
+                        state.Stack[state.SP - 1] = state.Stack[a.PointerValue];
+                        ip++;
+                        break;
+                    case OpCode.StorePointer:
+                        a = state.Stack[state.SP - 2];
+                        b = state.Stack[state.SP - 1];
+                        state.Stack[a.PointerValue] = b;
+                        state.SP--;
+                        ip++;
+                        break;
+                    case OpCode.OffsetPointer:
+                        a = state.Stack[state.SP - 2];
+                        b = state.Stack[state.SP - 1];
+                        state.Stack[state.SP - 2] = new Value { PointerValue = a.PointerValue + b.Int32Value };
+                        state.SP--;
+                        ip++;
+                        break;
                     case OpCode.LoadGlobal:
                         state.Stack[state.SP] = state.Stack[i.X.Int32Value];
                         state.SP++;
                         ip++;
-                        break;
-                    case OpCode.LoadPointer: {
-                            var p = state.Stack[state.SP - 1];
-                            state.Stack[state.SP - 1] = state.Stack[p.PointerValue];
-                            ip++;
-                        }
                         break;
                     case OpCode.StoreGlobal:
                         state.Stack[i.X.Int32Value] = state.Stack[state.SP - 1];
@@ -145,13 +158,6 @@ namespace CLanguage.Interpreter
                         break;
                     case OpCode.StoreLocal:
                         state.Stack[frame.FP + i.X.Int32Value] = state.Stack[state.SP - 1];
-                        state.SP--;
-                        ip++;
-                        break;
-                    case OpCode.OffsetPointer:
-                        a = state.Stack[state.SP - 2];
-                        b = state.Stack[state.SP - 1];
-                        state.Stack[state.SP - 2] = new Value { PointerValue = a.PointerValue + b.Int32Value };
                         state.SP--;
                         ip++;
                         break;
