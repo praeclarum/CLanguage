@@ -64,5 +64,10 @@ namespace CLanguage.Syntax
                 return Statements.Any (s => s.AlwaysReturns);
             }
         }
+
+        public void AddVariable (string name, CType ctype)
+        {
+            Variables.Add (new CompiledVariable (name, 0, ctype));
+        }
     }
 }

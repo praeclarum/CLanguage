@@ -46,15 +46,16 @@ namespace CLanguage.Interpreter
 
         public override void Init (CInterpreter state)
         {
-            state.ActiveFrame.AllocateLocals (LocalVariables.Count);
+            var last = LocalVariables.Count == 0 ? null : LocalVariables[LocalVariables.Count - 1];
+            if (last != null) {
+                state.SP += last.Offset + last.VariableType.NumValues;
+            }
         }
 
         public override void Step (CInterpreter state)
         {
             var frame = state.ActiveFrame;
             var ip = frame.IP;
-            var locals = frame.Locals;
-            var args = frame.Args;
 
             var done = false;
 
@@ -65,7 +66,7 @@ namespace CLanguage.Interpreter
 
                 var i = Instructions[ip];
 
-                //Debug.WriteLine (i);
+                Debug.WriteLine (i);
 
                 switch (i.Op) {
                     case OpCode.Dup:
@@ -106,6 +107,11 @@ namespace CLanguage.Interpreter
                         state.SP++;
                         ip++;
                         break;
+                    case OpCode.LoadFramePointer:
+                        state.Stack[state.SP] = frame.FP;
+                        state.SP++;
+                        ip++;
+                        break;
                     case OpCode.LoadGlobal:
                         state.Stack[state.SP] = state.Stack[i.X];
                         state.SP++;
@@ -125,22 +131,22 @@ namespace CLanguage.Interpreter
                         ip++;
                         break;
                     case OpCode.LoadArg:
-                        state.Stack[state.SP] = args[i.X];
+                        state.Stack[state.SP] = state.Stack[frame.FP + i.X];
                         state.SP++;
                         ip++;
                         break;
                     case OpCode.StoreArg:
-                        args[i.X] = state.Stack[state.SP - 1];
+                        state.Stack[frame.FP + i.X] = state.Stack[state.SP - 1];
                         state.SP--;
                         ip++;
                         break;
                     case OpCode.LoadLocal:
-                        state.Stack[state.SP] = locals[i.X];
+                        state.Stack[state.SP] = state.Stack[frame.FP + i.X];
                         state.SP++;
                         ip++;
                         break;
                     case OpCode.StoreLocal:
-                        locals[i.X] = state.Stack[state.SP - 1];
+                        state.Stack[frame.FP + i.X] = state.Stack[state.SP - 1];
                         state.SP--;
                         ip++;
                         break;

@@ -34,7 +34,7 @@ void main () {
 			catch (ExecutionException) {
 			}
 			catch (Exception ex) {
-				Assert.Fail ("Expected ExecutionException but got " + ex);
+				throw;
 			}
 		}
 

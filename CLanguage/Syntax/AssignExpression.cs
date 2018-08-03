@@ -41,13 +41,13 @@ namespace CLanguage.Syntax
                     ec.Report.Error (103, $"The name `{variableName}` does not exist in the current context.");
                 }
                 else if (v.Scope == VariableScope.Global) {
-                    ec.Emit (OpCode.StoreGlobal, v.Index);
+                    ec.Emit (OpCode.StoreGlobal, v.Address);
                 }
                 else if (v.Scope == VariableScope.Local) {
-                    ec.Emit (OpCode.StoreLocal, v.Index);
+                    ec.Emit (OpCode.StoreLocal, v.Address);
                 }
                 else if (v.Scope == VariableScope.Arg) {
-                    ec.Emit (OpCode.StoreArg, v.Index);
+                    ec.Emit (OpCode.StoreArg, v.Address);
                 }
                 else if (v.Scope == VariableScope.Function) {
                     ec.Emit (OpCode.Pop);

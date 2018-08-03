@@ -35,20 +35,20 @@ namespace CLanguage.Syntax
 			if (variable != null) {
 
 				if (variable.Scope == VariableScope.Function) {
-                    ec.Emit (OpCode.LoadConstant, Value.FunctionPointer (variable.Index));
+                    ec.Emit (OpCode.LoadConstant, Value.FunctionPointer (variable.Address));
 				}
 				else {
                     if (variable.VariableType is CBasicType ||
                         variable.VariableType is CPointerType) {
 
                         if (variable.Scope == VariableScope.Arg) {
-                            ec.Emit (OpCode.LoadArg, variable.Index);
+                            ec.Emit (OpCode.LoadArg, variable.Address);
                         }
                         else if (variable.Scope == VariableScope.Global) {
-                            ec.Emit (OpCode.LoadGlobal, variable.Index);
+                            ec.Emit (OpCode.LoadGlobal, variable.Address);
                         }
                         else if (variable.Scope == VariableScope.Local) {
-                            ec.Emit (OpCode.LoadLocal, variable.Index);
+                            ec.Emit (OpCode.LoadLocal, variable.Address);
                         }
                         else {
                             throw new NotSupportedException ("Cannot evaluate variable scope '" + variable.Scope + "'");
@@ -57,13 +57,13 @@ namespace CLanguage.Syntax
                     else if (variable.VariableType is CArrayType arrayType) {
 
                         if (variable.Scope == VariableScope.Arg) {
-                            ec.Emit (OpCode.LoadConstant, Value.ArgPointer (variable.Index));
+                            ec.Emit (OpCode.LoadConstant, Value.ArgPointer (variable.Address));
                         }
                         else if (variable.Scope == VariableScope.Global) {
-                            ec.Emit (OpCode.LoadConstant, Value.GlobalPointer (variable.Index));
+                            ec.Emit (OpCode.LoadConstant, Value.GlobalPointer (variable.Address));
                         }
                         else if (variable.Scope == VariableScope.Local) {
-                            ec.Emit (OpCode.LoadConstant, Value.LocalPointer (variable.Index));
+                            ec.Emit (OpCode.LoadConstant, Value.LocalPointer (variable.Address));
                         }
                         else {
                             throw new NotSupportedException ("Cannot evaluate array variable scope '" + variable.Scope + "'");

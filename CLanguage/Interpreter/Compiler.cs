@@ -46,7 +46,7 @@ namespace CLanguage.Interpreter
 			var exe = new Executable (context.MachineInfo);
 
 			// Put something at the zero address so we don't get 0 addresses of globals
-			exe.Globals.Add (new CompiledVariable ("__zero__", CBasicType.SignedInt));
+			exe.AddGlobal ("__zero__", CBasicType.SignedInt);
 
             //
             // Find Variables, Functions, Types
@@ -147,8 +147,7 @@ namespace CLanguage.Interpreter
                                     }
                                 }
                                 //var init = GetInitExpression(idecl.Initializer);
-                                var vdecl = new CompiledVariable (name, ctype);
-                                block.Variables.Add (vdecl);
+                                block.AddVariable (name, ctype);
                             }
 
                             if (idecl.Initializer != null) {
@@ -318,7 +317,7 @@ namespace CLanguage.Interpreter
             foreach (var pdecl in fdecl.Parameters) {
                 var pt = MakeCType (pdecl.DeclarationSpecifiers, pdecl.Declarator, block);
                 if (!pt.IsVoid) {
-                    ftype.Parameters.Add (new CFunctionType.Parameter (pdecl.Name, pt));
+                    ftype.AddParameter (pdecl.Name, pt);
                 }
             }
 

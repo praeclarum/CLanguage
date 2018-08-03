@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using CLanguage.Syntax;
+using CLanguage.Types;
 
 namespace CLanguage.Interpreter
 {
@@ -22,12 +23,20 @@ namespace CLanguage.Interpreter
 			Functions.AddRange (machineInfo.InternalFunctions.Cast<BaseFunction> ());
 		}
 
+        public CompiledVariable AddGlobal (string name, CType type)
+        {
+            var last = Globals.LastOrDefault ();
+            var offset = last == null ? 0 : last.Offset + last.VariableType.NumValues;
+            var v = new CompiledVariable (name, offset, type);
+            Globals.Add (v);
+            return v;
+        }
+
         public Value GetConstantMemory (string stringConstant)
         {
             var index = Globals.Count;
-            var v = new CompiledVariable ("__c" + Globals.Count, Types.CPointerType.PointerToConstChar);
-            Globals.Add (v);
-            return Value.GlobalPointer (index);
+            var v = AddGlobal ("__c" + Globals.Count, CPointerType.PointerToConstChar);
+            return Value.GlobalPointer (v.Offset);
         }
     }
 }

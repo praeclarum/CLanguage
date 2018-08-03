@@ -73,6 +73,7 @@ namespace CLanguage.Interpreter
 		#region Memory
 
 		LoadConstant,
+        LoadFramePointer,
 
 		LoadArg,
 		LoadLocal,

@@ -12,6 +12,7 @@ namespace CLanguage.Types
         {
             public string Name { get; set; }
             public CType ParameterType { get; set; }
+            public int Offset { get; set; }
             public Parameter(string name, CType parameterType)
             {
                 Name = name;
@@ -23,18 +24,37 @@ namespace CLanguage.Types
             }
         }
 
+        public override int NumValues => 1;
+
         public CType ReturnType { get; private set; }
-        public List<Parameter> Parameters { get; private set; }
+
+        readonly List<Parameter> parameters = new List<Parameter> ();
+        public IReadOnlyList<Parameter> Parameters => parameters;
+
         public bool IsInstance { get; private set; }
 
         public CFunctionType(CType returnType, bool isInstance)
         {
             ReturnType = returnType;
-            Parameters = new List<Parameter>();
             IsInstance = isInstance;
         }
 
-        public override int NumValues => 1;
+        public void AddParameter (string name, CType type)
+        {
+            parameters.Add (new Parameter (name, type));
+            CalculateParameterOffsets ();
+        }
+
+        void CalculateParameterOffsets ()
+        {
+            var offset = IsInstance ? -1 : 0;
+            for (var i = Parameters.Count - 1; i >= 0; --i) {
+                var p = Parameters[i];
+                var n = p.ParameterType.NumValues;
+                offset -= n;
+                p.Offset = offset;
+            }
+        }
 
         public override int GetByteSize(EmitContext c)
         {

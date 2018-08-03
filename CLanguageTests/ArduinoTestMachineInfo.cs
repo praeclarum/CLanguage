@@ -71,29 +71,29 @@ struct SerialClass Serial;
 
 		static void AssertAreEqual (CInterpreter state)
 		{
-			var expected = state.ActiveFrame.Args[0];
-			var actual = state.ActiveFrame.Args[1];
+			var expected = state.ReadArg(0);
+			var actual = state.ReadArg(1);
             Assert.AreEqual ((int)expected, (int)actual);
 		}
 
         static void AssertFloatsAreEqual (CInterpreter state)
         {
-            var expected = state.ActiveFrame.Args[0];
-            var actual = state.ActiveFrame.Args[1];
+            var expected = state.ReadArg(0);
+            var actual = state.ReadArg(1);
             Assert.AreEqual ((float)expected, (float)actual, 1.0e-6);
         }
 
         static void AssertDoublesAreEqual (CInterpreter state)
         {
-            var expected = state.ActiveFrame.Args[0];
-            var actual = state.ActiveFrame.Args[1];
+            var expected = state.ReadArg(0);
+            var actual = state.ReadArg(1);
             Assert.AreEqual ((double)expected, (double)actual, 1.0e-12);
         }
 
         static void AssertBoolsAreEqual (CInterpreter state)
         {
-            var expected = state.ActiveFrame.Args[0];
-            var actual = state.ActiveFrame.Args[1];
+            var expected = state.ReadArg(0);
+            var actual = state.ReadArg(1);
             Assert.AreEqual ((int)expected, (int)actual);
         }
 
@@ -127,29 +127,29 @@ struct SerialClass Serial;
 
             public void PinMode (CInterpreter state)
             {
-                var pin = state.ActiveFrame.Args[0];
-                var mode = state.ActiveFrame.Args[1];
+                var pin = state.ReadArg(0);
+                var mode = state.ReadArg(1);
                 Pins[pin].Mode = mode;
             }
 
             public void AnalogRead (CInterpreter state)
             {
-                var pin = state.ActiveFrame.Args[0];
+                var pin = state.ReadArg(0);
                 var value = Pins[pin].AnalogValue;
                 state.Push (value);
             }
 
             public void DigitalRead (CInterpreter state)
             {
-                var pin = state.ActiveFrame.Args[0];
+                var pin = state.ReadArg(0);
                 var value = Pins[pin].DigitalValue;
                 state.Push (value);
             }
 
             public void DigitalWrite (CInterpreter state)
             {
-                var pin = state.ActiveFrame.Args[0];
-                var value = state.ActiveFrame.Args[1];
+                var pin = state.ReadArg(0);
+                var value = state.ReadArg(1);
                 Pins[pin].DigitalValue = value;
             }
 
@@ -159,13 +159,13 @@ struct SerialClass Serial;
 
             public void SerialPrintlnII (CInterpreter state)
             {
-                var v = state.ActiveFrame.Args[0];
+                var v = state.ReadArg(0);
                 SerialOut.WriteLine (v);
             }
 
             public void SerialPrintlnI (CInterpreter state)
             {
-                var v = state.ActiveFrame.Args[0];
+                var v = state.ReadArg(0);
                 SerialOut.WriteLine (v);
             }
 

@@ -40,8 +40,9 @@ namespace CLanguage.Interpreter
             // Look for function parameters
             //
             for (var i = 0; i < fexe.FunctionType.Parameters.Count; i++) {
-                if (fexe.FunctionType.Parameters[i].Name == name) {
-                    return new ResolvedVariable (VariableScope.Arg, i, fexe.FunctionType.Parameters[i].ParameterType);
+                var p = fexe.FunctionType.Parameters[i];
+                if (p.Name == name) {
+                    return new ResolvedVariable (VariableScope.Arg, p.Offset, fexe.FunctionType.Parameters[i].ParameterType);
                 }
             }
 
@@ -53,7 +54,7 @@ namespace CLanguage.Interpreter
                 for (var i = 0; i < blocals.Length; i++) {
                     var j = blocals.StartIndex + i;
                     if (allLocals[j].Name == name) {
-                        return new ResolvedVariable (VariableScope.Local, j, allLocals[j].VariableType);
+                        return new ResolvedVariable (VariableScope.Local, allLocals[j].Offset, allLocals[j].VariableType);
                     }
                 }
             }
@@ -108,6 +109,12 @@ namespace CLanguage.Interpreter
             };
             blockLocals[b] = locs;
             allLocals.AddRange (b.Variables);
+
+            var offset = 0;
+            foreach (var v in allLocals) {
+                v.Offset = offset;
+                offset += v.VariableType.NumValues;
+            }
         }
 
         public override void EndBlock ()

@@ -13,20 +13,48 @@ namespace CLanguage.Interpreter
         public readonly Value[] Stack;
         public int SP;
         readonly ExecutionFrame[] Frames;
-        int FP;
+        int FI;
         public int SleepTime { get; set; }
         public int RemainingTime { get; set; }
 		
         public int CpuSpeed = 1000;
 
-        public ExecutionFrame CallerFrame { get { return (0 <= (FP - 1) && (FP - 1) < Frames.Length) ? Frames[FP - 1] : null; } }
-        public ExecutionFrame ActiveFrame { get { return (0 <= FP && FP < Frames.Length) ? Frames[FP] : null; } }
+        public ExecutionFrame CallerFrame { get { return (0 <= (FI - 1) && (FI - 1) < Frames.Length) ? Frames[FI - 1] : null; } }
+        public ExecutionFrame ActiveFrame { get { return (0 <= FI && FI < Frames.Length) ? Frames[FI] : null; } }
 
         public CInterpreter (Executable exe, int maxStack = 1024, int maxFrames = 24)
         {
             this.exe = exe;
             Stack = new Value[maxStack];
             Frames = (from i in Enumerable.Range (0, maxFrames) select new ExecutionFrame ()).ToArray ();
+        }
+
+        public Value ReadRelativeMemory (int frameOffset)
+        {
+            var address = ActiveFrame.FP + frameOffset;
+            return Stack[address];
+        }
+
+        public Value ReadMemory (int address)
+        {
+            return Stack[address];
+        }
+
+        public Value ReadArg (int index)
+        {
+            var frame = ActiveFrame;
+            var functionType = frame.Function.FunctionType;
+            int frameOffset;
+            if (index < functionType.Parameters.Count) {
+                frameOffset = functionType.Parameters[index].Offset;
+            }
+            else if (index == functionType.Parameters.Count && functionType.IsInstance) {
+                frameOffset = -1;
+            }
+            else {
+                throw new ArgumentOutOfRangeException ("Cannot read argument #" + index);
+            }
+            return ReadRelativeMemory (frameOffset);
         }
 
         public void Call (Value functionAddress)
@@ -39,21 +67,20 @@ namespace CLanguage.Interpreter
 
         public void Call (BaseFunction function)
         {
-            FP++;
-            Frames[FP].Function = function;
-            Frames[FP].IP = 0;
+            if (FI + 1 >= Frames.Length) {
+                var name = function.Name;
+                var cname = ActiveFrame != null ? ActiveFrame.Function.Name : "?";
+                Reset ();
+                throw new ExecutionException ("Stack overflow while calling '" + name + "' from '" + cname + "'");
+            }
 
+            FI++;
             var frame = ActiveFrame;
 
-            var functionType = function.FunctionType;
-            var nargValues = (functionType.Parameters.Count == 0 ? 0 : (functionType.Parameters.Sum(x => x.ParameterType.NumValues)))
-                + (functionType.IsInstance ? 1 : 0);
-            frame.AllocateArgs (nargValues);
-            var args = frame.Args;
-            for (var i = nargValues - 1; i >= 0; i--) {
-                args[i] = Stack[SP - 1];
-                SP--;
-            }
+            frame.Function = function;
+            frame.FP = SP;
+            frame.IP = 0;
+
             function.Init (this);
         }
 
@@ -64,7 +91,36 @@ namespace CLanguage.Interpreter
 
         public void Return ()
         {
-            FP--;
+            //
+            // Pop the stack
+            //
+            var frame = ActiveFrame;
+            var ftype = frame.Function.FunctionType;
+            var numArgsAndLocals = 0;
+            foreach (var p in ftype.Parameters) {
+                numArgsAndLocals += p.ParameterType.NumValues;
+            }
+            if (ftype.IsInstance) {
+                numArgsAndLocals++;
+            }
+            if (frame.Function is CompiledFunction cf) {
+                foreach (var v in cf.LocalVariables) {
+                    numArgsAndLocals += v.VariableType.NumValues;
+                }
+            }
+
+            var numReturnVals = ftype.ReturnType.NumValues;
+            var newSP = SP - numArgsAndLocals;
+            var retSP = newSP - numReturnVals;
+            for (var i = 0; i < numReturnVals; i++) {
+                Stack[retSP + i] = Stack[SP - numReturnVals + i];
+            }
+            SP = newSP;
+
+            //
+            // Pop the frame stack
+            //
+            FI--;
         }
 
 		public void Reset (string entrypoint)
@@ -75,7 +131,7 @@ namespace CLanguage.Interpreter
 
 		void Reset ()
 		{
-            FP = -1;
+            FI = -1;
             SP = exe.Globals.Count;
             SleepTime = 0;
 			if (entrypoint != null) {
@@ -103,12 +159,6 @@ namespace CLanguage.Interpreter
 					while (RemainingTime > 0 && ActiveFrame != null) {
 						ActiveFrame.Function.Step (this);
 					}
-				}
-				catch (IndexOutOfRangeException ex) {
-					var cname = CallerFrame != null ? CallerFrame.Function.Name : "?";
-					var name = ActiveFrame != null ? ActiveFrame.Function.Name : "?";
-					Reset ();
-					throw new ExecutionException ("Stack overflow while executing '" + name + "' from '" + cname + "'", ex);
 				}
 				catch (Exception) {
 					Reset ();
