@@ -121,7 +121,7 @@ namespace CLanguage.Interpreter
                             var p = state.Stack[state.SP - 1];
                             if (!p.IsPointer)
                                 throw new InvalidOperationException ($"Cannot dereference {p.Type}");
-                            state.Stack[state.SP - 1] = state.Stack[p.PointerValue.Index];
+                            state.Stack[state.SP - 1] = state.Stack[p.PointerValue];
                             ip++;
                         }
                         break;
@@ -153,7 +153,7 @@ namespace CLanguage.Interpreter
                     case OpCode.OffsetPointer:
                         a = state.Stack[state.SP - 2];
                         b = state.Stack[state.SP - 1];
-                        state.Stack[state.SP - 2] = a.OffsetPointer (b);
+                        state.Stack[state.SP - 2] = new Value { Type = ValueType.GlobalPointer, PointerValue = a.PointerValue + (int)b };
                         state.SP--;
                         ip++;
                         break;

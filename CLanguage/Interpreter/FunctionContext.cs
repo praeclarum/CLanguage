@@ -64,7 +64,7 @@ namespace CLanguage.Interpreter
             //
             for (var i = 0; i < exe.Globals.Count; i++) {
                 if (exe.Globals[i].Name == name) {
-                    return new ResolvedVariable (VariableScope.Global, i, exe.Globals[i].VariableType);
+                    return new ResolvedVariable (VariableScope.Global, exe.Globals[i].Offset, exe.Globals[i].VariableType);
                 }
             }
 

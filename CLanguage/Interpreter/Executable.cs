@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using CLanguage.Syntax;
 using CLanguage.Types;
+using System.Text;
 
 namespace CLanguage.Interpreter
 {
@@ -12,13 +13,14 @@ namespace CLanguage.Interpreter
 		public MachineInfo MachineInfo { get; private set; }
 
 		public List<BaseFunction> Functions { get; private set; }
-		public List<CompiledVariable> Globals { get; private set; }
+
+        readonly List<CompiledVariable> globals = new List<CompiledVariable> ();
+        public IReadOnlyList<CompiledVariable> Globals => globals;
 
 		public Executable (MachineInfo machineInfo)
 		{
 			MachineInfo = machineInfo;
 			Functions = new List<BaseFunction> ();
-            Globals = new List<CompiledVariable> ();
 
 			Functions.AddRange (machineInfo.InternalFunctions.Cast<BaseFunction> ());
 		}
@@ -28,14 +30,18 @@ namespace CLanguage.Interpreter
             var last = Globals.LastOrDefault ();
             var offset = last == null ? 0 : last.Offset + last.VariableType.NumValues;
             var v = new CompiledVariable (name, offset, type);
-            Globals.Add (v);
+            globals.Add (v);
             return v;
         }
 
         public Value GetConstantMemory (string stringConstant)
         {
             var index = Globals.Count;
-            var v = AddGlobal ("__c" + Globals.Count, CPointerType.PointerToConstChar);
+            var bytes = Encoding.UTF8.GetBytes (stringConstant);
+            var len = bytes.Length + 1;
+            var type = new CArrayType (CBasicType.SignedChar, len);
+            var v = AddGlobal ("__c" + Globals.Count, type);
+            v.InitialValue = bytes.Concat (new byte[] { 0 }).Select (x => (Value)x).ToArray ();
             return Value.GlobalPointer (v.Offset);
         }
     }

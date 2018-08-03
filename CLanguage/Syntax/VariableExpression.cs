@@ -58,12 +58,16 @@ namespace CLanguage.Syntax
 
                         if (variable.Scope == VariableScope.Arg) {
                             ec.Emit (OpCode.LoadConstant, Value.ArgPointer (variable.Address));
+                            ec.Emit (OpCode.LoadFramePointer);
+                            ec.Emit (OpCode.OffsetPointer);
                         }
                         else if (variable.Scope == VariableScope.Global) {
                             ec.Emit (OpCode.LoadConstant, Value.GlobalPointer (variable.Address));
                         }
                         else if (variable.Scope == VariableScope.Local) {
                             ec.Emit (OpCode.LoadConstant, Value.LocalPointer (variable.Address));
+                            ec.Emit (OpCode.LoadFramePointer);
+                            ec.Emit (OpCode.OffsetPointer);
                         }
                         else {
                             throw new NotSupportedException ("Cannot evaluate array variable scope '" + variable.Scope + "'");

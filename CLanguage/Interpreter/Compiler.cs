@@ -67,7 +67,10 @@ namespace CLanguage.Interpreter
             // This is done before compilation to make sure everything is visible (for recursion)
             //
             foreach (var tu in tus) {
-                exe.Globals.AddRange (tu.Variables);
+                foreach (var g in tu.Variables) {
+                    var v = exe.AddGlobal (g.Name, g.VariableType);
+                    v.InitialValue = g.InitialValue;
+                }
                 exe.Functions.AddRange (tu.Functions.Where (x => x.Body != null));
             }
 

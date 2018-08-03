@@ -15,7 +15,7 @@ namespace CLanguage
         [FieldOffset (0)]
         public System.Int32 Int32Value;
         [FieldOffset (0)]
-        public ValuePointer PointerValue;
+        public System.Int32 PointerValue;
         [FieldOffset (8)]
         public ValueType Type;
 
@@ -137,7 +137,7 @@ namespace CLanguage
                 case ValueType.GlobalPointer:
                 case ValueType.ArgPointer:
                 case ValueType.LocalPointer:
-                    return (float)v.PointerValue.Int32Value;
+                    return (float)v.PointerValue;
                 default:
                     return 0;
             }
@@ -158,7 +158,7 @@ namespace CLanguage
                 case ValueType.GlobalPointer:
                 case ValueType.ArgPointer:
                 case ValueType.LocalPointer:
-                    return (double)v.PointerValue.Int32Value;
+                    return (double)v.PointerValue;
                 default:
                     return 0;
             }
@@ -179,25 +179,9 @@ namespace CLanguage
                 case ValueType.GlobalPointer:
                 case ValueType.ArgPointer:
                 case ValueType.LocalPointer:
-                    return (ulong)v.PointerValue.Int32Value;
+                    return (ulong)v.PointerValue;
                 default:
                     return 0;
-            }
-        }
-
-        public Value OffsetPointer (Value offset)
-        {
-            if (IsPointer) {
-                return new Value {
-                    Type = this.Type,
-                    PointerValue = new ValuePointer {
-                        Index = this.PointerValue.Index,
-                        Offset = (ushort)(this.PointerValue.Offset + (int)offset),
-                    }
-                };
-            }
-            else {
-                return (int)this + (int)offset;
             }
         }
 
@@ -216,7 +200,7 @@ namespace CLanguage
                 case ValueType.GlobalPointer:
                 case ValueType.ArgPointer:
                 case ValueType.LocalPointer:
-                    return (long)v.PointerValue.Int32Value;
+                    return (long)v.PointerValue;
                 default:
                     return 0;
             }
@@ -237,7 +221,7 @@ namespace CLanguage
                 case ValueType.GlobalPointer:
                 case ValueType.ArgPointer:
                 case ValueType.LocalPointer:
-                    return (uint)v.PointerValue.Int32Value;
+                    return (uint)v.PointerValue;
                 default:
                     return 0;
             }
@@ -258,7 +242,7 @@ namespace CLanguage
                 case ValueType.GlobalPointer:
                 case ValueType.ArgPointer:
                 case ValueType.LocalPointer:
-                    return v.PointerValue.Int32Value;
+                    return v.PointerValue;
                 default:
                     return 0;
             }
@@ -279,7 +263,7 @@ namespace CLanguage
                 case ValueType.GlobalPointer:
                 case ValueType.ArgPointer:
                 case ValueType.LocalPointer:
-                    return (ushort)v.PointerValue.Int32Value;
+                    return (ushort)v.PointerValue;
                 default:
                     return 0;
             }
@@ -300,7 +284,7 @@ namespace CLanguage
                 case ValueType.GlobalPointer:
                 case ValueType.ArgPointer:
                 case ValueType.LocalPointer:
-                    return (short)v.PointerValue.Int32Value;
+                    return (short)v.PointerValue;
                 default:
                     return 0;
             }
@@ -321,7 +305,7 @@ namespace CLanguage
                 case ValueType.GlobalPointer:
                 case ValueType.ArgPointer:
                 case ValueType.LocalPointer:
-                    return (byte)v.PointerValue.Int32Value;
+                    return (byte)v.PointerValue;
                 default:
                     return 0;
             }
@@ -342,7 +326,7 @@ namespace CLanguage
                 case ValueType.GlobalPointer:
                 case ValueType.ArgPointer:
                 case ValueType.LocalPointer:
-                    return (sbyte)v.PointerValue.Int32Value;
+                    return (sbyte)v.PointerValue;
                 default:
                     return 0;
             }
@@ -350,28 +334,20 @@ namespace CLanguage
 
         public static Value FunctionPointer (int index, int offset = 0) => new Value {
             Type = ValueType.FunctionPointer,
-            PointerValue = new ValuePointer { Index = (ushort)index, Offset = (ushort)offset },
+            PointerValue = index + offset,
         };
         public static Value GlobalPointer (int index, int offset = 0) => new Value {
             Type = ValueType.GlobalPointer,
-            PointerValue = new ValuePointer { Index = (ushort)index, Offset = (ushort)offset },
+            PointerValue = index + offset,
         };
         public static Value ArgPointer (int index, int offset = 0) => new Value {
             Type = ValueType.ArgPointer,
-            PointerValue = new ValuePointer { Index = (ushort)index, Offset = (ushort)offset },
+            PointerValue = index + offset,
         };
         public static Value LocalPointer (int index, int offset = 0) => new Value {
             Type = ValueType.LocalPointer,
-            PointerValue = new ValuePointer { Index = (ushort)index, Offset = (ushort)offset },
+            PointerValue = index + offset,
         };
-    }
-
-    public struct ValuePointer
-    {
-        public ushort Index;
-        public ushort Offset;
-
-        public int Int32Value => ((int)Index) << 16 | Offset;
     }
 
     public enum ValueType

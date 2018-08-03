@@ -188,7 +188,7 @@ void main () {
 }");
         }
 
-        [TestMethod, Ignore]
+        [TestMethod]
         public void AddressOfLocal ()
         {
             var i = Run (@"

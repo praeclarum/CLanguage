@@ -38,7 +38,7 @@ namespace CLanguage.Syntax
         {
             Array.Emit (ec);
             ElementIndex.Emit (ec);
-            ec.Emit (OpCode.LoadConstant, GetEvaluatedCType (ec).GetByteSize (ec));
+            ec.Emit (OpCode.LoadConstant, GetEvaluatedCType (ec).NumValues);
             ec.Emit (OpCode.MultiplyInt32);
             ec.Emit (OpCode.OffsetPointer);
             ec.Emit (OpCode.LoadPointer);

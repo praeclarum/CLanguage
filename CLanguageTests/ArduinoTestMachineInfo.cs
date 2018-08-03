@@ -4,6 +4,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
 using System.Diagnostics;
 using System.IO;
+using System.Collections.Generic;
+using System.Text;
 
 namespace CLanguage.Tests
 {
@@ -63,10 +65,10 @@ struct SerialClass Serial;
             AddInternalFunction ("void assertDoublesAreEqual (double expected, double actual)", AssertDoublesAreEqual);
             AddInternalFunction ("long millis ()", Arduino.Millis);
             AddInternalFunction ("void SerialClass::begin (int baud)", Arduino.SerialBegin);
-            AddInternalFunction ("void SerialClass::print (const char *value)", Arduino.SerialPrintlnI);
+            AddInternalFunction ("void SerialClass::print (const char *value)", Arduino.SerialPrintS);
             AddInternalFunction ("void SerialClass::println (int value, int base)", Arduino.SerialPrintlnII);
             AddInternalFunction ("void SerialClass::println (int value)", Arduino.SerialPrintlnI);
-            AddInternalFunction ("void SerialClass::println (const char *value)", Arduino.SerialPrintlnI);
+            AddInternalFunction ("void SerialClass::println (const char *value)", Arduino.SerialPrintlnS);
 		}
 
 		static void AssertAreEqual (CInterpreter state)
@@ -167,6 +169,31 @@ struct SerialClass Serial;
             {
                 var v = state.ReadArg(0);
                 SerialOut.WriteLine (v);
+            }
+
+            public void SerialPrintS (CInterpreter state)
+            {
+                var p = state.ReadArg (0);
+                SerialOut.Write (ReadString (p, state));
+            }
+
+            public void SerialPrintlnS (CInterpreter state)
+            {
+                var p = state.ReadArg (0);
+                SerialOut.WriteLine (ReadString (p, state));
+            }
+
+            string ReadString (Value p, CInterpreter state)
+            {
+                var pi = (int)p.PointerValue;
+                var b = (byte)state.ReadMemory (pi);
+                var bytes = new List<byte> ();
+                while (b != 0) {
+                    bytes.Add (b);
+                    pi++;
+                    b = (byte)state.ReadMemory (pi);
+                }
+                return Encoding.UTF8.GetString (bytes.ToArray ());
             }
 
             public class Pin

@@ -62,7 +62,7 @@ namespace CLanguage.Interpreter
             if (functionAddress.Type != ValueType.FunctionPointer) {
                 throw new Exception ($"Cannot call {functionAddress.Type}");
             }
-            Call (exe.Functions[functionAddress.PointerValue.Index]);
+            Call (exe.Functions[functionAddress.PointerValue]);
         }
 
         public void Call (BaseFunction function)
@@ -132,7 +132,15 @@ namespace CLanguage.Interpreter
 		void Reset ()
 		{
             FI = -1;
-            SP = exe.Globals.Count;
+            SP = 0;
+            foreach (var g in exe.Globals) {
+                if (g.InitialValue != null) {
+                    for (var i = 0; i < g.InitialValue.Length; i++) {
+                        Stack[g.Offset + i] = g.InitialValue[i];
+                    }
+                }
+                SP += g.VariableType.NumValues;
+            }
             SleepTime = 0;
 			if (entrypoint != null) {
 				Call (entrypoint);
