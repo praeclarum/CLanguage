@@ -103,13 +103,16 @@ namespace CLanguage.Syntax
                 if (intType.Signedness == Signedness.Signed) {
                     switch (size) {
                         case 1:
-                            ec.Emit (OpCode.LoadConstant, (Value)(sbyte)EmitValue);
+                            ec.Emit (OpCode.LoadConstant, (Value)Convert.ToSByte (Value));
                             break;
                         case 2:
-                            ec.Emit (OpCode.LoadConstant, (Value)(short)EmitValue);
+                            ec.Emit (OpCode.LoadConstant, (Value)Convert.ToInt16 (Value));
                             break;
                         case 4:
-                            ec.Emit (OpCode.LoadConstant, (Value)(int)EmitValue);
+                            ec.Emit (OpCode.LoadConstant, (Value)Convert.ToInt32 (Value));
+                            break;
+                        case 8:
+                            ec.Emit (OpCode.LoadConstant, (Value)Convert.ToInt64 (Value));
                             break;
                         default:
                             throw new NotSupportedException ("Signed integral constants with type '" + ConstantType + "'");
@@ -118,13 +121,16 @@ namespace CLanguage.Syntax
                 else {
                     switch (size) {
                         case 1:
-                            ec.Emit (OpCode.LoadConstant, (Value)(byte)EmitValue);
+                            ec.Emit (OpCode.LoadConstant, (Value)Convert.ToByte (Value));
                             break;
                         case 2:
-                            ec.Emit (OpCode.LoadConstant, (Value)(ushort)EmitValue);
+                            ec.Emit (OpCode.LoadConstant, (Value)Convert.ToUInt16 (Value));
                             break;
                         case 4:
-                            ec.Emit (OpCode.LoadConstant, (Value)(uint)EmitValue);
+                            ec.Emit (OpCode.LoadConstant, (Value)Convert.ToUInt32 (Value));
+                            break;
+                        case 8:
+                            ec.Emit (OpCode.LoadConstant, (Value)Convert.ToUInt64 (Value));
                             break;
                         default:
                             throw new NotSupportedException ("Unsigned integral constants with type '" + ConstantType + "'");

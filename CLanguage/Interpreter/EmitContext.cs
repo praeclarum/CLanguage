@@ -91,5 +91,33 @@ namespace CLanguage.Interpreter
         {
             throw new NotSupportedException ("Cannot get constant memory from this context");
         }
+
+        public int GetInstructionOffset (CBasicType aType)
+        {
+            var size = aType.GetByteSize (this);
+
+            if (aType.IsIntegral) {
+                switch (size) {
+                    case 1:
+                        return aType.Signedness == Signedness.Signed ? 0 : 1;
+                    case 2:
+                        return aType.Signedness == Signedness.Signed ? 2 : 3;
+                    case 4:
+                        return aType.Signedness == Signedness.Signed ? 4 : 5;
+                    case 8:
+                        return aType.Signedness == Signedness.Signed ? 6 : 7;
+                }
+            }
+            else {
+                switch (size) {
+                    case 4:
+                        return 8;
+                    case 8:
+                        return 9;
+                }
+            }
+
+            throw new NotSupportedException ("Arithmetic on type '" + aType + "'");
+        }
     }
 }

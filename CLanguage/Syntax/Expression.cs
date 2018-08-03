@@ -29,34 +29,6 @@ namespace CLanguage.Syntax
         protected virtual void DoEmitPointer (EmitContext ec) =>
             throw new NotSupportedException ($"Cannot get address of {this.GetType().Name} `{this}`");
 
-		protected static int GetInstructionOffset (CBasicType aType, EmitContext ec)
-		{
-			var size = aType.GetByteSize (ec);
-
-            if (aType.IsIntegral) {
-                switch (size) {
-                    case 1:
-                        return aType.Signedness == Signedness.Signed ? 0 : 1;
-                    case 2:
-                        return aType.Signedness == Signedness.Signed ? 2 : 3;
-                    case 4:
-                        return aType.Signedness == Signedness.Signed ? 4 : 5;
-                    case 8:
-                        return aType.Signedness == Signedness.Signed ? 6 : 7;
-                }
-            }
-            else {
-                switch (size) {
-                    case 4:
-                        return 8;
-                    case 8:
-                        return 9;
-                }
-            }
-
-			throw new NotSupportedException ("Arithmetic on type '" + aType + "'");
-		}
-
 		protected static CBasicType GetPromotedType (Expression expr, string op, EmitContext ec)
 		{
 			var leftType = expr.GetEvaluatedCType (ec);

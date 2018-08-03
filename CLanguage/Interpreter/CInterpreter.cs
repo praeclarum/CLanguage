@@ -59,9 +59,6 @@ namespace CLanguage.Interpreter
 
         public void Call (Value functionAddress)
         {
-            if (functionAddress.Type != ValueType.FunctionPointer) {
-                throw new Exception ($"Cannot call {functionAddress.Type}");
-            }
             Call (exe.Functions[functionAddress.PointerValue]);
         }
 

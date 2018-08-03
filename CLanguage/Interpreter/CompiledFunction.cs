@@ -84,7 +84,7 @@ namespace CLanguage.Interpreter
                     case OpCode.BranchIfFalse:
                         a = state.Stack[state.SP - 1];
                         state.SP--;
-                        if (a == 0) {
+                        if (a.Int32Value == 0) {
                             ip = i.Label.Index;
                         }
                         else {
@@ -113,47 +113,45 @@ namespace CLanguage.Interpreter
                         ip++;
                         break;
                     case OpCode.LoadGlobal:
-                        state.Stack[state.SP] = state.Stack[i.X];
+                        state.Stack[state.SP] = state.Stack[i.X.Int32Value];
                         state.SP++;
                         ip++;
                         break;
                     case OpCode.LoadPointer: {
                             var p = state.Stack[state.SP - 1];
-                            if (!p.IsPointer)
-                                throw new InvalidOperationException ($"Cannot dereference {p.Type}");
                             state.Stack[state.SP - 1] = state.Stack[p.PointerValue];
                             ip++;
                         }
                         break;
                     case OpCode.StoreGlobal:
-                        state.Stack[i.X] = state.Stack[state.SP - 1];
+                        state.Stack[i.X.Int32Value] = state.Stack[state.SP - 1];
                         state.SP--;
                         ip++;
                         break;
                     case OpCode.LoadArg:
-                        state.Stack[state.SP] = state.Stack[frame.FP + i.X];
+                        state.Stack[state.SP] = state.Stack[frame.FP + i.X.Int32Value];
                         state.SP++;
                         ip++;
                         break;
                     case OpCode.StoreArg:
-                        state.Stack[frame.FP + i.X] = state.Stack[state.SP - 1];
+                        state.Stack[frame.FP + i.X.Int32Value] = state.Stack[state.SP - 1];
                         state.SP--;
                         ip++;
                         break;
                     case OpCode.LoadLocal:
-                        state.Stack[state.SP] = state.Stack[frame.FP + i.X];
+                        state.Stack[state.SP] = state.Stack[frame.FP + i.X.Int32Value];
                         state.SP++;
                         ip++;
                         break;
                     case OpCode.StoreLocal:
-                        state.Stack[frame.FP + i.X] = state.Stack[state.SP - 1];
+                        state.Stack[frame.FP + i.X.Int32Value] = state.Stack[state.SP - 1];
                         state.SP--;
                         ip++;
                         break;
                     case OpCode.OffsetPointer:
                         a = state.Stack[state.SP - 2];
                         b = state.Stack[state.SP - 1];
-                        state.Stack[state.SP - 2] = new Value { Type = ValueType.GlobalPointer, PointerValue = a.PointerValue + (int)b };
+                        state.Stack[state.SP - 2] = new Value { PointerValue = a.PointerValue + b.Int32Value };
                         state.SP--;
                         ip++;
                         break;
@@ -525,20 +523,20 @@ namespace CLanguage.Interpreter
                         break;
                     case OpCode.LogicalNot:
                         a = state.Stack[state.SP - 1];
-                        state.Stack[state.SP - 1] = (a == 0) ? 1 : 0;
+                        state.Stack[state.SP - 1] = (a.Int32Value == 0) ? 1 : 0;
                         ip++;
                         break;
                     case OpCode.LogicalAnd:
                         a = state.Stack[state.SP - 2];
                         b = state.Stack[state.SP - 1];
-                        state.Stack[state.SP - 2] = ((a != 0) && (b != 0)) ? 1 : 0;
+                        state.Stack[state.SP - 2] = ((a.Int32Value != 0) && (b.Int32Value != 0)) ? 1 : 0;
                         state.SP--;
                         ip++;
                         break;
                     case OpCode.LogicalOr:
                         a = state.Stack[state.SP - 2];
                         b = state.Stack[state.SP - 1];
-                        state.Stack[state.SP - 2] = ((a != 0) || (b != 0)) ? 1 : 0;
+                        state.Stack[state.SP - 2] = ((a.Int32Value != 0) || (b.Int32Value != 0)) ? 1 : 0;
                         state.SP--;
                         ip++;
                         break;

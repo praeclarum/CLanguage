@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace CLanguage
 {
-    [StructLayout (LayoutKind.Explicit, Size = 12)]
+    [StructLayout (LayoutKind.Explicit, Size = 8)]
     public struct Value
     {
         [FieldOffset (0)]
@@ -16,37 +16,16 @@ namespace CLanguage
         public System.Int32 Int32Value;
         [FieldOffset (0)]
         public System.Int32 PointerValue;
-        [FieldOffset (8)]
-        public ValueType Type;
-
-        public bool IsPointer => Type == ValueType.FunctionPointer || Type == ValueType.GlobalPointer || Type == ValueType.ArgPointer || Type == ValueType.LocalPointer;
 
         public override string ToString ()
         {
-            switch (Type) {
-                case ValueType.Int32:
-                    return Int32Value.ToString ();
-                case ValueType.Int64:
-                    return Int64Value.ToString ();
-                case ValueType.Float32:
-                    return Float32Value.ToString ();
-                case ValueType.Float64:
-                    return Float64Value.ToString ();
-                case ValueType.FunctionPointer:
-                case ValueType.GlobalPointer:
-                case ValueType.ArgPointer:
-                case ValueType.LocalPointer:
-                    return PointerValue.ToString ();
-                default:
-                    return "";
-            }
+            return Int32Value.ToString ();
         }
 
         public static implicit operator Value (float v)
         {
             return new Value {
                 Float32Value = v,
-                Type = ValueType.Float32,
             };
         }
 
@@ -54,7 +33,6 @@ namespace CLanguage
         {
             return new Value {
                 Float64Value = v,
-                Type = ValueType.Float64,
             };
         }
 
@@ -62,7 +40,6 @@ namespace CLanguage
         {
             return new Value {
                 Int64Value = (long)v,
-                Type = ValueType.Int64,
             };
         }
 
@@ -70,7 +47,6 @@ namespace CLanguage
         {
             return new Value {
                 Int64Value = v,
-                Type = ValueType.Int64,
             };
         }
 
@@ -78,7 +54,6 @@ namespace CLanguage
         {
             return new Value {
                 Int32Value = (int)v,
-                Type = ValueType.Int32,
             };
         }
 
@@ -86,7 +61,6 @@ namespace CLanguage
         {
             return new Value {
                 Int32Value = v,
-                Type = ValueType.Int32,
             };
         }
 
@@ -94,7 +68,6 @@ namespace CLanguage
         {
             return new Value {
                 Int32Value = v,
-                Type = ValueType.Int32,
             };
         }
 
@@ -102,7 +75,6 @@ namespace CLanguage
         {
             return new Value {
                 Int32Value = v,
-                Type = ValueType.Int32,
             };
         }
 
@@ -110,7 +82,6 @@ namespace CLanguage
         {
             return new Value {
                 Int32Value = v,
-                Type = ValueType.Int32,
             };
         }
 
@@ -118,10 +89,9 @@ namespace CLanguage
         {
             return new Value {
                 Int32Value = v,
-                Type = ValueType.Int32,
             };
         }
-
+        /*
         public static implicit operator float (Value v)
         {
             switch (v.Type) {
@@ -331,36 +301,19 @@ namespace CLanguage
                     return 0;
             }
         }
+        */
 
         public static Value FunctionPointer (int index, int offset = 0) => new Value {
-            Type = ValueType.FunctionPointer,
             PointerValue = index + offset,
         };
         public static Value GlobalPointer (int index, int offset = 0) => new Value {
-            Type = ValueType.GlobalPointer,
             PointerValue = index + offset,
         };
         public static Value ArgPointer (int index, int offset = 0) => new Value {
-            Type = ValueType.ArgPointer,
             PointerValue = index + offset,
         };
         public static Value LocalPointer (int index, int offset = 0) => new Value {
-            Type = ValueType.LocalPointer,
             PointerValue = index + offset,
         };
-    }
-
-    public enum ValueType
-    {
-        Int32,
-        Int64,
-
-        Float32,
-        Float64,
-
-        FunctionPointer,
-        GlobalPointer,
-        ArgPointer,
-        LocalPointer,
     }
 }

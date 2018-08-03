@@ -66,7 +66,7 @@ namespace CLanguage.Syntax
                         Right.Emit (ec);
                         ec.EmitCast (Right.GetEvaluatedCType (ec), aType);
 
-                        var ioff = GetInstructionOffset (aType, ec);
+                        var ioff = ec.GetInstructionOffset (aType);
 
                         switch (Op) {
                             case Unop.None:
