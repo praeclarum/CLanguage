@@ -121,7 +121,7 @@ namespace CLanguage.Interpreter
                         a = state.Stack[state.SP - 2];
                         b = state.Stack[state.SP - 1];
                         state.Stack[a.PointerValue] = b;
-                        state.SP--;
+                        state.SP -= 2;
                         ip++;
                         break;
                     case OpCode.OffsetPointer:

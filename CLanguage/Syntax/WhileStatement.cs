@@ -11,9 +11,9 @@ namespace CLanguage.Syntax
     {
         public bool IsDo { get; private set; }
         public Expression Condition { get; private set; }
-        public Statement Loop { get; private set; }
+        public Block Loop { get; private set; }
 
-        public WhileStatement(bool isDo, Expression condition, Statement loop)
+        public WhileStatement(bool isDo, Expression condition, Block loop)
         {
             IsDo = isDo;
             Condition = condition;

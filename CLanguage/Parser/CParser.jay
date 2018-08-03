@@ -861,11 +861,11 @@ selection_statement
 iteration_statement
 	: WHILE '(' expression ')' statement
 	{
-		$$ = new WhileStatement(false, (Expression)$3, (Statement)$5);
+		$$ = new WhileStatement(false, (Expression)$3, ((Statement)$5).ToBlock ());
 	}
 	| DO statement WHILE '(' expression ')' ';'
 	{
-		$$ = new WhileStatement(true, (Expression)$5, (Statement)$2);
+		$$ = new WhileStatement(true, (Expression)$5, ((Statement)$2).ToBlock ());
 	}
 	| FOR '(' expression_statement expression_statement ')' statement
 	{
