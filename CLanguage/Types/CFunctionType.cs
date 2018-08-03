@@ -75,20 +75,29 @@ namespace CLanguage.Types
             return s;
         }
 
-        public bool ParameterTypesMatchArgs (CType[] argTypes)
+        public int ScoreParameterTypesMatches (CType[] argTypes)
         {
+            if (argTypes == null)
+                return 1;
+
             if (Parameters.Count != argTypes.Length)
-                return false;
+                return 0;
+
+            var score = 1;
 
             for (var i = 0; i < Parameters.Count; i++) {
                 var ft = argTypes[i];
                 var tt = Parameters[i].ParameterType;
 
-                if (!ft.CanCastTo (tt))
-                    return false;
+                if (ft.Equals (tt)) {
+                    score += 100;
+                }
+                else if (ft.CanCastTo (tt)) {
+                    score += 50;
+                }
             }
 
-            return true;
+            return score;
         }
 
         public bool ParameterTypesEqual (CFunctionType otherType)

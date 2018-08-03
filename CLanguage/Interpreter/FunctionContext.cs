@@ -71,11 +71,22 @@ namespace CLanguage.Interpreter
             //
             // Look for global functions
             //
+            BaseFunction ff = null;
+            var fi = -1;
+            var fs = 0;
             for (var i = 0; i < exe.Functions.Count; i++) {
                 var f = exe.Functions[i];
                 if (f.Name == name && string.IsNullOrEmpty (f.NameContext)) {
-                    return new ResolvedVariable (f, i);
+                    var score = f.FunctionType.ScoreParameterTypesMatches (argTypes);
+                    if (score > fs) {
+                        ff = f;
+                        fi = i;
+                        fs = score;
+                    }
                 }
+            }
+            if (ff != null) {
+                return new ResolvedVariable (ff, fi);
             }
 
             context.Report.Error (103, "The name '" + name + "' does not exist in the current context");
@@ -88,6 +99,7 @@ namespace CLanguage.Interpreter
 
                 var nameContext = structType.Name;
 
+                var funcs = exe.Functions.Select ((f, i) => (f, i)).Where (x => x.Item1.NameContext == nameContext && x.Item1.Name == method.Name);
                 for (var i = 0; i < exe.Functions.Count; i++) {
                     var f = exe.Functions[i];
                     if (f.NameContext == nameContext && f.Name == method.Name && f.FunctionType.ParameterTypesEqual (ftype)) {

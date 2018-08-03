@@ -99,7 +99,10 @@ namespace CLanguage.Syntax
                     else {
                         var methodq = from m in methods
                                       let mt = m.MemberType as CFunctionType
-                                      where mt != null && mt.ParameterTypesMatchArgs (argTypes)
+                                      where mt != null
+                                      let score = mt.ScoreParameterTypesMatches (argTypes)
+                                      where score > 0
+                                      orderby score descending
                                       select m;
                         var method = methodq.FirstOrDefault ();
                         if (method == null) {

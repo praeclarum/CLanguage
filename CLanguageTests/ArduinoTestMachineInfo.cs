@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Collections.Generic;
 using System.Text;
+using System.Xml.Linq;
 
 namespace CLanguage.Tests
 {
@@ -51,6 +52,11 @@ struct SerialClass {
     void println(int value);
     void println(const char *value);
 };
+struct MemberTest {
+    int f(int testme);
+    int f(double testme);
+};
+struct MemberTest test;
 struct SerialClass Serial;
 ";
 
@@ -74,6 +80,8 @@ struct SerialClass Serial;
             AddInternalFunction ("void SerialClass::println (int value, int base)", Arduino.SerialPrintlnII);
             AddInternalFunction ("void SerialClass::println (int value)", Arduino.SerialPrintlnI);
             AddInternalFunction ("void SerialClass::println (const char *value)", Arduino.SerialPrintlnS);
+            AddInternalFunction ("int MemberTest::f (int)", x => x.Push (1));
+            AddInternalFunction ("int MemberTest::f (double)", x => x.Push (2));
 		}
 
 		static void AssertAreEqual (CInterpreter state)
