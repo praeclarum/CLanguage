@@ -392,10 +392,42 @@ namespace CLanguage.Parser
                 r = _pp.Read ();
                 ch = (char)r;
                 var done = r < 0 || ch == '\"';
-                while (!done && _chbuflen + 1 < _chbuf.Length) {                    
-                    _chbuf[_chbuflen++] = ch;
-                    r = _pp.Read ();
-                    ch = (char)r;
+                while (!done && _chbuflen + 1 < _chbuf.Length) {
+                    if (ch == '\\') {
+                        r = _pp.Read ();
+                        ch = (char)r;
+                        if (r >= 0) {
+                            switch (ch) {
+                                case '\\':
+                                    _chbuf[_chbuflen++] = '\\';
+                                    break;
+                                case 'r':
+                                    _chbuf[_chbuflen++] = '\r';
+                                    break;
+                                case 'n':
+                                    _chbuf[_chbuflen++] = '\n';
+                                    break;
+                                case 't':
+                                    _chbuf[_chbuflen++] = '\t';
+                                    break;
+                                case '\'':
+                                    _chbuf[_chbuflen++] = '\'';
+                                    break;
+                                case '\"':
+                                    _chbuf[_chbuflen++] = '\"';
+                                    break;
+                                default:
+                                    throw new NotSupportedException ("Unrecognized string escape sequence");
+                            }
+                            r = _pp.Read ();
+                            ch = (char)r;
+                        }
+                    }
+                    else {
+                        _chbuf[_chbuflen++] = ch;
+                        r = _pp.Read ();
+                        ch = (char)r;
+                    }
                     done = r < 0 || ch == '\"';
                 }
 
@@ -414,6 +446,37 @@ namespace CLanguage.Parser
                     r = _pp.Read ();
                     ch = (char)r;
                     done = r < 0 || ch == '\'';
+                }
+
+                if (_chbuflen > 1 && _chbuf[0] == '\\') {                    
+                    switch (_chbuf[1]) {
+                        case '\\':
+                            _chbuf[0] = '\\';
+                            _chbuflen = 1;
+                            break;
+                        case 'r':
+                            _chbuf[0] = '\r';
+                            _chbuflen = 1;
+                            break;
+                        case 'n':
+                            _chbuf[0] = '\n';
+                            _chbuflen = 1;
+                            break;
+                        case 't':
+                            _chbuf[0] = '\t';
+                            _chbuflen = 1;
+                            break;
+                        case '\'':
+                            _chbuf[0] = '\'';
+                            _chbuflen = 1;
+                            break;
+                        case '\"':
+                            _chbuf[0] = '\"';
+                            _chbuflen = 1;
+                            break;
+                        default:
+                            throw new NotSupportedException ("Unrecognized char escape sequence");
+                    }
                 }
 
                 _lastR = _pp.Read ();
