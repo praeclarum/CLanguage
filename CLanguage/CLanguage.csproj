@@ -20,9 +20,6 @@
     <Folder Include="Types\" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="System.Memory" Version="4.5.1" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Remove="Interpreter\ExecutionState.cs" />
   </ItemGroup>
 </Project>
