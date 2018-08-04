@@ -100,7 +100,7 @@ namespace CLanguage.Syntax
                         var methodq = from m in methods
                                       let mt = m.MemberType as CFunctionType
                                       where mt != null
-                                      let score = mt.ScoreParameterTypesMatches (argTypes)
+                                      let score = mt.ScoreParameterTypeMatches (argTypes)
                                       where score > 0
                                       orderby score descending
                                       select m;

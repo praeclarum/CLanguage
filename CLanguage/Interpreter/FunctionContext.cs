@@ -77,7 +77,7 @@ namespace CLanguage.Interpreter
             for (var i = 0; i < exe.Functions.Count; i++) {
                 var f = exe.Functions[i];
                 if (f.Name == name && string.IsNullOrEmpty (f.NameContext)) {
-                    var score = f.FunctionType.ScoreParameterTypesMatches (argTypes);
+                    var score = f.FunctionType.ScoreParameterTypeMatches (argTypes);
                     if (score > fs) {
                         ff = f;
                         fi = i;

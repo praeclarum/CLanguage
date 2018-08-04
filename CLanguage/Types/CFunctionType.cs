@@ -75,7 +75,7 @@ namespace CLanguage.Types
             return s;
         }
 
-        public int ScoreParameterTypesMatches (CType[] argTypes)
+        public int ScoreParameterTypeMatches (CType[] argTypes)
         {
             if (argTypes == null)
                 return 1;
@@ -83,7 +83,7 @@ namespace CLanguage.Types
             if (Parameters.Count != argTypes.Length)
                 return 0;
 
-            var score = 1;
+            var score = 2;
 
             for (var i = 0; i < Parameters.Count; i++) {
                 var ft = argTypes[i];
