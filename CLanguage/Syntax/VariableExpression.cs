@@ -35,7 +35,7 @@ namespace CLanguage.Syntax
 			if (variable != null) {
 
 				if (variable.Scope == VariableScope.Function) {
-                    ec.Emit (OpCode.LoadConstant, Value.FunctionPointer (variable.Address));
+                    ec.Emit (OpCode.LoadConstant, Value.Pointer (variable.Address));
 				}
 				else {
                     if (variable.VariableType is CBasicType ||
@@ -57,15 +57,15 @@ namespace CLanguage.Syntax
                     else if (variable.VariableType is CArrayType arrayType) {
 
                         if (variable.Scope == VariableScope.Arg) {
-                            ec.Emit (OpCode.LoadConstant, Value.ArgPointer (variable.Address));
+                            ec.Emit (OpCode.LoadConstant, Value.Pointer (variable.Address));
                             ec.Emit (OpCode.LoadFramePointer);
                             ec.Emit (OpCode.OffsetPointer);
                         }
                         else if (variable.Scope == VariableScope.Global) {
-                            ec.Emit (OpCode.LoadConstant, Value.GlobalPointer (variable.Address));
+                            ec.Emit (OpCode.LoadConstant, Value.Pointer (variable.Address));
                         }
                         else if (variable.Scope == VariableScope.Local) {
-                            ec.Emit (OpCode.LoadConstant, Value.LocalPointer (variable.Address));
+                            ec.Emit (OpCode.LoadConstant, Value.Pointer (variable.Address));
                             ec.Emit (OpCode.LoadFramePointer);
                             ec.Emit (OpCode.OffsetPointer);
                         }

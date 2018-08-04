@@ -117,7 +117,7 @@ namespace CLanguage.Syntax
                                     CType = res.Function?.FunctionType,
                                     Emit = nec => {
                                         memr.Left.EmitPointer (nec);
-                                        nec.Emit (OpCode.LoadConstant, Value.FunctionPointer (res.Address));
+                                        nec.Emit (OpCode.LoadConstant, Value.Pointer (res.Address));
                                     },
                                 };
                             }

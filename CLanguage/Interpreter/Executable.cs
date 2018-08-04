@@ -42,7 +42,7 @@ namespace CLanguage.Interpreter
             var type = new CArrayType (CBasicType.SignedChar, len);
             var v = AddGlobal ("__c" + Globals.Count, type);
             v.InitialValue = bytes.Concat (new byte[] { 0 }).Select (x => (Value)x).ToArray ();
-            return Value.GlobalPointer (v.Offset);
+            return Value.Pointer (v.Offset);
         }
     }
 }

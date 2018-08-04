@@ -154,17 +154,8 @@ namespace CLanguage
             return v.Int8Value;
         }
 
-        public static Value FunctionPointer (int index, int offset = 0) => new Value {
-            PointerValue = index + offset,
-        };
-        public static Value GlobalPointer (int index, int offset = 0) => new Value {
-            PointerValue = index + offset,
-        };
-        public static Value ArgPointer (int index, int offset = 0) => new Value {
-            PointerValue = index + offset,
-        };
-        public static Value LocalPointer (int index, int offset = 0) => new Value {
-            PointerValue = index + offset,
+        public static Value Pointer (int address) => new Value {
+            PointerValue = address,
         };
     }
 }

@@ -28,18 +28,18 @@ namespace CLanguage.Interpreter
         public void Emit (EmitContext ec)
         {
             if (Scope == VariableScope.Function) {
-                ec.Emit (OpCode.LoadConstant, Value.FunctionPointer (Address));
+                ec.Emit (OpCode.LoadConstant, Value.Pointer (Address));
             }
             else if (Scope == VariableScope.Global) {
-                ec.Emit (OpCode.LoadConstant, Value.GlobalPointer (Address));
+                ec.Emit (OpCode.LoadConstant, Value.Pointer (Address));
             }
             else if (Scope == VariableScope.Arg) {
-                ec.Emit (OpCode.LoadConstant, Value.ArgPointer (Address));
+                ec.Emit (OpCode.LoadConstant, Value.Pointer (Address));
                 ec.Emit (OpCode.LoadFramePointer);
                 ec.Emit (OpCode.OffsetPointer);
             }
             else if (Scope == VariableScope.Local) {
-                ec.Emit (OpCode.LoadConstant, Value.LocalPointer (Address));
+                ec.Emit (OpCode.LoadConstant, Value.Pointer (Address));
                 ec.Emit (OpCode.LoadFramePointer);
                 ec.Emit (OpCode.OffsetPointer);
             }
