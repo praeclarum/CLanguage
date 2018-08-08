@@ -24,14 +24,7 @@ namespace CLanguage.Syntax
         {
             var rtype = GetEvaluatedCType (ec);
             var itype = InnerExpression.GetEvaluatedCType (ec);
-
-            if (rtype.Equals (itype)) {
-                InnerExpression.Emit (ec);
-            }
-            else {
-                InnerExpression.Emit (ec);
-                ec.Report.Error (30, $"Cannot convert type '{itype}' to '{rtype}'");
-            }
+            ec.EmitCast (itype, rtype);
         }
     }
 }
