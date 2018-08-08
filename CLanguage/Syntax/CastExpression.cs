@@ -24,6 +24,7 @@ namespace CLanguage.Syntax
         {
             var rtype = GetEvaluatedCType (ec);
             var itype = InnerExpression.GetEvaluatedCType (ec);
+            InnerExpression.Emit (ec);
             ec.EmitCast (itype, rtype);
         }
     }
