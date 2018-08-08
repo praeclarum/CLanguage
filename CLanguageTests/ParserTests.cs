@@ -60,6 +60,15 @@ void f () {
 			Assert.IsInstanceOfType (expr.Second, typeof(AssignExpression));
 			Assert.AreEqual (((VariableExpression)((AssignExpression)expr.Second).Left).VariableName, "j");
 		}
+
+        [TestMethod]
+        public void HexNumbers ()
+        {
+            var lex = new Lexer ("", "0x201");
+            lex.advance ();
+            Assert.AreEqual (Token.CONSTANT, lex.token ());
+            Assert.AreEqual (513, lex.value ());
+        }
 	}
 }
 

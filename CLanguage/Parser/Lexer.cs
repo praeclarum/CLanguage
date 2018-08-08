@@ -152,9 +152,10 @@ namespace CLanguage.Parser
                 var islong = false;
                 var isunsigned = false;
                 var isfloat = false;
+                var ishex = false;
                 _chbuf[0] = ch;
                 _chbuflen = 0;
-                while (ch == '.' || char.IsDigit (ch) || ch == 'E' || ch == 'e' || ch == 'f' || ch == 'F' || ch == 'u' || ch == 'U' || ch == 'l' || ch == 'L') {
+                while (ch == '.' || char.IsDigit (ch) || ch == 'E' || ch == 'e' || ch == 'f' || ch == 'F' || ch == 'u' || ch == 'U' || ch == 'l' || ch == 'L' || (!ishex && ch=='x')) {
                     if (ch == 'l' || ch == 'L') {
                         islong = true;
                     }
@@ -164,8 +165,11 @@ namespace CLanguage.Parser
                     else if (ch == 'f' || ch == 'F') {
                         isfloat = true;
                     }
+                    else if (ch == 'x' && _chbuflen == 1 && _chbuf[0] == '0') {
+                        ishex = true;
+                    }
                     else {
-                        onlydigits = onlydigits & char.IsDigit (ch);
+                        onlydigits = onlydigits && char.IsDigit (ch);
                         _chbuf[_chbuflen++] = ch;
                     }
                     r = _pp.Read ();
@@ -174,30 +178,32 @@ namespace CLanguage.Parser
                 _lastR = r;
 
                 var vals = new string (_chbuf, 0, _chbuflen);
+                var icult = System.Globalization.CultureInfo.InvariantCulture;
                 if (onlydigits) {
+                    var style = ishex ? System.Globalization.NumberStyles.HexNumber : System.Globalization.NumberStyles.None;
                     if (islong) {
                         if (isunsigned) {
-                            _value = ulong.Parse (vals);
+                            _value = ulong.Parse (vals, style, icult);
                         }
                         else {
-                            _value = long.Parse (vals);
+                            _value = long.Parse (vals, style, icult);
                         }
                     }
                     else {
                         if (isunsigned) {
-                            _value = uint.Parse (vals);
+                            _value = uint.Parse (vals, style, icult);
                         }
                         else {
-                            _value = int.Parse (vals);
+                            _value = int.Parse (vals, style, icult);
                         }
                     }
                 }
                 else {
                     if (isfloat) {
-                        _value = float.Parse (vals);
+                        _value = float.Parse (vals, icult);
                     }
                     else {
-                        _value = double.Parse (vals);
+                        _value = double.Parse (vals, icult);
                     }
                 }
 
