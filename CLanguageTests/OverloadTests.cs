@@ -21,11 +21,17 @@ namespace CLanguage.Tests
         public void GlobalScoring ()
         {
             var i = Run (@"
-int f(int x) { return 1; }
-int f(double x) { return 2; }
+int f(char x) { return 1; }
+int f(int x) { return 2; }
+int f(float x) { return 3; }
+int f(double x) { return 4; }
+int f(unsigned long x) { return 5; }
 void main () {
-    assertAreEqual (1, f(0));
-    assertAreEqual (2, f(0.0));
+    assertAreEqual (1, f((char)0));
+    assertAreEqual (2, f(0));
+    assertAreEqual (3, f(0.0f));
+    assertAreEqual (4, f(0.0));
+    assertAreEqual (5, f(0ul));
 }");
         }
 

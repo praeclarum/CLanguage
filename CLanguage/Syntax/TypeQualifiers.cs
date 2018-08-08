@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace CLanguage.Types
+namespace CLanguage.Syntax
 {
     [Flags]
     public enum TypeQualifiers

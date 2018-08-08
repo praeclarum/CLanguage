@@ -88,13 +88,7 @@ namespace CLanguage.Types
             for (var i = 0; i < Parameters.Count; i++) {
                 var ft = argTypes[i];
                 var tt = Parameters[i].ParameterType;
-
-                if (ft.Equals (tt)) {
-                    score += 100;
-                }
-                else if (ft.CanCastTo (tt)) {
-                    score += 50;
-                }
+                score += ft.ScoreCastTo (tt);
             }
 
             return score;

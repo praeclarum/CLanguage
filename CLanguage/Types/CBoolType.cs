@@ -14,9 +14,8 @@ namespace CLanguage.Types
 
         public override int NumValues => 1;
 
-        public override int GetByteSize (EmitContext c)
-        {
-            return c.MachineInfo.CharSize;
-        }
+        public override int GetByteSize (EmitContext c) => c.MachineInfo.CharSize;
+
+        public override string ToString () => "bool";
     }
 }

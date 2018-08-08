@@ -152,7 +152,7 @@ cast_expression
 	}
 	| '(' type_name ')' cast_expression
 	{
-		$$ = $4;
+		$$ = new CastExpression ((TypeName)$2, (Expression)$4);
 	}
 	;
 
@@ -463,9 +463,27 @@ struct_or_union
 
 specifier_qualifier_list
 	: type_specifier specifier_qualifier_list
+    {
+        ((DeclarationSpecifiers)$2).TypeSpecifiers.Add ((TypeSpecifier)$1);
+        $$ = $2;
+    }
 	| type_specifier
+    {
+        var list = new DeclarationSpecifiers ();
+        list.TypeSpecifiers.Add ((TypeSpecifier)$1);
+        $$ = list;
+    }
 	| type_qualifier specifier_qualifier_list
+    {
+        ((DeclarationSpecifiers)$2).TypeQualifiers = ((DeclarationSpecifiers)$2).TypeQualifiers | ((TypeQualifiers)$1);
+        $$ = $2;
+    }
 	| type_qualifier
+    {
+        var list = new DeclarationSpecifiers ();
+        list.TypeQualifiers = (TypeQualifiers)$1;
+        $$ = list;
+    }
 	;
 
 enum_specifier
@@ -659,7 +677,13 @@ identifier_list
 
 type_name
 	: specifier_qualifier_list
+    {
+        $$ = new TypeName ((DeclarationSpecifiers)$1, null);
+    }
 	| specifier_qualifier_list abstract_declarator
+    {
+        $$ = new TypeName ((DeclarationSpecifiers)$1, (Declarator)$2);
+    }
 	;
 
 abstract_declarator

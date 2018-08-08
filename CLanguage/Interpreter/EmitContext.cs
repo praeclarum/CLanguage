@@ -2,6 +2,7 @@ using System;
 using CLanguage.Syntax;
 using CLanguage.Interpreter;
 using CLanguage.Types;
+using System.Linq;
 
 namespace CLanguage.Interpreter
 {
@@ -21,6 +22,11 @@ namespace CLanguage.Interpreter
             MachineInfo = machineInfo;
             Report = report;
             FunctionDecl = fdecl;
+        }
+
+        public virtual CType ResolveTypeName (TypeName typeName)
+        {
+            return MakeCType (typeName.Specifiers, typeName.Declarator, null, null);
         }
 
         public virtual ResolvedVariable ResolveVariable (string name, CType[] argTypes)
@@ -118,6 +124,199 @@ namespace CLanguage.Interpreter
             }
 
             throw new NotSupportedException ("Arithmetic on type '" + aType + "'");
+        }
+
+        public CType MakeCType (DeclarationSpecifiers specs, Declarator decl, Initializer init, Block block)
+        {
+            var type = MakeCType (specs, block);
+            return MakeCType (type, decl, init, block);
+        }
+
+        CType MakeCType (CType type, Declarator decl, Initializer init, Block block)
+        {
+            if (decl is IdentifierDeclarator) {
+                // This is the name
+            }
+            else if (decl is PointerDeclarator) {
+                var pdecl = (PointerDeclarator)decl;
+                var isPointerToFunc = false;
+
+                if (pdecl.StrongBinding) {
+                    type = MakeCType (type, pdecl.InnerDeclarator, null, block);
+                    isPointerToFunc = type is CFunctionType;
+                }
+
+                var p = pdecl.Pointer;
+                while (p != null) {
+                    type = new CPointerType (type);
+                    type.TypeQualifiers = p.TypeQualifiers;
+                    p = p.NextPointer;
+                }
+
+                if (!pdecl.StrongBinding) {
+                    type = MakeCType (type, pdecl.InnerDeclarator, null, block);
+                }
+
+                //
+                // Remove 1 level of pointer indirection if this is
+                // a pointer to a function since functions are themselves
+                // pointers
+                //
+                if (isPointerToFunc) {
+                    type = ((CPointerType)type).InnerType;
+                }
+            }
+            else if (decl is ArrayDeclarator) {
+                var adecl = (ArrayDeclarator)decl;
+
+                while (adecl != null) {
+                    int? len = null;
+                    if (adecl.LengthExpression is ConstantExpression clen) {
+                        len = clen.EmitValue.Int32Value;
+                    }
+                    else {
+                        if (init is StructuredInitializer sinit) {
+                            len = sinit.Initializers.Count;
+                        }
+                        else {
+                            len = 0;
+                            Report.Error (2057, "Expected constant expression");
+                        }
+                    }
+                    type = new CArrayType (type, len);
+                    adecl = adecl.InnerDeclarator as ArrayDeclarator;
+                    if (adecl != null && adecl.InnerDeclarator != null) {
+                        if (adecl.InnerDeclarator is IdentifierDeclarator) {
+                        }
+                        else if (!(adecl.InnerDeclarator is ArrayDeclarator)) {
+                            type = MakeCType (type, adecl.InnerDeclarator, null, block);
+                        }
+                        else {
+                            //throw new NotSupportedException("Unrecognized array syntax");
+                        }
+                    }
+                }
+            }
+            else if (decl is FunctionDeclarator) {
+                type = MakeCFunctionType (type, decl, block);
+            }
+
+            return type;
+        }
+
+        CType MakeCFunctionType (CType returnType, Declarator decl, Block block)
+        {
+            var fdecl = (FunctionDeclarator)decl;
+
+            bool isInstance = decl.InnerDeclarator is IdentifierDeclarator ident && ident.Context.Count > 0;
+
+            var name = decl.DeclaredIdentifier;
+            var ftype = new CFunctionType (returnType, isInstance);
+            foreach (var pdecl in fdecl.Parameters) {
+                var pt = MakeCType (pdecl.DeclarationSpecifiers, pdecl.Declarator, null, block);
+                if (!pt.IsVoid) {
+                    ftype.AddParameter (pdecl.Name, pt);
+                }
+            }
+
+            var type = MakeCType (ftype, fdecl.InnerDeclarator, null, block);
+
+            return type;
+        }
+
+        public CType MakeCType (DeclarationSpecifiers specs, Block block)
+        {
+            //
+            // Try for Basic. The TypeSpecifiers are recorded in reverse from what is actually declared
+            // in code.
+            //
+            var basicTs = specs.TypeSpecifiers.FirstOrDefault (x => x.Kind == TypeSpecifierKind.Builtin);
+            if (basicTs != null) {
+                if (basicTs.Name == "void") {
+                    return CType.Void;
+                }
+                else {
+                    var sign = Signedness.Signed;
+                    var size = "";
+                    TypeSpecifier trueTs = null;
+
+                    foreach (var ts in specs.TypeSpecifiers) {
+                        if (ts.Name == "unsigned") {
+                            sign = Signedness.Unsigned;
+                        }
+                        else if (ts.Name == "signed") {
+                            sign = Signedness.Signed;
+                        }
+                        else if (ts.Name == "short" || ts.Name == "long") {
+                            if (size.Length == 0) size = ts.Name;
+                            else size = size + " " + ts.Name;
+                        }
+                        else {
+                            trueTs = ts;
+                        }
+                    }
+
+                    var typeName = trueTs == null ? "int" : trueTs.Name;
+                    var type = typeName == "float" ? (CBasicType)CBasicType.Float
+                        : (typeName == "double" ? (CBasicType)CBasicType.Double
+                           : (typeName == "bool" ? (CBasicType)CBasicType.Bool
+                              : new CIntType (typeName, sign, size)));
+                    type.TypeQualifiers = specs.TypeQualifiers;
+                    return type;
+                }
+            }
+
+            //
+            // Structs and Classes
+            //
+            var structTs = specs.TypeSpecifiers.FirstOrDefault (x => x.Kind == TypeSpecifierKind.Struct || x.Kind == TypeSpecifierKind.Class);
+            if (structTs != null) {
+                if (structTs.Body != null) {
+                    var st = new CStructType ();
+                    st.Name = structTs.Name;
+                    foreach (var s in structTs.Body.Statements) {
+                        AddStructMember (st, s, block);
+                    }
+                    return st;
+                }
+                else {
+                    // Lookup
+                    var name = structTs.Name;
+                    if (block.Structures.TryGetValue (name, out var structType)) {
+                        return structType;
+                    }
+                    else {
+                        Report.Error (246, "The struct '{0}' could not be found", name);
+                        return CBasicType.SignedInt;
+                    }
+                }
+            }
+
+            //
+            // Rest
+            //
+            throw new NotImplementedException ();
+        }
+
+        void AddStructMember (CStructType st, Statement s, Block block)
+        {
+            if (s is MultiDeclaratorStatement multi) {
+                if (multi.InitDeclarators != null) {
+                    foreach (var i in multi.InitDeclarators) {
+                        var type = MakeCType (multi.Specifiers, i.Declarator, i.Initializer, block);
+                        if (type is CFunctionType functionType) {
+                            var name = i.Declarator.DeclaredIdentifier;
+                            st.Members.Add (new CStructMethod { Name = name, MemberType = type });
+                        }
+                        else {
+                            throw new NotSupportedException ($"Cannot add `{i}` to struct");
+                        }
+                    }
+                }
+            }
+            else {
+                throw new NotSupportedException ($"Cannot add statement `{s}` to struct");
+            }
         }
     }
 }

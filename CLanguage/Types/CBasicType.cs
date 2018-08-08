@@ -27,7 +27,7 @@ namespace CLanguage.Types
             return Name.GetHashCode() + Size.GetHashCode() + Signedness.GetHashCode();
         }
 
-        public static readonly CIntType ConstChar = new CIntType("char", Signedness.Signed, "") { TypeQualifiers = TypeQualifiers.Const };
+        public static readonly CIntType ConstChar = new CIntType("char", Signedness.Signed, "") { TypeQualifiers = CLanguage.Syntax.TypeQualifiers.Const };
         public static readonly CIntType UnsignedChar = new CIntType("char", Signedness.Unsigned, "");
         public static readonly CIntType SignedChar = new CIntType("char", Signedness.Signed, "");
         public static readonly CIntType UnsignedShortInt = new CIntType("int", Signedness.Unsigned, "short");
@@ -174,10 +174,10 @@ namespace CLanguage.Types
             return false;
         }
 
-        public override bool CanCastTo (CType otherType)
-        {
-            return otherType is CBasicType;
-        }
+        //public override int ScoreCastTo (CType otherType)
+        //{
+        //    return 0;
+        //}
 
         public override string ToString()
         {

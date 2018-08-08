@@ -34,6 +34,12 @@ namespace CLanguage.Interpreter
             allLocals = new List<CompiledVariable> ();
         }
 
+        //public override CType ResolveTypeName (TypeName name)
+        //{
+        //    MakeCType (name.Specifiers, null);
+        //    return null;
+        //}
+
         public override ResolvedVariable ResolveVariable (string name, CType[] argTypes)
         {
             //

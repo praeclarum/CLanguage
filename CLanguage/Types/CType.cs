@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Text;
 using CLanguage.Interpreter;
+using CLanguage.Syntax;
 
 namespace CLanguage.Types
 {
@@ -27,9 +28,9 @@ namespace CLanguage.Types
             pointer = new Lazy<CPointerType> (() => new CPointerType (this));
         }
 
-        public virtual bool CanCastTo (CType otherType)
+        public virtual int ScoreCastTo (CType otherType)
         {
-            return Equals (otherType);
+            return Equals (otherType) ? 1000 : 0;
         }
     }
 }
