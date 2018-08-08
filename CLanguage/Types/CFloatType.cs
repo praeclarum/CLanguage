@@ -19,5 +19,17 @@ namespace CLanguage.Types
         {
             return Bits / 8;
         }
+
+        public override int ScoreCastTo (CType otherType)
+        {
+            if (Equals (otherType)) return 1000;
+            if (otherType is CFloatType ft) {
+                return 900;
+            }
+            else {
+                return 0;
+            }
+        }
+
     }
 }

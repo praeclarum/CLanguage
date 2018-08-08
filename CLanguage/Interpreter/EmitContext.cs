@@ -53,19 +53,23 @@ namespace CLanguage.Interpreter
 
         public void EmitCast (CType fromType, CType toType)
         {
-            if (!fromType.Equals (toType)) {
-                var fromBasicType = fromType as CBasicType;
-                var toBasicType = toType as CBasicType;
+            if (fromType.Equals (toType)) {
+                return;
+            }
+            var fromBasicType = fromType as CBasicType;
+            var toBasicType = toType as CBasicType;
 
-                if (fromBasicType != null && toBasicType != null) {
-                    // This conversion is implicit with how the evaluator stores its stuff
-                }
-                else if (fromBasicType != null && fromBasicType.IsIntegral && toType is CPointerType) {
-                    // This conversion is implicit with how the evaluator stores its stuff
-                }
-                else {
-                    Report.Error (30, "Cannot convert type '" + fromType + "' to '" + toType + "'");
-                }
+            if (fromBasicType != null && toBasicType != null) {
+                // This conversion is implicit with how the evaluator stores its stuff
+            }
+            else if (fromBasicType != null && fromBasicType.IsIntegral && toType is CPointerType && fromBasicType.NumValues == toType.NumValues) {
+                // Support `const char *p = 0;`
+            }
+            else if (fromType is CArrayType fat && toType is CPointerType tpt && fat.ElementType.NumValues == tpt.InnerType.NumValues) {
+                // Demote arrays to pointers
+            }
+            else {
+                Report.Error (30, "Cannot convert type '" + fromType + "' to '" + toType + "'");
             }
         }
 
@@ -172,7 +176,7 @@ namespace CLanguage.Interpreter
                 while (adecl != null) {
                     int? len = null;
                     if (adecl.LengthExpression is ConstantExpression clen) {
-                        len = clen.EmitValue.Int32Value;
+                        len = Convert.ToInt32 (clen.Value);
                     }
                     else {
                         if (init is StructuredInitializer sinit) {

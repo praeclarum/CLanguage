@@ -26,12 +26,17 @@ int f(int x) { return 2; }
 int f(float x) { return 3; }
 int f(double x) { return 4; }
 int f(unsigned long x) { return 5; }
+int f(const char *x) { return 6; }
 void main () {
+    char msg[5];
     assertAreEqual (1, f((char)0));
     assertAreEqual (2, f(0));
     assertAreEqual (3, f(0.0f));
     assertAreEqual (4, f(0.0));
     assertAreEqual (5, f(0ul));
+    assertAreEqual (6, f(""hello""));
+    assertAreEqual (6, f(msg));
+    assertAreEqual (1, f('h'));
 }");
         }
 

@@ -37,5 +37,24 @@ namespace CLanguage.Types
                 throw new NotSupportedException (this.ToString ());
             }
         }
+
+        public override int ScoreCastTo (CType otherType)
+        {
+            if (Equals (otherType)) return 1000;
+            if (otherType is CIntType it) {
+                if (Size == it.Size) return 900;
+                return 800;
+            }
+            else if (otherType is CFloatType ft) {
+                if (ft.Bits == 64) return 400;
+                return 300;
+            }
+            else if (otherType is CBoolType bt) {
+                return 200;
+            }
+            else {
+                return 0;
+            }
+        }
     }
 }

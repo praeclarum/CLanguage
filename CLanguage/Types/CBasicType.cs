@@ -18,13 +18,16 @@ namespace CLanguage.Types
 
         public override bool Equals(object obj)
         {
-            var o = obj as CBasicType;
-            return (o != null) && (Name == o.Name) && (Signedness == o.Signedness) && (Size == o.Size);
+            return obj is CBasicType o && (Name == o.Name) && (Signedness == o.Signedness) && (Size == o.Size);
         }
 
         public override int GetHashCode()
         {
-            return Name.GetHashCode() + Size.GetHashCode() + Signedness.GetHashCode();
+            var hash = 17;
+            hash = hash * 37 + Name.GetHashCode ();
+            hash = hash * 37 + Size.GetHashCode ();
+            hash = hash * 37 + Signedness.GetHashCode ();
+            return hash;
         }
 
         public static readonly CIntType ConstChar = new CIntType("char", Signedness.Signed, "") { TypeQualifiers = CLanguage.Syntax.TypeQualifiers.Const };

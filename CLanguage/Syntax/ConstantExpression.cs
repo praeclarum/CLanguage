@@ -11,7 +11,6 @@ namespace CLanguage.Syntax
     public class ConstantExpression : Expression
     {
         public object Value { get; private set; }
-		public Value EmitValue { get; private set; }
         public CType ConstantType { get; private set; }
 
         public readonly static ConstantExpression Zero = new ConstantExpression (0);
@@ -29,7 +28,6 @@ namespace CLanguage.Syntax
         public ConstantExpression(object val)
         {
             Value = val;
-			EmitValue = 0;
 
             if (Value is string)
             {
@@ -37,57 +35,46 @@ namespace CLanguage.Syntax
             }
             else if (Value is bool) {
                 ConstantType = CBasicType.Bool;
-                EmitValue = (byte)((bool)Value ? 1 : 0);
             }
             else if (Value is byte)
             {
                 ConstantType = CBasicType.UnsignedChar;
-				EmitValue = (byte)Value;
             }
             else if (Value is char)
             {
                 ConstantType = CBasicType.SignedChar;
-				EmitValue = (char)Value;
             }
             else if (Value is ushort)
             {
                 ConstantType = CBasicType.UnsignedShortInt;
-				EmitValue = (ushort)Value;
 			}
             else if (Value is short)
             {
                 ConstantType = CBasicType.SignedShortInt;
-				EmitValue = (short)Value;
 			}
             else if (Value is uint)
             {
                 ConstantType = CBasicType.UnsignedInt;
-				EmitValue = (int)(uint)Value;
 			}
             else if (Value is int)
             {
                 ConstantType = CBasicType.SignedInt;
-				EmitValue = (int)Value;
 			}
             else if (Value is ulong)
             {
-                ConstantType = CBasicType.UnsignedLongLongInt;
-				EmitValue = (Value)(ulong)Value;
+                ConstantType = CBasicType.UnsignedLongInt;
 			}
             else if (Value is long)
             {
-                ConstantType = CBasicType.SignedLongLongInt;
-				EmitValue = (Value)(long)Value;
+                ConstantType = CBasicType.SignedLongInt;
 			}
             else if (Value is float)
             {
                 ConstantType = CBasicType.Float;
-				EmitValue = (Value)(float)Value;
 			}
             else if (Value is double)
             {
                 ConstantType = CBasicType.Double;
-				EmitValue = (Value)(double)Value;
 			}
         }
 
@@ -138,10 +125,12 @@ namespace CLanguage.Syntax
                 }
             }
             else if (ConstantType is CBoolType boolType) {
-                ec.Emit (OpCode.LoadConstant, EmitValue);
+                var ev = (Value)(byte)((bool)Value ? 1 : 0);
+                ec.Emit (OpCode.LoadConstant, ev);
             }
             else if (ConstantType is CFloatType floatType) {
-                ec.Emit (OpCode.LoadConstant, EmitValue);
+                var ev = floatType.Bits == 64 ? (Value)Convert.ToDouble(Value) : (Value)Convert.ToSingle (Value);
+                ec.Emit (OpCode.LoadConstant, ev);
             }
             else if (Value is string vs) {
                 ec.Emit (OpCode.LoadConstant, ec.GetConstantMemory (vs));
