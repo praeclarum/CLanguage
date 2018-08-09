@@ -49,7 +49,7 @@ namespace CLanguage.Syntax
 
 		public override CType GetEvaluatedCType (EmitContext ec)
 		{
-			return CBasicType.SignedInt;
+            return CBasicType.Bool;
 		}
 
 		public override string ToString()

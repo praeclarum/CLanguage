@@ -60,6 +60,10 @@ namespace CLanguage.Interpreter
             var toBasicType = toType as CBasicType;
 
             if (fromBasicType != null && toBasicType != null) {
+                var fromOffset = GetInstructionOffset (fromBasicType);
+                var toOffset = GetInstructionOffset (toBasicType);
+                var op = OpCode.ConvertInt8Int8 + (fromOffset * 10 + toOffset);
+                Emit (op);
                 // This conversion is implicit with how the evaluator stores its stuff
             }
             else if (fromBasicType != null && fromBasicType.IsIntegral && toType is CPointerType && fromBasicType.NumValues == toType.NumValues) {
@@ -75,7 +79,7 @@ namespace CLanguage.Interpreter
 
         public void EmitCastToBoolean (CType fromType)
         {
-            // Don't really need to do anything since 0 on that eval stack is false
+            EmitCast (fromType, CBasicType.Bool);
         }
 
         public virtual void Emit (Instruction instruction)

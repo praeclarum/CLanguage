@@ -63,14 +63,15 @@ namespace CLanguage.Tests
 		{
 			var exe = Compile (@"int f (int i) { if (i) return 0; else return 42; }");
 			var f = exe.Functions.OfType<CompiledFunction> ().First (x => x.Name == "f");
-			Assert.AreEqual (f.Instructions.Count, 7);
+			Assert.AreEqual (f.Instructions.Count, 8);
 			Assert.AreEqual (f.Instructions[0].Op, OpCode.LoadArg);
-			Assert.AreEqual (f.Instructions[1].Op, OpCode.BranchIfFalse);
-			Assert.AreEqual (f.Instructions[2].Op, OpCode.LoadConstant);
-			Assert.AreEqual (f.Instructions[3].Op, OpCode.Return);
-			Assert.AreEqual (f.Instructions[4].Op, OpCode.Jump);
-			Assert.AreEqual (f.Instructions[5].Op, OpCode.LoadConstant);
-			Assert.AreEqual (f.Instructions[6].Op, OpCode.Return);
+            Assert.AreEqual (f.Instructions[1].Op, OpCode.ConvertInt16UInt8);
+			Assert.AreEqual (f.Instructions[2].Op, OpCode.BranchIfFalse);
+			Assert.AreEqual (f.Instructions[3].Op, OpCode.LoadConstant);
+			Assert.AreEqual (f.Instructions[4].Op, OpCode.Return);
+			Assert.AreEqual (f.Instructions[5].Op, OpCode.Jump);
+			Assert.AreEqual (f.Instructions[6].Op, OpCode.LoadConstant);
+			Assert.AreEqual (f.Instructions[7].Op, OpCode.Return);
 		}
 
 		[TestMethod]

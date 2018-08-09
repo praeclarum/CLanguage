@@ -17,7 +17,7 @@ namespace CLanguage.Tests
             return i;
         }
 
-        [TestMethod, Ignore]
+        [TestMethod]
         public void CharMasksInt ()
         {
             var i = Run (@"

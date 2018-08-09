@@ -71,7 +71,7 @@ namespace CLanguage.Syntax
 
 		public override CType GetEvaluatedCType (EmitContext ec)
 		{
-			return GetArithmeticType (Left, Right, Op.ToString (), ec);
+            return CBasicType.Bool;
 		}
 
 		public override string ToString()

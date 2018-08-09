@@ -30,8 +30,8 @@ namespace CLanguage.Syntax
 
         public BinaryExpression(Expression left, Binop op, Expression right)
         {
-			if (left == null) throw new ArgumentNullException ("left");
-			if (right == null) throw new ArgumentNullException ("right");
+			if (left == null) throw new ArgumentNullException (nameof (left));
+			if (right == null) throw new ArgumentNullException (nameof (right));
 
             Left = left;
             Op = op;

@@ -84,7 +84,7 @@ namespace CLanguage.Interpreter
                     case OpCode.BranchIfFalse:
                         a = state.Stack[state.SP - 1];
                         state.SP--;
-                        if (a.Int32Value == 0) {
+                        if (a.UInt8Value == 0) {
                             ip = i.Label.Index;
                         }
                         else {
@@ -547,7 +547,10 @@ namespace CLanguage.Interpreter
                         ip++;
                         break;
                     default:
-                        throw new NotImplementedException (i.Op + " has not been implemented yet.");
+                        a = state.Stack[state.SP - 1];
+                        state.Stack[state.SP - 1] = Convert (a, i.Op);
+                        ip++;
+                        break;
                 }
 
                 state.RemainingTime -= state.CpuSpeed;
@@ -557,6 +560,124 @@ namespace CLanguage.Interpreter
 
             if (ip >= Instructions.Count) {
                 throw new ExecutionException ("Function '" + Name + "' never returned.");
+            }
+        }
+
+        Value Convert (Value x, OpCode op)
+        {
+            switch (op) {
+                case OpCode.ConvertInt8Int8: return (sbyte)(sbyte)x;
+                case OpCode.ConvertInt8UInt8: return (byte)(sbyte)x;
+                case OpCode.ConvertInt8Int16: return (short)(sbyte)x;
+                case OpCode.ConvertInt8UInt16: return (ushort)(sbyte)x;
+                case OpCode.ConvertInt8Int32: return (int)(sbyte)x;
+                case OpCode.ConvertInt8UInt32: return (uint)(sbyte)x;
+                case OpCode.ConvertInt8Int64: return (long)(sbyte)x;
+                case OpCode.ConvertInt8UInt64: return (ulong)(sbyte)x;
+                case OpCode.ConvertInt8Float32: return (float)(sbyte)x;
+                case OpCode.ConvertInt8Float64: return (double)(sbyte)x;
+                    
+                case OpCode.ConvertUInt8Int8: return (sbyte)(byte)x;
+                case OpCode.ConvertUInt8UInt8: return (byte)(byte)x;
+                case OpCode.ConvertUInt8Int16: return (short)(byte)x;
+                case OpCode.ConvertUInt8UInt16: return (ushort)(byte)x;
+                case OpCode.ConvertUInt8Int32: return (int)(byte)x;
+                case OpCode.ConvertUInt8UInt32: return (uint)(byte)x;
+                case OpCode.ConvertUInt8Int64: return (long)(byte)x;
+                case OpCode.ConvertUInt8UInt64: return (ulong)(byte)x;
+                case OpCode.ConvertUInt8Float32: return (float)(byte)x;
+                case OpCode.ConvertUInt8Float64: return (double)(byte)x;
+                    
+                case OpCode.ConvertInt16Int8: return (sbyte)(short)x;
+                case OpCode.ConvertInt16UInt8: return (byte)(short)x;
+                case OpCode.ConvertInt16Int16: return (short)(short)x;
+                case OpCode.ConvertInt16UInt16: return (ushort)(short)x;
+                case OpCode.ConvertInt16Int32: return (int)(short)x;
+                case OpCode.ConvertInt16UInt32: return (uint)(short)x;
+                case OpCode.ConvertInt16Int64: return (long)(short)x;
+                case OpCode.ConvertInt16UInt64: return (ulong)(short)x;
+                case OpCode.ConvertInt16Float32: return (float)(short)x;
+                case OpCode.ConvertInt16Float64: return (double)(short)x;
+                    
+                case OpCode.ConvertUInt16Int8: return (sbyte)(ushort)x;
+                case OpCode.ConvertUInt16UInt8: return (byte)(ushort)x;
+                case OpCode.ConvertUInt16Int16: return (short)(ushort)x;
+                case OpCode.ConvertUInt16UInt16: return (ushort)(ushort)x;
+                case OpCode.ConvertUInt16Int32: return (int)(ushort)x;
+                case OpCode.ConvertUInt16UInt32: return (uint)(ushort)x;
+                case OpCode.ConvertUInt16Int64: return (long)(ushort)x;
+                case OpCode.ConvertUInt16UInt64: return (ulong)(ushort)x;
+                case OpCode.ConvertUInt16Float32: return (float)(ushort)x;
+                case OpCode.ConvertUInt16Float64: return (double)(ushort)x;
+                    
+                case OpCode.ConvertInt32Int8: return (sbyte)(int)x;
+                case OpCode.ConvertInt32UInt8: return (byte)(int)x;
+                case OpCode.ConvertInt32Int16: return (short)(int)x;
+                case OpCode.ConvertInt32UInt16: return (ushort)(int)x;
+                case OpCode.ConvertInt32Int32: return (int)(int)x;
+                case OpCode.ConvertInt32UInt32: return (uint)(int)x;
+                case OpCode.ConvertInt32Int64: return (long)(int)x;
+                case OpCode.ConvertInt32UInt64: return (ulong)(int)x;
+                case OpCode.ConvertInt32Float32: return (float)(int)x;
+                case OpCode.ConvertInt32Float64: return (double)(int)x;
+                    
+                case OpCode.ConvertUInt32Int8: return (sbyte)(uint)x;
+                case OpCode.ConvertUInt32UInt8: return (byte)(uint)x;
+                case OpCode.ConvertUInt32Int16: return (short)(uint)x;
+                case OpCode.ConvertUInt32UInt16: return (ushort)(uint)x;
+                case OpCode.ConvertUInt32Int32: return (int)(uint)x;
+                case OpCode.ConvertUInt32UInt32: return (uint)(uint)x;
+                case OpCode.ConvertUInt32Int64: return (long)(uint)x;
+                case OpCode.ConvertUInt32UInt64: return (ulong)(uint)x;
+                case OpCode.ConvertUInt32Float32: return (float)(uint)x;
+                case OpCode.ConvertUInt32Float64: return (double)(uint)x;
+                    
+                case OpCode.ConvertInt64Int8: return (sbyte)(long)x;
+                case OpCode.ConvertInt64UInt8: return (byte)(long)x;
+                case OpCode.ConvertInt64Int16: return (short)(long)x;
+                case OpCode.ConvertInt64UInt16: return (ushort)(long)x;
+                case OpCode.ConvertInt64Int32: return (int)(long)x;
+                case OpCode.ConvertInt64UInt32: return (uint)(long)x;
+                case OpCode.ConvertInt64Int64: return (long)(long)x;
+                case OpCode.ConvertInt64UInt64: return (ulong)(long)x;
+                case OpCode.ConvertInt64Float32: return (float)(long)x;
+                case OpCode.ConvertInt64Float64: return (double)(long)x;
+                    
+                case OpCode.ConvertUInt64Int8: return (sbyte)(ulong)x;
+                case OpCode.ConvertUInt64UInt8: return (byte)(ulong)x;
+                case OpCode.ConvertUInt64Int16: return (short)(ulong)x;
+                case OpCode.ConvertUInt64UInt16: return (ushort)(ulong)x;
+                case OpCode.ConvertUInt64Int32: return (int)(ulong)x;
+                case OpCode.ConvertUInt64UInt32: return (uint)(ulong)x;
+                case OpCode.ConvertUInt64Int64: return (long)(ulong)x;
+                case OpCode.ConvertUInt64UInt64: return (ulong)(ulong)x;
+                case OpCode.ConvertUInt64Float32: return (float)(ulong)x;
+                case OpCode.ConvertUInt64Float64: return (double)(ulong)x;
+                    
+                case OpCode.ConvertFloat32Int8: return (sbyte)(float)x;
+                case OpCode.ConvertFloat32UInt8: return (byte)(float)x;
+                case OpCode.ConvertFloat32Int16: return (short)(float)x;
+                case OpCode.ConvertFloat32UInt16: return (ushort)(float)x;
+                case OpCode.ConvertFloat32Int32: return (int)(float)x;
+                case OpCode.ConvertFloat32UInt32: return (uint)(float)x;
+                case OpCode.ConvertFloat32Int64: return (long)(float)x;
+                case OpCode.ConvertFloat32UInt64: return (ulong)(float)x;
+                case OpCode.ConvertFloat32Float32: return (float)(float)x;
+                case OpCode.ConvertFloat32Float64: return (double)(float)x;
+                    
+                case OpCode.ConvertFloat64Int8: return (sbyte)(double)x;
+                case OpCode.ConvertFloat64UInt8: return (byte)(double)x;
+                case OpCode.ConvertFloat64Int16: return (short)(double)x;
+                case OpCode.ConvertFloat64UInt16: return (ushort)(double)x;
+                case OpCode.ConvertFloat64Int32: return (int)(double)x;
+                case OpCode.ConvertFloat64UInt32: return (uint)(double)x;
+                case OpCode.ConvertFloat64Int64: return (long)(double)x;
+                case OpCode.ConvertFloat64UInt64: return (ulong)(double)x;
+                case OpCode.ConvertFloat64Float32: return (float)(double)x;
+                case OpCode.ConvertFloat64Float64: return (double)(double)x;
+                    
+                default:
+                    throw new NotImplementedException ($"Op code '{op}' is not implemented");
             }
         }
     }
