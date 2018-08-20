@@ -299,13 +299,8 @@ namespace CLanguage.Parser
             }
         }
 
-        public int CurrentPosition
-        {
-            get
-            {
-                return 0;
-            }
-        }
+        public int CurrentPosition => _pos.ChunkIndex < _chunks.Count ? _pos.Index + _chunks[_pos.ChunkIndex].StartIndex : -1;
+        public string CurrentFilePath => _pos.ChunkIndex < _chunks.Count ? _chunks[_pos.ChunkIndex].File.Path : null;
 
         /// <summary>
         /// Reads a single character and advances the CurrentPosition.

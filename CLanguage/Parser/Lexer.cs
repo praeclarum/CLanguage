@@ -37,7 +37,7 @@ namespace CLanguage.Parser
 
         public Func<string, bool> IsTypedef { get; set; }
 
-        Dictionary<string, int> _kwTokens = new Dictionary<string, int>()
+        static readonly Dictionary<string, int> _kwTokens = new Dictionary<string, int>()
         {
             { "void", Token.VOID },
             { "char", Token.CHAR },
@@ -74,6 +74,21 @@ namespace CLanguage.Parser
             { "false", Token.FALSE },
         };
 
+        public static readonly HashSet<int> KeywordTokens = new HashSet<int> (_kwTokens.Values);
+        public static readonly HashSet<int> OperatorTokens = new HashSet<int> {
+            Token.EQ_OP,
+            Token.GE_OP,
+            Token.LE_OP,
+            Token.NE_OP,
+            Token.OR_OP,
+            Token.AND_OP,
+            Token.DEC_OP,
+            Token.INC_OP,
+            Token.PTR_OP,
+            Token.LEFT_OP,
+            Token.RIGHT_OP,
+        };
+
         public bool advance()
         {
             //
@@ -97,14 +112,29 @@ namespace CLanguage.Parser
 
                 skippedComment = false;
 
-                if (r == '/' && _pp.Peek() == '/')
-                {
-                    var nr = _pp.Read();
-                    while (nr > 0 && nr != '\n')
-                    {
-                        nr = _pp.Read();
+                if (r == '/' && _pp.Peek () == '/') {
+                    var nr = _pp.Read ();
+                    while (nr > 0 && nr != '\n') {
+                        nr = _pp.Read ();
                     }
-                    r = _pp.Read();
+                    r = _pp.Read ();
+                    skippedComment = true;
+                }
+                else if (r == '/' && _pp.Peek () == '*') {
+                    var nr = _pp.Read ();
+                    while (nr > 0 && !(nr == '*' && _pp.Peek() == '/')) {
+                        nr = _pp.Read ();
+                    }
+                    _pp.Read (); // Consume ending /
+                    r = _pp.Read ();
+                    skippedComment = true;
+                }
+                else if (r == '#') {
+                    var nr = _pp.Read ();
+                    while (nr > 0 && nr != '\n') {
+                        nr = _pp.Read ();
+                    }
+                    r = _pp.Read ();
                     skippedComment = true;
                 }
             }
