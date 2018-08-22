@@ -33,7 +33,7 @@ void main () {
 			}
 			catch (ExecutionException) {
 			}
-			catch (Exception ex) {
+			catch (Exception) {
 				throw;
 			}
 		}
