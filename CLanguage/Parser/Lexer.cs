@@ -12,7 +12,7 @@ namespace CLanguage.Parser
         int _token = -1;
         object _value = null;
 
-        int _lastR = ' ';
+        int _lastR = -2;
         char[] _chbuf = new char[4 * 1024];
         int _chbuflen = 0;
 
@@ -89,25 +89,26 @@ namespace CLanguage.Parser
             Token.RIGHT_OP,
         };
 
-        public bool advance()
+        public void SkipWhiteSpace ()
         {
             //
             // Skip whitespace
             //
-            var r = _lastR;            
+            var r = _lastR;
+            if (r == -2) {
+                r = _pp.Read ();
+            }
 
             //
             // Skip comments
             //
             var skippedComment = true;
-            while (skippedComment)
-            {
+            while (skippedComment) {
                 //
                 // Skip white
                 //
-                while (r >= 0 && r <= ' ')
-                {
-                    r = _pp.Read();
+                while (r >= 0 && r <= ' ') {
+                    r = _pp.Read ();
                 }
 
                 skippedComment = false;
@@ -122,7 +123,7 @@ namespace CLanguage.Parser
                 }
                 else if (r == '/' && _pp.Peek () == '*') {
                     var nr = _pp.Read ();
-                    while (nr > 0 && !(nr == '*' && _pp.Peek() == '/')) {
+                    while (nr > 0 && !(nr == '*' && _pp.Peek () == '/')) {
                         nr = _pp.Read ();
                     }
                     _pp.Read (); // Consume ending /
@@ -138,6 +139,15 @@ namespace CLanguage.Parser
                     skippedComment = true;
                 }
             }
+
+            _lastR = r;
+        }
+
+        public bool advance()
+        {
+            SkipWhiteSpace ();
+
+            var r = _lastR;            
 
             //
             // Are we done?

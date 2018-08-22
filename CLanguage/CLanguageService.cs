@@ -65,40 +65,41 @@ namespace CLanguage
             var mi = machineInfo ?? new MachineInfo ();
 
             var name = "colorize.cpp";
-            var pp = new Preprocessor (report);
-            pp.AddCode ("machine.h", mi.HeaderCode);
+            var pp = new Preprocessor (report, passthrough: true);
             pp.AddCode (name, code);
 
             var lexer = new Lexer (pp);
-
-            var infile = false;
-            var p = 0;
 
             var tokens = new List<ColorSpan> ();
 
             var funcs = new HashSet<string> (mi.InternalFunctions.Where (x => string.IsNullOrEmpty (x.NameContext)).Select (x => x.Name));
 
-            while (lexer.advance ()) {
-                if (!infile && pp.CurrentFilePath == name) {
-                    infile = true;
-                }
-                if (infile && (pp.CurrentFilePath == name || pp.CurrentFilePath == null)) {
-                    var e = pp.CurrentPosition;
-                    //Console.WriteLine ($"{pp.CurrentFilePath}@{e} \"{code.Substring (p, e - p)}\" = {lexer.token()} ({lexer.value()})");
-                    var color = ColorizeToken (lexer.token (), lexer.value (), funcs);
-                    tokens.Add (new ColorSpan {
-                        Index = p,
-                        Length = e - p,
-                        Color = color,
-                    });
-                    p = e;
-                }
+            while (true) {
+                lexer.SkipWhiteSpace ();
+
+                var p = pp.CurrentPosition - 1;
+
+                if (!lexer.advance ())
+                    break;
+
+                var tok = lexer.token ();
+                var val = lexer.value ();
+
+                var e = pp.CurrentPosition - 1;
+                if (e < 0 || p + 1 >= code.Length) e = code.Length;
+                //Console.WriteLine ($"{e-p}@{p} \"{code.Substring (p, e - p)}\" = {tok} ({val})");
+                var color = ColorizeToken (tok, val, funcs);
+                tokens.Add (new ColorSpan {
+                    Index = p,
+                    Length = e - p,
+                    Color = color,
+                });
             }
 
             return tokens.ToArray ();
         }
 
-        public static SyntaxColor ColorizeToken (int token, object value, HashSet<string> funcs)
+        static SyntaxColor ColorizeToken (int token, object value, HashSet<string> funcs)
         {
             switch (token) {
                 case Token.INT:

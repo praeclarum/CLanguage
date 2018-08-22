@@ -19,9 +19,12 @@ namespace CLanguage.Parser
 
         public Report Report => report;
 
-        public Preprocessor (Report report = null)
+        public bool Passthrough { get; }
+
+        public Preprocessor (Report report = null, bool passthrough = false)
         {
             this.report = report ?? new Report ();
+            Passthrough = passthrough;
             _files = new List<File>();
             _chunks = new List<Chunk>();
             //_log = log;
@@ -31,8 +34,8 @@ namespace CLanguage.Parser
 			identLength = 0;
         }
 
-        public Preprocessor (string name, string code, Report report = null)
-            : this (report)
+        public Preprocessor (string name, string code, Report report = null, bool passthrough = false)
+            : this (report, passthrough)
         {
             AddCode (name, code);
         }
@@ -138,6 +141,14 @@ namespace CLanguage.Parser
                 File = file,
                 StartIndex = p
             };
+
+            if (Passthrough) {
+                // Skip processing whitespace, etc.
+                chunk.Length = numChars;
+                chunk.Line = 1;
+                _chunks.Add (chunk);
+                return;
+            }
 
             Action NewChunk = () => {
 				identLength = 0;
@@ -299,8 +310,11 @@ namespace CLanguage.Parser
             }
         }
 
-        public int CurrentPosition => _pos.ChunkIndex < _chunks.Count ? _pos.Index + _chunks[_pos.ChunkIndex].StartIndex : -1;
-        public string CurrentFilePath => _pos.ChunkIndex < _chunks.Count ? _chunks[_pos.ChunkIndex].File.Path : null;
+        public int CurrentPosition => _pos.ChunkIndex < _chunks.Count ?
+                                            _pos.Index + _chunks[_pos.ChunkIndex].StartIndex :
+                                            _chunks[_chunks.Count-1].StartIndex + _chunks[_chunks.Count - 1].Length;
+        public string CurrentFilePath => _pos.ChunkIndex < _chunks.Count ?
+                                            _chunks[_pos.ChunkIndex].File.Path : null;
 
         /// <summary>
         /// Reads a single character and advances the CurrentPosition.

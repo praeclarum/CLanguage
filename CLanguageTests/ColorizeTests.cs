@@ -20,6 +20,7 @@ namespace CLanguage.Tests
             for (int i = 0; i < colors.Length; i++) {
                 var color = colors[i];
                 var ecolor = expectedColors[i];
+                Assert.IsTrue (color.Length > 0, "Span has length = 0");
                 Assert.AreEqual (ecolor, color.Color);
             }
         }
@@ -64,6 +65,14 @@ namespace CLanguage.Tests
             AssertColorization ("*\"Hello\"",
                                 SyntaxColor.Operator,
                                 SyntaxColor.Constant);
+        }
+
+        [TestMethod]
+        public void SimpleStatement ()
+        {
+            AssertColorization ("f;",
+                                SyntaxColor.Identifier,
+                                SyntaxColor.Operator);
         }
 
         [TestMethod]
