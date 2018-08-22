@@ -19,7 +19,8 @@ namespace CLanguage.Syntax
     {
         Comment,
         Identifier,
-        Constant,
+        Number,
+        String,
         Keyword,
         Operator,
         Function,

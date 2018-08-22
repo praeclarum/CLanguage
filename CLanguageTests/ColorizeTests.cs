@@ -29,11 +29,11 @@ namespace CLanguage.Tests
         public void Expression ()
         {
             AssertColorization ("42 / 100.0 + 50",
-                                SyntaxColor.Constant, 
+                                SyntaxColor.Number, 
                                 SyntaxColor.Operator, 
-                                SyntaxColor.Constant, 
+                                SyntaxColor.Number, 
                                 SyntaxColor.Operator,
-                                SyntaxColor.Constant);
+                                SyntaxColor.Number);
         }
 
         [TestMethod]
@@ -42,7 +42,7 @@ namespace CLanguage.Tests
             AssertColorization ("if (true) {}",
                                 SyntaxColor.Keyword,
                                 SyntaxColor.Operator,
-                                SyntaxColor.Constant,
+                                SyntaxColor.Number,
                                 SyntaxColor.Operator,
                                 SyntaxColor.Operator,
                                 SyntaxColor.Operator);
@@ -55,7 +55,7 @@ namespace CLanguage.Tests
                                 SyntaxColor.Type,
                                 SyntaxColor.Identifier,
                                 SyntaxColor.Operator,
-                                SyntaxColor.Constant,
+                                SyntaxColor.Number,
                                 SyntaxColor.Operator);
         }
 
@@ -64,7 +64,14 @@ namespace CLanguage.Tests
         {
             AssertColorization ("*\"Hello\"",
                                 SyntaxColor.Operator,
-                                SyntaxColor.Constant);
+                                SyntaxColor.String);
+        }
+
+        [TestMethod]
+        public void CharLiteral ()
+        {
+            AssertColorization ("'h'",
+                                SyntaxColor.String);
         }
 
         [TestMethod]
@@ -110,7 +117,7 @@ namespace CLanguage.Tests
         public void MultilineComment ()
         {
             AssertColorization ("2 + /* la dee \n\n\n daaa */ foo",
-                                SyntaxColor.Constant,
+                                SyntaxColor.Number,
                                 SyntaxColor.Operator,
                                 SyntaxColor.Identifier);
         }
@@ -122,7 +129,7 @@ namespace CLanguage.Tests
             AssertColorization ("FOO + 2",
                                 SyntaxColor.Identifier,
                                 SyntaxColor.Operator,
-                                SyntaxColor.Constant);
+                                SyntaxColor.Number);
         }
 
         [TestMethod]
@@ -131,7 +138,7 @@ namespace CLanguage.Tests
             AssertColorization ("#define FOOFOO 100\n\nFOOFOO + 3",
                                 SyntaxColor.Identifier,
                                 SyntaxColor.Operator,
-                                SyntaxColor.Constant);
+                                SyntaxColor.Number);
         }
     }
 }

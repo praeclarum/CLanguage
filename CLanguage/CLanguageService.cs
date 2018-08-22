@@ -115,10 +115,13 @@ namespace CLanguage
                         return SyntaxColor.Function;
                     return SyntaxColor.Identifier;
                 case Token.CONSTANT:
-                case Token.STRING_LITERAL:
+                    if (value is char) return SyntaxColor.String;
+                    return SyntaxColor.Number;
                 case Token.TRUE:
                 case Token.FALSE:
-                    return SyntaxColor.Constant;
+                    return SyntaxColor.Number;
+                case Token.STRING_LITERAL:
+                    return SyntaxColor.String;
                 default:
                     if (token < 128 || Lexer.OperatorTokens.Contains (token))
                         return SyntaxColor.Operator;
