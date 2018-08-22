@@ -462,8 +462,17 @@ namespace CLanguage.Parser
                                 case '\"':
                                     _chbuf[_chbuflen++] = '\"';
                                     break;
-                                default:
-                                    throw new NotSupportedException ("Unrecognized string escape sequence");
+                                default: {
+                                        if (char.IsWhiteSpace ((char)r)) {
+                                            while (r > 0 && r != '\n') {
+                                                r = _pp.Read ();
+                                            }
+                                        }
+                                        else {
+                                            throw new NotSupportedException ("Unrecognized string escape sequence");
+                                        }
+                                    }
+                                    break;
                             }
                             r = _pp.Read ();
                             ch = (char)r;

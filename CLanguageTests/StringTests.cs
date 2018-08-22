@@ -62,5 +62,20 @@ void main () {
     assertAreEqual (0, bar[3]);
 }");
         }
+
+        [TestMethod]
+        public void Multiline ()
+        {
+            var i = Run (@"
+char *bar = ""a\
+b\   
+c"";
+void main () {
+    assertAreEqual ('a', bar[0]);
+    assertAreEqual ('b', bar[1]);
+    assertAreEqual ('c', bar[2]);
+    assertAreEqual (0, bar[3]);
+}");
+        }
     }
 }
