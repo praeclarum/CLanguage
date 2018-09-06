@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using CLanguage.Syntax;
 using CLanguage.Types;
@@ -677,7 +676,7 @@ namespace CLanguage.Interpreter
                 case OpCode.ConvertFloat64Float64: return (double)(double)x;
                     
                 default:
-                    throw new NotImplementedException ($"Op code '{op}' is not implemented");
+                    throw new NotSupportedException ($"Op code '{op}' is not supported");
             }
         }
     }
