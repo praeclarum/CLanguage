@@ -69,6 +69,37 @@ void f () {
             Assert.AreEqual (Token.CONSTANT, lex.token ());
             Assert.AreEqual (513, lex.value ());
         }
-	}
+
+        [TestMethod]
+        public void EmojiIds ()
+        {
+            AssertId ("🎃");
+            AssertId ("🎃", "🎃=0;");
+        }
+
+        [TestMethod]
+        public void NonEnglishIds ()
+        {
+            AssertId ("ὸ");
+            AssertId ("あ");
+            AssertId ("あ", "あ/2");
+            AssertId ("あ", "あ (2");
+        }
+
+        [TestMethod]
+        public void BadSymbols ()
+        {
+            AssertId ("´");
+            AssertId ("⁼");
+        }
+
+        void AssertId (string expectedId, string code = null)
+        {
+            var lex = new Lexer ("", code ?? expectedId);
+            lex.advance ();
+            Assert.AreEqual (Token.IDENTIFIER, lex.token ());
+            Assert.AreEqual (expectedId, lex.value ());
+        }
+    }
 }
 

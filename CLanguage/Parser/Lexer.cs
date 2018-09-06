@@ -161,33 +161,7 @@ namespace CLanguage.Parser
             // Make sense of it
             //
             var ch = (char)r;
-            if (ch == '_' || char.IsLetter (ch)) {
-                _chbuf[0] = ch;
-                _chbuflen = 0;
-                while (ch == '_' || char.IsLetter (ch) || char.IsDigit (ch)) {
-                    _chbuf[_chbuflen++] = ch;
-                    r = _pp.Read ();
-                    ch = (char)r;
-                }
-                _lastR = r;
-
-                var id = new string (_chbuf, 0, _chbuflen);
-                _value = id;
-
-                var tok = 0;
-                if (_kwTokens.TryGetValue (id, out tok)) {
-                    _token = tok;
-                }
-                else {
-                    if (IsTypedef != null && IsTypedef (id)) {
-                        _token = Token.TYPE_NAME;
-                    }
-                    else {
-                        _token = Token.IDENTIFIER;
-                    }
-                }
-            }
-            else if (char.IsDigit (ch)) {
+            if (char.IsDigit (ch)) {
                 var onlydigits = true;
                 var islong = false;
                 var isunsigned = false;
@@ -538,9 +512,36 @@ namespace CLanguage.Parser
                 _token = Token.CONSTANT;
                 _value = _chbuf[0];
             }
-            else
-            {
-                throw new NotSupportedException ($"'{(char)r}' is not supported");
+            else {
+                _chbuf[0] = ch;
+                _chbuflen = 0;
+                while (ch == '_' || char.IsLetter (ch) || char.IsDigit (ch) || r > 127) {
+                    _chbuf[_chbuflen++] = ch;
+                    r = _pp.Read ();
+                    ch = (char)r;
+                }
+
+                if (_chbuflen == 0) {
+                    throw new NotSupportedException ($"'{(char)r}' is not supported");
+                }
+
+                _lastR = r;
+
+                var id = new string (_chbuf, 0, _chbuflen);
+                _value = id;
+
+                var tok = 0;
+                if (_kwTokens.TryGetValue (id, out tok)) {
+                    _token = tok;
+                }
+                else {
+                    if (IsTypedef != null && IsTypedef (id)) {
+                        _token = Token.TYPE_NAME;
+                    }
+                    else {
+                        _token = Token.IDENTIFIER;
+                    }
+                }
             }
 
             return true;
