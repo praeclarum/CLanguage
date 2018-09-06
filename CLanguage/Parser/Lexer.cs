@@ -288,7 +288,7 @@ namespace CLanguage.Parser
                     _lastR = r;
                 }
             }
-            else if (r == '%' || r == ',' || r == ';' || r == '?' || r == '(' || r == ')' || r == '{' || r == '}' || r == '[' || r == ']') {
+            else if (r == ',' || r == ';' || r == '?' || r == '(' || r == ')' || r == '{' || r == '}' || r == '[' || r == ']' || r == '~' || r == '%') {
                 _token = r;
                 _value = null;
                 _lastR = _pp.Read ();

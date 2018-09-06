@@ -3,6 +3,7 @@ using CLanguage.Interpreter;
 using CLanguage.Types;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
+using System.Globalization;
 
 namespace CLanguage.Tests
 {
@@ -242,6 +243,45 @@ namespace CLanguage.Tests
 			TestArithmetic (mi, "unsigned long", "long", CBasicType.UnsignedLongInt);
 			TestArithmetic (mi, "unsigned long", "unsigned long", CBasicType.UnsignedLongInt);
 		}
-	}
+
+        CInterpreter Run (string code)
+        {
+            var fullCode = "void start() { __cinit(); main(); } " + code;
+            var i = CLanguageService.CreateInterpreter (fullCode, new ArduinoTestMachineInfo (), printer: new TestPrinter ());
+            i.Reset ("start");
+            i.Step ();
+            return i;
+        }
+
+        public void AssertEqual (int f, string code)
+        {
+            var i = Run (@"
+void main () {
+    assertAreEqual (" + f + @", " + code + @");
+}");
+        }
+
+        [TestMethod]
+        public void TestBitwiseNot ()
+        {
+            AssertEqual (~0, "~0");
+            AssertEqual (~1, "~1");
+            AssertEqual (~2, "~2");
+            AssertEqual (~(-0), "~(-0)");
+            AssertEqual (~(-1), "~(-1)");
+            AssertEqual (~(-2), "~(-2)");
+        }
+
+        [TestMethod]
+        public void TestNot ()
+        {
+            AssertEqual (1, "!0");
+            //AssertEqual (0, "!1");
+            //AssertEqual (0, "!2");
+            //AssertEqual (1, "!(-0)");
+            //AssertEqual (0, "!(-1)");
+            //AssertEqual (0, "!(-2)");
+        }
+    }
 }
 

@@ -189,6 +189,17 @@ namespace CLanguage.Interpreter
         NotFloat32,
         NotFloat64,
 
+        BinaryNotInt8,
+        BinaryNotUInt8,
+        BinaryNotInt16,
+        BinaryNotUInt16,
+        BinaryNotInt32,
+        BinaryNotUInt32,
+        BinaryNotInt64,
+        BinaryNotUInt64,
+        BinaryNotFloat32,
+        BinaryNotFloat64,
+
         NegateInt8,
         NegateUInt8,
         NegateInt16,
@@ -206,7 +217,6 @@ namespace CLanguage.Interpreter
 
         LogicalAnd,
         LogicalOr,
-        LogicalNot,
 
         #endregion
 

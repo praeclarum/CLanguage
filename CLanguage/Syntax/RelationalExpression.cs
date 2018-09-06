@@ -48,22 +48,22 @@ namespace CLanguage.Syntax
 				break;
 			case RelationalOp.NotEquals:
 				ec.Emit ((OpCode)(OpCode.EqualToInt8 + ioff));
-				ec.Emit (OpCode.LogicalNot);
-				break;
+                ec.Emit ((OpCode)(OpCode.NotInt8 + ioff));
+                break;
 			case RelationalOp.LessThan:
 				ec.Emit ((OpCode)(OpCode.LessThanInt8 + ioff));
 				break;
 			case RelationalOp.LessThanOrEqual:
 				ec.Emit ((OpCode)(OpCode.GreaterThanInt8 + ioff));
-				ec.Emit (OpCode.LogicalNot);
-				break;
+                ec.Emit ((OpCode)(OpCode.NotInt8 + ioff));
+                break;
 			case RelationalOp.GreaterThan:
 				ec.Emit ((OpCode)(OpCode.GreaterThanInt8 + ioff));
 				break;
 			case RelationalOp.GreaterThanOrEqual:
 				ec.Emit ((OpCode)(OpCode.LessThanInt8 + ioff));
-				ec.Emit (OpCode.LogicalNot);
-				break;
+                ec.Emit ((OpCode)(OpCode.NotInt8 + ioff));
+                break;
 			default:
 				throw new NotSupportedException ("Unsupported relational operator '" + Op + "'");
 			}

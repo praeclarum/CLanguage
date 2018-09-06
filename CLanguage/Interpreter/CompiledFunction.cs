@@ -496,6 +496,116 @@ namespace CLanguage.Interpreter
                         state.SP--;
                         ip++;
                         break;
+                    case OpCode.NotInt8:
+                        a = state.Stack[state.SP - 1];
+                        state.Stack[state.SP - 1] = (sbyte)a == 0 ? 1 : 0;
+                        ip++;
+                        break;
+                    case OpCode.NotUInt8:
+                        a = state.Stack[state.SP - 1];
+                        state.Stack[state.SP - 1] = (byte)a == 0 ? 1 : 0;
+                        ip++;
+                        break;
+                    case OpCode.NotInt16:
+                        a = state.Stack[state.SP - 1];
+                        state.Stack[state.SP - 1] = (short)a == 0 ? 1 : 0;
+                        ip++;
+                        break;
+                    case OpCode.NotUInt16:
+                        a = state.Stack[state.SP - 1];
+                        state.Stack[state.SP - 1] = (ushort)a == 0 ? 1 : 0;
+                        ip++;
+                        break;
+                    case OpCode.NotInt32:
+                        a = state.Stack[state.SP - 1];
+                        state.Stack[state.SP - 1] = (int)a == 0 ? 1 : 0;
+                        ip++;
+                        break;
+                    case OpCode.NotUInt32:
+                        a = state.Stack[state.SP - 1];
+                        state.Stack[state.SP - 1] = (uint)a == 0 ? 1 : 0;
+                        ip++;
+                        break;
+                    case OpCode.NotInt64:
+                        a = state.Stack[state.SP - 1];
+                        state.Stack[state.SP - 1] = (long)a == 0 ? 1 : 0;
+                        ip++;
+                        break;
+                    case OpCode.NotUInt64:
+                        a = state.Stack[state.SP - 1];
+                        state.Stack[state.SP - 1] = (ulong)a == 0 ? 1 : 0;
+                        ip++;
+                        break;
+                    case OpCode.NotFloat32:
+                        a = state.Stack[state.SP - 1];
+                        state.Stack[state.SP - 1] = (float)a == 0.0f ? 1 : 0;
+                        ip++;
+                        break;
+                    case OpCode.NotFloat64:
+                        a = state.Stack[state.SP - 1];
+                        state.Stack[state.SP - 1] = (double)a == 0.0 ? 1 : 0;
+                        ip++;
+                        break;
+                    case OpCode.BinaryNotInt8:
+                        a = state.Stack[state.SP - 1];
+                        state.Stack[state.SP - 1] = ~(sbyte)a;
+                        ip++;
+                        break;
+                    case OpCode.BinaryNotUInt8:
+                        a = state.Stack[state.SP - 1];
+                        state.Stack[state.SP - 1] = ~(byte)a;
+                        ip++;
+                        break;
+                    case OpCode.BinaryNotInt16:
+                        a = state.Stack[state.SP - 1];
+                        state.Stack[state.SP - 1] = ~(short)a;
+                        ip++;
+                        break;
+                    case OpCode.BinaryNotUInt16:
+                        a = state.Stack[state.SP - 1];
+                        state.Stack[state.SP - 1] = ~(ushort)a;
+                        ip++;
+                        break;
+                    case OpCode.BinaryNotInt32:
+                        a = state.Stack[state.SP - 1];
+                        state.Stack[state.SP - 1] = ~(int)a;
+                        ip++;
+                        break;
+                    case OpCode.BinaryNotUInt32:
+                        a = state.Stack[state.SP - 1];
+                        state.Stack[state.SP - 1] = ~(uint)a;
+                        ip++;
+                        break;
+                    case OpCode.BinaryNotInt64:
+                        a = state.Stack[state.SP - 1];
+                        state.Stack[state.SP - 1] = ~(long)a;
+                        ip++;
+                        break;
+                    case OpCode.BinaryNotUInt64:
+                        a = state.Stack[state.SP - 1];
+                        state.Stack[state.SP - 1] = ~(ulong)a;
+                        ip++;
+                        break;
+                    case OpCode.BinaryNotFloat32:
+                        a = state.Stack[state.SP - 1];
+                        state.Stack[state.SP - 1] = ~(int)(float)a;
+                        ip++;
+                        break;
+                    case OpCode.BinaryNotFloat64:
+                        a = state.Stack[state.SP - 1];
+                        state.Stack[state.SP - 1] = ~(int)(double)a;
+                        ip++;
+                        break;
+                    case OpCode.NegateInt8:
+                        a = state.Stack[state.SP - 1];
+                        state.Stack[state.SP - 1] = -(sbyte)a;
+                        ip++;
+                        break;
+                    case OpCode.NegateUInt8:
+                        a = state.Stack[state.SP - 1];
+                        state.Stack[state.SP - 1] = -(byte)a;
+                        ip++;
+                        break;
                     case OpCode.NegateInt16:
                         a = state.Stack[state.SP - 1];
                         state.Stack[state.SP - 1] = -(short)a;
@@ -516,6 +626,16 @@ namespace CLanguage.Interpreter
                         state.Stack[state.SP - 1] = (Value)(-(uint)a);
                         ip++;
                         break;
+                    case OpCode.NegateInt64:
+                        a = state.Stack[state.SP - 1];
+                        state.Stack[state.SP - 1] = -(long)a;
+                        ip++;
+                        break;
+                    case OpCode.NegateUInt64:
+                        a = state.Stack[state.SP - 1];
+                        state.Stack[state.SP - 1] = (Value)((ulong)-(long)a);
+                        ip++;
+                        break;
                     case OpCode.NegateFloat32:
                         a = state.Stack[state.SP - 1];
                         state.Stack[state.SP - 1] = (Value)(-(float)a);
@@ -524,11 +644,6 @@ namespace CLanguage.Interpreter
                     case OpCode.NegateFloat64:
                         a = state.Stack[state.SP - 1];
                         state.Stack[state.SP - 1] = (Value)(-(double)a);
-                        ip++;
-                        break;
-                    case OpCode.LogicalNot:
-                        a = state.Stack[state.SP - 1];
-                        state.Stack[state.SP - 1] = (a.Int32Value == 0) ? 1 : 0;
                         ip++;
                         break;
                     case OpCode.LogicalAnd:

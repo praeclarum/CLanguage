@@ -77,6 +77,9 @@ namespace CLanguage.Syntax
                             case Unop.Not:
                                 ec.Emit ((OpCode)(OpCode.NotInt8 + ioff));
                                 break;
+                            case Unop.BinaryComplement:
+                                ec.Emit ((OpCode)(OpCode.BinaryNotInt8 + ioff));
+                                break;
                             default:
                                 throw new NotSupportedException ("Unsupported unary operator '" + Op + "'");
                         }
