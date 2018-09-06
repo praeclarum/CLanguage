@@ -162,7 +162,7 @@ namespace CLanguage.Interpreter
                     }
                 }
                 else {
-                    var ctype = context.MakeCType (multi.Specifiers, block);
+                    var ctype = context.MakeCType (multi.Specifiers, null, block);
                     if (ctype is CStructType structType) {
                         var n = structType.Name;
                         if (!string.IsNullOrEmpty (n)) {

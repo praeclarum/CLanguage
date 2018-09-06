@@ -453,5 +453,24 @@ namespace CLanguage.Tests
 
             Assert.IsInstanceOfType(r.ReturnType, typeof(CPointerType));
         }
+
+        [TestMethod]
+        public void AutoConstants ()
+        {
+            AssertAutoType ("1", CBasicType.SignedInt);
+            AssertAutoType ("1l", CBasicType.SignedLongInt);
+            AssertAutoType ("true", CBasicType.Bool);
+            AssertAutoType ("false", CBasicType.Bool);
+            AssertAutoType ("1 + 2", CBasicType.SignedInt);
+            AssertAutoType ("1 + 2.0", CBasicType.Double);
+        }
+
+        void AssertAutoType (string code, CType expectedType)
+        {
+            var fullCode = "auto x = " + code + ";";
+            var exe = CLanguageService.Compile (fullCode, machineInfo: new ArduinoTestMachineInfo ());
+            var g = exe.Globals.FirstOrDefault (x => x.Name == "x");
+            Assert.AreEqual (expectedType, g.VariableType);
+        }
     }
 }

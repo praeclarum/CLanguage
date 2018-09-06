@@ -45,7 +45,7 @@ namespace CLanguage.Syntax
         }
         public override string ToString ()
         {
-            return string.Join (" ", TypeSpecifiers);
+            return StorageClassSpecifier == StorageClassSpecifier.Auto ? "auto" : string.Join (" ", TypeSpecifiers);
         }
     }
 

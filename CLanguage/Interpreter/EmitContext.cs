@@ -136,7 +136,7 @@ namespace CLanguage.Interpreter
 
         public CType MakeCType (DeclarationSpecifiers specs, Declarator decl, Initializer init, Block block)
         {
-            var type = MakeCType (specs, block);
+            var type = MakeCType (specs, init, block);
             return MakeCType (type, decl, init, block);
         }
 
@@ -232,8 +232,19 @@ namespace CLanguage.Interpreter
             return type;
         }
 
-        public CType MakeCType (DeclarationSpecifiers specs, Block block)
+        public CType MakeCType (DeclarationSpecifiers specs, Initializer init, Block block)
         {
+            //
+            // Infer types
+            //
+            if (specs.StorageClassSpecifier == StorageClassSpecifier.Auto) {
+                if (!(init is ExpressionInitializer einit)) {
+                    this.Report.Error (818, "Implicitly-typed variabled must be initialized");
+                    return CBasicType.SignedInt;
+                }
+                return einit.Expression.GetEvaluatedCType (this);
+            }
+
             //
             // Try for Basic. The TypeSpecifiers are recorded in reverse from what is actually declared
             // in code.
