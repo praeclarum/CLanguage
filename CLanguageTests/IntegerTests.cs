@@ -316,6 +316,12 @@ void main () {
             AssertEqual (0, "1 ^ 1");
             AssertEqual (3947 ^ 143, "3947 ^ 143");
         }
+
+        [TestMethod]
+        public void ConstantTooBig ()
+        {
+            AssertEqual (8972313 & 0xFFFF, "8972313");
+        }
     }
 }
 

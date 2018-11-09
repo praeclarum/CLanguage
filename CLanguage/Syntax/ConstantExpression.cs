@@ -88,39 +88,43 @@ namespace CLanguage.Syntax
             if (ConstantType is CIntType intType) {
                 var size = intType.GetByteSize (ec);
                 if (intType.Signedness == Signedness.Signed) {
-                    switch (size) {
-                        case 1:
-                            ec.Emit (OpCode.LoadConstant, (Value)Convert.ToSByte (Value));
-                            break;
-                        case 2:
-                            ec.Emit (OpCode.LoadConstant, (Value)Convert.ToInt16 (Value));
-                            break;
-                        case 4:
-                            ec.Emit (OpCode.LoadConstant, (Value)Convert.ToInt32 (Value));
-                            break;
-                        case 8:
-                            ec.Emit (OpCode.LoadConstant, (Value)Convert.ToInt64 (Value));
-                            break;
-                        default:
-                            throw new NotSupportedException ("Signed integral constants with type '" + ConstantType + "'");
+                    unchecked {
+                        switch (size) {
+                            case 1:
+                                ec.Emit (OpCode.LoadConstant, (Value)(sbyte)Convert.ToInt64 (Value));
+                                break;
+                            case 2:
+                                ec.Emit (OpCode.LoadConstant, (Value)(short)Convert.ToInt64 (Value));
+                                break;
+                            case 4:
+                                ec.Emit (OpCode.LoadConstant, (Value)(int)Convert.ToInt64 (Value));
+                                break;
+                            case 8:
+                                ec.Emit (OpCode.LoadConstant, (Value)Convert.ToInt64 (Value));
+                                break;
+                            default:
+                                throw new NotSupportedException ("Signed integral constants with type '" + ConstantType + "'");
+                        }
                     }
                 }
                 else {
-                    switch (size) {
-                        case 1:
-                            ec.Emit (OpCode.LoadConstant, (Value)Convert.ToByte (Value));
-                            break;
-                        case 2:
-                            ec.Emit (OpCode.LoadConstant, (Value)Convert.ToUInt16 (Value));
-                            break;
-                        case 4:
-                            ec.Emit (OpCode.LoadConstant, (Value)Convert.ToUInt32 (Value));
-                            break;
-                        case 8:
-                            ec.Emit (OpCode.LoadConstant, (Value)Convert.ToUInt64 (Value));
-                            break;
-                        default:
-                            throw new NotSupportedException ("Unsigned integral constants with type '" + ConstantType + "'");
+                    unchecked {
+                        switch (size) {
+                            case 1:
+                                ec.Emit (OpCode.LoadConstant, (Value)(byte)Convert.ToInt64 (Value));
+                                break;
+                            case 2:
+                                ec.Emit (OpCode.LoadConstant, (Value)(ushort)Convert.ToInt64 (Value));
+                                break;
+                            case 4:
+                                ec.Emit (OpCode.LoadConstant, (Value)(uint)Convert.ToInt64 (Value));
+                                break;
+                            case 8:
+                                ec.Emit (OpCode.LoadConstant, (Value)Convert.ToUInt64 (Value));
+                                break;
+                            default:
+                                throw new NotSupportedException ("Unsigned integral constants with type '" + ConstantType + "'");
+                        }
                     }
                 }
             }
