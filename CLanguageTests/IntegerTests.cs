@@ -262,7 +262,7 @@ void main () {
         }
 
         [TestMethod]
-        public void TestBitwiseNot ()
+        public void BitwiseNot ()
         {
             AssertEqual (~0, "~0");
             AssertEqual (~1, "~1");
@@ -273,14 +273,48 @@ void main () {
         }
 
         [TestMethod]
-        public void TestNot ()
+        public void Not ()
         {
             AssertEqual (1, "!0");
-            //AssertEqual (0, "!1");
-            //AssertEqual (0, "!2");
-            //AssertEqual (1, "!(-0)");
-            //AssertEqual (0, "!(-1)");
-            //AssertEqual (0, "!(-2)");
+            AssertEqual (0, "!1");
+            AssertEqual (0, "!2");
+            AssertEqual (1, "!(-0)");
+            AssertEqual (0, "!(-1)");
+            AssertEqual (0, "!(-2)");
+            AssertEqual (0, "!true");
+            AssertEqual (1, "!false");
+            AssertEqual (1, "!!true");
+            AssertEqual (0, "!!false");
+        }
+
+        [TestMethod]
+        public void BitwiseAnd ()
+        {
+            AssertEqual (0, "0 & 0");
+            AssertEqual (0, "0 & 1");
+            AssertEqual (0, "1 & 0");
+            AssertEqual (1, "1 & 1");
+            AssertEqual (3947 & 143, "3947 & 143");
+        }
+
+        [TestMethod]
+        public void BitwiseOr ()
+        {
+            AssertEqual (0, "0 | 0");
+            AssertEqual (1, "0 | 1");
+            AssertEqual (1, "1 | 0");
+            AssertEqual (1, "1 | 1");
+            AssertEqual (3947 | 143, "3947 | 143");
+        }
+
+        [TestMethod]
+        public void BitwiseXor ()
+        {
+            AssertEqual (0, "0 ^ 0");
+            AssertEqual (1, "0 ^ 1");
+            AssertEqual (1, "1 ^ 0");
+            AssertEqual (0, "1 ^ 1");
+            AssertEqual (3947 ^ 143, "3947 ^ 143");
         }
     }
 }

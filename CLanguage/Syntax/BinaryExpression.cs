@@ -65,7 +65,16 @@ namespace CLanguage.Syntax
 			case Binop.Mod:
 				ec.Emit ((OpCode)(OpCode.ModuloInt8 + ioff));
 				break;
-			default:
+            case Binop.BinaryAnd:
+                ec.Emit ((OpCode)(OpCode.BinaryAndInt8 + ioff));
+                break;
+            case Binop.BinaryOr:
+                ec.Emit ((OpCode)(OpCode.BinaryOrInt8 + ioff));
+                break;
+            case Binop.BinaryXor:
+                ec.Emit ((OpCode)(OpCode.BinaryXorInt8 + ioff));
+                break;
+            default:
 				throw new NotSupportedException ("Unsupported binary operator '" + Op + "'");
 			}
         }

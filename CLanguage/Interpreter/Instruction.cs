@@ -174,6 +174,39 @@ namespace CLanguage.Interpreter
 
         #region Bitwise
 
+        BinaryAndInt8,
+        BinaryAndUInt8,
+        BinaryAndInt16,
+        BinaryAndUInt16,
+        BinaryAndInt32,
+        BinaryAndUInt32,
+        BinaryAndInt64,
+        BinaryAndUInt64,
+        BinaryAndFloat32,
+        BinaryAndFloat64,
+
+        BinaryOrInt8,
+        BinaryOrUInt8,
+        BinaryOrInt16,
+        BinaryOrUInt16,
+        BinaryOrInt32,
+        BinaryOrUInt32,
+        BinaryOrInt64,
+        BinaryOrUInt64,
+        BinaryOrFloat32,
+        BinaryOrFloat64,
+
+        BinaryXorInt8,
+        BinaryXorUInt8,
+        BinaryXorInt16,
+        BinaryXorUInt16,
+        BinaryXorInt32,
+        BinaryXorUInt32,
+        BinaryXorInt64,
+        BinaryXorUInt64,
+        BinaryXorFloat32,
+        BinaryXorFloat64,
+
         #endregion
 
         #region Unary
