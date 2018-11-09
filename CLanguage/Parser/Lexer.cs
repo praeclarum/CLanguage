@@ -515,14 +515,14 @@ namespace CLanguage.Parser
             else {
                 _chbuf[0] = ch;
                 _chbuflen = 0;
-                while (ch == '_' || char.IsLetter (ch) || char.IsDigit (ch) || r > 127) {
+                while (ch == '_' || char.IsLetterOrDigit (ch) || r > 127) {
                     _chbuf[_chbuflen++] = ch;
                     r = _pp.Read ();
                     ch = (char)r;
                 }
 
                 if (_chbuflen == 0) {
-                    throw new NotSupportedException ($"'{(char)r}' is not supported");
+                    throw new NotSupportedException ($"Character '{(char)r}' is not parsable");
                 }
 
                 _lastR = r;
