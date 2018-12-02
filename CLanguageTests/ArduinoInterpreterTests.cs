@@ -320,5 +320,155 @@ lastButtonState = buttonState;
             Assert.AreEqual ("start", arduino.SerialOut.ToString ().Split ("\n").First ().Trim ());
         }
 
+        [TestMethod, Ignore]
+        public void UserBug0 ()
+        {
+            var code = @"
+
+/* 
+7 Segment LED Display Pin Connects to Arduino Digital Terminal ... 
+a 2 
+b 3 
+c 4 
+d 6 
+e 7 
+f 9 
+g 8 
+DP 5 
+*/ 
+#define DIST_LEFT_PIN A4 
+#define DIST_RIGHT_PIN A5 
+#define PWM_PIN 10 
+float sensorValue, E, wireTemperature, amps, pwmVal,prevLeft, prevRight, distRight, distLeft, power; 
+float Vcc = 5000.0; 
+boolean warnLeft = false, warnRight = false; 
+// a b c d e f g 
+// 1 1 1 0 1 1 0 0 0 
+//bits representing numerals 0-9 
+const byte numeral[18] = { 
+B11111100, //0 
+B01100000, //1 
+B11011010, //2 
+B11110010, //3 
+B01100110, //4 
+B10110110, //5 
+B00111110, //6 
+B11100000, //7 
+B11111110, //8 
+B11100110, //9 
+B11101100, //A 
+B00111110, //B 
+B10011100, //C 
+B01111100, //D 
+B10011110, //E 
+B10001110, //F 
+B00000000, //shows nothing 
+};
+
+//pins for each segment (a-g) on the 7 segment LED display with the corresponding arduino connection 
+const int segmentPins[8] = { 5, 8, 9, 7, 6, 4, 3, 2 };
+
+void setup() 
+{ 
+// initialize serial communication at 9600 bits per second: 
+Serial.begin(9600);
+
+for (int i = 0; i < 8; i++) 
+{ 
+pinMode(segmentPins[i], OUTPUT); 
+} 
+for (int i = 0; i <= 18; i++) 
+{ 
+showDigit(i); 
+Serial.print(""\n setup: ""); 
+Serial.print(i); 
+delay(50); 
+}
+
+} 
+void loop() 
+{ int count = 0; 
+float currentV, prevV;
+
+distLeft = ReadDistance_cm(DIST_LEFT_PIN); 
+distRight = ReadDistance_cm(DIST_RIGHT_PIN); 
+if ((distRight <= 300) && (distRight <= prevRight)) { 
+warnRight = true; 
+} else warnRight = false;
+
+if ((distLeft <= 300) && (distLeft <= prevLeft)) { 
+warnLeft = true; 
+} else warnLeft = false;
+
+prevRight = distRight; 
+prevLeft = distLeft; 
+// display warning L or R
+
+// read the input on analog pin 0: (this is the temperature adjustment pot) 
+for (int i = 0; i <= 1000; i++) { 
+sensorValue = analogRead(A0); 
+E = E + sensorValue; 
+count = i; 
+} 
+E = E / 1000; 
+sensorValue = E; 
+float voltage = sensorValue * (5.0 / 1023.0); 
+float factor = (voltage) / 5.0; 
+pwmVal = 255 * factor; 
+if (pwmVal > 255) { 
+pwmVal = 255; 
+} 
+analogWrite(PWM_PIN, pwmVal); 
+delay(10);
+
+for (int i = 0; i <= 18; i++) 
+{ 
+showDigit(i); 
+Serial.print(""main loop: ""); 
+Serial.print(i); 
+Serial.print(""\n"");
+
+delay(10); 
+} 
+Serial.print(""!!!!!!!!!!!!*************!!!!!!!!!\n""); 
+delay(2000); //after LED segment shuts off, there is a 2-second delay 
+}
+
+void showDigit (int number) 
+{ 
+boolean isBitSet;
+
+for (int segment = 1; segment < 8; segment++) 
+{ 
+isBitSet = bitRead(numeral[number], segment); 
+digitalWrite(segmentPins[segment], isBitSet); 
+} 
+}
+
+//returns the distance in cm 
+float ReadDistance_cm(int pin) { 
+int i; 
+float volt = 0;
+
+for (i = 0; i < 25; i++) { 
+volt += analogRead(pin); 
+} 
+volt = volt / i; 
+return ((volt * (Vcc / 1023)) / 9.765) * 2.54; 
+}
+
+float readVolts(int pin) { 
+int i; 
+float volt = 0;
+
+for (i = 0; i < 25; i++) { 
+volt += analogRead(pin); 
+} 
+volt = volt / i; 
+return volt * (Vcc / 1023); 
+}";
+            var arduino = Run (code);
+            Assert.AreEqual ("start", arduino.SerialOut.ToString ().Split ("\n").First ().Trim ());
+        }
     }
 }

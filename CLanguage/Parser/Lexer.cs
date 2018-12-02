@@ -574,6 +574,8 @@ namespace CLanguage.Parser
                 }
             }
 
+            Console.WriteLine ("LEX " + _pp.CurrentPosition);
+
             return true;
         }
 
