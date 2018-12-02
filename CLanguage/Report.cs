@@ -81,7 +81,9 @@ namespace CLanguage
 
             public override string ToString ()
             {
-                return string.Format ("{0} C{1:0000}: {2}", MessageType, Code, Text);
+                if (Location.IsNull)
+                    return string.Format ("{0} C{1:0000}: {2}", MessageType.ToLowerInvariant (), Code, Text);
+                return string.Format ("{3}: {0} C{1:0000}: {2}", MessageType.ToLowerInvariant (), Code, Text, Location);
             }
         }
 

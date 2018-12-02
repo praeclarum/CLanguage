@@ -44,7 +44,10 @@ namespace CLanguage.Parser
 			catch (NotSupportedException err) {
 				report.Error (9002, "Feature not supported: " + err.Message);
 			}
-			catch (Exception err) {
+            catch (Exception err) when (err.Message == "irrecoverable syntax error") {
+                report.Error (1001, lexer.CurrentLocation, "Syntax error");
+            }
+            catch (Exception err) {
 				report.Error (9001, "Internal compiler error: " + err.Message);
 			}
 			
@@ -95,7 +98,7 @@ namespace CLanguage.Parser
 
         Location GetLocation(object obj)
         {
-            return null;
+            return Location.Null;
             /*
                 if (obj is Tokenizer.LocatedToken)
                     return ((Tokenizer.LocatedToken) obj).Location;

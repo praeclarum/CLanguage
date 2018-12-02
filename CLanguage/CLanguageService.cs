@@ -8,7 +8,7 @@ namespace CLanguage
 {
     public static class CLanguageService
     {
-        const string DefaultName = "stdin";
+        const string DefaultName = "main.cpp";
 
         public static TranslationUnit ParseTranslationUnit (string code)
         {

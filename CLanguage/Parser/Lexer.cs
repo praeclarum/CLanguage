@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using CLanguage.Syntax;
 
 namespace CLanguage.Parser
 {
@@ -16,17 +17,24 @@ namespace CLanguage.Parser
         char[] _chbuf = new char[4 * 1024];
         int _chbuflen = 0;
 
+        Location location = Location.Null;
+        int line = 1;
+        int column = 1;
+
         public Report Report => _pp.Report;
 
         public Lexer(Preprocessor pp)
         {
             _pp = pp;
+            location = new Location (pp.CurrentFilePath, 1, 1);
         }
 
         public Lexer (string name, string code, Report report = null)
             : this (new Preprocessor (name, code, report))
         {
         }
+
+        public Location CurrentLocation => location;
 
         bool Eof()
         {
@@ -91,6 +99,11 @@ namespace CLanguage.Parser
 
         public void SkipWhiteSpace ()
         {
+            if (_pp.CurrentFilePath != location.Document) {
+                line = 1;
+                column = 1;
+            }
+
             //
             // Skip whitespace
             //
@@ -108,6 +121,10 @@ namespace CLanguage.Parser
                 // Skip white
                 //
                 while (r >= 0 && r <= ' ') {
+                    if (r == '\n') {
+                        line++;
+                        column = 1;
+                    }
                     r = _pp.Read ();
                 }
 
@@ -119,11 +136,17 @@ namespace CLanguage.Parser
                         nr = _pp.Read ();
                     }
                     r = _pp.Read ();
+                    line++;
+                    column = 1;
                     skippedComment = true;
                 }
                 else if (r == '/' && _pp.Peek () == '*') {
                     var nr = _pp.Read ();
                     while (nr > 0 && !(nr == '*' && _pp.Peek () == '/')) {
+                        if (nr == '\n') {
+                            line++;
+                            column = 1;
+                        }
                         nr = _pp.Read ();
                     }
                     _pp.Read (); // Consume ending /
@@ -136,6 +159,8 @@ namespace CLanguage.Parser
                         nr = _pp.Read ();
                     }
                     r = _pp.Read ();
+                    line++;
+                    column = 1;
                     skippedComment = true;
                 }
             }
@@ -156,6 +181,11 @@ namespace CLanguage.Parser
             {
                 return Eof();
             }
+
+            //
+            // Record where we are
+            //
+            location = new Location (_pp.CurrentFilePath, line, column);
 
             //
             // Make sense of it
