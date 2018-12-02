@@ -102,25 +102,25 @@ namespace CLanguage
         static SyntaxColor ColorizeToken (int token, object value, HashSet<string> funcs)
         {
             switch (token) {
-                case Token.INT:
-                case Token.SHORT:
-                case Token.LONG:
-                case Token.CHAR:
-                case Token.FLOAT:
-                case Token.DOUBLE:
-                case Token.BOOL:
+                case TokenKind.INT:
+                case TokenKind.SHORT:
+                case TokenKind.LONG:
+                case TokenKind.CHAR:
+                case TokenKind.FLOAT:
+                case TokenKind.DOUBLE:
+                case TokenKind.BOOL:
                     return SyntaxColor.Type;
-                case Token.IDENTIFIER:
+                case TokenKind.IDENTIFIER:
                     if (value is string s && funcs.Contains (s))
                         return SyntaxColor.Function;
                     return SyntaxColor.Identifier;
-                case Token.CONSTANT:
+                case TokenKind.CONSTANT:
                     if (value is char) return SyntaxColor.String;
                     return SyntaxColor.Number;
-                case Token.TRUE:
-                case Token.FALSE:
+                case TokenKind.TRUE:
+                case TokenKind.FALSE:
                     return SyntaxColor.Number;
-                case Token.STRING_LITERAL:
+                case TokenKind.STRING_LITERAL:
                     return SyntaxColor.String;
                 default:
                     if (token < 128 || Lexer.OperatorTokens.Contains (token))

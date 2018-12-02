@@ -486,8 +486,8 @@ namespace CLanguage.Parser
               yyErrorFlag = 3;
               do {
                 if ((yyN = yySindex[yyStates[yyTop]]) != 0
-                    && (yyN += Token.yyErrorCode) >= 0 && yyN < yyTable.Length
-                    && yyCheck[yyN] == Token.yyErrorCode) {
+                    && (yyN += TokenKind.yyErrorCode) >= 0 && yyN < yyTable.Length
+                    && yyCheck[yyN] == TokenKind.yyErrorCode) {
 //t                  if (debug != null)
 //t                    debug.shift(yyStates[yyTop], yyTable[yyN], 3);
                   yyState = yyTable[yyN];
@@ -2713,7 +2713,7 @@ namespace yydebug {
 	 }
 }
 // %token constants
-public class Token {
+public class TokenKind {
   public const int IDENTIFIER = 257;
   public const int CONSTANT = 258;
   public const int STRING_LITERAL = 259;

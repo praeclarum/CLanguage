@@ -66,7 +66,7 @@ void f () {
         {
             var lex = new Lexer ("", "0x201");
             lex.advance ();
-            Assert.AreEqual (Token.CONSTANT, lex.token ());
+            Assert.AreEqual (TokenKind.CONSTANT, lex.token ());
             Assert.AreEqual (513, lex.value ());
         }
 
@@ -97,7 +97,7 @@ void f () {
         {
             var lex = new Lexer ("", code ?? expectedId);
             lex.advance ();
-            Assert.AreEqual (Token.IDENTIFIER, lex.token ());
+            Assert.AreEqual (TokenKind.IDENTIFIER, lex.token ());
             Assert.AreEqual (expectedId, lex.value ());
         }
     }

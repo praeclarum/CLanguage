@@ -47,54 +47,54 @@ namespace CLanguage.Parser
 
         static readonly Dictionary<string, int> _kwTokens = new Dictionary<string, int>()
         {
-            { "void", Token.VOID },
-            { "char", Token.CHAR },
-            { "short", Token.SHORT },
-            { "int", Token.INT },
-            { "long", Token.LONG },
-            { "float", Token.FLOAT },
-            { "double", Token.DOUBLE },
-            { "signed", Token.SIGNED },
-            { "unsigned", Token.UNSIGNED },
-            { "bool", Token.BOOL },
-            { "struct", Token.STRUCT },
-            { "class", Token.CLASS },
-            { "union", Token.UNION },
-            { "enum", Token.ENUM },
-            { "typedef", Token.TYPEDEF },
-            { "extern", Token.EXTERN },
-            { "static", Token.STATIC },
-            { "auto", Token.AUTO },
-            { "register", Token.REGISTER },
-            { "inline", Token.INLINE },
-            { "const", Token.CONST },
-            { "restrict", Token.RESTRICT },
-            { "volatile", Token.VOLATILE },
-            { "goto", Token.GOTO },
-            { "continue", Token.CONTINUE },
-            { "break", Token.BREAK },
-            { "return", Token.RETURN },
-            { "if", Token.IF },
-            { "else", Token.ELSE },
-            { "for", Token.FOR },
-            { "while", Token.WHILE },
-            { "true", Token.TRUE },
-            { "false", Token.FALSE },
+            { "void", TokenKind.VOID },
+            { "char", TokenKind.CHAR },
+            { "short", TokenKind.SHORT },
+            { "int", TokenKind.INT },
+            { "long", TokenKind.LONG },
+            { "float", TokenKind.FLOAT },
+            { "double", TokenKind.DOUBLE },
+            { "signed", TokenKind.SIGNED },
+            { "unsigned", TokenKind.UNSIGNED },
+            { "bool", TokenKind.BOOL },
+            { "struct", TokenKind.STRUCT },
+            { "class", TokenKind.CLASS },
+            { "union", TokenKind.UNION },
+            { "enum", TokenKind.ENUM },
+            { "typedef", TokenKind.TYPEDEF },
+            { "extern", TokenKind.EXTERN },
+            { "static", TokenKind.STATIC },
+            { "auto", TokenKind.AUTO },
+            { "register", TokenKind.REGISTER },
+            { "inline", TokenKind.INLINE },
+            { "const", TokenKind.CONST },
+            { "restrict", TokenKind.RESTRICT },
+            { "volatile", TokenKind.VOLATILE },
+            { "goto", TokenKind.GOTO },
+            { "continue", TokenKind.CONTINUE },
+            { "break", TokenKind.BREAK },
+            { "return", TokenKind.RETURN },
+            { "if", TokenKind.IF },
+            { "else", TokenKind.ELSE },
+            { "for", TokenKind.FOR },
+            { "while", TokenKind.WHILE },
+            { "true", TokenKind.TRUE },
+            { "false", TokenKind.FALSE },
         };
 
         public static readonly HashSet<int> KeywordTokens = new HashSet<int> (_kwTokens.Values);
         public static readonly HashSet<int> OperatorTokens = new HashSet<int> {
-            Token.EQ_OP,
-            Token.GE_OP,
-            Token.LE_OP,
-            Token.NE_OP,
-            Token.OR_OP,
-            Token.AND_OP,
-            Token.DEC_OP,
-            Token.INC_OP,
-            Token.PTR_OP,
-            Token.LEFT_OP,
-            Token.RIGHT_OP,
+            TokenKind.EQ_OP,
+            TokenKind.GE_OP,
+            TokenKind.LE_OP,
+            TokenKind.NE_OP,
+            TokenKind.OR_OP,
+            TokenKind.AND_OP,
+            TokenKind.DEC_OP,
+            TokenKind.INC_OP,
+            TokenKind.PTR_OP,
+            TokenKind.LEFT_OP,
+            TokenKind.RIGHT_OP,
         };
 
         public void SkipWhiteSpace ()
@@ -251,12 +251,12 @@ namespace CLanguage.Parser
                     }
                 }
 
-                _token = Token.CONSTANT;
+                _token = TokenKind.CONSTANT;
             }
             else if (r == '=') {
                 r = _pp.Read ();
                 if (r == '=') {
-                    _token = Token.EQ_OP;
+                    _token = TokenKind.EQ_OP;
                     _value = null;
                     _lastR = _pp.Read ();
                 }
@@ -269,7 +269,7 @@ namespace CLanguage.Parser
             else if (r == '!') {
                 r = _pp.Read ();
                 if (r == '=') {
-                    _token = Token.NE_OP;
+                    _token = TokenKind.NE_OP;
                     _value = null;
                     _lastR = _pp.Read ();
                 }
@@ -282,7 +282,7 @@ namespace CLanguage.Parser
             else if (r == ':') {
                 r = _pp.Read ();
                 if (r == ':') {
-                    _token = Token.COLONCOLON;
+                    _token = TokenKind.COLONCOLON;
                     _value = null;
                     _lastR = _pp.Read ();
                 }
@@ -313,7 +313,7 @@ namespace CLanguage.Parser
                 var nr = _pp.Read ();
 
                 if (nr == '=') {
-                    _token = (r == '*') ? Token.MUL_ASSIGN : Token.DIV_ASSIGN;
+                    _token = (r == '*') ? TokenKind.MUL_ASSIGN : TokenKind.DIV_ASSIGN;
                     _value = null;
                     _lastR = nr;
                 }
@@ -333,7 +333,7 @@ namespace CLanguage.Parser
                         throw new NotImplementedException ();
                     }
                     else {
-                        _token = Token.AND_OP;
+                        _token = TokenKind.AND_OP;
                         _value = null;
                         _lastR = nr;
                     }
@@ -357,7 +357,7 @@ namespace CLanguage.Parser
                         throw new NotImplementedException ();
                     }
                     else {
-                        _token = Token.OR_OP;
+                        _token = TokenKind.OR_OP;
                         _value = null;
                         _lastR = nr;
                     }
@@ -375,12 +375,12 @@ namespace CLanguage.Parser
                 var nr = _pp.Read ();
 
                 if (nr == '=') {
-                    _token = Token.ADD_ASSIGN;
+                    _token = TokenKind.ADD_ASSIGN;
                     _value = null;
                     _lastR = _pp.Read ();
                 }
                 else if (nr == '+') {
-                    _token = Token.INC_OP;
+                    _token = TokenKind.INC_OP;
                     _value = null;
                     _lastR = _pp.Read ();
                 }
@@ -394,12 +394,12 @@ namespace CLanguage.Parser
                 var nr = _pp.Read ();
 
                 if (nr == '=') {
-                    _token = Token.SUB_ASSIGN;
+                    _token = TokenKind.SUB_ASSIGN;
                     _value = null;
                     _lastR = _pp.Read ();
                 }
                 else if (nr == '-') {
-                    _token = Token.DEC_OP;
+                    _token = TokenKind.DEC_OP;
                     _value = null;
                     _lastR = _pp.Read ();
                 }
@@ -413,7 +413,7 @@ namespace CLanguage.Parser
                 var nr = _pp.Read ();
 
                 if (nr == '=') {
-                    _token = Token.LE_OP;
+                    _token = TokenKind.LE_OP;
                     _value = null;
                     _lastR = _pp.Read ();
                 }
@@ -427,7 +427,7 @@ namespace CLanguage.Parser
                 var nr = _pp.Read ();
 
                 if (nr == '=') {
-                    _token = Token.GE_OP;
+                    _token = TokenKind.GE_OP;
                     _value = null;
                     _lastR = _pp.Read ();
                 }
@@ -492,7 +492,7 @@ namespace CLanguage.Parser
 
                 _lastR = _pp.Read ();
 
-                _token = Token.STRING_LITERAL;
+                _token = TokenKind.STRING_LITERAL;
                 _value = new string (_chbuf, 0, _chbuflen);
             }
             else if (r == '\'') {
@@ -539,7 +539,7 @@ namespace CLanguage.Parser
                 }
 
                 _lastR = _pp.Read ();
-                _token = Token.CONSTANT;
+                _token = TokenKind.CONSTANT;
                 _value = _chbuf[0];
             }
             else {
@@ -566,10 +566,10 @@ namespace CLanguage.Parser
                 }
                 else {
                     if (IsTypedef != null && IsTypedef (id)) {
-                        _token = Token.TYPE_NAME;
+                        _token = TokenKind.TYPE_NAME;
                     }
                     else {
-                        _token = Token.IDENTIFIER;
+                        _token = TokenKind.IDENTIFIER;
                     }
                 }
             }
