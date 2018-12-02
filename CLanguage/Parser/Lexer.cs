@@ -26,7 +26,7 @@ namespace CLanguage.Parser
         public Lexer(Preprocessor pp)
         {
             _pp = pp;
-            location = new Location (pp.CurrentFilePath, 1, 1);
+            location = new Location (pp.CurrentDocument, 1, 1);
         }
 
         public Lexer (string name, string code, Report report = null)
@@ -99,7 +99,7 @@ namespace CLanguage.Parser
 
         public void SkipWhiteSpace ()
         {
-            if (_pp.CurrentFilePath != location.Document) {
+            if (_pp.CurrentDocument?.Path != location.Document?.Path) {
                 line = 1;
                 column = 1;
             }
@@ -185,7 +185,7 @@ namespace CLanguage.Parser
             //
             // Record where we are
             //
-            location = new Location (_pp.CurrentFilePath, line, column);
+            location = new Location (_pp.CurrentDocument, line, column);
 
             //
             // Make sense of it

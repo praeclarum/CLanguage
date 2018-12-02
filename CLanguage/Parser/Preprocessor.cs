@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using CLanguage.Syntax;
 
 namespace CLanguage.Parser
 {
     public class Preprocessor
     {
 		Report report;
-        List<File> _files;
+        List<Document> _files;
         List<Chunk> _chunks;
         Position _pos;
 		Dictionary<string, Chunk> simpleDefines;
@@ -25,7 +26,7 @@ namespace CLanguage.Parser
         {
             this.report = report ?? new Report ();
             Passthrough = passthrough;
-            _files = new List<File>();
+            _files = new List<Document>();
             _chunks = new List<Chunk>();
             //_log = log;
             _pos = new Position();
@@ -40,15 +41,9 @@ namespace CLanguage.Parser
             AddCode (name, code);
         }
 
-        class File
-        {
-            public string Path;
-            public string Content;
-        }
-
         class Chunk
         {
-            public File File;
+            public Document File;
             public int StartIndex;
             public int Length;
             public int Line;
@@ -127,7 +122,7 @@ namespace CLanguage.Parser
 			return true;
 		}
 
-        void Process(File file)
+        void Process(Document file)
         {
 			identLength = 0;
 
@@ -282,11 +277,7 @@ namespace CLanguage.Parser
 
         public void AddCode(string name, string code)
         {
-            var file = new File()
-            {
-                Path = name,
-                Content = code
-            };
+            var file = new Document (name, code, Encoding.UTF8);
             _files.Add(file);
             Process(file);
         }
@@ -295,11 +286,7 @@ namespace CLanguage.Parser
         {
             try
             {
-                var file = new File()
-                {
-                    Path = path,
-                    Content = content,
-                };
+                var file = new Document(path, content, Encoding.UTF8);
                 _files.Add(file);
                 Process(file);
             }
@@ -315,6 +302,8 @@ namespace CLanguage.Parser
                                             _chunks[_chunks.Count-1].StartIndex + _chunks[_chunks.Count - 1].Length;
         public string CurrentFilePath => _pos.ChunkIndex < _chunks.Count ?
                                             _chunks[_pos.ChunkIndex].File.Path : null;
+        public Document CurrentDocument => _pos.ChunkIndex < _chunks.Count ?
+                                            _chunks[_pos.ChunkIndex].File : null;
 
         /// <summary>
         /// Reads a single character and advances the CurrentPosition.
