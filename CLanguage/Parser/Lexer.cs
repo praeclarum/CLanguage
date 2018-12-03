@@ -137,8 +137,7 @@ namespace CLanguage.Parser
                 //
                 while (r >= 0 && r <= ' ') {
                     if (r == '\n') {
-                        line++;
-                        column = 1;
+                        break;
                     }
                     r = Read ();
                 }
@@ -168,16 +167,6 @@ namespace CLanguage.Parser
                     r = Read ();
                     skippedComment = true;
                 }
-                else if (r == '#') {
-                    var nr = Read ();
-                    while (nr > 0 && nr != '\n') {
-                        nr = Read ();
-                    }
-                    r = Read ();
-                    line++;
-                    column = 1;
-                    skippedComment = true;
-                }
             }
 
             _lastR = r;
@@ -205,7 +194,12 @@ namespace CLanguage.Parser
             // Make sense of it
             //
             var ch = (char)r;
-            if (char.IsDigit (ch)) {
+            if (ch == '\n') {
+                _token = TokenKind.EOL;
+                _value = null;
+                _lastR = Read ();
+            }
+            else if (char.IsDigit (ch)) {
                 var onlydigits = true;
                 var islong = false;
                 var isunsigned = false;
@@ -306,7 +300,7 @@ namespace CLanguage.Parser
                     _lastR = r;
                 }
             }
-            else if (r == ',' || r == ';' || r == '?' || r == '(' || r == ')' || r == '{' || r == '}' || r == '[' || r == ']' || r == '~' || r == '%' || r == '^') {
+            else if (r == ',' || r == ';' || r == '?' || r == '(' || r == ')' || r == '{' || r == '}' || r == '[' || r == ']' || r == '~' || r == '%' || r == '^' || r == '#') {
                 _token = r;
                 _value = null;
                 _lastR = Read ();

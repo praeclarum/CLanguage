@@ -30,7 +30,8 @@ namespace CLanguage.Parser
 
         public TranslationUnit ParseTranslationUnit (Report report, params IEnumerable<Token>[] tokens)
         {
-            var lexer = new ParserInput (tokens);
+            var preprocessor = new Preprocessor (tokens);
+            var lexer = new ParserInput (preprocessor.Preprocess ());
 
             _tu = new TranslationUnit ();
             //lexer.IsTypedef = _tu.Typedefs.ContainsKey;

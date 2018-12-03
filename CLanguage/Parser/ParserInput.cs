@@ -10,9 +10,9 @@ namespace CLanguage.Parser
         Token[] tokens;
         int index = -1;
 
-        public ParserInput (params IEnumerable<Token>[] tokens)
+        public ParserInput (params Token[] tokens)
         {
-            this.tokens = tokens.SelectMany (x => x).ToArray ();
+            this.tokens = tokens;
         }
 
         public bool advance ()
