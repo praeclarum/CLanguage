@@ -75,7 +75,7 @@ namespace CLanguage.Interpreter
             //
             var cinitBody = new Block ();
             foreach (var tu in tus) {
-                AddStatementDeclarations (tu);
+                AddStatementDeclarations (tu, tu);
                 cinitBody.Statements.AddRange (tu.InitStatements);
             }
 
@@ -135,7 +135,8 @@ namespace CLanguage.Interpreter
                         if ((multi.Specifiers.StorageClassSpecifier & StorageClassSpecifier.Typedef) != 0) {
                             if (idecl.Declarator != null) {
                                 var name = idecl.Declarator.DeclaredIdentifier;
-                                //Typedefs[name] = decl;
+                                var ttype = context.MakeCType (multi.Specifiers, idecl.Declarator, idecl.Initializer, block);
+                                block.Typedefs[name] = ttype;
                             }
                         }
                         else {

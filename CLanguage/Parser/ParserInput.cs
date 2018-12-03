@@ -9,8 +9,9 @@ namespace CLanguage.Parser
     {
         Token[] tokens;
         int index = -1;
+        readonly HashSet<string> typedefs = new HashSet<string> ();
 
-        public ParserInput (params Token[] tokens)
+        public ParserInput (Token[] tokens)
         {
             this.tokens = tokens;
         }
@@ -24,10 +25,17 @@ namespace CLanguage.Parser
             return false;
         }
 
-        public int token () => tokens[index].Kind;
+        public int token () => CurrentToken.Kind;
 
-        public object value () => tokens[index].Value;
+        public object value () => CurrentToken.Value;
 
-        public Token CurrentToken => tokens[index];
+        public Token CurrentToken => tokens[index].Kind == TokenKind.IDENTIFIER && typedefs.Contains((string)tokens[index].Value) ?
+            tokens[index].AsKind (TokenKind.TYPE_NAME) :
+            tokens[index];
+
+        public void AddTypedef (string declaredIdentifier)
+        {
+            typedefs.Add (declaredIdentifier);
+        }
     }
 }

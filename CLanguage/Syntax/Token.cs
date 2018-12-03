@@ -23,6 +23,11 @@ namespace CLanguage.Syntax
 
         public override string ToString () => $"\"{Text}\": {Parser.CParser.yyname (Kind)}";
 
+        public Token AsKind (int kind)
+        {
+            return new Token (kind, Value, Location, EndLocation);
+        }
+
         public override bool Equals (object obj) => obj is Token && Equals ((Token)obj);
 
         public bool Equals (Token other)

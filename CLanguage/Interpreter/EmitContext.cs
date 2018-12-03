@@ -312,6 +312,21 @@ namespace CLanguage.Interpreter
             }
 
             //
+            // Typedefs
+            //
+            if (specs.TypeSpecifiers.Count == 1 && specs.TypeSpecifiers[0].Kind == TypeSpecifierKind.Typename) {
+                var name = specs.TypeSpecifiers[0].Name;
+
+                var t = block.LookupTypedef (name);
+
+                if (t != null)
+                    return t;
+
+                Report.Error (103, "The name '{0}' does not exist in the current context", name);
+                return CBasicType.SignedInt;
+            }
+
+            //
             // Rest
             //
             throw new NotImplementedException ();

@@ -69,5 +69,10 @@ namespace CLanguage.Syntax
         {
             Variables.Add (new CompiledVariable (name, 0, ctype));
         }
+
+        public CType LookupTypedef (string name)
+        {
+            return Typedefs.TryGetValue (name, out var t) ? t : null;
+        }
     }
 }

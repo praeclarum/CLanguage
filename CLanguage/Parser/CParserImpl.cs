@@ -15,7 +15,7 @@ namespace CLanguage.Parser
         static public int yacc_verbose_flag;
 
         TranslationUnit _tu;
-        //Lexer _lexer;
+        ParserInput lexer;
 
         public CParser()
         {
@@ -31,7 +31,7 @@ namespace CLanguage.Parser
         public TranslationUnit ParseTranslationUnit (Report report, params IEnumerable<Token>[] tokens)
         {
             var preprocessor = new Preprocessor (tokens);
-            var lexer = new ParserInput (preprocessor.Preprocess ());
+            lexer = new ParserInput (preprocessor.Preprocess ());
 
             _tu = new TranslationUnit ();
             //lexer.IsTypedef = _tu.Typedefs.ContainsKey;
@@ -40,16 +40,20 @@ namespace CLanguage.Parser
                 yyparse (lexer);
             }
             catch (NotImplementedException err) {
-                report.Error (9003, "Feature not implemented: " + err.Message);
+                report.Error (9003, lexer.CurrentToken.Location, lexer.CurrentToken.EndLocation, 
+                    "Feature not implemented: " + err.Message);
             }
             catch (NotSupportedException err) {
-                report.Error (9002, "Feature not supported: " + err.Message);
+                report.Error (9002, lexer.CurrentToken.Location, lexer.CurrentToken.EndLocation,
+                    "Feature not supported: " + err.Message);
             }
             catch (Exception err) when (err.Message == "irrecoverable syntax error") {
-                report.Error (1001, lexer.CurrentToken.Location, lexer.CurrentToken.EndLocation, "Syntax error");
+                report.Error (1001, lexer.CurrentToken.Location, lexer.CurrentToken.EndLocation,
+                    "Syntax error");
             }
             catch (Exception err) {
-                report.Error (9001, "Internal compiler error: " + err.Message);
+                report.Error (9001, lexer.CurrentToken.Location, lexer.CurrentToken.EndLocation,
+                    "Internal compiler error: " + err.Message);
             }
 
             //lexer.IsTypedef = null;
@@ -59,9 +63,19 @@ namespace CLanguage.Parser
         void AddDeclaration(object a)
         {
             _tu.AddStatement ((Statement)a);
+
+            if (a is MultiDeclaratorStatement mds) {
+                switch (mds.Specifiers.StorageClassSpecifier) {
+                    case StorageClassSpecifier.Typedef:
+                        foreach (var i in mds.InitDeclarators) {
+                            lexer.AddTypedef (i.Declarator.DeclaredIdentifier);
+                        }
+                        break;
+                }
+            }
         }
 
-        Declarator FixPointerAndArrayPrecedence(Declarator d)
+        Declarator FixPointerAndArrayPrecedence (Declarator d)
         {
             if (d is PointerDeclarator && d.InnerDeclarator != null && d.InnerDeclarator is ArrayDeclarator)
             {

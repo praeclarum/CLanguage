@@ -26,7 +26,7 @@ void main () {
 }");
         }
 
-        [TestMethod, Ignore]
+        [TestMethod]
         public void DeclareGlobal ()
         {
             Run (@"
