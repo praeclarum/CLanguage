@@ -79,57 +79,7 @@ namespace CLanguage.Interpreter
                 }
             }
 
-            //
-            // Look for global variables
-            //
-            for (var i = 0; i < exe.Globals.Count; i++) {
-                if (exe.Globals[i].Name == name) {
-                    return new ResolvedVariable (VariableScope.Global, exe.Globals[i].Offset, exe.Globals[i].VariableType);
-                }
-            }
-
-            //
-            // Look for global functions
-            //
-            BaseFunction ff = null;
-            var fi = -1;
-            var fs = 0;
-            for (var i = 0; i < exe.Functions.Count; i++) {
-                var f = exe.Functions[i];
-                if (f.Name == name && string.IsNullOrEmpty (f.NameContext)) {
-                    var score = f.FunctionType.ScoreParameterTypeMatches (argTypes);
-                    if (score > fs) {
-                        ff = f;
-                        fi = i;
-                        fs = score;
-                    }
-                }
-            }
-            if (ff != null) {
-                return new ResolvedVariable (ff, fi);
-            }
-
-            Report.Error (103, "The name '" + name + "' does not exist in the current context");
-            return null;
-        }
-
-        public override ResolvedVariable ResolveMethodFunction (CStructType structType, CStructMethod method)
-        {
-            if (method.MemberType is CFunctionType ftype) {
-
-                var nameContext = structType.Name;
-
-                var funcs = exe.Functions.Select ((f, i) => (f, i)).Where (x => x.Item1.NameContext == nameContext && x.Item1.Name == method.Name);
-                for (var i = 0; i < exe.Functions.Count; i++) {
-                    var f = exe.Functions[i];
-                    if (f.NameContext == nameContext && f.Name == method.Name && f.FunctionType.ParameterTypesEqual (ftype)) {
-                        return new ResolvedVariable (f, i);
-                    }
-                }
-            }
-
-            Report.Error (9000, $"No definition for '{structType.Name}::{method.Name}' found");
-            return null;
+            return base.ResolveVariable (name, argTypes);
         }
 
         public override void BeginBlock (Block b)

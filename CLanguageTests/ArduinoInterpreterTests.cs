@@ -27,34 +27,36 @@ namespace CLanguage.Tests
         [TestMethod]
         public void Sizes ()
         {
-            var ec = new ExecutableContext (new ArduinoTestMachineInfo (), new Report (new TestPrinter ()));
+            var printer = new TestPrinter ();
+            var mi = new TestMachineInfo ();
+            var ec = new ExecutableContext (new Executable (mi), new Report (printer));
 
             Interpreter.CompiledVariable ParseVariable (string code)
             {
-                var exe = Compile (code, MachineInfo.Windows32, new TestPrinter ());
+                var exe = Compile (code, mi, printer);
                 return exe.Globals.Skip (1).First ();
             }
 
             var charV = ParseVariable ("char v;");
-            Assert.AreEqual (charV.VariableType.GetByteSize (ec), 1);
+            Assert.AreEqual (1, charV.VariableType.GetByteSize (ec));
 
             var intV = ParseVariable ("int v;");
-            Assert.AreEqual (intV.VariableType.GetByteSize (ec), 2);
+            Assert.AreEqual (2, intV.VariableType.GetByteSize (ec));
 
             var shortIntV = ParseVariable ("short int v;");
-            Assert.AreEqual (shortIntV.VariableType.GetByteSize (ec), 2);
+            Assert.AreEqual (2, shortIntV.VariableType.GetByteSize (ec));
 
             var unsignedLongV = ParseVariable ("unsigned long v;");
-            Assert.AreEqual (unsignedLongV.VariableType.GetByteSize (ec), 4);
+            Assert.AreEqual (4, unsignedLongV.VariableType.GetByteSize (ec));
 
             var unsignedLongLongV = ParseVariable ("unsigned long long v;");
-            Assert.AreEqual (unsignedLongLongV.VariableType.GetByteSize (ec), 8);
+            Assert.AreEqual (8, unsignedLongLongV.VariableType.GetByteSize (ec));
 
             var intPV = ParseVariable ("int *v;");
-            Assert.AreEqual (intPV.VariableType.GetByteSize (ec), 2);
+            Assert.AreEqual (2, intPV.VariableType.GetByteSize (ec));
 
             var longPV = ParseVariable ("long *v;");
-            Assert.AreEqual (longPV.VariableType.GetByteSize (ec), 2);
+            Assert.AreEqual (2, longPV.VariableType.GetByteSize (ec));
         }
 
         public const string BlinkCode = @"

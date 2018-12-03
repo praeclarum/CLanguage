@@ -7,6 +7,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml.Linq;
+using CLanguage.Types;
 
 namespace CLanguage.Tests
 {
@@ -113,6 +114,27 @@ struct SerialClass Serial;
             var expected = state.ReadArg(0);
             var actual = state.ReadArg(1);
             Assert.AreEqual ((int)expected, (int)actual);
+        }
+
+        public override ResolvedVariable GetUnresolvedVariable (string name, CType[] argTypes, EmitContext context)
+        {
+            if (name.Length == 9 && name[0] == 'B') {
+                byte b = 0;
+                for (var i = 0; i < 8; i++) {
+                    var c = name[i + 1];
+                    var on = false;
+                    if (c == '0') { }
+                    else if (c == '1')
+                        on = true;
+                    else
+                        return base.GetUnresolvedVariable (name, argTypes, context);
+                    if (on) {
+                        b = (byte)(b | (1 << (7 - i)));
+                    }
+                }
+                return new ResolvedVariable (b, CBasicType.UnsignedChar);
+            }
+            return base.GetUnresolvedVariable (name, argTypes, context);
         }
 
         public class TestArduino

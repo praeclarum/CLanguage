@@ -19,7 +19,7 @@ namespace CLanguage.Tests
             return exe.Globals.Skip (1).First ().VariableType;
         }
 
-        EmitContext _c = new ExecutableContext (MachineInfo.Windows32, new Report (new Report.TextWriterPrinter (Console.Out)));
+        EmitContext _c = new ExecutableContext (new Executable (MachineInfo.Windows32), new Report (new Report.TextWriterPrinter (Console.Out)));
 
         [TestMethod]
         public void BasicSizes()

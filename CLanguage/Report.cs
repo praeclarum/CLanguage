@@ -50,6 +50,19 @@ namespace CLanguage
             Error (code, Syntax.Location.Null, Syntax.Location.Null, String.Format (format, args));
         }
 
+        public void ErrorCode (int code, params object[] args)
+        {
+            string m = "";
+            switch (code) {
+                case 103:
+                    m = "The name '{0}' does not exist in the current context";
+                    break;
+                default:
+                    Error (code, string.Join (", ", args));
+                    return;
+            }
+            Error (code, m, args);
+        }
 
         public abstract class AbstractMessage
         {

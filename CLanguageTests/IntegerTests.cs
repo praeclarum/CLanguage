@@ -13,7 +13,7 @@ namespace CLanguage.Tests
 		void TestPromote (MachineInfo mi, string type, int resultBytes, Signedness signedness)
 		{
 			var report = new Report (new TestPrinter ());
-			var context = new ExecutableContext (mi, report);
+			var context = new ExecutableContext (new Executable (mi), report);
 
 			var compiler = new Compiler (mi, report);
 			compiler.AddCode ("test.c", type + " v;");
@@ -36,7 +36,7 @@ namespace CLanguage.Tests
             var compiler = new Compiler (mi, report);
             compiler.AddCode ("test.c", type1 + " v1; " + type2 + " v2;");
             var exe = compiler.Compile ();
-            var context = new ExecutableContext (mi, report);
+            var context = new ExecutableContext (new Executable (mi), report);
 
             var ty1 = exe.Globals.First (x => x.Name == "v1").VariableType;
 			Assert.IsInstanceOfType (ty1, typeof(CBasicType));

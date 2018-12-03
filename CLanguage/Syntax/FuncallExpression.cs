@@ -137,7 +137,7 @@ namespace CLanguage.Syntax
                 if (res != null) {
                     return new Overload {
                         CType = res.VariableType,
-                        Emit = res.Emit
+                        Emit = res.EmitPointer
                     };
                 }
                 else {

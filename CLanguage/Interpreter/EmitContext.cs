@@ -33,17 +33,36 @@ namespace CLanguage.Interpreter
 
         public virtual CType ResolveTypeName (string typeName)
         {
-            return ParentContext?.ResolveTypeName (typeName);
+            var r = ParentContext?.ResolveTypeName (typeName);
+            if (r != null)
+                return r;
+
+            Report.ErrorCode (103, typeName);
+            return CBasicType.SignedInt;
         }
 
         public virtual ResolvedVariable ResolveVariable (string name, CType[] argTypes)
         {
-            return ParentContext?.ResolveVariable (name, argTypes);
+            var r = ParentContext?.ResolveVariable (name, argTypes);
+            if (r != null)
+                return r;
+
+            r = MachineInfo.GetUnresolvedVariable (name, argTypes, this);
+            if (r != null)
+                return r;
+
+            Report.ErrorCode (103, name);
+            return null;
         }
 
         public virtual ResolvedVariable ResolveMethodFunction (CStructType structType, CStructMethod method)
         {
-            return ParentContext?.ResolveMethodFunction (structType, method);
+            var r = ParentContext?.ResolveMethodFunction (structType, method);
+            if (r != null)
+                return r;
+
+            Report.Error (9000, $"No definition for '{structType.Name}::{method.Name}' found");
+            return null;
         }
 
         public virtual void BeginBlock (Block b) { }
@@ -323,11 +342,7 @@ namespace CLanguage.Interpreter
             //
             if (specs.TypeSpecifiers.Count == 1 && specs.TypeSpecifiers[0].Kind == TypeSpecifierKind.Typename) {
                 var name = specs.TypeSpecifiers[0].Name;
-                var t = ResolveTypeName (name);
-                if (t != null)
-                    return t;
-                Report.Error (103, "The name '{0}' does not exist in the current context", name);
-                return CBasicType.SignedInt;
+                return ResolveTypeName (name);
             }
 
             //

@@ -50,6 +50,9 @@ namespace CLanguage.Syntax
                         else if (variable.Scope == VariableScope.Local) {
                             ec.Emit (OpCode.LoadLocal, variable.Address);
                         }
+                        else if (variable.Scope == VariableScope.MachineConstant) {
+                            ec.Emit (OpCode.LoadConstant, variable.Constant);
+                        }
                         else {
                             throw new NotSupportedException ("Cannot evaluate variable scope '" + variable.Scope + "'");
                         }
@@ -79,7 +82,6 @@ namespace CLanguage.Syntax
 				}
 			}
 			else {
-                ec.Report.Error (103, $"The name `{VariableName}` does not exist in the current context.");
 				ec.Emit (OpCode.LoadConstant, 0);
 			}
         }
@@ -89,10 +91,9 @@ namespace CLanguage.Syntax
             var res = ec.ResolveVariable (VariableName, null);
 
             if (res != null) {
-                res.Emit (ec);
+                res.EmitPointer (ec);
             }
             else {
-                ec.Report.Error (103, $"The name `{VariableName}` does not exist in the current context.");
                 ec.Emit (OpCode.LoadConstant, 0);
             }
         }

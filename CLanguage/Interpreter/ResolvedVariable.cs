@@ -5,10 +5,11 @@ namespace CLanguage.Interpreter
 {
     public class ResolvedVariable
     {
-        public VariableScope Scope { get; private set; }
-        public int Address { get; private set; }
-        public CType VariableType { get; private set; }
-        public BaseFunction Function { get; private set; }
+        public VariableScope Scope { get; }
+        public int Address { get; }
+        public CType VariableType { get; }
+        public BaseFunction Function { get; }
+        public Value Constant { get; }
 
         public ResolvedVariable (VariableScope scope, int address, CType variableType)
         {
@@ -25,26 +26,38 @@ namespace CLanguage.Interpreter
             VariableType = Function.FunctionType;
         }
 
-        public void Emit (EmitContext ec)
+        public ResolvedVariable (Value constantValue, CType variableType)
         {
-            if (Scope == VariableScope.Function) {
-                ec.Emit (OpCode.LoadConstant, Value.Pointer (Address));
-            }
-            else if (Scope == VariableScope.Global) {
-                ec.Emit (OpCode.LoadConstant, Value.Pointer (Address));
-            }
-            else if (Scope == VariableScope.Arg) {
-                ec.Emit (OpCode.LoadConstant, Value.Pointer (Address));
-                ec.Emit (OpCode.LoadFramePointer);
-                ec.Emit (OpCode.OffsetPointer);
-            }
-            else if (Scope == VariableScope.Local) {
-                ec.Emit (OpCode.LoadConstant, Value.Pointer (Address));
-                ec.Emit (OpCode.LoadFramePointer);
-                ec.Emit (OpCode.OffsetPointer);
-            }
-            else {
-                throw new NotSupportedException ("Cannot get address of variable scope '" + Scope + "'");
+            Scope = VariableScope.MachineConstant;
+            Constant = constantValue;
+            Address = 0;
+            VariableType = variableType;
+        }
+
+        public void EmitPointer (EmitContext ec)
+        {
+            switch (Scope) {
+                case VariableScope.Function:
+                    ec.Emit (OpCode.LoadConstant, Value.Pointer (Address));
+                    break;
+                case VariableScope.Global:
+                    ec.Emit (OpCode.LoadConstant, Value.Pointer (Address));
+                    break;
+                case VariableScope.Arg:
+                    ec.Emit (OpCode.LoadConstant, Value.Pointer (Address));
+                    ec.Emit (OpCode.LoadFramePointer);
+                    ec.Emit (OpCode.OffsetPointer);
+                    break;
+                case VariableScope.Local:
+                    ec.Emit (OpCode.LoadConstant, Value.Pointer (Address));
+                    ec.Emit (OpCode.LoadFramePointer);
+                    ec.Emit (OpCode.OffsetPointer);
+                    break;
+                case VariableScope.MachineConstant:
+                    ec.Emit (OpCode.LoadConstant, 0);
+                    break;
+                default:
+                    throw new NotSupportedException ("Cannot get address of variable scope '" + Scope + "'");
             }
         }
     }
@@ -55,5 +68,6 @@ namespace CLanguage.Interpreter
         Arg,
         Local,
         Function,
+        MachineConstant,
     }
 }

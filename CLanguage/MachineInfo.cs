@@ -60,5 +60,10 @@ namespace CLanguage
 			LongDoubleSize = 8,
 			PointerSize = 8,
 		};
+
+        public virtual ResolvedVariable GetUnresolvedVariable (string name, CType[] argTypes, EmitContext context)
+        {
+            return null;
+        }
     }
 }

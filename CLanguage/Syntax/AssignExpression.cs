@@ -69,7 +69,7 @@ namespace CLanguage.Syntax
 
                 if (v == null) {
                     ec.Emit (OpCode.Pop);
-                    ec.Report.Error (103, $"The name `{variableName}` does not exist in the current context.");
+                    ec.Report.ErrorCode (103, variableName);
                 }
                 else if (v.Scope == VariableScope.Global) {
                     ec.Emit (OpCode.StoreGlobal, v.Address);

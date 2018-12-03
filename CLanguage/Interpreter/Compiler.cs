@@ -63,7 +63,7 @@ namespace CLanguage.Interpreter
         public Executable Compile ()
 		{
 			var exe = new Executable (options.MachineInfo);
-            var exeContext = new ExecutableContext (options.MachineInfo, options.Report);
+            var exeContext = new ExecutableContext (exe, options.Report);
 
             // Put something at the zero address so we don't get 0 addresses of globals
             exe.AddGlobal ("__zero__", CBasicType.SignedInt);
