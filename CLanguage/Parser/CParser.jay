@@ -33,6 +33,8 @@ namespace CLanguage.Parser
 
 %token CASE DEFAULT IF ELSE SWITCH WHILE DO FOR GOTO CONTINUE BREAK RETURN
 
+%token EOL
+
 %start translation_unit
 %%
 
@@ -968,6 +970,12 @@ declaration_list
 		l.Add((Declaration)$1);
 		$$ = l;
 	}
+    | preproc declaration
+    {
+        var l = new List<Declaration>();
+        l.Add((Declaration)$2);
+        $$ = l;
+    }
 	| declaration_list declaration
 	{
 		var l = (List<Declaration>)$1;
@@ -975,6 +983,11 @@ declaration_list
 		$$ = l;
 	}
 	;
+    
+preproc
+    : EOL
+    | '#'
+    ;
 
 
 

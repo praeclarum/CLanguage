@@ -65,9 +65,9 @@ void f () {
         public void HexNumbers ()
         {
             var lex = new Lexer ("", "0x201");
-            lex.advance ();
-            Assert.AreEqual (Token.CONSTANT, lex.token ());
-            Assert.AreEqual (513, lex.value ());
+            lex.Advance ();
+            Assert.AreEqual (TokenKind.CONSTANT, lex.CurrentToken.Kind);
+            Assert.AreEqual (513, lex.CurrentToken.Value);
         }
 
         [TestMethod]
@@ -96,9 +96,9 @@ void f () {
         void AssertId (string expectedId, string code = null)
         {
             var lex = new Lexer ("", code ?? expectedId);
-            lex.advance ();
-            Assert.AreEqual (Token.IDENTIFIER, lex.token ());
-            Assert.AreEqual (expectedId, lex.value ());
+            lex.Advance ();
+            Assert.AreEqual (TokenKind.IDENTIFIER, lex.CurrentToken.Kind);
+            Assert.AreEqual (expectedId, lex.CurrentToken.Value);
         }
     }
 }

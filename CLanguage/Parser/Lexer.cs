@@ -6,10 +6,8 @@ using CLanguage.Syntax;
 
 namespace CLanguage.Parser
 {
-    public class Lexer : yyParser.yyInput
+    public class Lexer
     {
-        Preprocessor _pp;
-
         int _token = -1;
         object _value = null;
 
@@ -17,26 +15,30 @@ namespace CLanguage.Parser
         char[] _chbuf = new char[4 * 1024];
         int _chbuflen = 0;
 
-        Location location = Location.Null;
+        Location location;
+        Location endLocation;
         int line = 1;
         int column = 1;
 
-        public Report Report => _pp.Report;
+        public Report Report { get; }
+        public Document Document { get; }
 
-        public Lexer(Preprocessor pp)
+        public Token CurrentToken => new Token (_token, _value, location, endLocation);
+
+        public Lexer (Document document, Report report = null)
         {
-            _pp = pp;
-            location = new Location (pp.CurrentFilePath, 1, 1);
+            Report = report ?? new Report ();
+            Document = document;
+            location = new Location (document, 0, 1, 1);
+            endLocation = location;
         }
 
         public Lexer (string name, string code, Report report = null)
-            : this (new Preprocessor (name, code, report))
+            : this (new Document (name, code), report)
         {
         }
 
-        public Location CurrentLocation => location;
-
-        bool Eof()
+        bool Eof ()
         {
             _value = null;
             _token = -1;
@@ -45,71 +47,86 @@ namespace CLanguage.Parser
 
         public Func<string, bool> IsTypedef { get; set; }
 
-        static readonly Dictionary<string, int> _kwTokens = new Dictionary<string, int>()
+        static readonly Dictionary<string, int> _kwTokens = new Dictionary<string, int> ()
         {
-            { "void", Token.VOID },
-            { "char", Token.CHAR },
-            { "short", Token.SHORT },
-            { "int", Token.INT },
-            { "long", Token.LONG },
-            { "float", Token.FLOAT },
-            { "double", Token.DOUBLE },
-            { "signed", Token.SIGNED },
-            { "unsigned", Token.UNSIGNED },
-            { "bool", Token.BOOL },
-            { "struct", Token.STRUCT },
-            { "class", Token.CLASS },
-            { "union", Token.UNION },
-            { "enum", Token.ENUM },
-            { "typedef", Token.TYPEDEF },
-            { "extern", Token.EXTERN },
-            { "static", Token.STATIC },
-            { "auto", Token.AUTO },
-            { "register", Token.REGISTER },
-            { "inline", Token.INLINE },
-            { "const", Token.CONST },
-            { "restrict", Token.RESTRICT },
-            { "volatile", Token.VOLATILE },
-            { "goto", Token.GOTO },
-            { "continue", Token.CONTINUE },
-            { "break", Token.BREAK },
-            { "return", Token.RETURN },
-            { "if", Token.IF },
-            { "else", Token.ELSE },
-            { "for", Token.FOR },
-            { "while", Token.WHILE },
-            { "true", Token.TRUE },
-            { "false", Token.FALSE },
+            { "void", TokenKind.VOID },
+            { "char", TokenKind.CHAR },
+            { "short", TokenKind.SHORT },
+            { "int", TokenKind.INT },
+            { "long", TokenKind.LONG },
+            { "float", TokenKind.FLOAT },
+            { "double", TokenKind.DOUBLE },
+            { "signed", TokenKind.SIGNED },
+            { "unsigned", TokenKind.UNSIGNED },
+            { "bool", TokenKind.BOOL },
+            { "struct", TokenKind.STRUCT },
+            { "class", TokenKind.CLASS },
+            { "union", TokenKind.UNION },
+            { "enum", TokenKind.ENUM },
+            { "typedef", TokenKind.TYPEDEF },
+            { "extern", TokenKind.EXTERN },
+            { "static", TokenKind.STATIC },
+            { "auto", TokenKind.AUTO },
+            { "register", TokenKind.REGISTER },
+            { "inline", TokenKind.INLINE },
+            { "const", TokenKind.CONST },
+            { "restrict", TokenKind.RESTRICT },
+            { "volatile", TokenKind.VOLATILE },
+            { "goto", TokenKind.GOTO },
+            { "continue", TokenKind.CONTINUE },
+            { "break", TokenKind.BREAK },
+            { "return", TokenKind.RETURN },
+            { "if", TokenKind.IF },
+            { "else", TokenKind.ELSE },
+            { "for", TokenKind.FOR },
+            { "while", TokenKind.WHILE },
+            { "true", TokenKind.TRUE },
+            { "false", TokenKind.FALSE },
         };
 
         public static readonly HashSet<int> KeywordTokens = new HashSet<int> (_kwTokens.Values);
         public static readonly HashSet<int> OperatorTokens = new HashSet<int> {
-            Token.EQ_OP,
-            Token.GE_OP,
-            Token.LE_OP,
-            Token.NE_OP,
-            Token.OR_OP,
-            Token.AND_OP,
-            Token.DEC_OP,
-            Token.INC_OP,
-            Token.PTR_OP,
-            Token.LEFT_OP,
-            Token.RIGHT_OP,
+            TokenKind.EQ_OP,
+            TokenKind.GE_OP,
+            TokenKind.LE_OP,
+            TokenKind.NE_OP,
+            TokenKind.OR_OP,
+            TokenKind.AND_OP,
+            TokenKind.DEC_OP,
+            TokenKind.INC_OP,
+            TokenKind.PTR_OP,
+            TokenKind.LEFT_OP,
+            TokenKind.RIGHT_OP,
         };
+
+        int nextPosition = 0;
+
+        int Read ()
+        {
+            if (nextPosition < Document.Content.Length) {
+                var r = Document.Content[nextPosition];
+                nextPosition++;
+                return r;
+            }
+            return -1;
+        }
+
+        int Peek ()
+        {
+            if (nextPosition < Document.Content.Length) {
+                return Document.Content[nextPosition];
+            }
+            return -1;
+        }
 
         public void SkipWhiteSpace ()
         {
-            if (_pp.CurrentFilePath != location.Document) {
-                line = 1;
-                column = 1;
-            }
-
             //
             // Skip whitespace
             //
             var r = _lastR;
             if (r == -2) {
-                r = _pp.Read ();
+                r = Read ();
             }
 
             //
@@ -122,45 +139,34 @@ namespace CLanguage.Parser
                 //
                 while (r >= 0 && r <= ' ') {
                     if (r == '\n') {
-                        line++;
-                        column = 1;
+                        break;
                     }
-                    r = _pp.Read ();
+                    r = Read ();
                 }
 
                 skippedComment = false;
 
-                if (r == '/' && _pp.Peek () == '/') {
-                    var nr = _pp.Read ();
+                if (r == '/' && Peek () == '/') {
+                    var nr = Read ();
                     while (nr > 0 && nr != '\n') {
-                        nr = _pp.Read ();
+                        nr = Read ();
                     }
-                    r = _pp.Read ();
+                    r = Read ();
                     line++;
                     column = 1;
                     skippedComment = true;
                 }
-                else if (r == '/' && _pp.Peek () == '*') {
-                    var nr = _pp.Read ();
-                    while (nr > 0 && !(nr == '*' && _pp.Peek () == '/')) {
+                else if (r == '/' && Peek () == '*') {
+                    var nr = Read ();
+                    while (nr > 0 && !(nr == '*' && Peek () == '/')) {
                         if (nr == '\n') {
                             line++;
                             column = 1;
                         }
-                        nr = _pp.Read ();
+                        nr = Read ();
                     }
-                    _pp.Read (); // Consume ending /
-                    r = _pp.Read ();
-                    skippedComment = true;
-                }
-                else if (r == '#') {
-                    var nr = _pp.Read ();
-                    while (nr > 0 && nr != '\n') {
-                        nr = _pp.Read ();
-                    }
-                    r = _pp.Read ();
-                    line++;
-                    column = 1;
+                    Read (); // Consume ending /
+                    r = Read ();
                     skippedComment = true;
                 }
             }
@@ -168,30 +174,34 @@ namespace CLanguage.Parser
             _lastR = r;
         }
 
-        public bool advance()
+        public bool Advance ()
         {
             SkipWhiteSpace ();
 
-            var r = _lastR;            
+            var r = _lastR;
 
             //
             // Are we done?
             //
-            if (r == -1)
-            {
-                return Eof();
+            if (r == -1) {
+                return Eof ();
             }
 
             //
             // Record where we are
             //
-            location = new Location (_pp.CurrentFilePath, line, column);
+            location = new Location (location.Document, nextPosition - 1, line, column);
 
             //
             // Make sense of it
             //
             var ch = (char)r;
-            if (char.IsDigit (ch)) {
+            if (ch == '\n') {
+                _token = TokenKind.EOL;
+                _value = null;
+                _lastR = Read ();
+            }
+            else if (char.IsDigit (ch)) {
                 var onlydigits = true;
                 var islong = false;
                 var isunsigned = false;
@@ -199,7 +209,7 @@ namespace CLanguage.Parser
                 var ishex = false;
                 _chbuf[0] = ch;
                 _chbuflen = 0;
-                while (ch == '.' || char.IsDigit (ch) || ch == 'E' || ch == 'e' || ch == 'f' || ch == 'F' || ch == 'u' || ch == 'U' || ch == 'l' || ch == 'L' || (!ishex && ch=='x')) {
+                while (ch == '.' || char.IsDigit (ch) || ch == 'E' || ch == 'e' || ch == 'f' || ch == 'F' || ch == 'u' || ch == 'U' || ch == 'l' || ch == 'L' || (!ishex && ch == 'x')) {
                     if (ch == 'l' || ch == 'L') {
                         islong = true;
                     }
@@ -216,7 +226,7 @@ namespace CLanguage.Parser
                         onlydigits = onlydigits && char.IsDigit (ch);
                         _chbuf[_chbuflen++] = ch;
                     }
-                    r = _pp.Read ();
+                    r = Read ();
                     ch = (char)r;
                 }
                 _lastR = r;
@@ -251,14 +261,14 @@ namespace CLanguage.Parser
                     }
                 }
 
-                _token = Token.CONSTANT;
+                _token = TokenKind.CONSTANT;
             }
             else if (r == '=') {
-                r = _pp.Read ();
+                r = Read ();
                 if (r == '=') {
-                    _token = Token.EQ_OP;
+                    _token = TokenKind.EQ_OP;
                     _value = null;
-                    _lastR = _pp.Read ();
+                    _lastR = Read ();
                 }
                 else {
                     _token = '=';
@@ -267,11 +277,11 @@ namespace CLanguage.Parser
                 }
             }
             else if (r == '!') {
-                r = _pp.Read ();
+                r = Read ();
                 if (r == '=') {
-                    _token = Token.NE_OP;
+                    _token = TokenKind.NE_OP;
                     _value = null;
-                    _lastR = _pp.Read ();
+                    _lastR = Read ();
                 }
                 else {
                     _token = '!';
@@ -280,11 +290,11 @@ namespace CLanguage.Parser
                 }
             }
             else if (r == ':') {
-                r = _pp.Read ();
+                r = Read ();
                 if (r == ':') {
-                    _token = Token.COLONCOLON;
+                    _token = TokenKind.COLONCOLON;
                     _value = null;
-                    _lastR = _pp.Read ();
+                    _lastR = Read ();
                 }
                 else {
                     _token = ':';
@@ -292,15 +302,15 @@ namespace CLanguage.Parser
                     _lastR = r;
                 }
             }
-            else if (r == ',' || r == ';' || r == '?' || r == '(' || r == ')' || r == '{' || r == '}' || r == '[' || r == ']' || r == '~' || r == '%' || r == '^') {
+            else if (r == ',' || r == ';' || r == '?' || r == '(' || r == ')' || r == '{' || r == '}' || r == '[' || r == ']' || r == '~' || r == '%' || r == '^' || r == '#') {
                 _token = r;
                 _value = null;
-                _lastR = _pp.Read ();
+                _lastR = Read ();
             }
             else if (r == '.') {
-                var nr = _pp.Read ();
+                var nr = Read ();
 
-                if (nr == '.' && _pp.Peek () == '.') {
+                if (nr == '.' && Peek () == '.') {
                     throw new NotImplementedException ();
                 }
                 else {
@@ -310,10 +320,10 @@ namespace CLanguage.Parser
                 }
             }
             else if (r == '*' || r == '/') {
-                var nr = _pp.Read ();
+                var nr = Read ();
 
                 if (nr == '=') {
-                    _token = (r == '*') ? Token.MUL_ASSIGN : Token.DIV_ASSIGN;
+                    _token = (r == '*') ? TokenKind.MUL_ASSIGN : TokenKind.DIV_ASSIGN;
                     _value = null;
                     _lastR = nr;
                 }
@@ -324,16 +334,16 @@ namespace CLanguage.Parser
                 }
             }
             else if (r == '&') {
-                var nr = _pp.Read ();
+                var nr = Read ();
 
                 if (nr == '&') {
-                    nr = _pp.Read ();
+                    nr = Read ();
 
                     if (nr == '=') {
                         throw new NotImplementedException ();
                     }
                     else {
-                        _token = Token.AND_OP;
+                        _token = TokenKind.AND_OP;
                         _value = null;
                         _lastR = nr;
                     }
@@ -348,16 +358,16 @@ namespace CLanguage.Parser
                 }
             }
             else if (r == '|') {
-                var nr = _pp.Read ();
+                var nr = Read ();
 
                 if (nr == '|') {
-                    nr = _pp.Read ();
+                    nr = Read ();
 
                     if (nr == '=') {
                         throw new NotImplementedException ();
                     }
                     else {
-                        _token = Token.OR_OP;
+                        _token = TokenKind.OR_OP;
                         _value = null;
                         _lastR = nr;
                     }
@@ -372,17 +382,17 @@ namespace CLanguage.Parser
                 }
             }
             else if (r == '+') {
-                var nr = _pp.Read ();
+                var nr = Read ();
 
                 if (nr == '=') {
-                    _token = Token.ADD_ASSIGN;
+                    _token = TokenKind.ADD_ASSIGN;
                     _value = null;
-                    _lastR = _pp.Read ();
+                    _lastR = Read ();
                 }
                 else if (nr == '+') {
-                    _token = Token.INC_OP;
+                    _token = TokenKind.INC_OP;
                     _value = null;
-                    _lastR = _pp.Read ();
+                    _lastR = Read ();
                 }
                 else {
                     _token = r;
@@ -391,17 +401,17 @@ namespace CLanguage.Parser
                 }
             }
             else if (r == '-') {
-                var nr = _pp.Read ();
+                var nr = Read ();
 
                 if (nr == '=') {
-                    _token = Token.SUB_ASSIGN;
+                    _token = TokenKind.SUB_ASSIGN;
                     _value = null;
-                    _lastR = _pp.Read ();
+                    _lastR = Read ();
                 }
                 else if (nr == '-') {
-                    _token = Token.DEC_OP;
+                    _token = TokenKind.DEC_OP;
                     _value = null;
-                    _lastR = _pp.Read ();
+                    _lastR = Read ();
                 }
                 else {
                     _token = r;
@@ -410,12 +420,12 @@ namespace CLanguage.Parser
                 }
             }
             else if (r == '<') {
-                var nr = _pp.Read ();
+                var nr = Read ();
 
                 if (nr == '=') {
-                    _token = Token.LE_OP;
+                    _token = TokenKind.LE_OP;
                     _value = null;
-                    _lastR = _pp.Read ();
+                    _lastR = Read ();
                 }
                 else {
                     _token = r;
@@ -424,12 +434,12 @@ namespace CLanguage.Parser
                 }
             }
             else if (r == '>') {
-                var nr = _pp.Read ();
+                var nr = Read ();
 
                 if (nr == '=') {
-                    _token = Token.GE_OP;
+                    _token = TokenKind.GE_OP;
                     _value = null;
-                    _lastR = _pp.Read ();
+                    _lastR = Read ();
                 }
                 else {
                     _token = r;
@@ -439,12 +449,12 @@ namespace CLanguage.Parser
             }
             else if (r == '\"') {
                 _chbuflen = 0;
-                r = _pp.Read ();
+                r = Read ();
                 ch = (char)r;
                 var done = r < 0 || ch == '\"';
                 while (!done && _chbuflen + 1 < _chbuf.Length) {
                     if (ch == '\\') {
-                        r = _pp.Read ();
+                        r = Read ();
                         ch = (char)r;
                         if (r >= 0) {
                             switch (ch) {
@@ -469,7 +479,7 @@ namespace CLanguage.Parser
                                 default: {
                                         if (char.IsWhiteSpace ((char)r)) {
                                             while (r > 0 && r != '\n') {
-                                                r = _pp.Read ();
+                                                r = Read ();
                                             }
                                         }
                                         else {
@@ -478,36 +488,36 @@ namespace CLanguage.Parser
                                     }
                                     break;
                             }
-                            r = _pp.Read ();
+                            r = Read ();
                             ch = (char)r;
                         }
                     }
                     else {
                         _chbuf[_chbuflen++] = ch;
-                        r = _pp.Read ();
+                        r = Read ();
                         ch = (char)r;
                     }
                     done = r < 0 || ch == '\"';
                 }
 
-                _lastR = _pp.Read ();
+                _lastR = Read ();
 
-                _token = Token.STRING_LITERAL;
+                _token = TokenKind.STRING_LITERAL;
                 _value = new string (_chbuf, 0, _chbuflen);
             }
             else if (r == '\'') {
                 _chbuflen = 0;
-                r = _pp.Read ();
+                r = Read ();
                 ch = (char)r;
                 var done = r < 0 || ch == '\'';
                 while (!done && _chbuflen + 1 < _chbuf.Length) {
                     _chbuf[_chbuflen++] = ch;
-                    r = _pp.Read ();
+                    r = Read ();
                     ch = (char)r;
                     done = r < 0 || ch == '\'';
                 }
 
-                if (_chbuflen > 1 && _chbuf[0] == '\\') {                    
+                if (_chbuflen > 1 && _chbuf[0] == '\\') {
                     switch (_chbuf[1]) {
                         case '\\':
                             _chbuf[0] = '\\';
@@ -538,8 +548,8 @@ namespace CLanguage.Parser
                     }
                 }
 
-                _lastR = _pp.Read ();
-                _token = Token.CONSTANT;
+                _lastR = Read ();
+                _token = TokenKind.CONSTANT;
                 _value = _chbuf[0];
             }
             else {
@@ -547,7 +557,7 @@ namespace CLanguage.Parser
                 _chbuflen = 0;
                 while (ch == '_' || char.IsLetterOrDigit (ch) || r > 127) {
                     _chbuf[_chbuflen++] = ch;
-                    r = _pp.Read ();
+                    r = Read ();
                     ch = (char)r;
                 }
 
@@ -566,27 +576,16 @@ namespace CLanguage.Parser
                 }
                 else {
                     if (IsTypedef != null && IsTypedef (id)) {
-                        _token = Token.TYPE_NAME;
+                        _token = TokenKind.TYPE_NAME;
                     }
                     else {
-                        _token = Token.IDENTIFIER;
+                        _token = TokenKind.IDENTIFIER;
                     }
                 }
             }
 
-            Console.WriteLine ("LEX " + _pp.CurrentPosition);
-
+            endLocation = new Location (location.Document, nextPosition, line, column);
             return true;
-        }
-
-        public int token()
-        {
-            return _token;
-        }
-
-        public object value()
-        {
-            return _value;
         }
     }
 }

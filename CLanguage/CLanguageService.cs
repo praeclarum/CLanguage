@@ -17,9 +17,8 @@ namespace CLanguage
 
         public static TranslationUnit ParseTranslationUnit (string code, Report report)
         {
-            var lexer = new Lexer (DefaultName, code, report);
             var parser = new CParser ();
-            return parser.ParseTranslationUnit (lexer);
+            return parser.ParseTranslationUnit (DefaultName, code, report);
         }
 
         public static TranslationUnit ParseTranslationUnit (string code, Report.Printer printer)
@@ -41,22 +40,14 @@ namespace CLanguage
             var report = new Report (printer);
 
             var mi = machineInfo ?? new MachineInfo ();
+            var doc = new Document (DefaultName, code);
+            var options = new Interpreter.CompilerOptions (mi, report, new[] { doc });
 
-            var pp = new Preprocessor (report);
-            pp.AddCode ("machine.h", mi.HeaderCode);
-            pp.AddCode (DefaultName, code);
-            var lexer = new Lexer (pp);
-            var parser = new CParser ();
-            var tu = parser.ParseTranslationUnit (lexer);
-
-            var c = new Interpreter.Compiler (mi, report);
-            c.Add (tu);
+            var c = new Interpreter.Compiler (options);
             var exe = c.Compile ();
 
             return exe;
         }
-
-
 
         public static ColorSpan[] Colorize (string code, MachineInfo machineInfo = null, Report.Printer printer = null)
         {
@@ -65,71 +56,53 @@ namespace CLanguage
             var mi = machineInfo ?? new MachineInfo ();
 
             var name = "colorize.cpp";
-            var pp = new Preprocessor (report, passthrough: true);
-            pp.AddCode (name, code);
-
-            var lexer = new Lexer (pp);
-
-            var tokens = new List<ColorSpan> ();
+            var lexed = new LexedDocument (new Document (name, code), report);
 
             var funcs = new HashSet<string> (mi.InternalFunctions.Where (x => string.IsNullOrEmpty (x.NameContext)).Select (x => x.Name));
 
-            while (true) {
-                lexer.SkipWhiteSpace ();
+            var tokens = lexed.Tokens.Where (x => x.Kind != TokenKind.EOL).Select (ColorizeToken).ToArray ();
 
-                var p = pp.CurrentPosition - 1;
+            return tokens;
 
-                if (!lexer.advance ())
-                    break;
+            ColorSpan ColorizeToken (Token token) => new ColorSpan {
+                Index = token.Location.Index,
+                Length = token.EndLocation.Index - token.Location.Index,
+                Color = GetTokenColor (token),
+            };
 
-                var tok = lexer.token ();
-                var val = lexer.value ();
-
-                var e = pp.CurrentPosition - 1;
-                if (e < 0 || p + 1 >= code.Length) e = code.Length;
-                //Console.WriteLine ($"{e-p}@{p} \"{code.Substring (p, e - p)}\" = {tok} ({val})");
-                var color = ColorizeToken (tok, val, funcs);
-                tokens.Add (new ColorSpan {
-                    Index = p,
-                    Length = e - p,
-                    Color = color,
-                });
+            SyntaxColor GetTokenColor (Token token)
+            {
+                switch (token.Kind) {
+                    case TokenKind.INT:
+                    case TokenKind.SHORT:
+                    case TokenKind.LONG:
+                    case TokenKind.CHAR:
+                    case TokenKind.FLOAT:
+                    case TokenKind.DOUBLE:
+                    case TokenKind.BOOL:
+                        return SyntaxColor.Type;
+                    case TokenKind.IDENTIFIER:
+                        if (token.Value is string s && funcs.Contains (s))
+                            return SyntaxColor.Function;
+                        return SyntaxColor.Identifier;
+                    case TokenKind.CONSTANT:
+                        if (token.Value is char)
+                            return SyntaxColor.String;
+                        return SyntaxColor.Number;
+                    case TokenKind.TRUE:
+                    case TokenKind.FALSE:
+                        return SyntaxColor.Number;
+                    case TokenKind.STRING_LITERAL:
+                        return SyntaxColor.String;
+                    default:
+                        if (token.Kind < 128 || Lexer.OperatorTokens.Contains (token.Kind))
+                            return SyntaxColor.Operator;
+                        else if (Lexer.KeywordTokens.Contains (token.Kind))
+                            return SyntaxColor.Keyword;
+                        break;
+                }
+                return SyntaxColor.Comment;
             }
-
-            return tokens.ToArray ();
-        }
-
-        static SyntaxColor ColorizeToken (int token, object value, HashSet<string> funcs)
-        {
-            switch (token) {
-                case Token.INT:
-                case Token.SHORT:
-                case Token.LONG:
-                case Token.CHAR:
-                case Token.FLOAT:
-                case Token.DOUBLE:
-                case Token.BOOL:
-                    return SyntaxColor.Type;
-                case Token.IDENTIFIER:
-                    if (value is string s && funcs.Contains (s))
-                        return SyntaxColor.Function;
-                    return SyntaxColor.Identifier;
-                case Token.CONSTANT:
-                    if (value is char) return SyntaxColor.String;
-                    return SyntaxColor.Number;
-                case Token.TRUE:
-                case Token.FALSE:
-                    return SyntaxColor.Number;
-                case Token.STRING_LITERAL:
-                    return SyntaxColor.String;
-                default:
-                    if (token < 128 || Lexer.OperatorTokens.Contains (token))
-                        return SyntaxColor.Operator;
-                    else if (Lexer.KeywordTokens.Contains (token))
-                        return SyntaxColor.Keyword;
-                    break;
-            }
-            return SyntaxColor.Comment;
         }
     }
 }

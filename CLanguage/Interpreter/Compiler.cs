@@ -13,16 +13,26 @@ namespace CLanguage.Interpreter
     {
 		EmitContext context;
 
+        CompilerOptions options;
+
+        readonly Dictionary<string, LexedDocument> lexedDocuments = new Dictionary<string, LexedDocument> ();
+
 		List<TranslationUnit> tus;
 
-		public Compiler (EmitContext context)
+		public Compiler (CompilerOptions options)
 		{
-			this.context = context;
+            this.options = options;
+			this.context = new EmitContext (options.MachineInfo, options.Report);
 			tus = new List<TranslationUnit> ();
-		}
+
+            ProcessDocument (new Document ("_machine.h", options.MachineInfo.HeaderCode));
+            foreach (var d in options.Documents) {
+                ProcessDocument (d);
+            }
+        }
 
 		public Compiler (MachineInfo mi, Report report)
-			: this (new EmitContext (mi, report))
+			: this (new CompilerOptions (mi, report, Array.Empty<Document> ()))
         {
         }
 
@@ -31,17 +41,29 @@ namespace CLanguage.Interpreter
             tus.Add (translationUnit);
         }
 
-        public void AddCode (string name, string code)
+        void ProcessDocument (Document document)
         {
-            var pp = new Preprocessor (context.Report);
-            pp.AddCode ("machine.h", context.MachineInfo.HeaderCode);
-            pp.AddCode (name, code);
-            var lexer = new Lexer (pp);
-            var parser = new CParser ();
-            Add (parser.ParseTranslationUnit (lexer));
+            var lexed = new LexedDocument (document, options.Report);
+            lexedDocuments[document.Path] = lexed;
+
+            if (document.IsCompilable) {
+                var parser = new CParser ();
+
+                Add (parser.ParseTranslationUnit (options.Report, lexedDocuments["_machine.h"].Tokens, lexed.Tokens));
+            }
         }
 
-		public Executable Compile ()
+        public void AddCode (string name, string code)
+        {
+            AddDocument (new Document (name, code));
+        }
+
+        public void AddDocument (Document document)
+        {
+            ProcessDocument (document);
+        }
+
+        public Executable Compile ()
 		{
 			var exe = new Executable (context.MachineInfo);
 

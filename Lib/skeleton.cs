@@ -52,12 +52,12 @@ t  internal yydebug.yyDebug debug;
 .      @param token single character or %token value.
 .      @return token name or [illegal] or [unknown].
 .    */
-t  public static string yyname (int token) {
-t    if ((token < 0) || (token > yyNames.Length)) return "[illegal]";
-t    string name;
-t    if ((name = yyNames[token]) != null) return name;
-t    return "[unknown]";
-t  }
+.  public static string yyname (int token) {
+.    if ((token < 0) || (token > yyNames.Length)) return "[illegal]";
+.    string name;
+.    if ((name = yyNames[token]) != null) return name;
+.    return "[unknown]";
+.  }
 .
 .  int yyExpectingState;
 .  /** computes list of expected tokens on error by tracing the tables.
@@ -203,8 +203,8 @@ t              if (debug != null) debug.error("syntax error");
 .              yyErrorFlag = 3;
 .              do {
 .                if ((yyN = yySindex[yyStates[yyTop]]) != 0
-.                    && (yyN += Token.yyErrorCode) >= 0 && yyN < yyTable.Length
-.                    && yyCheck[yyN] == Token.yyErrorCode) {
+.                    && (yyN += TokenKind.yyErrorCode) >= 0 && yyN < yyTable.Length
+.                    && yyCheck[yyN] == TokenKind.yyErrorCode) {
 t                  if (debug != null)
 t                    debug.shift(yyStates[yyTop], yyTable[yyN], 3);
 .                  yyState = yyTable[yyN];
@@ -346,7 +346,7 @@ t        if (debug != null) debug.shift(yyStates[yyTop], yyState);
 .	 }
 .}
 .// %token constants
-.public class Token {
+.public class TokenKind {
  tokens public const int
 . }
 . namespace yyParser {
