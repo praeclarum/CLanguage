@@ -52,12 +52,12 @@ t  internal yydebug.yyDebug debug;
 .      @param token single character or %token value.
 .      @return token name or [illegal] or [unknown].
 .    */
-t  public static string yyname (int token) {
-t    if ((token < 0) || (token > yyNames.Length)) return "[illegal]";
-t    string name;
-t    if ((name = yyNames[token]) != null) return name;
-t    return "[unknown]";
-t  }
+.  public static string yyname (int token) {
+.    if ((token < 0) || (token > yyNames.Length)) return "[illegal]";
+.    string name;
+.    if ((name = yyNames[token]) != null) return name;
+.    return "[unknown]";
+.  }
 .
 .  int yyExpectingState;
 .  /** computes list of expected tokens on error by tracing the tables.

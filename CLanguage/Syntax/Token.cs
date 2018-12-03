@@ -16,10 +16,9 @@ namespace CLanguage.Syntax
             Value = value;
         }
 
-        public override bool Equals (object obj)
-        {
-            return obj is Token && Equals ((Token)obj);
-        }
+        public override string ToString () => (Value != null ? Value + ": " : "") + Parser.CParser.yyname (Kind);
+
+        public override bool Equals (object obj) => obj is Token && Equals ((Token)obj);
 
         public bool Equals (Token other)
         {

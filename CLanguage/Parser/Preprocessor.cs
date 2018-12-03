@@ -277,7 +277,7 @@ namespace CLanguage.Parser
 
         public void AddCode(string name, string code)
         {
-            var file = new Document (name, code, Encoding.UTF8);
+            var file = new Document (name, code);
             _files.Add(file);
             Process(file);
         }
@@ -286,7 +286,7 @@ namespace CLanguage.Parser
         {
             try
             {
-                var file = new Document(path, content, Encoding.UTF8);
+                var file = new Document(path, content);
                 _files.Add(file);
                 Process(file);
             }
