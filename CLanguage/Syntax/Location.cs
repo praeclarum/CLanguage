@@ -10,12 +10,14 @@ namespace CLanguage.Syntax
     {
         public bool IsNull => Document == null;
         public readonly Document Document;
+        public readonly int Index;
         public readonly int Line;
         public readonly int Column;
 
-        public Location (Document document, int line, int column)
+        public Location (Document document, int index, int line, int column)
         {
             Document = document;
+            Index = index;
             Line = line;
             Column = column;
         }

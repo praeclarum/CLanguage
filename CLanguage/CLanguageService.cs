@@ -60,12 +60,13 @@ namespace CLanguage
 
             var funcs = new HashSet<string> (mi.InternalFunctions.Where (x => string.IsNullOrEmpty (x.NameContext)).Select (x => x.Name));
 
-            var tokens = lexed.Tokens.Select (ColorizeToken).ToArray ();
+            var tokens = lexed.Tokens.Where (x => x.Kind != TokenKind.EOL).Select (ColorizeToken).ToArray ();
 
             return tokens;
 
             ColorSpan ColorizeToken (Token token) => new ColorSpan {
-                Index = token.Location.Line,
+                Index = token.Location.Index,
+                Length = token.EndLocation.Index - token.Location.Index,
                 Color = GetTokenColor (token),
             };
 

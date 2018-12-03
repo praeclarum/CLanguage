@@ -16,19 +16,21 @@ namespace CLanguage.Parser
         int _chbuflen = 0;
 
         Location location;
+        Location endLocation;
         int line = 1;
         int column = 1;
 
         public Report Report { get; }
         public Document Document { get; }
 
-        public Token CurrentToken => new Token (_token, _value, location, location);
+        public Token CurrentToken => new Token (_token, _value, location, endLocation);
 
         public Lexer (Document document, Report report = null)
         {
             Report = report ?? new Report ();
             Document = document;
-            location = new Location (document, 1, 1);
+            location = new Location (document, 0, 1, 1);
+            endLocation = location;
         }
 
         public Lexer (string name, string code, Report report = null)
@@ -188,7 +190,7 @@ namespace CLanguage.Parser
             //
             // Record where we are
             //
-            location = new Location (location.Document, line, column);
+            location = new Location (location.Document, nextPosition - 1, line, column);
 
             //
             // Make sense of it
@@ -582,6 +584,7 @@ namespace CLanguage.Parser
                 }
             }
 
+            endLocation = new Location (location.Document, nextPosition, line, column);
             return true;
         }
     }
