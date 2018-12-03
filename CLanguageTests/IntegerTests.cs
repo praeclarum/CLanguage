@@ -322,6 +322,50 @@ void main () {
         {
             AssertEqual (8972313 & 0xFFFF, "8972313");
         }
+
+        [TestMethod]
+        public void ShiftLeft ()
+        {
+            AssertEqual (0 << 0, "0 << 0");
+            AssertEqual (0 << 1, "0 << 1");
+            AssertEqual (0 << 2, "0 << 2");
+            AssertEqual (0 << -1, "0 << -1");
+            AssertEqual (1 << 0, "1 << 0");
+            AssertEqual (1 << 1, "1 << 1");
+            AssertEqual (1 << 2, "1 << 2");
+            AssertEqual (1 << -1, "1 << -1");
+            AssertEqual (2 << 0, "2 << 0");
+            AssertEqual (2 << 1, "2 << 1");
+            AssertEqual (2 << 2, "2 << 2");
+            AssertEqual (2 << -1, "2 << -1");
+            AssertEqual (-1 << 0, "-1 << 0");
+            AssertEqual (-1 << 1, "-1 << 1");
+            AssertEqual (-1 << 2, "-1 << 2");
+            AssertEqual (-1 << -1, "-1 << -1");
+            AssertEqual (34 << 5, "34 << 5");
+        }
+
+        [TestMethod]
+        public void ShiftRight ()
+        {
+            AssertEqual (0 >> 0, "0 >> 0");
+            AssertEqual (0 >> 1, "0 >> 1");
+            AssertEqual (0 >> 2, "0 >> 2");
+            AssertEqual (0 >> -1, "0 >> -1");
+            AssertEqual (1 >> 0, "1 >> 0");
+            AssertEqual (1 >> 1, "1 >> 1");
+            AssertEqual (1 >> 2, "1 >> 2");
+            AssertEqual (1 >> -1, "1 >> -1");
+            AssertEqual (2 >> 0, "2 >> 0");
+            AssertEqual (2 >> 1, "2 >> 1");
+            AssertEqual (2 >> 2, "2 >> 2");
+            AssertEqual (2 >> -1, "2 >> -1");
+            AssertEqual (-1 >> 0, "-1 >> 0");
+            AssertEqual (-1 >> 1, "-1 >> 1");
+            AssertEqual (-1 >> 2, "-1 >> 2");
+            AssertEqual (-1 >> -1, "-1 >> -1");
+            AssertEqual (34 >> 5, "34 >> 5");
+        }
     }
 }
 

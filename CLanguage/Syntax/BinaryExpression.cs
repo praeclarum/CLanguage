@@ -49,34 +49,40 @@ namespace CLanguage.Syntax
 
 			var ioff = ec.GetInstructionOffset (aType);
 
-			switch (Op) {
-			case Binop.Add:
-				ec.Emit ((OpCode)(OpCode.AddInt8 + ioff));
-				break;
-			case Binop.Subtract:
-				ec.Emit ((OpCode)(OpCode.SubtractInt8 + ioff));
-				break;
-			case Binop.Multiply:
-				ec.Emit ((OpCode)(OpCode.MultiplyInt8 + ioff));
-				break;
-			case Binop.Divide:
-				ec.Emit ((OpCode)(OpCode.DivideInt8 + ioff));
-				break;
-			case Binop.Mod:
-				ec.Emit ((OpCode)(OpCode.ModuloInt8 + ioff));
-				break;
-            case Binop.BinaryAnd:
-                ec.Emit ((OpCode)(OpCode.BinaryAndInt8 + ioff));
-                break;
-            case Binop.BinaryOr:
-                ec.Emit ((OpCode)(OpCode.BinaryOrInt8 + ioff));
-                break;
-            case Binop.BinaryXor:
-                ec.Emit ((OpCode)(OpCode.BinaryXorInt8 + ioff));
-                break;
-            default:
-				throw new NotSupportedException ("Unsupported binary operator '" + Op + "'");
-			}
+            switch (Op) {
+                case Binop.Add:
+                    ec.Emit ((OpCode)(OpCode.AddInt8 + ioff));
+                    break;
+                case Binop.Subtract:
+                    ec.Emit ((OpCode)(OpCode.SubtractInt8 + ioff));
+                    break;
+                case Binop.Multiply:
+                    ec.Emit ((OpCode)(OpCode.MultiplyInt8 + ioff));
+                    break;
+                case Binop.Divide:
+                    ec.Emit ((OpCode)(OpCode.DivideInt8 + ioff));
+                    break;
+                case Binop.Mod:
+                    ec.Emit ((OpCode)(OpCode.ModuloInt8 + ioff));
+                    break;
+                case Binop.BinaryAnd:
+                    ec.Emit ((OpCode)(OpCode.BinaryAndInt8 + ioff));
+                    break;
+                case Binop.BinaryOr:
+                    ec.Emit ((OpCode)(OpCode.BinaryOrInt8 + ioff));
+                    break;
+                case Binop.BinaryXor:
+                    ec.Emit ((OpCode)(OpCode.BinaryXorInt8 + ioff));
+                    break;
+                case Binop.ShiftLeft:
+                    ec.Emit ((OpCode)(OpCode.ShiftLeftInt8 + ioff));
+                    break;
+                case Binop.ShiftRight:
+                    ec.Emit ((OpCode)(OpCode.ShiftRightInt8 + ioff));
+                    break;
+                default:
+                    throw new NotSupportedException ("Unsupported binary operator '" + Op + "'");
+            }
         }
 
 		public override CType GetEvaluatedCType (EmitContext ec)

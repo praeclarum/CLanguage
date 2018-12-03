@@ -430,6 +430,11 @@ namespace CLanguage.Parser
                     _value = null;
                     _lastR = Read ();
                 }
+                else if (nr == '<') {
+                    _token = TokenKind.LEFT_OP;
+                    _value = null;
+                    _lastR = Read ();
+                }
                 else {
                     _token = r;
                     _value = null;
@@ -441,6 +446,11 @@ namespace CLanguage.Parser
 
                 if (nr == '=') {
                     _token = TokenKind.GE_OP;
+                    _value = null;
+                    _lastR = Read ();
+                }
+                else if (nr == '>') {
+                    _token = TokenKind.RIGHT_OP;
                     _value = null;
                     _lastR = Read ();
                 }
