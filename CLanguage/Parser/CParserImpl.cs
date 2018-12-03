@@ -46,7 +46,7 @@ namespace CLanguage.Parser
                 report.Error (9002, "Feature not supported: " + err.Message);
             }
             catch (Exception err) when (err.Message == "irrecoverable syntax error") {
-                report.Error (1001, lexer.CurrentLocation, "Syntax error");
+                report.Error (1001, lexer.CurrentToken.Location, lexer.CurrentToken.EndLocation, "Syntax error");
             }
             catch (Exception err) {
                 report.Error (9001, "Internal compiler error: " + err.Message);

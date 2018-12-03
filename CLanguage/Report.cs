@@ -21,12 +21,12 @@ namespace CLanguage
 
         Dictionary<AbstractMessage, bool> _previousErrors = new Dictionary<AbstractMessage, bool> ();
 
-        public void Error (int code, Syntax.Location loc, string error)
+        public void Error (int code, Syntax.Location loc, Syntax.Location endLoc, string error)
         {
             if (_reportingDisabled > 0)
                 return;
 
-            ErrorMessage msg = new ErrorMessage (code, loc, error, _extraInformation);
+            ErrorMessage msg = new ErrorMessage (code, loc, endLoc, error, _extraInformation);
             _extraInformation.Clear ();
 
             if (!_previousErrors.ContainsKey (msg)) {
@@ -35,19 +35,19 @@ namespace CLanguage
             }
         }
 
-        public void Error (int code, Syntax.Location loc, string format, params object[] args)
+        public void Error (int code, Syntax.Location loc, Syntax.Location endLoc, string format, params object[] args)
         {
-            Error (code, loc, String.Format (format, args));
+            Error (code, loc, endLoc, String.Format (format, args));
         }
 
         public void Error (int code, string error)
         {
-            Error (code, Syntax.Location.Null, error);
+            Error (code, Syntax.Location.Null, Syntax.Location.Null, error);
         }
 
         public void Error (int code, string format, params object[] args)
         {
-            Error (code, Syntax.Location.Null, String.Format (format, args));
+            Error (code, Syntax.Location.Null, Syntax.Location.Null, String.Format (format, args));
         }
 
 
@@ -55,14 +55,11 @@ namespace CLanguage
         {
             public string MessageType { get; protected set; }
             public Syntax.Location Location { get; protected set; }
+            public Syntax.Location EndLocation { get; protected set; }
             public bool IsWarning { get; protected set; }
             public int Code { get; protected set; }
             public string Text { get; protected set; }
             public List<string> RelatedSymbols { get; protected set; }
-
-            public AbstractMessage ()
-            {
-            }
 
             public override bool Equals (object obj)
             {
@@ -76,25 +73,26 @@ namespace CLanguage
 
             public override int GetHashCode ()
             {
-                return Code.GetHashCode () + Location.GetHashCode ();
+                return Code.GetHashCode () + Location.GetHashCode () + IsWarning.GetHashCode () + Text.GetHashCode ();
             }
 
             public override string ToString ()
             {
                 if (Location.IsNull)
                     return string.Format ("{0} C{1:0000}: {2}", MessageType.ToLowerInvariant (), Code, Text);
-                return string.Format ("{3}: {0} C{1:0000}: {2}", MessageType.ToLowerInvariant (), Code, Text, Location);
+                return string.Format ("{3}({4},{5},{6},{7}): {0} C{1:0000}: {2}", MessageType.ToLowerInvariant (), Code, Text, Location.Document.Path, Location.Line, Location.Column, EndLocation.Line, EndLocation.Column);
             }
         }
 
         public class ErrorMessage : AbstractMessage
         {
-            public ErrorMessage (int code, Syntax.Location loc, string error, List<string> extraInformation)
+            public ErrorMessage (int code, Syntax.Location loc, Syntax.Location endLoc, string error, List<string> extraInformation)
             {
                 MessageType = "Error";
                 Code = code;
                 Text = error;
                 Location = loc;
+                EndLocation = endLoc;
                 IsWarning = false;
                 if (extraInformation != null) {
                     RelatedSymbols = new List<string> ();

@@ -28,6 +28,6 @@ namespace CLanguage.Parser
 
         public object value () => tokens[index].Value;
 
-        public Location CurrentLocation => tokens[index].Location;
+        public Token CurrentToken => tokens[index];
     }
 }

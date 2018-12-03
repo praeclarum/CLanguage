@@ -18,7 +18,10 @@ namespace CLanguage.Syntax
             EndLocation = endLocation;
         }
 
-        public override string ToString () => (Value != null ? Value + ": " : "") + Parser.CParser.yyname (Kind);
+        public string Text => Location.IsNull || EndLocation.IsNull || Location.Document.Path != EndLocation.Document.Path ? "" :
+            Location.Document.Content.Substring (Location.Index, EndLocation.Index - Location.Index);
+
+        public override string ToString () => $"\"{Text}\": {Parser.CParser.yyname (Kind)}";
 
         public override bool Equals (object obj) => obj is Token && Equals ((Token)obj);
 

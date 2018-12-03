@@ -106,6 +106,7 @@ namespace CLanguage.Parser
             if (nextPosition < Document.Content.Length) {
                 var r = Document.Content[nextPosition];
                 nextPosition++;
+                column++;
                 return r;
             }
             return -1;
@@ -200,6 +201,8 @@ namespace CLanguage.Parser
                 _token = TokenKind.EOL;
                 _value = null;
                 _lastR = Read ();
+                line++;
+                column = 1;
             }
             else if (char.IsDigit (ch)) {
                 var onlydigits = true;
@@ -584,7 +587,7 @@ namespace CLanguage.Parser
                 }
             }
 
-            endLocation = new Location (location.Document, nextPosition, line, column);
+            endLocation = new Location (location.Document, _lastR >= 0 ? nextPosition - 1 : location.Document.Content.Length, line, column);
             return true;
         }
     }
