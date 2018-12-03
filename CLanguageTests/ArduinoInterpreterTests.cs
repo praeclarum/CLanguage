@@ -320,7 +320,7 @@ lastButtonState = buttonState;
             Assert.AreEqual ("start", arduino.SerialOut.ToString ().Split ("\n").First ().Trim ());
         }
 
-        [TestMethod, Ignore]
+        [TestMethod]
         public void UserBug0 ()
         {
             var code = @"

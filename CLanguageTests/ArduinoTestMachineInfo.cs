@@ -45,6 +45,9 @@ namespace CLanguage.Tests
 #define NOTE_G3 307
 #define NOTE_A3 301
 #define NOTE_B3 302
+typedef bool boolean;
+typedef unsigned char byte;
+typedef unsigned short word;
 struct SerialClass {
     void begin(int baud);
     void print(const char *value);
