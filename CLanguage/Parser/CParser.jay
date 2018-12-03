@@ -843,11 +843,11 @@ labeled_statement
 compound_statement
 	: '{' '}'
 	{
-		$$ = new Block (GetLocation($1), GetLocation($2));
+		$$ = new Block ();
 	}
 	| '{' block_item_list '}'
 	{
-        $$ = new Block (GetLocation($1), (List<Statement>)$2, GetLocation($3));
+        $$ = new Block ((List<Statement>)$2);
 	}
 	;
 
@@ -895,11 +895,11 @@ iteration_statement
 	}
 	| FOR '(' expression_statement expression_statement ')' statement
 	{
-		$$ = new ForStatement((Statement)$3, ((ExpressionStatement)$4).Expression, ((Statement)$6).ToBlock (), null, GetLocation($1), GetLocation($6));
+		$$ = new ForStatement((Statement)$3, ((ExpressionStatement)$4).Expression, ((Statement)$6).ToBlock ());
 	}
 	| FOR '(' expression_statement expression_statement expression ')' statement
 	{
-		$$ = new ForStatement((Statement)$3, ((ExpressionStatement)$4).Expression, (Expression)$5, ((Statement)$7).ToBlock (), null, GetLocation($1), GetLocation($7));
+		$$ = new ForStatement((Statement)$3, ((ExpressionStatement)$4).Expression, (Expression)$5, ((Statement)$7).ToBlock ());
 	}
 	| FOR '(' declaration expression_statement ')' statement
 	{

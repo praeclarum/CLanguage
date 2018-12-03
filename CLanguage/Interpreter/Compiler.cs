@@ -11,8 +11,6 @@ namespace CLanguage.Interpreter
 {
     public class Compiler
     {
-		EmitContext context;
-
         CompilerOptions options;
 
         readonly Dictionary<string, LexedDocument> lexedDocuments = new Dictionary<string, LexedDocument> ();
@@ -22,7 +20,6 @@ namespace CLanguage.Interpreter
 		public Compiler (CompilerOptions options)
 		{
             this.options = options;
-			this.context = new EmitContext (options.MachineInfo, options.Report);
 			tus = new List<TranslationUnit> ();
 
             ProcessDocument (new Document ("_machine.h", options.MachineInfo.HeaderCode));
@@ -65,44 +62,52 @@ namespace CLanguage.Interpreter
 
         public Executable Compile ()
 		{
-			var exe = new Executable (context.MachineInfo);
+			var exe = new Executable (options.MachineInfo);
+            var exeContext = new ExecutableContext (options.MachineInfo, options.Report);
 
-			// Put something at the zero address so we don't get 0 addresses of globals
-			exe.AddGlobal ("__zero__", CBasicType.SignedInt);
+            // Put something at the zero address so we don't get 0 addresses of globals
+            exe.AddGlobal ("__zero__", CBasicType.SignedInt);
 
             //
             // Find Variables, Functions, Types
             //
             var cinitBody = new Block ();
-            foreach (var tu in tus) {
-                AddStatementDeclarations (tu, tu);
-                cinitBody.Statements.AddRange (tu.InitStatements);
+            var tucs = tus.Select (x => new TranslationUnitContext (x, exeContext));
+            foreach (var tuc in tucs) {
+                var tu = tuc.TranslationUnit;
+                AddStatementDeclarations (tu, tu, tuc);
+                cinitBody.AddStatements (tu.InitStatements);
             }
 
             //
             // Generate a function to init globals
             //
-            exe.Functions.Add (new CompiledFunction ("__cinit", CFunctionType.VoidProcedure, cinitBody));
+            var cinit = new CompiledFunction ("__cinit", CFunctionType.VoidProcedure, cinitBody);
+            exe.Functions.Add (cinit);
+            var functionsToCompile = new List<(CompiledFunction, EmitContext)> { (cinit, exeContext) };
 
             //
             // Link everything together
             // This is done before compilation to make sure everything is visible (for recursion)
             //
-            foreach (var tu in tus) {
+            foreach (var tuc in tucs) {
+                var tu = tuc.TranslationUnit;
                 foreach (var g in tu.Variables) {
                     var v = exe.AddGlobal (g.Name, g.VariableType);
                     v.InitialValue = g.InitialValue;
                 }
-                exe.Functions.AddRange (tu.Functions.Where (x => x.Body != null));
+                var funcs = tu.Functions.Where (x => x.Body != null).ToList ();
+                exe.Functions.AddRange (funcs);
+                functionsToCompile.AddRange (funcs.Select (x => (x, (EmitContext)tuc)));
             }
 
             //
             // Compile functions
             //
-            foreach (var f in exe.Functions.OfType<CompiledFunction> ()) {
-                AddStatementDeclarations (f.Body);
+            foreach (var (f, pc) in functionsToCompile) {
+                AddStatementDeclarations (f.Body, pc);
 
-				var c = new FunctionContext (exe, f, context);
+				var c = new FunctionContext (exe, f, pc);
 				f.Body.Emit (c);
 				f.LocalVariables.AddRange (c.LocalVariables);
 
@@ -112,7 +117,7 @@ namespace CLanguage.Interpreter
 						c.Emit (OpCode.Return);
 					}
 					else {
-						context.Report.Error (161, "'" + f.Name + "' not all code paths return a value");
+						options.Report.Error (161, "'" + f.Name + "' not all code paths return a value");
 					}
 				}
 			}
@@ -120,14 +125,14 @@ namespace CLanguage.Interpreter
 			return exe;
 		}
 
-        void AddStatementDeclarations (Block block)
+        void AddStatementDeclarations (Block block, EmitContext context)
         {
             foreach (var s in block.Statements) {
-                AddStatementDeclarations (s, block);
+                AddStatementDeclarations (s, block, context);
             }
         }
 
-        void AddStatementDeclarations (Statement statement, Block block)
+        void AddStatementDeclarations (Statement statement, Block block, EmitContext context)
         {
             if (statement is MultiDeclaratorStatement multi) {
                 if (multi.InitDeclarators != null) {
@@ -202,11 +207,11 @@ namespace CLanguage.Interpreter
                 }
             }
             else if (statement is ForStatement fors) {
-                AddStatementDeclarations (fors.InitBlock);
-                AddStatementDeclarations (fors.LoopBody);
+                AddStatementDeclarations (fors.InitBlock, context);
+                AddStatementDeclarations (fors.LoopBody, context);
             }
             else if (statement is Block subblock) {
-                AddStatementDeclarations (subblock);
+                AddStatementDeclarations (subblock, context);
             }
         }
 

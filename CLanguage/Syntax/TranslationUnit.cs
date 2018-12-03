@@ -8,7 +8,7 @@ namespace CLanguage.Syntax
     public class TranslationUnit : Block
     {
         public TranslationUnit ()
-            : base (Location.Null, Location.Null)
+            : base ()
         {
         }
     }

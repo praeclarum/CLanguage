@@ -27,7 +27,7 @@ namespace CLanguage.Tests
         [TestMethod]
         public void Sizes ()
         {
-            var ec = new EmitContext (new ArduinoTestMachineInfo (), new Report (new TestPrinter ()));
+            var ec = new ExecutableContext (new ArduinoTestMachineInfo (), new Report (new TestPrinter ()));
 
             Interpreter.CompiledVariable ParseVariable (string code)
             {

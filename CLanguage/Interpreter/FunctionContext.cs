@@ -10,7 +10,6 @@ namespace CLanguage.Interpreter
     {
         Executable exe;
         CompiledFunction fexe;
-        EmitContext context;
 
         class BlockLocals
         {
@@ -23,22 +22,37 @@ namespace CLanguage.Interpreter
 
         public IEnumerable<CompiledVariable> LocalVariables { get { return allLocals; } }
 
-        public FunctionContext (Executable exe, CompiledFunction fexe, EmitContext context)
-            : base (context.MachineInfo, context.Report, fexe)
+        public FunctionContext (Executable exe, CompiledFunction fexe, EmitContext parentContext)
+            : base (parentContext.MachineInfo, parentContext.Report, fexe, parentContext)
         {
             this.exe = exe;
             this.fexe = fexe;
-            this.context = context;
             blocks = new List<Block> ();
             blockLocals = new Dictionary<Block, BlockLocals> ();
             allLocals = new List<CompiledVariable> ();
         }
 
-        //public override CType ResolveTypeName (TypeName name)
-        //{
-        //    MakeCType (name.Specifiers, null);
-        //    return null;
-        //}
+        public override CType ResolveTypeName (string typeName)
+        {
+            //
+            // Look for local types
+            //
+            foreach (var b in blocks.Reverse<Block> ()) {
+                if (b.Typedefs.TryGetValue (typeName, out var t))
+                    return t;
+            }
+
+            //
+            // Look for global types
+            //
+            foreach (var t in exe.GlobalTypes) {
+                if (t.Name == typeName) {
+                    return t.Type;
+                }
+            }
+
+            return null;
+        }
 
         public override ResolvedVariable ResolveVariable (string name, CType[] argTypes)
         {
@@ -95,7 +109,7 @@ namespace CLanguage.Interpreter
                 return new ResolvedVariable (ff, fi);
             }
 
-            context.Report.Error (103, "The name '" + name + "' does not exist in the current context");
+            Report.Error (103, "The name '" + name + "' does not exist in the current context");
             return null;
         }
 
@@ -114,7 +128,7 @@ namespace CLanguage.Interpreter
                 }
             }
 
-            context.Report.Error (9000, $"No definition for '{structType.Name}::{method.Name}' found");
+            Report.Error (9000, $"No definition for '{structType.Name}::{method.Name}' found");
             return null;
         }
 

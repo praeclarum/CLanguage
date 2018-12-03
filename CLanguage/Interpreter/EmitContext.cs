@@ -6,15 +6,16 @@ using System.Linq;
 
 namespace CLanguage.Interpreter
 {
-    public class EmitContext
+    public abstract class EmitContext
     {
+        public EmitContext ParentContext { get; }
         public CompiledFunction FunctionDecl { get; private set; }
 
         public Report Report { get; private set; }
 
         public MachineInfo MachineInfo { get; private set; }
 
-        public EmitContext (MachineInfo machineInfo, Report report, CompiledFunction fdecl = null)
+        protected EmitContext (MachineInfo machineInfo, Report report, CompiledFunction fdecl, EmitContext parentContext)
         {
             if (machineInfo == null) throw new ArgumentNullException (nameof (machineInfo));
             if (report == null) throw new ArgumentNullException (nameof (report));
@@ -22,6 +23,7 @@ namespace CLanguage.Interpreter
             MachineInfo = machineInfo;
             Report = report;
             FunctionDecl = fdecl;
+            ParentContext = parentContext;
         }
 
         public virtual CType ResolveTypeName (TypeName typeName)
@@ -29,14 +31,19 @@ namespace CLanguage.Interpreter
             return MakeCType (typeName.Specifiers, typeName.Declarator, null, null);
         }
 
+        public virtual CType ResolveTypeName (string typeName)
+        {
+            return ParentContext?.ResolveTypeName (typeName);
+        }
+
         public virtual ResolvedVariable ResolveVariable (string name, CType[] argTypes)
         {
-            return null;
+            return ParentContext?.ResolveVariable (name, argTypes);
         }
 
         public virtual ResolvedVariable ResolveMethodFunction (CStructType structType, CStructMethod method)
         {
-            return null;
+            return ParentContext?.ResolveMethodFunction (structType, method);
         }
 
         public virtual void BeginBlock (Block b) { }
@@ -316,12 +323,9 @@ namespace CLanguage.Interpreter
             //
             if (specs.TypeSpecifiers.Count == 1 && specs.TypeSpecifiers[0].Kind == TypeSpecifierKind.Typename) {
                 var name = specs.TypeSpecifiers[0].Name;
-
-                var t = block.LookupTypedef (name);
-
+                var t = ResolveTypeName (name);
                 if (t != null)
                     return t;
-
                 Report.Error (103, "The name '{0}' does not exist in the current context", name);
                 return CBasicType.SignedInt;
             }

@@ -9,9 +9,8 @@ namespace CLanguage.Syntax
 {
     public class Block : Statement
     {
-        public Location StartLocation { get; private set; } = Location.Null;
+        public Block Parent { get; set; }
         public List<Statement> Statements { get; private set; } = new List<Statement> ();
-        public Location EndLocation { get; set; } = Location.Null;
 
         public List<CompiledVariable> Variables { get; private set; } = new List<CompiledVariable> ();
         public List<CompiledFunction> Functions { get; private set; } = new List<CompiledFunction> ();
@@ -19,32 +18,29 @@ namespace CLanguage.Syntax
         public List<Statement> InitStatements { get; private set; } = new List<Statement> ();
         public Dictionary<string, CStructType> Structures { get; private set; } = new Dictionary<string, CStructType> ();
 
+        public Block (IEnumerable<Statement> statements)
+        {
+            AddStatements (statements);
+        }
+
         public Block ()
         {
-        }
-
-        public Block (Location startLoc, List<Statement> statements, Location endLoc)
-        {
-            StartLocation = startLoc;
-            Statements.AddRange (statements);
-            EndLocation = endLoc;
-        }
-
-        public Block (Location startLoc, Location endLoc)
-        {
-            StartLocation = startLoc;
-            EndLocation = endLoc;
-        }
-
-        public Block (Block parent, Location startLoc)
-        {
-            StartLocation = startLoc;
-            EndLocation = Location.Null;
         }
 
         public void AddStatement (Statement stmt)
         {
             Statements.Add (stmt);
+
+            if (stmt is Block block) {
+                block.Parent = this;
+            }
+        }
+
+        public void AddStatements (IEnumerable<Statement> stmts)
+        {
+            foreach (var s in stmts) {
+                AddStatement (s);
+            }
         }
 
         protected override void DoEmit (EmitContext ec)
@@ -70,9 +66,9 @@ namespace CLanguage.Syntax
             Variables.Add (new CompiledVariable (name, 0, ctype));
         }
 
-        public CType LookupTypedef (string name)
+        public CType LookupTypename (string name)
         {
-            return Typedefs.TryGetValue (name, out var t) ? t : null;
+            return Typedefs.TryGetValue (name, out var t) ? t : Parent?.LookupTypename (name);
         }
     }
 }
