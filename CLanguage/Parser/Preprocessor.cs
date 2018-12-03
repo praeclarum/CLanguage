@@ -12,10 +12,13 @@ namespace CLanguage.Parser
         readonly List<Token> tokens;
 
         readonly Dictionary<string, Define> defines = new Dictionary<string, Define> ();
+        private readonly Report report;
+
         class Define
         {
             public string Name;
-            //public string[] Parameters;
+            public string[] Parameters;
+            public bool HasParameters;
             public List<Token> Body;
             public override string ToString ()
             {
@@ -23,9 +26,10 @@ namespace CLanguage.Parser
             }
         }
 
-        public Preprocessor (params IEnumerable<Token>[] tokens)
+        public Preprocessor (Report report, params IEnumerable<Token>[] tokens)
         {
             this.tokens = tokens.SelectMany (x => x).ToList ();
+            this.report = report;
         }
 
         public Token[] Preprocess ()
@@ -50,8 +54,15 @@ namespace CLanguage.Parser
                 else if (t.Kind == TokenKind.IDENTIFIER) {
                     var ident = t.Value.ToString ();
                     if (defines.TryGetValue (ident, out var define)) {
-                        tokens.RemoveAt (i);
-                        tokens.InsertRange (i, define.Body);
+                        if (define.HasParameters) {
+                            report.Error (9000, "PARAMETERIZED DEFINE");
+                            tokens.RemoveAt (i);
+                            tokens.InsertRange (i, define.Body);
+                        }
+                        else {
+                            tokens.RemoveAt (i);
+                            tokens.InsertRange (i, define.Body);
+                        }
                     }
                     else {
                         i++;
@@ -66,9 +77,23 @@ namespace CLanguage.Parser
                                     eol++;
                                 }
                                 if (eol - i >= 2) {
+                                    var nameToken = tokens[i + 2];
+                                    var body = tokens.Skip (i + 3).Take (eol - i - 3).ToList ();
+                                    var ps = Array.Empty<string> ();
+                                    var hasPs = false;
+                                    if (body.Count >= 2 && body[0].Kind == '(' && body[0].Location.Index == nameToken.EndLocation.Index) {
+                                        var endParam = body.FindIndex (1, x => x.Kind == ')');
+                                        if (endParam >= 0 && endParam + 1 < body.Count) {
+                                            ps = body.Take (endParam).Where (x => x.Kind == TokenKind.IDENTIFIER).Select (x => (string)x.Value).ToArray ();
+                                            body.RemoveRange (0, endParam + 1);
+                                            hasPs = true;
+                                        }
+                                    }
                                     var define = new Define {
-                                        Name = tokens[i + 2].Value?.ToString (),
-                                        Body = tokens.Skip (i + 3).Take (eol - i - 3).ToList (),
+                                        Name = nameToken.Value?.ToString (),
+                                        Body = body,
+                                        Parameters = ps,
+                                        HasParameters = hasPs,
                                     };
                                     if (!string.IsNullOrWhiteSpace (define.Name)) {
                                         defines[define.Name] = define;

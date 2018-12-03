@@ -30,17 +30,16 @@ namespace CLanguage.Parser
 
         public TranslationUnit ParseTranslationUnit (Report report, params IEnumerable<Token>[] tokens)
         {
-            var preprocessor = new Preprocessor (tokens);
+            var preprocessor = new Preprocessor (report, tokens);
             lexer = new ParserInput (preprocessor.Preprocess ());
 
             _tu = new TranslationUnit ();
-            //lexer.IsTypedef = _tu.Typedefs.ContainsKey;
 
             try {
                 yyparse (lexer);
             }
             catch (NotImplementedException err) {
-                report.Error (9003, lexer.CurrentToken.Location, lexer.CurrentToken.EndLocation, 
+                report.Error (9000, lexer.CurrentToken.Location, lexer.CurrentToken.EndLocation, 
                     "Feature not implemented: " + err.Message);
             }
             catch (NotSupportedException err) {
@@ -56,7 +55,6 @@ namespace CLanguage.Parser
                     "Internal compiler error: " + err.Message);
             }
 
-            //lexer.IsTypedef = null;
             return _tu;
         }
 
