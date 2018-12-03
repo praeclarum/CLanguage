@@ -7,13 +7,15 @@ namespace CLanguage.Syntax
     {
         public readonly int Kind;
         public readonly Location Location;
+        public readonly Location EndLocation;
         public readonly object Value;
 
-        public Token (int kind, Location location, object value)
+        public Token (int kind, object value, Location location, Location endLocation)
         {
             Kind = kind;
-            Location = location;
             Value = value;
+            Location = location;
+            EndLocation = endLocation;
         }
 
         public override string ToString () => (Value != null ? Value + ": " : "") + Parser.CParser.yyname (Kind);

@@ -22,36 +22,36 @@ namespace CLanguage.Parser
             //debug = new yydebug.yyDebugSimple();
         }
 		
-		public TranslationUnit ParseTranslationUnit(string name, string code, Report report = null)
+        public TranslationUnit ParseTranslationUnit (string name, string code, Report report)
         {
-            var lex = new Lexer (name, code, report);
-			return ParseTranslationUnit (lex);
-		}
+            var lexed = new LexedDocument (new Document (name, code), report);
+            return ParseTranslationUnit (report, lexed.Tokens);
+        }
 
-        public TranslationUnit ParseTranslationUnit(Lexer lexer)
+        public TranslationUnit ParseTranslationUnit (Report report, params IEnumerable<Token>[] tokens)
         {
-            var report = lexer.Report;
+            var lexer = new ParserInput (tokens);
 
-            _tu = new TranslationUnit();
-            lexer.IsTypedef = _tu.Typedefs.ContainsKey;
-			
-			try {
-	            yyparse(lexer);
-			}
-			catch (NotImplementedException err) {
-				report.Error (9003, "Feature not implemented: " + err.Message);
-			}
-			catch (NotSupportedException err) {
-				report.Error (9002, "Feature not supported: " + err.Message);
-			}
+            _tu = new TranslationUnit ();
+            //lexer.IsTypedef = _tu.Typedefs.ContainsKey;
+
+            try {
+                yyparse (lexer);
+            }
+            catch (NotImplementedException err) {
+                report.Error (9003, "Feature not implemented: " + err.Message);
+            }
+            catch (NotSupportedException err) {
+                report.Error (9002, "Feature not supported: " + err.Message);
+            }
             catch (Exception err) when (err.Message == "irrecoverable syntax error") {
                 report.Error (1001, lexer.CurrentLocation, "Syntax error");
             }
             catch (Exception err) {
-				report.Error (9001, "Internal compiler error: " + err.Message);
-			}
-			
-            lexer.IsTypedef = null;
+                report.Error (9001, "Internal compiler error: " + err.Message);
+            }
+
+            //lexer.IsTypedef = null;
             return _tu;
         }
 

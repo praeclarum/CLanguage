@@ -47,12 +47,9 @@ namespace CLanguage.Interpreter
             lexedDocuments[document.Path] = lexed;
 
             if (document.IsCompilable) {
-                var pp = new Preprocessor (context.Report);
-                pp.AddCode ("machine.h", context.MachineInfo.HeaderCode);
-                pp.AddCode (document.Path, document.Content);
-                var lexer = new Lexer (pp);
                 var parser = new CParser ();
-                Add (parser.ParseTranslationUnit (lexer));
+
+                Add (parser.ParseTranslationUnit (options.Report, lexedDocuments["_machine.h"].Tokens, lexed.Tokens));
             }
         }
 
