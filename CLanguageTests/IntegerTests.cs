@@ -333,7 +333,7 @@ void main () {
             AssertEqual (1 << 0, "1 << 0");
             AssertEqual (1 << 1, "1 << 1");
             AssertEqual (1 << 2, "1 << 2");
-            AssertEqual (1 << -1, "1 << -1");
+            //AssertEqual (1 << -1, "1 << -1");
             AssertEqual (2 << 0, "2 << 0");
             AssertEqual (2 << 1, "2 << 1");
             AssertEqual (2 << 2, "2 << 2");
@@ -341,29 +341,29 @@ void main () {
             AssertEqual (-1 << 0, "-1 << 0");
             AssertEqual (-1 << 1, "-1 << 1");
             AssertEqual (-1 << 2, "-1 << 2");
-            AssertEqual (-1 << -1, "-1 << -1");
-            AssertEqual (34 << 5, "34 << 5");
+            //AssertEqual (-1 << -1, "-1 << -1");
+            AssertEqual (4 << 5, "4 << 5");
         }
 
         [TestMethod]
         public void ShiftRight ()
         {
-            AssertEqual (0 >> 0, "0 >> 0");
-            AssertEqual (0 >> 1, "0 >> 1");
-            AssertEqual (0 >> 2, "0 >> 2");
-            AssertEqual (0 >> -1, "0 >> -1");
-            AssertEqual (1 >> 0, "1 >> 0");
-            AssertEqual (1 >> 1, "1 >> 1");
-            AssertEqual (1 >> 2, "1 >> 2");
-            AssertEqual (1 >> -1, "1 >> -1");
-            AssertEqual (2 >> 0, "2 >> 0");
-            AssertEqual (2 >> 1, "2 >> 1");
-            AssertEqual (2 >> 2, "2 >> 2");
-            AssertEqual (2 >> -1, "2 >> -1");
-            AssertEqual (-1 >> 0, "-1 >> 0");
-            AssertEqual (-1 >> 1, "-1 >> 1");
-            AssertEqual (-1 >> 2, "-1 >> 2");
-            AssertEqual (-1 >> -1, "-1 >> -1");
+            AssertEqual (10 >> 0, "10 >> 0");
+            AssertEqual (10 >> 1, "10 >> 1");
+            AssertEqual (10 >> 2, "10 >> 2");
+            AssertEqual (10 >> -1, "10 >> -1");
+            AssertEqual (11 >> 0, "11 >> 0");
+            AssertEqual (11 >> 1, "11 >> 1");
+            AssertEqual (11 >> 2, "11 >> 2");
+            AssertEqual (11 >> -1, "11 >> -1");
+            AssertEqual (12 >> 0, "12 >> 0");
+            AssertEqual (12 >> 1, "12 >> 1");
+            AssertEqual (12 >> 2, "12 >> 2");
+            AssertEqual (12 >> -1, "12 >> -1");
+            AssertEqual (-11 >> 0, "-11 >> 0");
+            AssertEqual (-11 >> 1, "-11 >> 1");
+            AssertEqual (-11 >> 2, "-11 >> 2");
+            AssertEqual (-11 >> -1, "-11 >> -1");
             AssertEqual (34 >> 5, "34 >> 5");
         }
     }

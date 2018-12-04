@@ -412,6 +412,62 @@ namespace CLanguage.Interpreter
                         state.SP--;
                         ip++;
                         break;
+                    case OpCode.ShiftLeftInt8:
+                        a = state.Stack[state.SP - 2];
+                        b = state.Stack[state.SP - 1];
+                        state.Stack[state.SP - 2] = (sbyte)a << (sbyte)b;
+                        state.SP--;
+                        ip++;
+                        break;
+                    case OpCode.ShiftLeftUInt8:
+                        a = state.Stack[state.SP - 2];
+                        b = state.Stack[state.SP - 1];
+                        state.Stack[state.SP - 2] = (byte)a << (byte)b;
+                        state.SP--;
+                        ip++;
+                        break;
+                    case OpCode.ShiftLeftInt16:
+                        a = state.Stack[state.SP - 2];
+                        b = state.Stack[state.SP - 1];
+                        state.Stack[state.SP - 2] = ((short)a << (short)b);
+                        state.SP--;
+                        ip++;
+                        break;
+                    case OpCode.ShiftLeftUInt16:
+                        a = state.Stack[state.SP - 2];
+                        b = state.Stack[state.SP - 1];
+                        state.Stack[state.SP - 2] = ((ushort)a << (ushort)b);
+                        state.SP--;
+                        ip++;
+                        break;
+                    case OpCode.ShiftLeftInt32:
+                        a = state.Stack[state.SP - 2];
+                        b = state.Stack[state.SP - 1];
+                        state.Stack[state.SP - 2] = ((int)a << (int)b);
+                        state.SP--;
+                        ip++;
+                        break;
+                    case OpCode.ShiftLeftUInt32:
+                        a = state.Stack[state.SP - 2];
+                        b = state.Stack[state.SP - 1];
+                        state.Stack[state.SP - 2] = (Value)((uint)a << (int)b);
+                        state.SP--;
+                        ip++;
+                        break;
+                    case OpCode.ShiftLeftFloat32:
+                        a = state.Stack[state.SP - 2];
+                        b = state.Stack[state.SP - 1];
+                        state.Stack[state.SP - 2] = ((int)(float)a << (int)(float)b);
+                        state.SP--;
+                        ip++;
+                        break;
+                    case OpCode.ShiftLeftFloat64:
+                        a = state.Stack[state.SP - 2];
+                        b = state.Stack[state.SP - 1];
+                        state.Stack[state.SP - 2] = ((long)(double)a << (int)(double)b);
+                        state.SP--;
+                        ip++;
+                        break;
                     case OpCode.ShiftRightInt8:
                         a = state.Stack[state.SP - 2];
                         b = state.Stack[state.SP - 1];
