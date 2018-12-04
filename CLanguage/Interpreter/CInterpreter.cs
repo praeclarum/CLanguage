@@ -40,6 +40,23 @@ namespace CLanguage.Interpreter
             return Stack[address];
         }
 
+        public string ReadStringWithEncoding (int address, Encoding encoding)
+        {
+            var b = (byte)Stack[address];
+            var bytes = new List<byte> ();
+            while (b != 0) {
+                bytes.Add (b);
+                address++;
+                b = (byte)Stack[address];
+            }
+            return encoding.GetString (bytes.ToArray ());
+        }
+
+        public string ReadString (int address)
+        {
+            return ReadStringWithEncoding (address, Encoding.UTF8);
+        }
+
         public Value ReadArg (int index)
         {
             var frame = ActiveFrame;

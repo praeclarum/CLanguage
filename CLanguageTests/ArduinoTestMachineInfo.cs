@@ -210,25 +210,13 @@ struct SerialClass Serial;
             public void SerialPrintS (CInterpreter state)
             {
                 var p = state.ReadArg (0).PointerValue;
-                SerialOut.Write (ReadString (p, state));
+                SerialOut.Write (state.ReadString (p));
             }
 
             public void SerialPrintlnS (CInterpreter state)
             {
                 var p = state.ReadArg (0).PointerValue;
-                SerialOut.WriteLine (ReadString (p, state));
-            }
-
-            string ReadString (int pi, CInterpreter state)
-            {
-                var b = (byte)state.ReadMemory (pi);
-                var bytes = new List<byte> ();
-                while (b != 0) {
-                    bytes.Add (b);
-                    pi++;
-                    b = (byte)state.ReadMemory (pi);
-                }
-                return Encoding.UTF8.GetString (bytes.ToArray ());
+                SerialOut.WriteLine (state.ReadString (p));
             }
 
             public class Pin

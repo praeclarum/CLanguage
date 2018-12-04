@@ -13,6 +13,7 @@ namespace CLanguage.Tests
     {
         class Calc
         {
+            public string Title { get; set; }
             readonly List<long> stack = new List<long> ();
             public void PushInt64 (long x)
             {
@@ -46,11 +47,13 @@ namespace CLanguage.Tests
             public double PopDouble () => (double)PopInt64 ();
         }
 
-        void TestCalc (string code)
+        Calc TestCalc (string code)
         {
             var mi = new ArduinoTestMachineInfo ();
-            mi.AddGlobalReference ("c", new Calc ());
+            var c = new Calc ();
+            mi.AddGlobalReference ("c", c);
             Run ("void main() { " + code + "}", mi);
+            return c;
         }
 
         [TestMethod]
@@ -132,6 +135,15 @@ namespace CLanguage.Tests
     c.PushChar('x');
     assertAreEqual('x', c.PopChar());
 ");
+        }
+
+        [TestMethod]
+        public void String ()
+        {
+            var c = TestCalc (@"
+    c.setTitle(""hello"");
+");
+            Assert.AreEqual ("hello", c.Title);
         }
     }
 }

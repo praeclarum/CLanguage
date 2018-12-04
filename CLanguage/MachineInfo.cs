@@ -47,8 +47,8 @@ namespace CLanguage
 
             var type = target.GetType ();
             var allmethods = type.GetMethods (BindingFlags.Public | BindingFlags.FlattenHierarchy | BindingFlags.Instance);
-            var methods = allmethods.Where (x => !x.IsSpecialName && !x.ContainsGenericParameters && !x.IsConstructor)
-                .Where (x => x.Name != "GetType" && x.Name != "Equals" && x.Name != "GetHashCode");
+            var methods = allmethods.Where (x => !x.ContainsGenericParameters && !x.IsConstructor)
+                .Where (x => x.ReturnType != typeof(string) && x.Name != "GetType" && x.Name != "Equals" && x.Name != "GetHashCode" && x.Name != "ToString");
             var code = new CodeWriter ();
             var typeName = $"_{name}_t";
             code.WriteLine ("");
@@ -64,7 +64,11 @@ namespace CLanguage
                 code.Write (mrt);
                 code.Write (" ");
                 var pcode = new CodeWriter ();
-                pcode.Write ($"{m.Name}(");
+                var mname = m.Name;
+                if (m.IsSpecialName && mname.StartsWith ("set_", StringComparison.Ordinal)) {
+                    mname = "set" + mname.Substring (4);
+                }
+                pcode.Write ($"{mname}(");
                 var head = "";
                 foreach (var (t, n) in ps) {
                     pcode.Write (head);
@@ -87,7 +91,8 @@ namespace CLanguage
         }
 
         static readonly MethodInfo miReadArg = typeof (CInterpreter).GetMethod (nameof(CInterpreter.ReadArg));
-        static readonly MethodInfo miPush = typeof (CInterpreter).GetMethod ("Push");
+        static readonly MethodInfo miPush = typeof (CInterpreter).GetMethod (nameof (CInterpreter.Push));
+        static readonly MethodInfo miReadString = typeof (CInterpreter).GetMethod (nameof (CInterpreter.ReadString));
 
         InternalFunctionAction MarshalMethod (object target, MethodInfo method)
         {
@@ -99,7 +104,12 @@ namespace CLanguage
 
             var argsE = ps.Length > 0 ? new Expression[nargs] : Array.Empty<Expression> ();
             for (var i = 0; i < nargs; i++) {
-                argsE[i] = Expression.Field (Expression.Call (interpreterE, miReadArg, Expression.Constant (i)), ValueReflection.TypedFields[ps[i].ParameterType]);
+                var pt = ps[i].ParameterType;
+                var vargE = Expression.Call (interpreterE, miReadArg, Expression.Constant (i));
+                argsE[i] = Expression.Field (vargE, ValueReflection.TypedFields[pt]);
+                if (pt == typeof (string)) {
+                    argsE[i] = Expression.Call (interpreterE, miReadString, argsE[i]);
+                }
             }
             var resultE = Expression.Call (targetE, method, argsE);
             var bodyE = resultE;
@@ -125,6 +135,8 @@ namespace CLanguage
                 return "float";
             if (type == typeof (double))
                 return "double";
+            if (type == typeof (string))
+                return "const char *";
             if (type == typeof (char))
                 return "char";
             if (type == typeof (uint))

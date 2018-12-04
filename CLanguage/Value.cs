@@ -39,6 +39,12 @@ namespace CLanguage
             return Int32Value.ToString ();
         }
 
+        public static implicit operator Value (string v)
+        {
+            // Used for marshalling, but not actually allowed
+            return new Value ();
+        }
+
         public static implicit operator Value (char v)
         {
             return new Value {
@@ -187,5 +193,10 @@ namespace CLanguage
              let ps = m.GetParameters ()
              where ps.Length == 1
              select (ps[0].ParameterType, m)).ToDictionary (x => x.Item1, x => x.Item2);
+
+        static ValueReflection ()
+        {
+            TypedFields[typeof (string)] = typeof (Value).GetField (nameof (Value.PointerValue));
+        }
     }
 }
