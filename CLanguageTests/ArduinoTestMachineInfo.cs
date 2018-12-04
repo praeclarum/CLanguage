@@ -11,7 +11,7 @@ using CLanguage.Types;
 
 namespace CLanguage.Tests
 {
-    public class ArduinoTestMachineInfo : MachineInfo
+    public class ArduinoTestMachineInfo : TestMachineInfo
 	{
         public TestArduino Arduino = new TestArduino ();
 
@@ -75,10 +75,6 @@ struct SerialClass Serial;
             AddInternalFunction ("void delay (unsigned long ms)");
             AddInternalFunction ("void tone (int pin, int note, int duration)");
             AddInternalFunction ("void noTone (int pin)");
-            AddInternalFunction ("void assertAreEqual (int expected, int actual)", AssertAreEqual);
-            AddInternalFunction ("void assertBoolsAreEqual (bool expected, bool actual)", AssertBoolsAreEqual);
-            AddInternalFunction ("void assertFloatsAreEqual (float expected, float actual)", AssertFloatsAreEqual);
-            AddInternalFunction ("void assertDoublesAreEqual (double expected, double actual)", AssertDoublesAreEqual);
             AddInternalFunction ("long millis ()", Arduino.Millis);
             AddInternalFunction ("void SerialClass::begin (int baud)", Arduino.SerialBegin);
             AddInternalFunction ("void SerialClass::print (const char *value)", Arduino.SerialPrintS);

@@ -26,6 +26,9 @@ namespace CLanguage.Tests
             HeaderCode = "";
 
             AddInternalFunction ("void assertAreEqual (int expected, int actual)", AssertAreEqual);
+            AddInternalFunction ("void assertU16AreEqual (unsigned int expected, unsigned int actual)", AssertU16AreEqual);
+            AddInternalFunction ("void assert32AreEqual (long expected, long actual)", Assert32AreEqual);
+            AddInternalFunction ("void assertU32AreEqual (unsigned long expected, unsigned long actual)", AssertU32AreEqual);
             AddInternalFunction ("void assertBoolsAreEqual (bool expected, bool actual)", AssertBoolsAreEqual);
             AddInternalFunction ("void assertFloatsAreEqual (float expected, float actual)", AssertFloatsAreEqual);
             AddInternalFunction ("void assertDoublesAreEqual (double expected, double actual)", AssertDoublesAreEqual);
@@ -35,7 +38,28 @@ namespace CLanguage.Tests
         {
             var expected = state.ReadArg (0);
             var actual = state.ReadArg (1);
+            Assert.AreEqual ((short)expected, (short)actual);
+        }
+
+        static void AssertU16AreEqual (CInterpreter state)
+        {
+            var expected = state.ReadArg (0);
+            var actual = state.ReadArg (1);
+            Assert.AreEqual ((ushort)expected, (ushort)actual);
+        }
+
+        static void Assert32AreEqual (CInterpreter state)
+        {
+            var expected = state.ReadArg (0);
+            var actual = state.ReadArg (1);
             Assert.AreEqual ((int)expected, (int)actual);
+        }
+
+        static void AssertU32AreEqual (CInterpreter state)
+        {
+            var expected = state.ReadArg (0);
+            var actual = state.ReadArg (1);
+            Assert.AreEqual ((uint)expected, (uint)actual);
         }
 
         static void AssertFloatsAreEqual (CInterpreter state)

@@ -31,10 +31,19 @@ namespace CLanguage
         public System.Byte UInt8Value;
         [FieldOffset (0)]
         public System.Int32 PointerValue;
+        [FieldOffset (0)]
+        public System.Char CharValue;
 
         public override string ToString ()
         {
             return Int32Value.ToString ();
+        }
+
+        public static implicit operator Value (char v)
+        {
+            return new Value {
+                CharValue = v,
+            };
         }
 
         public static implicit operator Value (float v)
@@ -160,6 +169,15 @@ namespace CLanguage
         public static Value Pointer (int address) => new Value {
             PointerValue = address,
         };
+    }
+
+    static class ValueReflection
+    {
+        public static readonly Dictionary<Type, FieldInfo> TypedFields =
+            (from f in typeof (Value).GetFields (BindingFlags.Instance | BindingFlags.Public)
+             where f.Name.EndsWith ("Value", StringComparison.InvariantCultureIgnoreCase) &&
+                 !f.Name.StartsWith ("Pointer", StringComparison.InvariantCultureIgnoreCase)
+             select (f.FieldType, f)).ToDictionary (x => x.Item1, x => x.Item2);
 
         public static readonly Dictionary<Type, MethodInfo> CreateValueFromTypeMethods =
             (from m in typeof (Value).GetMethods (BindingFlags.Static | BindingFlags.Public)

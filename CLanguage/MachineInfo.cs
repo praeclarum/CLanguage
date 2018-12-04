@@ -87,8 +87,6 @@ namespace CLanguage
 
         static readonly MethodInfo miReadArg = typeof (CInterpreter).GetMethod (nameof(CInterpreter.ReadArg));
         static readonly MethodInfo miPush = typeof (CInterpreter).GetMethod ("Push");
-        static readonly FieldInfo fvInt32Value = typeof (Value).GetField (nameof(Value.Int32Value));
-        //static readonly MethodInfo ipush = typeof (CInterpreter).GetMethods ().First (x => x.Name == "Push" && x.GetParameters ().Length == 1 && x.GetParameters ()[0].ParameterType == typeof (Value));
 
         InternalFunctionAction MarshalMethod (object target, MethodInfo method)
         {
@@ -100,12 +98,12 @@ namespace CLanguage
 
             var argsE = ps.Length > 0 ? new Expression[nargs] : Array.Empty<Expression> ();
             for (var i = 0; i < nargs; i++) {
-                argsE[i] = Expression.Field (Expression.Call (interpreterE, miReadArg, Expression.Constant (i)), fvInt32Value);
+                argsE[i] = Expression.Field (Expression.Call (interpreterE, miReadArg, Expression.Constant (i)), ValueReflection.TypedFields[ps[i].ParameterType]);
             }
             var resultE = Expression.Call (targetE, method, argsE);
             var bodyE = resultE;
             if (method.ReturnType != typeof (void)) {
-                var valueResultE = Expression.Call (Value.CreateValueFromTypeMethods[method.ReturnType], resultE);
+                var valueResultE = Expression.Call (ValueReflection.CreateValueFromTypeMethods[method.ReturnType], resultE);
                 bodyE = Expression.Call (interpreterE, miPush, valueResultE);
             }
             var ee = Expression.Lambda<InternalFunctionAction> (bodyE, interpreterE);
@@ -120,6 +118,20 @@ namespace CLanguage
                 return IntSize == 4 ? "int" : "long";
             if (type == typeof (short))
                 return "short";
+            if (type == typeof (byte))
+                return "unsigned char";
+            if (type == typeof (float))
+                return "float";
+            if (type == typeof (double))
+                return "double";
+            if (type == typeof (char))
+                return "char";
+            if (type == typeof (uint))
+                return IntSize == 4 ? "unsigned int" : "unsigned long";
+            if (type == typeof (ushort))
+                return "unsigned short";
+            if (type == typeof (sbyte))
+                return "signed char";
             return null;
         }
 
