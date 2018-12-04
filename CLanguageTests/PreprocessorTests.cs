@@ -8,19 +8,8 @@ using static CLanguage.CLanguageService;
 namespace CLanguage.Tests
 {
 	[TestClass]
-	public class PreprocessorTests
+	public class PreprocessorTests : TestsBase
 	{
-        CInterpreter Run (string code, params int[] expectedErrors)
-        {
-            var fullCode = "void start() { __cinit(); main(); } " + code;
-            var printer = new TestPrinter (expectedErrors);
-            var i = CLanguageService.CreateInterpreter (fullCode, new TestMachineInfo (), printer: printer);
-            printer.CheckForErrors ();
-            i.Reset ("start");
-            i.Step ();
-            return i;
-        }
-
         [TestMethod]
         public void AssignToDefines ()
         {

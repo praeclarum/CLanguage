@@ -341,8 +341,17 @@ namespace CLanguage.Interpreter
             // Typedefs
             //
             if (specs.TypeSpecifiers.Count == 1 && specs.TypeSpecifiers[0].Kind == TypeSpecifierKind.Typename) {
-                var name = specs.TypeSpecifiers[0].Name;
-                return ResolveTypeName (name);
+                var typedefName = specs.TypeSpecifiers[0].Name;
+                return ResolveTypeName (typedefName);
+            }
+
+            //
+            // Enums
+            //
+            if (specs.TypeSpecifiers.Count == 1 && specs.TypeSpecifiers[0].Kind == TypeSpecifierKind.Enum) {
+                var enumName = specs.TypeSpecifiers[0].Name;
+                Report.Error (9000, "Enums not supported");
+                return CBasicType.SignedInt;
             }
 
             //
