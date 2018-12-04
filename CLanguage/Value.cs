@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 
 namespace CLanguage
@@ -157,5 +160,14 @@ namespace CLanguage
         public static Value Pointer (int address) => new Value {
             PointerValue = address,
         };
+
+        public static readonly Dictionary<Type, MethodInfo> CreateValueFromTypeMethods =
+            (from m in typeof (Value).GetMethods (BindingFlags.Static | BindingFlags.Public)
+             where m.Name.StartsWith ("op", StringComparison.InvariantCultureIgnoreCase)
+             let rt = m.ReturnType
+             where rt == typeof (Value)
+             let ps = m.GetParameters ()
+             where ps.Length == 1
+             select (ps[0].ParameterType, m)).ToDictionary (x => x.Item1, x => x.Item2);
     }
 }

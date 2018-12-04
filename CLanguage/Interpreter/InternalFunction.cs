@@ -13,7 +13,7 @@ namespace CLanguage.Interpreter
 		{
 			var report = new Report (new Report.TextWriterPrinter (Console.Out));
 			var parser = new CParser ();
-			var tu = parser.ParseTranslationUnit ("_machine.h", prototype + ";", report);
+			var tu = parser.ParseTranslationUnit ("_internal.h", prototype + ";", report);
             Compiler compiler = new Compiler (machineInfo, report);
             compiler.Add (tu);
             var exe = compiler.Compile ();
@@ -21,10 +21,10 @@ namespace CLanguage.Interpreter
                 throw new Exception ("Failed to parse function prototype: " + prototype);
             }
 			var f = tu.Functions[0];
+
 			Name = f.Name;
             NameContext = f.NameContext;
 			FunctionType = f.FunctionType;
-
 			Action = action;
 		}
 

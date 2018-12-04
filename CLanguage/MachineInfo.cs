@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using CLanguage.Interpreter;
 using CLanguage.Types;
 using System.Reflection;
+using System.Linq.Expressions;
 
 namespace CLanguage
 {
@@ -84,24 +85,31 @@ namespace CLanguage
             }
         }
 
+        static readonly MethodInfo miReadArg = typeof (CInterpreter).GetMethod (nameof(CInterpreter.ReadArg));
+        static readonly MethodInfo miPush = typeof (CInterpreter).GetMethod ("Push");
+        static readonly FieldInfo fvInt32Value = typeof (Value).GetField (nameof(Value.Int32Value));
+        //static readonly MethodInfo ipush = typeof (CInterpreter).GetMethods ().First (x => x.Name == "Push" && x.GetParameters ().Length == 1 && x.GetParameters ()[0].ParameterType == typeof (Value));
+
         InternalFunctionAction MarshalMethod (object target, MethodInfo method)
         {
-            void Execute (CInterpreter interpreter)
-            {
-                var ps = method.GetParameters ();
-                var args = ps.Length > 0 ? new object[ps.Length] : Array.Empty<object> ();
-                for (var i = 0; i < args.Length; i++) {
-                    args[i] = (int)interpreter.ReadArg (i);
-                }
-                var mr = method.Invoke (target, args);
-                var r = mr is int ir ? ir : 0;
-                if (method.ReturnType != typeof (void)) {
-                    interpreter.Push (r);
-                }
-                //throw new Exception ($"Cannot call '{method}' on '{target}'");
-            }
+            var ps = method.GetParameters ();
+            var nargs = ps.Length;
 
-            return Execute;
+            var targetE = Expression.Constant (target);
+            var interpreterE = Expression.Parameter (typeof (CInterpreter), "interpreter");
+
+            var argsE = ps.Length > 0 ? new Expression[nargs] : Array.Empty<Expression> ();
+            for (var i = 0; i < nargs; i++) {
+                argsE[i] = Expression.Field (Expression.Call (interpreterE, miReadArg, Expression.Constant (i)), fvInt32Value);
+            }
+            var resultE = Expression.Call (targetE, method, argsE);
+            var bodyE = resultE;
+            if (method.ReturnType != typeof (void)) {
+                var valueResultE = Expression.Call (Value.CreateValueFromTypeMethods[method.ReturnType], resultE);
+                bodyE = Expression.Call (interpreterE, miPush, valueResultE);
+            }
+            var ee = Expression.Lambda<InternalFunctionAction> (bodyE, interpreterE);
+            return ee.Compile ();
         }
 
         string ClrTypeToCode (Type type)
