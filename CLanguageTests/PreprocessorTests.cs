@@ -93,7 +93,7 @@ void main() {
     DO(i)
     assertAreEqual(1, i);
 }
-");
+", 1024);
         }
     }
 }

@@ -19,7 +19,7 @@ namespace CLanguage.Tests
 
 		public override void Print (Report.AbstractMessage msg)
 		{
-			if (msg.MessageType == "Error") {
+			if (msg.MessageType != "Info") {
 				encounteredErrors.Add (msg.Code);
 				if (!expectedErrors.Contains (msg.Code)) {
 					Assert.Fail (msg.ToString ());
