@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using CLanguage.Interpreter;
 using CLanguage.Types;
+using CLanguage.Compiler;
 
 namespace CLanguage.Syntax
 {

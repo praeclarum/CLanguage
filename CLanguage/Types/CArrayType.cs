@@ -1,6 +1,5 @@
 ﻿using System;
-using CLanguage.Interpreter;
-using CLanguage.Syntax;
+using CLanguage.Compiler;
 
 namespace CLanguage.Types
 {

@@ -3,7 +3,7 @@ using CLanguage.Syntax;
 using CLanguage.Types;
 using System.Linq;
 
-namespace CLanguage.Interpreter
+namespace CLanguage.Compiler
 {
     public class TranslationUnitContext : EmitContext
     {

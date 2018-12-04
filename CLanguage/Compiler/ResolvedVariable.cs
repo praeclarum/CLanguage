@@ -1,7 +1,8 @@
 ﻿using System;
 using CLanguage.Types;
+using CLanguage.Interpreter;
 
-namespace CLanguage.Interpreter
+namespace CLanguage.Compiler
 {
     public class ResolvedVariable
     {

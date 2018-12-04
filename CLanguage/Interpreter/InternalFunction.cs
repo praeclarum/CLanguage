@@ -14,7 +14,7 @@ namespace CLanguage.Interpreter
 			var report = new Report (new Report.TextWriterPrinter (Console.Out));
 			var parser = new CParser ();
 			var tu = parser.ParseTranslationUnit ("_internal.h", prototype + ";", report);
-            Compiler compiler = new Compiler (machineInfo, report);
+            var compiler = new Compiler.Compiler (machineInfo, report);
             compiler.Add (tu);
             var exe = compiler.Compile ();
             if (tu.Functions.Count == 0) {

@@ -3,7 +3,7 @@ using CLanguage.Syntax;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CLanguage.Interpreter
+namespace CLanguage.Compiler
 {
     public class CompilerOptions
     {

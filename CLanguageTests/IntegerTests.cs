@@ -4,6 +4,7 @@ using CLanguage.Types;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
 using System.Globalization;
+using CLanguage.Compiler;
 
 namespace CLanguage.Tests
 {
@@ -15,7 +16,7 @@ namespace CLanguage.Tests
 			var report = new Report (new TestPrinter ());
 			var context = new ExecutableContext (new Executable (mi), report);
 
-			var compiler = new Compiler (mi, report);
+			var compiler = new Compiler.Compiler (mi, report);
 			compiler.AddCode ("test.c", type + " v;");
 			var exe = compiler.Compile ();
 
@@ -33,7 +34,7 @@ namespace CLanguage.Tests
 		{
 			var report = new Report (new TestPrinter ());
 
-            var compiler = new Compiler (mi, report);
+            var compiler = new Compiler.Compiler (mi, report);
             compiler.AddCode ("test.c", type1 + " v1; " + type2 + " v2;");
             var exe = compiler.Compile ();
             var context = new ExecutableContext (new Executable (mi), report);

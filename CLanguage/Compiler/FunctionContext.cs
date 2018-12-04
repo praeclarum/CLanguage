@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using CLanguage.Syntax;
 using CLanguage.Types;
+using CLanguage.Interpreter;
 
-namespace CLanguage.Interpreter
+namespace CLanguage.Compiler
 {
     class FunctionContext : EmitContext
     {

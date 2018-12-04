@@ -7,6 +7,7 @@ using CLanguage.Interpreter;
 using CLanguage.Types;
 using System.Reflection;
 using System.Linq.Expressions;
+using CLanguage.Compiler;
 
 namespace CLanguage
 {

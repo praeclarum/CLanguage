@@ -1,6 +1,7 @@
 using System;
 
 using CLanguage.Interpreter;
+using CLanguage.Compiler;
 
 namespace CLanguage.Syntax
 {

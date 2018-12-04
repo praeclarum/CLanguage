@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml.Linq;
 using CLanguage.Types;
+using CLanguage.Compiler;
 
 namespace CLanguage.Tests
 {

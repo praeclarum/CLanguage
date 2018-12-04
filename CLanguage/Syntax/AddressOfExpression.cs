@@ -1,5 +1,5 @@
 ﻿using System;
-using CLanguage.Interpreter;
+using CLanguage.Compiler;
 using CLanguage.Types;
 
 namespace CLanguage.Syntax

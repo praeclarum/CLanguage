@@ -8,6 +8,7 @@ using CLanguage.Syntax;
 using CLanguage.Types;
 using static CLanguage.CLanguageService;
 using CLanguage.Interpreter;
+using CLanguage.Compiler;
 
 namespace CLanguage.Tests
 {

@@ -5,6 +5,7 @@ using System.Text;
 
 using CLanguage.Types;
 using CLanguage.Interpreter;
+using CLanguage.Compiler;
 
 namespace CLanguage.Syntax
 {

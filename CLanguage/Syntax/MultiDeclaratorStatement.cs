@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using CLanguage.Interpreter;
 using CLanguage.Types;
+using CLanguage.Compiler;
 
 namespace CLanguage.Syntax
 {

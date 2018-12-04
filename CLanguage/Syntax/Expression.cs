@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using CLanguage.Interpreter;
+using CLanguage.Compiler;
 using CLanguage.Types;
 
 namespace CLanguage.Syntax

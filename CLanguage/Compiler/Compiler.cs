@@ -6,8 +6,9 @@ using System.Text;
 using CLanguage.Syntax;
 using CLanguage.Types;
 using CLanguage.Parser;
+using CLanguage.Interpreter;
 
-namespace CLanguage.Interpreter
+namespace CLanguage.Compiler
 {
     public class Compiler
     {
