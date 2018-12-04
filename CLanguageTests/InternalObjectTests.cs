@@ -47,13 +47,28 @@ namespace CLanguage.Tests
             public double PopDouble () => (double)PopInt64 ();
         }
 
-        Calc TestCalc (string code)
+        Calc TestReference (string code)
         {
             var mi = new ArduinoTestMachineInfo ();
             var c = new Calc ();
             mi.AddGlobalReference ("c", c);
             Run ("void main() { " + code + "}", mi);
             return c;
+        }
+
+        Calc TestMethods (string code)
+        {
+            var mi = new ArduinoTestMachineInfo ();
+            var c = new Calc ();
+            mi.AddGlobalMethods (c);
+            Run ("void main() { " + code.Replace ("c.", "") + "}", mi);
+            return c;
+        }
+
+        Calc TestCalc (string code)
+        {
+            TestReference (code);
+            return TestMethods (code);
         }
 
         [TestMethod]

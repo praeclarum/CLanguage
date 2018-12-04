@@ -38,21 +38,42 @@ namespace CLanguage
             InternalFunctions.Add (new InternalFunction (this, prototype, action));
         }
 
+        public void AddGlobalMethods (object target)
+        {
+            AddTargetMethods (null, target);
+        }
+
         public void AddGlobalReference (string name, object target)
         {
             if (string.IsNullOrWhiteSpace (name))
                 throw new ArgumentException ("Name must be specified", nameof (name));
+            AddTargetMethods (name.Trim (), target);
+        }
+
+        void AddTargetMethods (string name, object target)
+        {
             if (target == null)
                 throw new ArgumentNullException (nameof (target));
 
+            var isRef = name != null;
+
+            //
+            // Find the methods to marshal
+            //
             var type = target.GetType ();
             var allmethods = type.GetMethods (BindingFlags.Public | BindingFlags.FlattenHierarchy | BindingFlags.Instance);
             var methods = allmethods.Where (x => !x.ContainsGenericParameters && !x.IsConstructor)
                 .Where (x => x.ReturnType != typeof(string) && x.Name != "GetType" && x.Name != "Equals" && x.Name != "GetHashCode" && x.Name != "ToString");
+
+            //
+            // Generate the type code for the reference
+            //
             var code = new CodeWriter ();
             var typeName = $"_{name}_t";
             code.WriteLine ("");
-            code.WriteLine ($"struct {typeName} {{").Indent ();
+            if (isRef) {
+                code.WriteLine ($"struct {typeName} {{").Indent ();
+            }
             var wmethods = new List<(MethodInfo Method, string ReturnType, string Prototype)> ();
             foreach (var m in methods) {
                 var mrt = ClrTypeToCode (m.ReturnType);
@@ -80,12 +101,14 @@ namespace CLanguage
                 code.WriteLine (";");
                 wmethods.Add ((m, mrt, pcode.Code));
             }
-            code.Outdent ().WriteLine ("};");
-            code.WriteLine ($"struct {typeName} {name};");
-            HeaderCode += code;
+            if (isRef) {
+                code.Outdent ().WriteLine ("};");
+                code.WriteLine ($"struct {typeName} {name};");
+                HeaderCode += code;
+            }
 
             foreach (var (m, mrt, pcode) in wmethods) {
-                var proto = $"{mrt} {typeName}::{pcode}";
+                var proto = isRef ? $"{mrt} {typeName}::{pcode}" : $"{mrt} {pcode}";
                 AddInternalFunction (proto, MarshalMethod (target, m));
             }
         }
