@@ -15,6 +15,7 @@ namespace CLanguage.Tests
         {
             public string Title { get; set; }
             readonly List<long> stack = new List<long> ();
+            public int Count => stack.Count;
             public void PushInt64 (long x)
             {
                 stack.Add (x);
@@ -75,8 +76,8 @@ namespace CLanguage.Tests
         public void Int8 ()
         {
             TestCalc (@"
-    c.PushInt8(-1);
-    assertAreEqual(-1, c.PopInt8());
+    c.pushInt8(-1);
+    assertAreEqual(-1, c.popInt8());
 ");
         }
 
@@ -84,8 +85,8 @@ namespace CLanguage.Tests
         public void UInt8 ()
         {
             TestCalc (@"
-    c.PushUInt8(345);
-    assertAreEqual(89, c.PopUInt8());
+    c.pushUInt8(345);
+    assertAreEqual(89, c.popUInt8());
 ");
         }
 
@@ -93,8 +94,8 @@ namespace CLanguage.Tests
         public void Int16 ()
         {
             TestCalc (@"
-    c.PushInt16(-345);
-    assertAreEqual(-345, c.PopInt16());
+    c.pushInt16(-345);
+    assertAreEqual(-345, c.popInt16());
 ");
         }
 
@@ -102,8 +103,8 @@ namespace CLanguage.Tests
         public void UInt16 ()
         {
             TestCalc (@"
-    c.PushUInt16(345);
-    assertU16AreEqual(345, c.PopUInt16());
+    c.pushUInt16(345);
+    assertU16AreEqual(345, c.popUInt16());
 ");
         }
 
@@ -111,8 +112,8 @@ namespace CLanguage.Tests
         public void Int32 ()
         {
             TestCalc (@"
-    c.PushInt32(-8112000);
-    assert32AreEqual(-8112000, c.PopInt32());
+    c.pushInt32(-8112000);
+    assert32AreEqual(-8112000, c.popInt32());
 ");
         }
 
@@ -120,8 +121,8 @@ namespace CLanguage.Tests
         public void UInt32 ()
         {
             TestCalc (@"
-    c.PushUInt32(678000);
-    assertU32AreEqual(678000, c.PopUInt32());
+    c.pushUInt32(678000);
+    assertU32AreEqual(678000, c.popUInt32());
 ");
         }
 
@@ -129,8 +130,8 @@ namespace CLanguage.Tests
         public void Single ()
         {
             TestCalc (@"
-    c.PushSingle(-42.0);
-    assertAreEqual(-42.0, c.PopSingle());
+    c.pushSingle(-42.0);
+    assertAreEqual(-42.0, c.popSingle());
 ");
         }
 
@@ -138,8 +139,8 @@ namespace CLanguage.Tests
         public void Double ()
         {
             TestCalc (@"
-    c.PushDouble(-42.0);
-    assertAreEqual(-42.0, c.PopDouble());
+    c.pushDouble(-42.0);
+    assertAreEqual(-42.0, c.popDouble());
 ");
         }
 
@@ -147,18 +148,28 @@ namespace CLanguage.Tests
         public void Char ()
         {
             TestCalc (@"
-    c.PushChar('x');
-    assertAreEqual('x', c.PopChar());
+    c.pushChar('x');
+    assertAreEqual('x', c.popChar());
 ");
         }
 
         [TestMethod]
-        public void String ()
+        public void StringPropertySetter ()
         {
             var c = TestCalc (@"
     c.setTitle(""hello"");
 ");
             Assert.AreEqual ("hello", c.Title);
+        }
+
+        [TestMethod]
+        public void PropertyGetter ()
+        {
+            var c = TestCalc (@"
+    c.pushChar('a');
+    c.pushChar('b');
+    assertAreEqual(2, c.getCount());
+");
         }
     }
 }

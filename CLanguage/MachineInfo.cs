@@ -89,6 +89,12 @@ namespace CLanguage
                 if (m.IsSpecialName && mname.StartsWith ("set_", StringComparison.Ordinal)) {
                     mname = "set" + mname.Substring (4);
                 }
+                else if (m.IsSpecialName && mname.StartsWith ("get_", StringComparison.Ordinal)) {
+                    mname = "get" + mname.Substring (4);
+                }
+                else if (char.IsUpper (mname[0])) {
+                    mname = char.ToLowerInvariant (mname[0]) + mname.Substring (1);
+                }
                 pcode.Write ($"{mname}(");
                 var head = "";
                 foreach (var (t, n) in ps) {
