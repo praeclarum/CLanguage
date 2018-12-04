@@ -64,7 +64,7 @@ void f () {
         [TestMethod]
         public void HexNumbers ()
         {
-            var lex = new Lexer ("", "0x201");
+            var lex = new Lexer ("hex.c", "0x201");
             lex.Advance ();
             Assert.AreEqual (TokenKind.CONSTANT, lex.CurrentToken.Kind);
             Assert.AreEqual (513, lex.CurrentToken.Value);
@@ -95,7 +95,7 @@ void f () {
 
         void AssertId (string expectedId, string code = null)
         {
-            var lex = new Lexer ("", code ?? expectedId);
+            var lex = new Lexer ("assertid.c", code ?? expectedId);
             lex.Advance ();
             Assert.AreEqual (TokenKind.IDENTIFIER, lex.CurrentToken.Kind);
             Assert.AreEqual (expectedId, lex.CurrentToken.Value);

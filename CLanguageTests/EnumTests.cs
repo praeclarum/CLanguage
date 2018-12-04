@@ -23,7 +23,7 @@ void main() {
 ");
         }
 
-        [TestMethod, Ignore]
+        [TestMethod]
         public void GlobalInit ()
         {
             Run (@"

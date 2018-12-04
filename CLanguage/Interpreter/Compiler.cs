@@ -46,7 +46,9 @@ namespace CLanguage.Interpreter
             if (document.IsCompilable) {
                 var parser = new CParser ();
 
-                Add (parser.ParseTranslationUnit (options.Report, lexedDocuments["_machine.h"].Tokens, lexed.Tokens));
+                var name = System.IO.Path.GetFileNameWithoutExtension (document.Path);
+
+                Add (parser.ParseTranslationUnit (options.Report, name, lexedDocuments["_machine.h"].Tokens, lexed.Tokens));
             }
         }
 
@@ -71,25 +73,34 @@ namespace CLanguage.Interpreter
             //
             // Find Variables, Functions, Types
             //
-            var cinitBody = new Block ();
+            var exeInitBody = new Block ();
             var tucs = tus.Select (x => new TranslationUnitContext (x, exeContext));
+            var tuInits = new List<(CompiledFunction, EmitContext)> ();
             foreach (var tuc in tucs) {
                 var tu = tuc.TranslationUnit;
                 AddStatementDeclarations (tu, tu, tuc);
-                cinitBody.AddStatements (tu.InitStatements);
+                if (tu.InitStatements.Count > 0) {
+                    var tuInitBody = new Block ();
+                    tuInitBody.AddStatements (tu.InitStatements);
+                    var tuInit = new CompiledFunction ($"__{tu.Name}__cinit", CFunctionType.VoidProcedure, tuInitBody);
+                    exeInitBody.AddStatement (new ExpressionStatement (new FuncallExpression (new VariableExpression (tuInit.Name))));
+                    tuInits.Add ((tuInit, tuc));
+                    exe.Functions.Add (tuInit);
+                }
             }
 
             //
             // Generate a function to init globals
             //
-            var cinit = new CompiledFunction ("__cinit", CFunctionType.VoidProcedure, cinitBody);
-            exe.Functions.Add (cinit);
-            var functionsToCompile = new List<(CompiledFunction, EmitContext)> { (cinit, exeContext) };
+            var exeInit = new CompiledFunction ($"__cinit", CFunctionType.VoidProcedure, exeInitBody);
+            exe.Functions.Add (exeInit);
 
             //
             // Link everything together
             // This is done before compilation to make sure everything is visible (for recursion)
             //
+            var functionsToCompile = new List<(CompiledFunction, EmitContext)> { (exeInit, exeContext) };
+            functionsToCompile.AddRange (tuInits);
             foreach (var tuc in tucs) {
                 var tu = tuc.TranslationUnit;
                 foreach (var g in tu.Variables) {

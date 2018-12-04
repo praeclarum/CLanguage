@@ -25,7 +25,7 @@ namespace CLanguage.Parser
             }
         }
 
-        public Preprocessor (Report report, params IEnumerable<Token>[] tokens)
+        public Preprocessor (Report report, params Token[][] tokens)
         {
             this.tokens = tokens.SelectMany (x => x).ToList ();
             this.report = report;

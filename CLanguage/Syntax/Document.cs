@@ -28,14 +28,22 @@ namespace CLanguage.Syntax
 
         public Document (string path, string content, Encoding encoding)
         {
-            Path = path ?? throw new ArgumentNullException (nameof (path));
+            if (string.IsNullOrWhiteSpace (path)) {
+                throw new ArgumentException ("Document path must be specified", nameof (path));
+            }
+
+            Path = path;
             Content = content ?? throw new ArgumentNullException (nameof (content));
             Encoding = encoding ?? throw new ArgumentNullException (nameof (encoding));
         }
 
         public Document (string path, string content)
         {
-            Path = path ?? throw new ArgumentNullException (nameof (path));
+            if (string.IsNullOrWhiteSpace (path)) {
+                throw new ArgumentException ("Document path must be specified", nameof (path));
+            }
+
+            Path = path;
             Content = content ?? throw new ArgumentNullException (nameof (content));
             Encoding = Encoding.UTF8;
         }

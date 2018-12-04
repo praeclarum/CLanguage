@@ -19,7 +19,4 @@
     <Folder Include="Syntax\" />
     <Folder Include="Types\" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Remove="Interpreter\ExecutionState.cs" />
-  </ItemGroup>
 </Project>
