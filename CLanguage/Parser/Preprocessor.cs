@@ -68,7 +68,6 @@ namespace CLanguage.Parser
                             }
                             tokens.RemoveRange (i, len + 1);
                             tokens.InsertRange (i, newBody);
-                            //report.Error (9000, "PARAMETERIZED DEFINE");
                         }
                         else {
                             tokens.RemoveAt (i);
