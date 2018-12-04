@@ -56,11 +56,11 @@ void main() {
 ");
         }
 
-        [TestMethod, Ignore]
+        [TestMethod]
         public void UnnamedRecursive ()
         {
             Run (@"
-enum { ZERO, ONE, OTHER_ONE = ONE, THREE = 2 + ONE };
+enum { ZERO, ONE, OTHER_ONE = ONE, THREE = 2 + OTHER_ONE };
 void main() {
     assertAreEqual(1, ONE);
     assertAreEqual(OTHER_ONE, OTHER_ONE);

@@ -15,13 +15,15 @@ namespace CLanguage.Interpreter
 
         public MachineInfo MachineInfo { get; private set; }
 
+        protected EmitContext (EmitContext parentContext)
+            : this (parentContext.MachineInfo, parentContext.Report, parentContext.FunctionDecl, parentContext)
+        { 
+        }
+
         protected EmitContext (MachineInfo machineInfo, Report report, CompiledFunction fdecl, EmitContext parentContext)
         {
-            if (machineInfo == null) throw new ArgumentNullException (nameof (machineInfo));
-            if (report == null) throw new ArgumentNullException (nameof (report));
-
-            MachineInfo = machineInfo;
-            Report = report;
+            MachineInfo = machineInfo ?? throw new ArgumentNullException (nameof (machineInfo));
+            Report = report ?? throw new ArgumentNullException (nameof (report));
             FunctionDecl = fdecl;
             ParentContext = parentContext;
         }
@@ -349,8 +351,9 @@ namespace CLanguage.Interpreter
                 if (enumTs.Body != null) {
                     var et = new CEnumType ();
                     et.Name = enumTs.Name;
+                    var enumContext = new EnumContext (enumTs, et, this);
                     foreach (var s in enumTs.Body.Statements) {
-                        AddEnumMember (et, s, block);
+                        AddEnumMember (et, s, block, enumContext);
                     }
                     return et;
                 }
@@ -404,10 +407,10 @@ namespace CLanguage.Interpreter
             }
         }
 
-        void AddEnumMember (CEnumType st, Statement s, Block block)
+        void AddEnumMember (CEnumType st, Statement s, Block block, EnumContext context)
         {
             if (s is EnumeratorStatement es) {
-                var value = es.LiteralValue != null ? (int)es.LiteralValue.EvalConstant(this) : st.NextValue;
+                var value = es.LiteralValue != null ? (int)es.LiteralValue.EvalConstant(context) : st.NextValue;
                 st.Members.Add (new CEnumMember (es.Name, value));
             }
             else {

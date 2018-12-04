@@ -13,6 +13,8 @@ namespace CLanguage.Types
 
         public override int NumValues => 1;
 
+        public override bool IsIntegral => true;
+
         public override int GetByteSize (EmitContext c)
         {
             return CBasicType.SignedInt.GetByteSize (c);

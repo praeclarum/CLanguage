@@ -103,5 +103,18 @@ namespace CLanguage.Syntax
         {
             return VariableName.ToString();
         }
+
+        public override Value EvalConstant (EmitContext ec)
+        {
+            var res = ec.ResolveVariable (VariableName, null);
+
+            if (res != null) {
+                if (res.Scope == VariableScope.Constant) {
+                    return res.Constant;
+                }
+            }
+
+            return base.EvalConstant (ec);
+        }
     }
 }
