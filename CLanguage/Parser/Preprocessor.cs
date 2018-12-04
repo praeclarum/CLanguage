@@ -34,13 +34,13 @@ namespace CLanguage.Parser
         public Token[] Preprocess ()
         {
             var defines = new Dictionary<string, Define> ();
-            while (PreprocessIteration (defines, tokens)) {
+            while (PreprocessIteration (defines, tokens, report)) {
                 // Keep going until nothing changes
             }
             return tokens.ToArray ();
         }
 
-        static bool PreprocessIteration (Dictionary<string, Define> defines, List<Token> tokens)
+        static bool PreprocessIteration (Dictionary<string, Define> defines, List<Token> tokens, Report report)
         {
             var anotherIterationNeeded = false;
 
@@ -62,7 +62,7 @@ namespace CLanguage.Parser
                                 newDefines[args[ai].Name] = args[ai];
                             }
                             var newBody = define.Body.ToList ();
-                            while (PreprocessIteration (newDefines, newBody)) {
+                            while (PreprocessIteration (newDefines, newBody, report)) {
                                 // Do as much as we can
                             }
                             tokens.RemoveRange (i, len + 1);
@@ -79,48 +79,45 @@ namespace CLanguage.Parser
                     }
                 }
                 else if (t.Kind == '#' && i + 1 < tokens.Count && tokens[i + 1].Kind == TokenKind.IDENTIFIER) {
+                    var eol = i + 1;
+                    while (eol < tokens.Count && tokens[eol].Kind != TokenKind.EOL) {
+                        if (tokens[eol].Kind == '\\' && eol + 1 < tokens.Count && tokens[eol + 1].Kind == TokenKind.EOL) {
+                            eol++;
+                        }
+                        eol++;
+                    }
                     switch (tokens[i + 1].Value.ToString ()) {
-                        case "define": {
-                                var eol = i + 1;
-                                while (eol < tokens.Count && tokens[eol].Kind != TokenKind.EOL) {
-                                    if (tokens[eol].Kind == '\\' && eol + 1 < tokens.Count && tokens[eol+1].Kind == TokenKind.EOL) {
-                                        eol++;
-                                    }
-                                    eol++;
+                        case "define" when eol - i >= 2:
+                            var nameToken = tokens[i + 2];
+                            var body = tokens.Skip (i + 3).Take (eol - i - 3).ToList ();
+                            var ps = Array.Empty<string> ();
+                            var hasPs = false;
+                            if (body.Count >= 2 && body[0].Kind == '(' && body[0].Location.Index == nameToken.EndLocation.Index) {
+                                var endParam = body.FindIndex (1, x => x.Kind == ')');
+                                if (endParam >= 0 && endParam + 1 < body.Count) {
+                                    ps = body.Take (endParam).Where (x => x.Kind == TokenKind.IDENTIFIER).Select (x => (string)x.Value).ToArray ();
+                                    body.RemoveRange (0, endParam + 1);
+                                    hasPs = true;
                                 }
-                                if (eol - i >= 2) {
-                                    var nameToken = tokens[i + 2];
-                                    var body = tokens.Skip (i + 3).Take (eol - i - 3).ToList ();
-                                    var ps = Array.Empty<string> ();
-                                    var hasPs = false;
-                                    if (body.Count >= 2 && body[0].Kind == '(' && body[0].Location.Index == nameToken.EndLocation.Index) {
-                                        var endParam = body.FindIndex (1, x => x.Kind == ')');
-                                        if (endParam >= 0 && endParam + 1 < body.Count) {
-                                            ps = body.Take (endParam).Where (x => x.Kind == TokenKind.IDENTIFIER).Select (x => (string)x.Value).ToArray ();
-                                            body.RemoveRange (0, endParam + 1);
-                                            hasPs = true;
-                                        }
-                                    }
-                                    var define = new Define {
-                                        Name = nameToken.Value?.ToString (),
-                                        Body = body,
-                                        Parameters = ps,
-                                        HasParameters = hasPs,
-                                    };
-                                    if (!string.IsNullOrWhiteSpace (define.Name)) {
-                                        defines[define.Name] = define;
-                                    }
-                                }
-                                if (eol < tokens.Count)
-                                    eol++;
-                                tokens.RemoveRange (i, eol - i);
-                                anotherIterationNeeded = true;
+                            }
+                            var define = new Define {
+                                Name = nameToken.Value?.ToString (),
+                                Body = body,
+                                Parameters = ps,
+                                HasParameters = hasPs,
+                            };
+                            if (!string.IsNullOrWhiteSpace (define.Name)) {
+                                defines[define.Name] = define;
                             }
                             break;
                         default:
-                            i++;
+                            report.Warning (1024, tokens[i].Location, tokens[eol-1].EndLocation, "Cannot understand preprocessor");
                             break;
                     }
+                    if (eol < tokens.Count)
+                        eol++;
+                    tokens.RemoveRange (i, eol - i);
+                    anotherIterationNeeded = true;
                 }
                 else {
                     i++;

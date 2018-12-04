@@ -80,6 +80,21 @@ void main() {
 }
 ");
         }
+
+        [TestMethod]
+        public void Ifndef ()
+        {
+            Run (@"
+#ifndef DO
+#define DO(x) x++;
+#endif
+void main() {
+    auto i = 0;
+    DO(i)
+    assertAreEqual(1, i);
+}
+");
+        }
     }
 }
 

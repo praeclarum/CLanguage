@@ -26,7 +26,21 @@ namespace CLanguage
             if (_reportingDisabled > 0)
                 return;
 
-            ErrorMessage msg = new ErrorMessage (code, loc, endLoc, error, _extraInformation);
+            var msg = new ErrorMessage (code, loc, endLoc, error, _extraInformation);
+            _extraInformation.Clear ();
+
+            if (!_previousErrors.ContainsKey (msg)) {
+                _previousErrors[msg] = true;
+                _printer.Print (msg);
+            }
+        }
+
+        public void Warning (int code, Syntax.Location loc, Syntax.Location endLoc, string warning)
+        {
+            if (_reportingDisabled > 0)
+                return;
+
+            var msg = new WarningMessage (code, loc, endLoc, warning, _extraInformation);
             _extraInformation.Clear ();
 
             if (!_previousErrors.ContainsKey (msg)) {
@@ -107,6 +121,23 @@ namespace CLanguage
                 Location = loc;
                 EndLocation = endLoc;
                 IsWarning = false;
+                if (extraInformation != null) {
+                    RelatedSymbols = new List<string> ();
+                    RelatedSymbols.AddRange (extraInformation);
+                }
+            }
+        }
+
+        public class WarningMessage : AbstractMessage
+        {
+            public WarningMessage (int code, Syntax.Location loc, Syntax.Location endLoc, string error, List<string> extraInformation)
+            {
+                MessageType = "Warning";
+                Code = code;
+                Text = error;
+                Location = loc;
+                EndLocation = endLoc;
+                IsWarning = true;
                 if (extraInformation != null) {
                     RelatedSymbols = new List<string> ();
                     RelatedSymbols.AddRange (extraInformation);
