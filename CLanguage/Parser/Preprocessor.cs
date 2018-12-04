@@ -57,6 +57,7 @@ namespace CLanguage.Parser
                         if (define.HasParameters) {
                             var (args, len) = ReadDefineArgs (i + 1, tokens);
                             var newDefines = new Dictionary<string, Define> (defines);
+                            newDefines.Remove (define.Name); // Prevent recursion
                             for (var ai = 0; ai < Math.Min (args.Count, define.Parameters.Length); ai++) {
                                 args[ai].Name = define.Parameters[ai];
                                 newDefines[args[ai].Name] = args[ai];
