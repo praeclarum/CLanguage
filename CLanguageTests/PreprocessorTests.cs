@@ -60,6 +60,37 @@ void main() {
 }
 ", 1001, 103, 2064);
         }
+
+        [TestMethod]
+        public void DefineMultiline ()
+        {
+            Run (@"
+#define DO i++; \
+i++;
+void main() {
+    auto i = 0;
+    DO
+    DO
+    assertAreEqual(4, i);
+}
+");
+        }
+
+        [TestMethod]
+        public void DefineMultilineParams ()
+        {
+            Run (@"
+#define DO(x, n) x++; \
+x += n;
+void main() {
+    auto i = 0;
+    DO(i, 1)
+    DO(i, 2)
+    DO(i, 3)
+    assertAreEqual(9, i);
+}
+");
+        }
     }
 }
 

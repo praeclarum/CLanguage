@@ -42,14 +42,13 @@ namespace CLanguage.Parser
 
         static bool PreprocessIteration (Dictionary<string, Define> defines, List<Token> tokens)
         {
-            var changed = false;
+            var anotherIterationNeeded = false;
 
             var i = 0;
             while (i < tokens.Count) {
                 var t = tokens[i];
-                if (t.Kind == TokenKind.EOL) {
+                if (t.Kind == TokenKind.EOL || t.Kind == '\\') {
                     tokens.RemoveAt (i);
-                    changed = true;
                 }
                 else if (t.Kind == TokenKind.IDENTIFIER) {
                     var ident = t.Value.ToString ();
@@ -73,7 +72,7 @@ namespace CLanguage.Parser
                             tokens.RemoveAt (i);
                             tokens.InsertRange (i, define.Body);
                         }
-                        changed = true;
+                        anotherIterationNeeded = true;
                     }
                     else {
                         i++;
@@ -84,7 +83,9 @@ namespace CLanguage.Parser
                         case "define": {
                                 var eol = i + 1;
                                 while (eol < tokens.Count && tokens[eol].Kind != TokenKind.EOL) {
-                                    // Look for end of line
+                                    if (tokens[eol].Kind == '\\' && eol + 1 < tokens.Count && tokens[eol+1].Kind == TokenKind.EOL) {
+                                        eol++;
+                                    }
                                     eol++;
                                 }
                                 if (eol - i >= 2) {
@@ -112,9 +113,8 @@ namespace CLanguage.Parser
                                 }
                                 if (eol < tokens.Count)
                                     eol++;
-                                Console.WriteLine ("EOL " + eol);
-                                changed = true;
                                 tokens.RemoveRange (i, eol - i);
+                                anotherIterationNeeded = true;
                             }
                             break;
                         default:
@@ -127,7 +127,7 @@ namespace CLanguage.Parser
                 }
             }
 
-            return changed;
+            return anotherIterationNeeded;
         }
 
         static (List<Define> Defines, int TokenLength) ReadDefineArgs (int startIndex, List<Token> tokens)

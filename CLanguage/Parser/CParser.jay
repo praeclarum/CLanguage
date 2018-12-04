@@ -987,6 +987,7 @@ declaration_list
 preproc
     : EOL
     | '#'
+    | '\'
     ;
 
 
