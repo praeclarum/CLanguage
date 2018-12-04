@@ -98,6 +98,9 @@ namespace CLanguage.Interpreter
             else if (fromType is CArrayType fat && toType is CPointerType tpt && fat.ElementType.NumValues == tpt.InnerType.NumValues) {
                 // Demote arrays to pointers
             }
+            else if (fromType is CEnumType et && toType is CIntType bt) {
+                // Enums act like ints
+            }
             else {
                 Report.Error (30, "Cannot convert type '" + fromType + "' to '" + toType + "'");
             }
@@ -206,7 +209,7 @@ namespace CLanguage.Interpreter
                 while (adecl != null) {
                     int? len = null;
                     if (adecl.LengthExpression is ConstantExpression clen) {
-                        len = Convert.ToInt32 (clen.Value);
+                        len = (int)EvalConstant (clen);
                     }
                     else {
                         if (init is StructuredInitializer sinit) {
@@ -338,20 +341,40 @@ namespace CLanguage.Interpreter
             }
 
             //
-            // Typedefs
+            // Enums
             //
-            if (specs.TypeSpecifiers.Count == 1 && specs.TypeSpecifiers[0].Kind == TypeSpecifierKind.Typename) {
-                var typedefName = specs.TypeSpecifiers[0].Name;
-                return ResolveTypeName (typedefName);
+            var enumTs = specs.TypeSpecifiers.FirstOrDefault (x => x.Kind == TypeSpecifierKind.Enum);
+            if (enumTs != null) {
+                var enumName = specs.TypeSpecifiers[0].Name;
+                if (enumTs.Body != null) {
+                    var et = new CEnumType ();
+                    et.Name = enumTs.Name;
+                    foreach (var s in enumTs.Body.Statements) {
+                        AddEnumMember (et, s, block);
+                    }
+                    return et;
+                }
+                else {
+                    // Lookup
+                    var name = enumTs.Name;
+                    if (block.Enums.TryGetValue (name, out var et)) {
+                        return et;
+                    }
+                    else {
+                        Report.Error (246, "The enum '{0}' could not be found", name);
+                        return CBasicType.SignedInt;
+                    }
+                }
+                //Report.Error (9000, "Enums not supported");
             }
 
             //
-            // Enums
+            // Typedefs
             //
-            if (specs.TypeSpecifiers.Count == 1 && specs.TypeSpecifiers[0].Kind == TypeSpecifierKind.Enum) {
-                var enumName = specs.TypeSpecifiers[0].Name;
-                Report.Error (9000, "Enums not supported");
-                return CBasicType.SignedInt;
+            var typenameTs = specs.TypeSpecifiers.FirstOrDefault (x => x.Kind == TypeSpecifierKind.Typename);
+            if (typenameTs != null) {
+                var typedefName = typenameTs.Name;
+                return ResolveTypeName (typedefName);
             }
 
             //
@@ -379,6 +402,31 @@ namespace CLanguage.Interpreter
             else {
                 throw new NotSupportedException ($"Cannot add statement `{s}` to struct");
             }
+        }
+
+        void AddEnumMember (CEnumType st, Statement s, Block block)
+        {
+            if (s is EnumeratorStatement es) {
+                var value = es.LiteralValue != null ? (int)EvalConstant (es.LiteralValue) : st.NextValue;
+                st.Members.Add (new CEnumMember (es.Name, value));
+            }
+            else {
+                throw new NotSupportedException ($"Cannot add statement `{s}` to enum");
+            }
+        }
+
+        Value EvalConstant (Expression expression)
+        {
+            if (expression is ConstantExpression ce)
+                return EvalConstant (ce);
+
+            Report.Error (133, $"'{expression}' must be constant");
+            return 0;
+        }
+
+        Value EvalConstant (ConstantExpression expression)
+        {
+            return Convert.ToInt32 (expression.Value);
         }
     }
 }

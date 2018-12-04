@@ -197,6 +197,13 @@ namespace CLanguage.Interpreter
                             block.Structures[n] = structType;
                         }
                     }
+                    else if (ctype is CEnumType enumType) {
+                        var n = enumType.Name;
+                        if (string.IsNullOrEmpty (n)) {
+                            n = "e" + enumType.GetHashCode ();
+                        }
+                        block.Enums[n] = enumType;
+                    }
                 }
             }
             else if (statement is FunctionDefinition fdef) {

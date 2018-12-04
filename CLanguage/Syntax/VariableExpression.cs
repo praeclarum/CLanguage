@@ -39,7 +39,8 @@ namespace CLanguage.Syntax
 				}
 				else {
                     if (variable.VariableType is CBasicType ||
-                        variable.VariableType is CPointerType) {
+                        variable.VariableType is CPointerType ||
+                        variable.VariableType is CEnumType) {
 
                         if (variable.Scope == VariableScope.Arg) {
                             ec.Emit (OpCode.LoadArg, variable.Address);
@@ -50,7 +51,7 @@ namespace CLanguage.Syntax
                         else if (variable.Scope == VariableScope.Local) {
                             ec.Emit (OpCode.LoadLocal, variable.Address);
                         }
-                        else if (variable.Scope == VariableScope.MachineConstant) {
+                        else if (variable.Scope == VariableScope.Constant) {
                             ec.Emit (OpCode.LoadConstant, variable.Constant);
                         }
                         else {

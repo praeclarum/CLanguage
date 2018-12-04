@@ -17,6 +17,7 @@ namespace CLanguage.Syntax
         public Dictionary<string, CType> Typedefs { get; private set; } = new Dictionary<string, CType> ();
         public List<Statement> InitStatements { get; private set; } = new List<Statement> ();
         public Dictionary<string, CStructType> Structures { get; private set; } = new Dictionary<string, CStructType> ();
+        public Dictionary<string, CEnumType> Enums { get; private set; } = new Dictionary<string, CEnumType> ();
 
         public Block (IEnumerable<Statement> statements)
         {

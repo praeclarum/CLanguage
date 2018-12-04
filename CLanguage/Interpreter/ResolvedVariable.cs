@@ -28,7 +28,7 @@ namespace CLanguage.Interpreter
 
         public ResolvedVariable (Value constantValue, CType variableType)
         {
-            Scope = VariableScope.MachineConstant;
+            Scope = VariableScope.Constant;
             Constant = constantValue;
             Address = 0;
             VariableType = variableType;
@@ -53,7 +53,7 @@ namespace CLanguage.Interpreter
                     ec.Emit (OpCode.LoadFramePointer);
                     ec.Emit (OpCode.OffsetPointer);
                     break;
-                case VariableScope.MachineConstant:
+                case VariableScope.Constant:
                     ec.Emit (OpCode.LoadConstant, 0);
                     break;
                 default:
@@ -68,6 +68,6 @@ namespace CLanguage.Interpreter
         Arg,
         Local,
         Function,
-        MachineConstant,
+        Constant,
     }
 }

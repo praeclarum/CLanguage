@@ -45,11 +45,11 @@ namespace CLanguage.Interpreter
             //
             // Look for global types
             //
-            foreach (var t in exe.GlobalTypes) {
-                if (t.Name == typeName) {
-                    return t.Type;
-                }
-            }
+            //foreach (var t in exe.GlobalTypes) {
+            //    if (t.Name == typeName) {
+            //        return t.Type;
+            //    }
+            //}
 
             return null;
         }

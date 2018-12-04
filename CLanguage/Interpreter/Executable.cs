@@ -17,14 +17,10 @@ namespace CLanguage.Interpreter
         readonly List<CompiledVariable> globals = new List<CompiledVariable> ();
         public IReadOnlyList<CompiledVariable> Globals => globals;
 
-        readonly List<CompiledType> globalTypes = new List<CompiledType> ();
-        public IReadOnlyList<CompiledType> GlobalTypes => globalTypes;
-
         public Executable (MachineInfo machineInfo)
 		{
 			MachineInfo = machineInfo;
 			Functions = new List<BaseFunction> ();
-
 			Functions.AddRange (machineInfo.InternalFunctions.Cast<BaseFunction> ());
 		}
 
@@ -35,13 +31,6 @@ namespace CLanguage.Interpreter
             var v = new CompiledVariable (name, offset, type);
             globals.Add (v);
             return v;
-        }
-
-        public CType AddGlobalType (string name, CType type)
-        {
-            var v = new CompiledType (name, type);
-            globalTypes.Add (v);
-            return type;
         }
 
         public Value GetConstantMemory (string stringConstant)

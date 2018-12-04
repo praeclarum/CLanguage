@@ -489,21 +489,37 @@ specifier_qualifier_list
 	;
 
 enum_specifier
-	: ENUM '{' enumerator_list '}'                 { $$ = new TypeSpecifier(TypeSpecifierKind.Enum, ""); }
-	| ENUM IDENTIFIER '{' enumerator_list '}'      { $$ = new TypeSpecifier(TypeSpecifierKind.Enum, ($2).ToString()); }
-	| ENUM '{' enumerator_list ',' '}'             { $$ = new TypeSpecifier(TypeSpecifierKind.Enum, ""); }
-	| ENUM IDENTIFIER '{' enumerator_list ',' '}'  { $$ = new TypeSpecifier(TypeSpecifierKind.Enum, ($2).ToString()); }
+	: ENUM '{' enumerator_list '}'                 { $$ = new TypeSpecifier(TypeSpecifierKind.Enum, "", (Block)$3); }
+	| ENUM IDENTIFIER '{' enumerator_list '}'      { $$ = new TypeSpecifier(TypeSpecifierKind.Enum, ($2).ToString(), (Block)$4); }
+	| ENUM '{' enumerator_list ',' '}'             { $$ = new TypeSpecifier(TypeSpecifierKind.Enum, "", (Block)$3); }
+	| ENUM IDENTIFIER '{' enumerator_list ',' '}'  { $$ = new TypeSpecifier(TypeSpecifierKind.Enum, ($2).ToString(), (Block)$4); }
 	| ENUM IDENTIFIER                              { $$ = new TypeSpecifier(TypeSpecifierKind.Enum, ($2).ToString()); }
 	;
 
 enumerator_list
 	: enumerator
+    {
+        var l = new Block ();
+        l.AddStatement((Statement)$1);
+        $$ = l;
+    }
 	| enumerator_list ',' enumerator
+    {
+        var l = (Block)$1;
+        l.AddStatement((Statement)$3);
+        $$ = l;
+    }
 	;
 
 enumerator
 	: IDENTIFIER
+    {
+        $$ = new EnumeratorStatement ((string)$1);
+    }
 	| IDENTIFIER '=' constant_expression
+    {
+        $$ = new EnumeratorStatement ((string)$1, (Expression)$3);
+    }
 	;
 
 function_specifier
@@ -987,7 +1003,7 @@ declaration_list
 preproc
     : EOL
     | '#'
-    | '\'
+    | '\\'
     ;
 
 

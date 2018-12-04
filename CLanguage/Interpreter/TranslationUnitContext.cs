@@ -1,6 +1,7 @@
 ﻿using System;
 using CLanguage.Syntax;
 using CLanguage.Types;
+using System.Linq;
 
 namespace CLanguage.Interpreter
 {
@@ -19,6 +20,17 @@ namespace CLanguage.Interpreter
             if (TranslationUnit.Typedefs.TryGetValue (typeName, out var t))
                 return t;
             return base.ResolveTypeName (typeName);
+        }
+
+        public override ResolvedVariable ResolveVariable (string name, CType[] argTypes)
+        {
+            foreach (var e in TranslationUnit.Enums) {
+                var em = e.Value.Members.FirstOrDefault (x => x.Name == name);
+                if (em != null) {
+                    return new ResolvedVariable (em.Value, e.Value);
+                }
+            }
+            return base.ResolveVariable (name, argTypes);
         }
     }
 }

@@ -14,11 +14,23 @@ namespace CLanguage.Tests
         public void NamedUnnumbered ()
         {
             Run (@"
-enum Numbers { ZERO, ONE, TWO }; \
+enum Numbers { ZERO, ONE, TWO };
 void main() {
     assertAreEqual(0, ZERO);
-    assertAreEqual(0, ONE);
-    assertAreEqual(0, TWO);
+    assertAreEqual(1, ONE);
+    assertAreEqual(2, TWO);
+}
+");
+        }
+
+        [TestMethod, Ignore]
+        public void GlobalInit ()
+        {
+            Run (@"
+enum Numbers { ZERO, ONE };
+enum Numbers one = ONE;
+void main() {
+    assertAreEqual(1, one);
 }
 ");
         }
