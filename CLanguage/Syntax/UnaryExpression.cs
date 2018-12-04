@@ -92,5 +92,37 @@ namespace CLanguage.Syntax
         {
             return string.Format("({0} {1})", Op, Right);
         }
+
+        public override Value EvalConstant (EmitContext ec)
+        {
+            var rightType = Right.GetEvaluatedCType (ec);
+
+            if (rightType.IsIntegral) {
+                var right = (int)Right.EvalConstant (ec);
+
+                switch (Op) {
+                    case Unop.None:
+                        return right;
+                    case Unop.Not:
+                        return (right == 0) ? 1 : 0;
+                    case Unop.Negate:
+                        return -right;
+                    case Unop.BinaryComplement:
+                        return ~right;
+                    case Unop.PreIncrement:
+                        return right + 1;
+                    case Unop.PreDecrement:
+                        return right - 1;
+                    case Unop.PostIncrement:
+                        return right;
+                    case Unop.PostDecrement:
+                        return right;
+                    default:
+                        throw new NotSupportedException ("Unsupported unary operator '" + Op + "'");
+                }
+            }
+
+            return base.EvalConstant (ec);
+        }
     }
 }

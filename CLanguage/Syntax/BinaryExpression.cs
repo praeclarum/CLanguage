@@ -94,5 +94,43 @@ namespace CLanguage.Syntax
         {
             return string.Format("({0} {1} {2})", Left, Op, Right);
         }
+
+        public override Value EvalConstant (EmitContext ec)
+        {
+            var leftType = Left.GetEvaluatedCType (ec);
+            var rightType = Right.GetEvaluatedCType (ec);
+
+            if (leftType.IsIntegral && rightType.IsIntegral) {
+                var left = (int)Left.EvalConstant (ec);
+                var right = (int)Right.EvalConstant (ec);
+
+                switch (Op) {
+                    case Binop.Add:
+                        return left + right;
+                    case Binop.Subtract:
+                        return left - right;
+                    case Binop.Multiply:
+                        return left * right;
+                    case Binop.Divide:
+                        return left / right;
+                    case Binop.Mod:
+                        return left % right;
+                    case Binop.BinaryAnd:
+                        return left & right;
+                    case Binop.BinaryOr:
+                        return left | right;
+                    case Binop.BinaryXor:
+                        return left ^ right;
+                    case Binop.ShiftLeft:
+                        return left << right;
+                    case Binop.ShiftRight:
+                        return left >> right;
+                    default:
+                        throw new NotSupportedException ("Unsupported binary operator '" + Op + "'");
+                }
+            }
+
+            return base.EvalConstant (ec);
+        }
     }
 }

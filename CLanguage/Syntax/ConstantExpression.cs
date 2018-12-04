@@ -85,23 +85,30 @@ namespace CLanguage.Syntax
 
         protected override void DoEmit (EmitContext ec)
         {
+            var cval = EvalConstant (ec);
+            ec.Emit (OpCode.LoadConstant, cval);
+        }
+
+        public override string ToString()
+        {
+            return Value.ToString();
+        }
+
+        public override Value EvalConstant (EmitContext ec)
+        {
             if (ConstantType is CIntType intType) {
                 var size = intType.GetByteSize (ec);
                 if (intType.Signedness == Signedness.Signed) {
                     unchecked {
                         switch (size) {
                             case 1:
-                                ec.Emit (OpCode.LoadConstant, (Value)(sbyte)Convert.ToInt64 (Value));
-                                break;
+                                return (sbyte)Convert.ToInt64 (Value);
                             case 2:
-                                ec.Emit (OpCode.LoadConstant, (Value)(short)Convert.ToInt64 (Value));
-                                break;
+                                return (short)Convert.ToInt64 (Value);
                             case 4:
-                                ec.Emit (OpCode.LoadConstant, (Value)(int)Convert.ToInt64 (Value));
-                                break;
+                                return (int)Convert.ToInt64 (Value);
                             case 8:
-                                ec.Emit (OpCode.LoadConstant, (Value)Convert.ToInt64 (Value));
-                                break;
+                                return Convert.ToInt64 (Value);
                             default:
                                 throw new NotSupportedException ("Signed integral constants with type '" + ConstantType + "'");
                         }
@@ -111,17 +118,13 @@ namespace CLanguage.Syntax
                     unchecked {
                         switch (size) {
                             case 1:
-                                ec.Emit (OpCode.LoadConstant, (Value)(byte)Convert.ToInt64 (Value));
-                                break;
+                                return (byte)Convert.ToInt64 (Value);
                             case 2:
-                                ec.Emit (OpCode.LoadConstant, (Value)(ushort)Convert.ToInt64 (Value));
-                                break;
+                                return (ushort)Convert.ToInt64 (Value);
                             case 4:
-                                ec.Emit (OpCode.LoadConstant, (Value)(uint)Convert.ToInt64 (Value));
-                                break;
+                                return (uint)Convert.ToInt64 (Value);
                             case 8:
-                                ec.Emit (OpCode.LoadConstant, (Value)Convert.ToUInt64 (Value));
-                                break;
+                                return Convert.ToUInt64 (Value);
                             default:
                                 throw new NotSupportedException ("Unsigned integral constants with type '" + ConstantType + "'");
                         }
@@ -129,24 +132,17 @@ namespace CLanguage.Syntax
                 }
             }
             else if (ConstantType is CBoolType boolType) {
-                var ev = (Value)(byte)((bool)Value ? 1 : 0);
-                ec.Emit (OpCode.LoadConstant, ev);
+                return (byte)((bool)Value ? 1 : 0);
             }
             else if (ConstantType is CFloatType floatType) {
-                var ev = floatType.Bits == 64 ? (Value)Convert.ToDouble(Value) : (Value)Convert.ToSingle (Value);
-                ec.Emit (OpCode.LoadConstant, ev);
+                return floatType.Bits == 64 ? (Value)Convert.ToDouble (Value) : (Value)Convert.ToSingle (Value);
             }
             else if (Value is string vs) {
-                ec.Emit (OpCode.LoadConstant, ec.GetConstantMemory (vs));
+                return ec.GetConstantMemory (vs);
             }
             else {
-				throw new NotSupportedException ("Non-basic constants with type '" + ConstantType + "'");
-			}
-        }
-
-        public override string ToString()
-        {
-            return Value.ToString();
+                throw new NotSupportedException ("Non-basic constants with type '" + ConstantType + "'");
+            }
         }
     }
 }

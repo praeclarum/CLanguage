@@ -209,7 +209,7 @@ namespace CLanguage.Interpreter
                 while (adecl != null) {
                     int? len = null;
                     if (adecl.LengthExpression is ConstantExpression clen) {
-                        len = (int)EvalConstant (clen);
+                        len = (int)clen.EvalConstant (this);
                     }
                     else {
                         if (init is StructuredInitializer sinit) {
@@ -407,26 +407,12 @@ namespace CLanguage.Interpreter
         void AddEnumMember (CEnumType st, Statement s, Block block)
         {
             if (s is EnumeratorStatement es) {
-                var value = es.LiteralValue != null ? (int)EvalConstant (es.LiteralValue) : st.NextValue;
+                var value = es.LiteralValue != null ? (int)es.LiteralValue.EvalConstant(this) : st.NextValue;
                 st.Members.Add (new CEnumMember (es.Name, value));
             }
             else {
                 throw new NotSupportedException ($"Cannot add statement `{s}` to enum");
             }
-        }
-
-        Value EvalConstant (Expression expression)
-        {
-            if (expression is ConstantExpression ce)
-                return EvalConstant (ce);
-
-            Report.Error (133, $"'{expression}' must be constant");
-            return 0;
-        }
-
-        Value EvalConstant (ConstantExpression expression)
-        {
-            return Convert.ToInt32 (expression.Value);
         }
     }
 }

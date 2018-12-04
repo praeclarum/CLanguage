@@ -58,5 +58,11 @@ namespace CLanguage.Syntax
 				return leftBasicType.ArithmeticConvert (rightBasicType, ec);
 			}
 		}
+
+        public virtual Value EvalConstant (EmitContext ec)
+        {
+            ec.Report.Error (133, $"'{this}' is not constant");
+            return 0;
+        }
     }
 }
