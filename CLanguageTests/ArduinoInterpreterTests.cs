@@ -470,7 +470,7 @@ volt = volt / i;
 return volt * (Vcc / 1023); 
 }";
             var arduino = Run (code);
-            Assert.AreEqual ("start", arduino.SerialOut.ToString ().Split ("\n").First ().Trim ());
+            Assert.IsTrue (arduino.SerialOut.ToString ().TrimStart ().StartsWith ("setup:", StringComparison.Ordinal));
         }
     }
 }

@@ -34,13 +34,13 @@ namespace CLanguage.Parser
         public Token[] Preprocess ()
         {
             var defines = new Dictionary<string, Define> ();
-            while (PreprocessIteration (defines)) {
+            while (PreprocessIteration (defines, tokens)) {
                 // Keep going until nothing changes
             }
             return tokens.ToArray ();
         }
 
-        bool PreprocessIteration (Dictionary<string, Define> defines)
+        static bool PreprocessIteration (Dictionary<string, Define> defines, List<Token> tokens)
         {
             var changed = false;
 
@@ -55,9 +55,18 @@ namespace CLanguage.Parser
                     var ident = t.Value.ToString ();
                     if (defines.TryGetValue (ident, out var define)) {
                         if (define.HasParameters) {
-                            var (args, len) = ReadDefineArgs (i + 1);
+                            var (args, len) = ReadDefineArgs (i + 1, tokens);
+                            var newDefines = new Dictionary<string, Define> (defines);
+                            for (var ai = 0; ai < Math.Min (args.Count, define.Parameters.Length); ai++) {
+                                args[ai].Name = define.Parameters[ai];
+                                newDefines[args[ai].Name] = args[ai];
+                            }
+                            var newBody = define.Body.ToList ();
+                            while (PreprocessIteration (newDefines, newBody)) {
+                                // Do as much as we can
+                            }
                             tokens.RemoveRange (i, len + 1);
-                            tokens.InsertRange (i, define.Body);
+                            tokens.InsertRange (i, newBody);
                             //report.Error (9000, "PARAMETERIZED DEFINE");
                         }
                         else {
@@ -121,7 +130,7 @@ namespace CLanguage.Parser
             return changed;
         }
 
-        (List<Define> Defines, int TokenLength) ReadDefineArgs (int startIndex)
+        static (List<Define> Defines, int TokenLength) ReadDefineArgs (int startIndex, List<Token> tokens)
         {
             var defines = new List<Define> ();
 
