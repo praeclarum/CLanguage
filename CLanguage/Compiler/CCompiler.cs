@@ -10,7 +10,7 @@ using CLanguage.Interpreter;
 
 namespace CLanguage.Compiler
 {
-    public class Compiler
+    public class CCompiler
     {
         CompilerOptions options;
 
@@ -18,7 +18,7 @@ namespace CLanguage.Compiler
 
 		List<TranslationUnit> tus;
 
-		public Compiler (CompilerOptions options)
+		public CCompiler (CompilerOptions options)
 		{
             this.options = options;
 			tus = new List<TranslationUnit> ();
@@ -29,7 +29,7 @@ namespace CLanguage.Compiler
             }
         }
 
-		public Compiler (MachineInfo mi, Report report)
+		public CCompiler (MachineInfo mi, Report report)
 			: this (new CompilerOptions (mi, report, Array.Empty<Document> ()))
         {
         }

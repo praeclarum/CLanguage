@@ -43,7 +43,7 @@ namespace CLanguage
             var doc = new Document (DefaultName, code);
             var options = new Compiler.CompilerOptions (mi, report, new[] { doc });
 
-            var c = new Compiler.Compiler (options);
+            var c = new Compiler.CCompiler (options);
             var exe = c.Compile ();
 
             return exe;

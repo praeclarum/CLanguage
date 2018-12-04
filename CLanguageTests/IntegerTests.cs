@@ -16,7 +16,7 @@ namespace CLanguage.Tests
 			var report = new Report (new TestPrinter ());
 			var context = new ExecutableContext (new Executable (mi), report);
 
-			var compiler = new Compiler.Compiler (mi, report);
+			var compiler = new Compiler.CCompiler (mi, report);
 			compiler.AddCode ("test.c", type + " v;");
 			var exe = compiler.Compile ();
 
@@ -34,7 +34,7 @@ namespace CLanguage.Tests
 		{
 			var report = new Report (new TestPrinter ());
 
-            var compiler = new Compiler.Compiler (mi, report);
+            var compiler = new Compiler.CCompiler (mi, report);
             compiler.AddCode ("test.c", type1 + " v1; " + type2 + " v2;");
             var exe = compiler.Compile ();
             var context = new ExecutableContext (new Executable (mi), report);
