@@ -5,6 +5,7 @@
 
     <IsPackable>false</IsPackable>
     <RootNamespace>CLanguage.Tests</RootNamespace>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
