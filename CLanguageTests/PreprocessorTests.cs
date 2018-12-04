@@ -10,10 +10,12 @@ namespace CLanguage.Tests
 	[TestClass]
 	public class PreprocessorTests
 	{
-        CInterpreter Run (string code)
+        CInterpreter Run (string code, params int[] expectedErrors)
         {
             var fullCode = "void start() { __cinit(); main(); } " + code;
-            var i = CLanguageService.CreateInterpreter (fullCode, new TestMachineInfo (), printer: new TestPrinter ());
+            var printer = new TestPrinter (expectedErrors);
+            var i = CLanguageService.CreateInterpreter (fullCode, new TestMachineInfo (), printer: printer);
+            printer.CheckForErrors ();
             i.Reset ("start");
             i.Step ();
             return i;
@@ -46,6 +48,17 @@ void main() {
     assertAreEqual(42, ID(42));
 }
 ");
+        }
+
+        [TestMethod]
+        public void DefineParamIncompleteArgs ()
+        {
+            Run (@"
+#define ID(x x
+void main() {
+    assertAreEqual(42, ID(42));
+}
+", 1001, 103, 2064);
         }
     }
 }

@@ -140,7 +140,7 @@ namespace CLanguage.Parser
             int parenDepth = 0;
             var i = startIndex;
             var startArgIndex = startIndex + 1;
-            for (; i < tokens.Count && startArgIndex > startIndex; i++) {
+            for (; i < tokens.Count && startArgIndex > startIndex && tokens[i].Kind != TokenKind.EOL; i++) {
                 switch (tokens[i].Kind) {
                     case '(':
                         parenDepth++;

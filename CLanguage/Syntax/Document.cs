@@ -28,15 +28,15 @@ namespace CLanguage.Syntax
 
         public Document (string path, string content, Encoding encoding)
         {
-            Path = path;
-            Content = content;
-            Encoding = encoding;
+            Path = path ?? throw new ArgumentNullException (nameof (path));
+            Content = content ?? throw new ArgumentNullException (nameof (content));
+            Encoding = encoding ?? throw new ArgumentNullException (nameof (encoding));
         }
 
         public Document (string path, string content)
         {
-            Path = path;
-            Content = content;
+            Path = path ?? throw new ArgumentNullException (nameof (path));
+            Content = content ?? throw new ArgumentNullException (nameof (content));
             Encoding = Encoding.UTF8;
         }
 

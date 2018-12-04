@@ -31,8 +31,8 @@ namespace CLanguage.Syntax
 
         public static readonly Location Null = new Location ();
 
-        public static bool operator == (Location x, Location y) => x.Line == y.Line && x.Column == y.Column && x.Document.Path == y.Document.Path;
-        public static bool operator != (Location x, Location y) => x.Line != y.Line || x.Column != y.Column || x.Document.Path != y.Document.Path;
+        public static bool operator == (Location x, Location y) => x.Line == y.Line && x.Column == y.Column && x.Document?.Path == y.Document?.Path;
+        public static bool operator != (Location x, Location y) => x.Line != y.Line || x.Column != y.Column || x.Document?.Path != y.Document?.Path;
 
         public override bool Equals (object obj) => obj is Location && Equals ((Location)obj);
         public bool Equals (Location y) => Line == y.Line && Column == y.Column && Document.Path == y.Document.Path;
