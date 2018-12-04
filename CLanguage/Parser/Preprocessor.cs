@@ -11,7 +11,6 @@ namespace CLanguage.Parser
     {
         readonly List<Token> tokens;
 
-        readonly Dictionary<string, Define> defines = new Dictionary<string, Define> ();
         private readonly Report report;
 
         class Define
@@ -34,13 +33,14 @@ namespace CLanguage.Parser
 
         public Token[] Preprocess ()
         {
-            while (PreprocessIteration ()) {
+            var defines = new Dictionary<string, Define> ();
+            while (PreprocessIteration (defines)) {
                 // Keep going until nothing changes
             }
             return tokens.ToArray ();
         }
 
-        bool PreprocessIteration ()
+        bool PreprocessIteration (Dictionary<string, Define> defines)
         {
             var changed = false;
 
@@ -55,14 +55,16 @@ namespace CLanguage.Parser
                     var ident = t.Value.ToString ();
                     if (defines.TryGetValue (ident, out var define)) {
                         if (define.HasParameters) {
-                            report.Error (9000, "PARAMETERIZED DEFINE");
-                            tokens.RemoveAt (i);
+                            var (args, len) = ReadDefineArgs (i + 1);
+                            tokens.RemoveRange (i, len + 1);
                             tokens.InsertRange (i, define.Body);
+                            //report.Error (9000, "PARAMETERIZED DEFINE");
                         }
                         else {
                             tokens.RemoveAt (i);
                             tokens.InsertRange (i, define.Body);
                         }
+                        changed = true;
                     }
                     else {
                         i++;
@@ -117,6 +119,42 @@ namespace CLanguage.Parser
             }
 
             return changed;
+        }
+
+        (List<Define> Defines, int TokenLength) ReadDefineArgs (int startIndex)
+        {
+            var defines = new List<Define> ();
+
+            if (startIndex < 0 || startIndex >= tokens.Count || tokens[startIndex].Kind != '(')
+                return (defines, 0);
+
+            int parenDepth = 0;
+            var i = startIndex;
+            var startArgIndex = startIndex + 1;
+            for (; i < tokens.Count && startArgIndex > startIndex; i++) {
+                switch (tokens[i].Kind) {
+                    case '(':
+                        parenDepth++;
+                        break;
+                    case ',':
+                        if (parenDepth == 1) {
+                            var body = tokens.Skip (startArgIndex).Take (i - startArgIndex).ToList ();
+                            defines.Add (new Define { Body = body });
+                            startArgIndex = i + 1;
+                        }
+                        break;
+                    case ')':
+                        parenDepth--;
+                        if (parenDepth == 0) {
+                            var body = tokens.Skip (startArgIndex).Take (i - startArgIndex).ToList ();
+                            defines.Add (new Define { Body = body });
+                            startArgIndex = -1;
+                        }
+                        break;
+                }
+            }
+
+            return (defines, i - startIndex);
         }
     }
 }
