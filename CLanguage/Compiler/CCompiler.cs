@@ -182,7 +182,7 @@ namespace CLanguage.Compiler
                             if (ctype is CFunctionType ftype && !HasStronglyBoundPointer (idecl.Declarator)) {
                                 var nameContext = (idecl.Declarator.InnerDeclarator is IdentifierDeclarator ndecl && ndecl.Context.Count > 0) ?
                                     string.Join ("::", ndecl.Context) : "";
-                                var f = new CompiledFunction (name, nameContext, ftype, new Block ());
+                                var f = new CompiledFunction (name, nameContext, ftype);
                                 block.Functions.Add (f);
                             }
                             else {

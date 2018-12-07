@@ -8,12 +8,12 @@ namespace CLanguage.Interpreter
 {
     public class CompiledFunction : BaseFunction
     {
-        public Block Body { get; private set; }
+        public Block? Body { get; }
 
-        public List<CompiledVariable> LocalVariables { get; private set; }
-        public List<Instruction> Instructions { get; private set; }
+        public List<CompiledVariable> LocalVariables { get; }
+        public List<Instruction> Instructions { get; }
 
-        public CompiledFunction (string name, CFunctionType functionType, Block body)
+        public CompiledFunction (string name, CFunctionType functionType, Block? body)
         {
             Name = name;
             FunctionType = functionType;
@@ -22,8 +22,8 @@ namespace CLanguage.Interpreter
             Instructions = new List<Instruction> ();
         }
 
-        public CompiledFunction (string name, string nameContext, CFunctionType functionType, Block body)
-            : this (name, functionType, body)
+        public CompiledFunction (string name, string nameContext, CFunctionType functionType)
+            : this (name, functionType, null)
         {
             NameContext = nameContext;
         }
