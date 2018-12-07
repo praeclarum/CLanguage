@@ -15,16 +15,16 @@ namespace CLanguage.Compiler
 
         public MachineInfo MachineInfo { get; private set; }
 
-        protected EmitContext (EmitContext? parentContext)
+        protected EmitContext (EmitContext parentContext)
             : this (parentContext.MachineInfo, parentContext.Report, parentContext.FunctionDecl, parentContext)
         { 
         }
 
-        protected EmitContext (MachineInfo machineInfo, Report report, CompiledFunction? fdecl, EmitContext parentContext)
+        protected EmitContext (MachineInfo machineInfo, Report report, CompiledFunction? fdecl, EmitContext? parentContext)
         {
-            MachineInfo = machineInfo ?? throw new ArgumentNullException (nameof (machineInfo));
-            Report = report ?? throw new ArgumentNullException (nameof (report));
-            FunctionDecl = fdecl;
+            MachineInfo = machineInfo ?? (parentContext?.MachineInfo ?? throw new ArgumentNullException (nameof (machineInfo)));
+            Report = report ?? (parentContext?.Report ?? throw new ArgumentNullException (nameof (report)));
+            FunctionDecl = fdecl ?? parentContext?.FunctionDecl;
             ParentContext = parentContext;
         }
 
@@ -212,8 +212,8 @@ namespace CLanguage.Compiler
                     type = ((CPointerType)type).InnerType;
                 }
             }
-            else if (decl is ArrayDeclarator) {
-                var adecl = (ArrayDeclarator)decl;
+            else if (decl is ArrayDeclarator startAdecl) {
+                var adecl = (ArrayDeclarator?)startAdecl;
 
                 while (adecl != null) {
                     int? len = null;
@@ -230,7 +230,7 @@ namespace CLanguage.Compiler
                         }
                     }
                     type = new CArrayType (type, len);
-                    adecl = adecl.InnerDeclarator as ArrayDeclarator;
+                    adecl = adecl?.InnerDeclarator as ArrayDeclarator;
                     if (adecl != null && adecl.InnerDeclarator != null) {
                         if (adecl.InnerDeclarator is IdentifierDeclarator) {
                         }
