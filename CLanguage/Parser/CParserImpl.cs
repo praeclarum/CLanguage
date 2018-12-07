@@ -109,7 +109,7 @@ namespace CLanguage.Parser
             }
         }
 
-        Declarator MakeArrayDeclarator(Declarator left, TypeQualifiers tq, Expression? len, bool isStatic)
+        Declarator MakeArrayDeclarator(Declarator? left, TypeQualifiers tq, Expression? len, bool isStatic)
         {
             var a = new ArrayDeclarator();
             a.LengthExpression = len;

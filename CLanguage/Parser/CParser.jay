@@ -587,16 +587,11 @@ direct_declarator
 	}
 	| direct_declarator '(' parameter_type_list ')'
 	{
-		var d = new FunctionDeclarator();
-		d.InnerDeclarator = (Declarator)$1;
-		d.Parameters = (List<ParameterDeclaration>)$3;
-		$$ = d;
+		$$ = new FunctionDeclarator(innerDeclarator: (Declarator)$1, parameters: (List<ParameterDeclaration>)$3);
 	}
 	| direct_declarator '(' identifier_list ')'
 	{
-		var d = new FunctionDeclarator();
-		d.InnerDeclarator = (Declarator)$1;
-		d.Parameters = new List<ParameterDeclaration>();
+		var d = new FunctionDeclarator(innerDeclarator: (Declarator)$1, parameters: new List<ParameterDeclaration>());
 		foreach (var n in (List<string>)$3) {
 			d.Parameters.Add(new ParameterDeclaration(n));
 		}
@@ -604,10 +599,7 @@ direct_declarator
 	}
 	| direct_declarator '(' ')'
 	{
-		var d = new FunctionDeclarator();
-		d.InnerDeclarator = (Declarator)$1;
-		d.Parameters = new List<ParameterDeclaration>();
-		$$ = d;
+		$$ = new FunctionDeclarator(innerDeclarator: (Declarator)$1, parameters: new List<ParameterDeclaration>());
 	}
 	;
 
@@ -749,30 +741,19 @@ direct_abstract_declarator
 	}
 	| '(' ')'
 	{
-		var d = new FunctionDeclarator();
-		d.InnerDeclarator = (Declarator)$1;
-		d.Parameters = new List<ParameterDeclaration>();
-		$$ = d;
+		$$ = new FunctionDeclarator(parameters: new List<ParameterDeclaration>());
 	}
 	| '(' parameter_type_list ')'
 	{
-		var d = new FunctionDeclarator();
-		d.Parameters = (List<ParameterDeclaration>)$2;
-		$$ = d;
+		$$ = new FunctionDeclarator(parameters: (List<ParameterDeclaration>)$2);
 	}
 	| direct_abstract_declarator '(' ')'
 	{
-		var d = new FunctionDeclarator();
-		d.InnerDeclarator = (Declarator)$1;
-		d.Parameters = new List<ParameterDeclaration> ();
-		$$ = d;
+		$$ = new FunctionDeclarator(innerDeclarator: (Declarator)$1, parameters: new List<ParameterDeclaration>());
 	}
 	| direct_abstract_declarator '(' parameter_type_list ')'
 	{
-		var d = new FunctionDeclarator();
-		d.InnerDeclarator = (Declarator)$1;
-		d.Parameters = (List<ParameterDeclaration>)$3;
-		$$ = d;
+		$$ = new FunctionDeclarator(innerDeclarator: (Declarator)$1, parameters: (List<ParameterDeclaration>)$3);
 	}
 	;
 	
