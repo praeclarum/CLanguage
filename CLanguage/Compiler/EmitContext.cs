@@ -172,13 +172,13 @@ namespace CLanguage.Compiler
             throw new NotSupportedException ("Arithmetic on type '" + aType + "'");
         }
 
-        public CType MakeCType (DeclarationSpecifiers specs, Declarator decl, Initializer? init, Block block)
+        public CType MakeCType (DeclarationSpecifiers specs, Declarator? decl, Initializer? init, Block block)
         {
             var type = MakeCType (specs, init, block);
             return MakeCType (type, decl, init, block);
         }
 
-        CType MakeCType (CType type, Declarator decl, Initializer? init, Block block)
+        CType MakeCType (CType type, Declarator? decl, Initializer? init, Block block)
         {
             if (decl is IdentifierDeclarator) {
                 // This is the name

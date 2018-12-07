@@ -8,11 +8,11 @@ namespace CLanguage.Syntax
     {
         public abstract string DeclaredIdentifier { get; }
         public bool StrongBinding { get; set; }
-        public Declarator InnerDeclarator { get; set; }
+        public Declarator? InnerDeclarator { get; set; }
 
-        protected Declarator (Declarator innerDeclarator)
+        protected Declarator (Declarator? innerDeclarator)
         {
-            InnerDeclarator = innerDeclarator ?? throw new ArgumentNullException (nameof (innerDeclarator));
+            InnerDeclarator = innerDeclarator;
         }
 
         public override string ToString ()
@@ -33,7 +33,7 @@ namespace CLanguage.Syntax
             }
         }
 
-        public IdentifierDeclarator (string id)
+        public IdentifierDeclarator (string id) : base (innerDeclarator: null)
         {
             Identifier = id;
         }
@@ -62,6 +62,11 @@ namespace CLanguage.Syntax
                 return (InnerDeclarator != null) ? InnerDeclarator.DeclaredIdentifier : "";
             }
         }
+
+        public ArrayDeclarator (Declarator innerDeclarator, Expression? length) : base (innerDeclarator)
+        {
+            LengthExpression = length;
+        }
     }
 
     public class FunctionDeclarator : Declarator
@@ -77,7 +82,13 @@ namespace CLanguage.Syntax
         public FunctionDeclarator (Declarator innerDeclarator, List<ParameterDeclaration> parameters)
             : base (innerDeclarator)
         {
-            Parameters = parameters ?? throw new ArgumentNullException (nameof (parameters));
+            Parameters = parameters;
+        }
+
+        public FunctionDeclarator (List<ParameterDeclaration> parameters)
+            : base (null)
+        {
+            Parameters = parameters;
         }
 
         public override string ToString ()
@@ -113,10 +124,9 @@ namespace CLanguage.Syntax
             }
         }
 
-        public PointerDeclarator (Pointer pointer, Declarator decl)
+        public PointerDeclarator (Pointer pointer, Declarator decl) : base (decl)
         {
             Pointer = pointer;
-            InnerDeclarator = decl;
         }
     }
 }

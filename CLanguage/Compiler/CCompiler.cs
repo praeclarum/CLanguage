@@ -287,15 +287,17 @@ namespace CLanguage.Compiler
             }
         }
 
-        FunctionDeclarator GetFunctionDeclarator (Declarator d)
+        FunctionDeclarator? GetFunctionDeclarator (Declarator? d)
         {
-            if (d is FunctionDeclarator) return (FunctionDeclarator)d;
+            if (d == null) return null;
+            else if (d is FunctionDeclarator) return (FunctionDeclarator)d;
             else return GetFunctionDeclarator (d.InnerDeclarator);
         }
 
-        bool HasStronglyBoundPointer (Declarator d)
+        bool HasStronglyBoundPointer (Declarator? d)
         {
-            if (d is PointerDeclarator && ((PointerDeclarator)d).StrongBinding) return true;
+            if (d == null) return false;
+            else if (d is PointerDeclarator && ((PointerDeclarator)d).StrongBinding) return true;
             else return HasStronglyBoundPointer (d.InnerDeclarator);
         }
     }

@@ -114,7 +114,7 @@ namespace CLanguage.Parser
             var a = new ArrayDeclarator();
             a.LengthExpression = len;
 
-            if (left.StrongBinding)
+            if (left != null && left.StrongBinding)
             {
                 var i = left.InnerDeclarator;
                 a.InnerDeclarator = i;

@@ -115,7 +115,7 @@ namespace CLanguage.Syntax
                             var res = ec.ResolveMethodFunction (structType, method);
                             if (res != null) {
                                 return new Overload {
-                                    CType = res.Function?.FunctionType,
+                                    CType = res.Function.FunctionType,
                                     Emit = nec => {
                                         memr.Left.EmitPointer (nec);
                                         nec.Emit (OpCode.LoadConstant, Value.Pointer (res.Address));
