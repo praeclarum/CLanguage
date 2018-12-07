@@ -111,20 +111,16 @@ namespace CLanguage.Parser
 
         Declarator MakeArrayDeclarator(Declarator? left, TypeQualifiers tq, Expression? len, bool isStatic)
         {
-            var a = new ArrayDeclarator();
-            a.LengthExpression = len;
-
             if (left != null && left.StrongBinding)
             {
                 var i = left.InnerDeclarator;
-                a.InnerDeclarator = i;
+                var a = new ArrayDeclarator (i, len);
                 left.InnerDeclarator = a;
                 return left;
             }
             else
             {
-                a.InnerDeclarator = left;
-                return a;
+                return new ArrayDeclarator (left, len);
             }
         }
 

@@ -11,6 +11,12 @@ namespace CLanguage.Syntax
         public DeclarationSpecifiers Specifiers;
         public List<InitDeclarator>? InitDeclarators;
 
+        public MultiDeclaratorStatement (DeclarationSpecifiers specifiers, List<InitDeclarator>? initDeclarators)
+        {
+            Specifiers = specifiers;
+            InitDeclarators = initDeclarators;
+        }
+
         public override bool AlwaysReturns => false;
 
         protected override void DoEmit (EmitContext ec)
@@ -19,7 +25,7 @@ namespace CLanguage.Syntax
 
         public override string ToString ()
         {
-            return string.Join (" ", Specifiers.TypeSpecifiers) + " " + string.Join (", ", InitDeclarators);
+            return string.Join (" ", Specifiers.TypeSpecifiers) + (InitDeclarators != null ? " " + string.Join (", ", InitDeclarators) : "");
         }
     }
 
@@ -54,6 +60,12 @@ namespace CLanguage.Syntax
     {
         public Declarator Declarator;
         public Initializer? Initializer;
+
+        public InitDeclarator(Declarator declarator, Initializer? initializer)
+        {
+            Declarator = declarator;
+            Initializer = initializer;
+        }
 
         public override string ToString ()
         {

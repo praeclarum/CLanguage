@@ -63,7 +63,7 @@ namespace CLanguage.Syntax
             }
         }
 
-        public ArrayDeclarator (Declarator innerDeclarator, Expression? length) : base (innerDeclarator)
+        public ArrayDeclarator (Declarator? innerDeclarator, Expression? length) : base (innerDeclarator)
         {
             LengthExpression = length;
         }
