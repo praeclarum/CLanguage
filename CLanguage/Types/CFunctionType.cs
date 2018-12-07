@@ -7,6 +7,7 @@ namespace CLanguage.Types
     public class CFunctionType : CType
     {
         public static readonly CFunctionType VoidProcedure = new CFunctionType (CType.Void, isInstance: false);
+        public static readonly CFunctionType VoidMethod = new CFunctionType (CType.Void, isInstance: true);
 
         public class Parameter
         {
@@ -75,7 +76,7 @@ namespace CLanguage.Types
             return s;
         }
 
-        public int ScoreParameterTypeMatches (CType[] argTypes)
+        public int ScoreParameterTypeMatches (CType[]? argTypes)
         {
             if (argTypes == null)
                 return 1;

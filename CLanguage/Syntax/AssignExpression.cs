@@ -57,8 +57,9 @@ namespace CLanguage.Syntax
                 DoEmitStructureAssignment (sexpr, ec);
                 return;
             }
-
+#pragma warning disable 8602
             Right.Emit(ec);
+#pragma warning restore
 
             if (Left is VariableExpression) {
 

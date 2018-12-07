@@ -12,9 +12,9 @@ namespace CLanguage.Syntax
     {
         public Expression Condition { get; private set; }
         public Statement TrueStatement { get; private set; }
-        public Statement FalseStatement { get; private set; }
+        public Statement? FalseStatement { get; private set; }
 
-        public IfStatement(Expression condition, Statement trueStatement, Statement falseStatement, Location loc)
+        public IfStatement(Expression condition, Statement trueStatement, Statement? falseStatement, Location loc)
         {
             if (condition == null) throw new ArgumentNullException (nameof (condition));
             if (trueStatement == null) throw new ArgumentNullException (nameof (trueStatement));

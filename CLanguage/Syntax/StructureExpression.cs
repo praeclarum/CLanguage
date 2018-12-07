@@ -13,8 +13,14 @@ namespace CLanguage.Syntax
         public class Item
         {
             public int Index;
-            public string Field;
+            public string? Field;
             public Expression Expression;
+
+            public Item (string? field, Expression expression)
+            {
+                Field = field;
+                Expression = expression;
+            }
         }
 
         public List<Item> Items { get; private set; }

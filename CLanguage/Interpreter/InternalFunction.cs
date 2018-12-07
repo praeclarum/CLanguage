@@ -1,5 +1,6 @@
 using System;
 using CLanguage.Parser;
+using CLanguage.Types;
 
 namespace CLanguage.Interpreter
 {
@@ -9,7 +10,15 @@ namespace CLanguage.Interpreter
 	{
 		public InternalFunctionAction Action { get; set; }
 
-        public InternalFunction (MachineInfo machineInfo, string prototype, InternalFunctionAction action = null)
+        public InternalFunction (string name, string nameContext, CFunctionType functionType)
+        {
+            Name = name;
+            NameContext = nameContext;
+            FunctionType = functionType;
+            Action = _ => { };
+        }
+
+        public InternalFunction (MachineInfo machineInfo, string prototype, InternalFunctionAction? action = null)
 		{
 			var report = new Report (new Report.TextWriterPrinter (Console.Out));
 			var parser = new CParser ();
@@ -25,15 +34,15 @@ namespace CLanguage.Interpreter
 			Name = f.Name;
             NameContext = f.NameContext;
 			FunctionType = f.FunctionType;
-			Action = action;
+            if (action != null) {
+                Action = action;
+            }
+            else {
+                Action = _ => { };
+            }
 		}
 
-		public override string ToString ()
-		{
-			return Name;
-		}
-
-		public override void Step (CInterpreter state)
+		public override void Step (CInterpreter state, ExecutionFrame frame)
 		{
 			if (Action != null) {
 				Action (state);

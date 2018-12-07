@@ -7,7 +7,7 @@ namespace CLanguage.Syntax
 {
 	public class ReturnStatement : Statement
 	{
-		public Expression ReturnExpression { get; set; }
+		public Expression? ReturnExpression { get; set; }
 
 		public ReturnStatement (Expression returnExpression)
 		{
@@ -20,18 +20,24 @@ namespace CLanguage.Syntax
 
 		protected override void DoEmit (EmitContext ec)
 		{
+            var f = ec.FunctionDecl;
+            if (f == null) {
+                ec.Report.Error (1519, "Invalid return outside of function");
+                return;
+            }
+
 			if (ReturnExpression != null) {
-				if (ec.FunctionDecl.FunctionType.IsVoid) {
+				if (f.FunctionType.IsVoid) {
 					ec.Report.Error (127, "A return keyword must not be followed by any expression when the function returns void");
 				}
 				else {
 					ReturnExpression.Emit (ec);
-					ec.EmitCast (ReturnExpression.GetEvaluatedCType (ec), ec.FunctionDecl.FunctionType.ReturnType);
+					ec.EmitCast (ReturnExpression.GetEvaluatedCType (ec), f.FunctionType.ReturnType);
 					ec.Emit (OpCode.Return);
 				}
 			}
 			else {
-				if (ec.FunctionDecl.FunctionType.IsVoid) {
+				if (f.FunctionType.IsVoid) {
 					ec.Emit (OpCode.Return);
 				}
 				else {

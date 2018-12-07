@@ -19,6 +19,10 @@ namespace CLanguage.Parser
 
         public CParser()
         {
+            yyVals = Array.Empty<object> ();
+            yyVal = String.Empty;
+            _tu = new TranslationUnit ("uninitialized.c");
+            lexer = new ParserInput (Array.Empty<Token> ());
             //debug = new yydebug.yyDebugSimple();
         }
 		
@@ -79,7 +83,7 @@ namespace CLanguage.Parser
 
             if (a is MultiDeclaratorStatement mds) {
                 switch (mds.Specifiers.StorageClassSpecifier) {
-                    case StorageClassSpecifier.Typedef:
+                    case StorageClassSpecifier.Typedef when mds.InitDeclarators != null:
                         foreach (var i in mds.InitDeclarators) {
                             lexer.AddTypedef (i.Declarator.DeclaredIdentifier);
                         }
@@ -88,7 +92,7 @@ namespace CLanguage.Parser
             }
         }
 
-        Declarator FixPointerAndArrayPrecedence (Declarator d)
+        Declarator? FixPointerAndArrayPrecedence (Declarator d)
         {
             if (d is PointerDeclarator && d.InnerDeclarator != null && d.InnerDeclarator is ArrayDeclarator)
             {
@@ -105,7 +109,7 @@ namespace CLanguage.Parser
             }
         }
 
-        Declarator MakeArrayDeclarator(Declarator left, TypeQualifiers tq, Expression len, bool isStatic)
+        Declarator MakeArrayDeclarator(Declarator left, TypeQualifiers tq, Expression? len, bool isStatic)
         {
             var a = new ArrayDeclarator();
             a.LengthExpression = len;

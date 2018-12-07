@@ -9,7 +9,7 @@ namespace CLanguage.Parser
     public class Lexer
     {
         int _token = -1;
-        object _value = null;
+        object? _value = null;
 
         int _lastR = -2;
         char[] _chbuf = new char[4 * 1024];
@@ -25,7 +25,7 @@ namespace CLanguage.Parser
 
         public Token CurrentToken => new Token (_token, _value, location, endLocation);
 
-        public Lexer (Document document, Report report = null)
+        public Lexer (Document document, Report? report = null)
         {
             Report = report ?? new Report ();
             Document = document;
@@ -33,7 +33,7 @@ namespace CLanguage.Parser
             endLocation = location;
         }
 
-        public Lexer (string name, string code, Report report = null)
+        public Lexer (string name, string code, Report? report = null)
             : this (new Document (name, code), report)
         {
         }
@@ -45,7 +45,7 @@ namespace CLanguage.Parser
             return false;
         }
 
-        public Func<string, bool> IsTypedef { get; set; }
+        public Func<string, bool> IsTypedef { get; set; } = _ => false;
 
         static readonly Dictionary<string, int> _kwTokens = new Dictionary<string, int> ()
         {
@@ -108,6 +108,14 @@ namespace CLanguage.Parser
                 nextPosition++;
                 column++;
                 return r;
+            }
+            return -1;
+        }
+
+        int Peek ()
+        {
+            if (nextPosition < Document.Content.Length) {
+                return Document.Content[nextPosition];
             }
             return -1;
         }
@@ -450,6 +458,25 @@ namespace CLanguage.Parser
                 }
                 else if (nr == '<') {
                     _token = TokenKind.LEFT_OP;
+                    _value = null;
+                    _lastR = Read ();
+                }
+                else {
+                    _token = r;
+                    _value = null;
+                    _lastR = nr;
+                }
+            }
+            else if (r == '>') {
+                var nr = Read ();
+
+                if (nr == '=') {
+                    _token = TokenKind.GE_OP;
+                    _value = null;
+                    _lastR = Read ();
+                }
+                else if (nr == '>') {
+                    _token = TokenKind.RIGHT_OP;
                     _value = null;
                     _lastR = Read ();
                 }

@@ -12,9 +12,9 @@ namespace CLanguage
 
         List<string> _extraInformation = new List<string> ();
 
-        Printer _printer = null;
+        Printer _printer;
 
-        public Report (Printer printer = null)
+        public Report (Printer? printer = null)
         {
             _printer = printer ?? new Printer ();
         }
@@ -80,13 +80,12 @@ namespace CLanguage
 
         public class AbstractMessage
         {
-            public string MessageType { get; protected set; }
+            public string MessageType { get; protected set; } = "Info";
             public Syntax.Location Location { get; protected set; }
             public Syntax.Location EndLocation { get; protected set; }
             public bool IsWarning { get; protected set; }
             public int Code { get; protected set; }
-            public string Text { get; protected set; }
-            public List<string> RelatedSymbols { get; protected set; }
+            public string Text { get; protected set; } = "";
 
             public AbstractMessage (string type, string text)
             {
@@ -131,10 +130,6 @@ namespace CLanguage
                 Location = loc;
                 EndLocation = endLoc;
                 IsWarning = false;
-                if (extraInformation != null) {
-                    RelatedSymbols = new List<string> ();
-                    RelatedSymbols.AddRange (extraInformation);
-                }
             }
         }
 
@@ -148,10 +143,6 @@ namespace CLanguage
                 Location = loc;
                 EndLocation = endLoc;
                 IsWarning = true;
-                if (extraInformation != null) {
-                    RelatedSymbols = new List<string> ();
-                    RelatedSymbols.AddRange (extraInformation);
-                }
             }
         }
 
@@ -207,12 +198,6 @@ namespace CLanguage
                 }
 
                 output.WriteLine ("{0} C{1:0000}: {2}", msg.MessageType, msg.Code, msg.Text);
-
-                if (msg.RelatedSymbols != null) {
-                    foreach (string s in msg.RelatedSymbols) {
-                        output.WriteLine ("  " + s);
-                    }
-                }
             }
         }
     }

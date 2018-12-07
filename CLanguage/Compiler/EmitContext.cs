@@ -8,19 +8,19 @@ namespace CLanguage.Compiler
 {
     public abstract class EmitContext
     {
-        public EmitContext ParentContext { get; }
-        public CompiledFunction FunctionDecl { get; private set; }
+        public EmitContext? ParentContext { get; }
+        public CompiledFunction? FunctionDecl { get; private set; }
 
         public Report Report { get; private set; }
 
         public MachineInfo MachineInfo { get; private set; }
 
-        protected EmitContext (EmitContext parentContext)
+        protected EmitContext (EmitContext? parentContext)
             : this (parentContext.MachineInfo, parentContext.Report, parentContext.FunctionDecl, parentContext)
         { 
         }
 
-        protected EmitContext (MachineInfo machineInfo, Report report, CompiledFunction fdecl, EmitContext parentContext)
+        protected EmitContext (MachineInfo machineInfo, Report report, CompiledFunction? fdecl, EmitContext parentContext)
         {
             MachineInfo = machineInfo ?? throw new ArgumentNullException (nameof (machineInfo));
             Report = report ?? throw new ArgumentNullException (nameof (report));
@@ -30,7 +30,7 @@ namespace CLanguage.Compiler
 
         public virtual CType ResolveTypeName (TypeName typeName)
         {
-            return MakeCType (typeName.Specifiers, typeName.Declarator, null, null);
+            return MakeCType (typeName.Specifiers, typeName.Declarator, null, new Block ());
         }
 
         public virtual CType ResolveTypeName (string typeName)
@@ -71,8 +71,7 @@ namespace CLanguage.Compiler
             if (r != null)
                 return r;
 
-            Report.Error (9000, $"No definition for '{structType.Name}::{method.Name}' found");
-            return null;
+            throw new Exception ("Cannot resolve method function");
         }
 
         public virtual void BeginBlock (Block b) { }
@@ -173,13 +172,13 @@ namespace CLanguage.Compiler
             throw new NotSupportedException ("Arithmetic on type '" + aType + "'");
         }
 
-        public CType MakeCType (DeclarationSpecifiers specs, Declarator decl, Initializer init, Block block)
+        public CType MakeCType (DeclarationSpecifiers specs, Declarator decl, Initializer? init, Block block)
         {
             var type = MakeCType (specs, init, block);
             return MakeCType (type, decl, init, block);
         }
 
-        CType MakeCType (CType type, Declarator decl, Initializer init, Block block)
+        CType MakeCType (CType type, Declarator decl, Initializer? init, Block block)
         {
             if (decl is IdentifierDeclarator) {
                 // This is the name
@@ -193,7 +192,7 @@ namespace CLanguage.Compiler
                     isPointerToFunc = type is CFunctionType;
                 }
 
-                var p = pdecl.Pointer;
+                Pointer? p = pdecl.Pointer;
                 while (p != null) {
                     type = new CPointerType (type);
                     type.TypeQualifiers = p.TypeQualifiers;
@@ -271,7 +270,7 @@ namespace CLanguage.Compiler
             return type;
         }
 
-        public CType MakeCType (DeclarationSpecifiers specs, Initializer init, Block block)
+        public CType MakeCType (DeclarationSpecifiers specs, Initializer? init, Block block)
         {
             //
             // Infer types
@@ -296,7 +295,7 @@ namespace CLanguage.Compiler
                 else {
                     var sign = Signedness.Signed;
                     var size = "";
-                    TypeSpecifier trueTs = null;
+                    TypeSpecifier? trueTs = null;
 
                     foreach (var ts in specs.TypeSpecifiers) {
                         if (ts.Name == "unsigned") {
@@ -330,8 +329,7 @@ namespace CLanguage.Compiler
             var structTs = specs.TypeSpecifiers.FirstOrDefault (x => x.Kind == TypeSpecifierKind.Struct || x.Kind == TypeSpecifierKind.Class);
             if (structTs != null) {
                 if (structTs.Body != null) {
-                    var st = new CStructType ();
-                    st.Name = structTs.Name;
+                    var st = new CStructType (structTs.Name);
                     foreach (var s in structTs.Body.Statements) {
                         AddStructMember (st, s, block);
                     }
@@ -357,8 +355,7 @@ namespace CLanguage.Compiler
             if (enumTs != null) {
                 var enumName = specs.TypeSpecifiers[0].Name;
                 if (enumTs.Body != null) {
-                    var et = new CEnumType ();
-                    et.Name = enumTs.Name;
+                    var et = new CEnumType (enumTs.Name);
                     var enumContext = new EnumContext (enumTs, et, this);
                     foreach (var s in enumTs.Body.Statements) {
                         AddEnumMember (et, s, block, enumContext);

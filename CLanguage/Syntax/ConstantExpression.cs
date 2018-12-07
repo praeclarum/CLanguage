@@ -77,6 +77,9 @@ namespace CLanguage.Syntax
             {
                 ConstantType = CBasicType.Double;
 			}
+            else {
+                ConstantType = CBasicType.SignedInt;
+            }
         }
 
 		public override CType GetEvaluatedCType (EmitContext ec)

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using CLanguage.Types;
 
 namespace CLanguage.Syntax
@@ -8,6 +9,11 @@ namespace CLanguage.Syntax
         public abstract string DeclaredIdentifier { get; }
         public bool StrongBinding { get; set; }
         public Declarator InnerDeclarator { get; set; }
+
+        protected Declarator (Declarator innerDeclarator)
+        {
+            InnerDeclarator = innerDeclarator ?? throw new ArgumentNullException (nameof (innerDeclarator));
+        }
 
         public override string ToString ()
         {
@@ -47,7 +53,7 @@ namespace CLanguage.Syntax
 
     public class ArrayDeclarator : Declarator
     {
-        public Expression LengthExpression { get; set; }
+        public Expression? LengthExpression { get; set; }
         public TypeQualifiers TypeQualifiers { get; set; }
         public bool LengthIsStatic { get; set; }
 
@@ -68,6 +74,12 @@ namespace CLanguage.Syntax
             }
         }
 
+        public FunctionDeclarator (Declarator innerDeclarator, List<ParameterDeclaration> parameters)
+            : base (innerDeclarator)
+        {
+            Parameters = parameters ?? throw new ArgumentNullException (nameof (parameters));
+        }
+
         public override string ToString ()
         {
             return DeclaredIdentifier + "(" + string.Join (", ", Parameters) + ")";
@@ -77,7 +89,7 @@ namespace CLanguage.Syntax
     public class Pointer
     {
         public TypeQualifiers TypeQualifiers { get; set; }
-        public Pointer NextPointer { get; set; }
+        public Pointer? NextPointer { get; set; }
 
         public Pointer (TypeQualifiers qual, Pointer p)
         {

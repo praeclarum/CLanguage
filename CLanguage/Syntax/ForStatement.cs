@@ -12,7 +12,7 @@ namespace CLanguage.Syntax
     {
         public Block InitBlock { get; private set; }
         public Expression ContinueExpression { get; private set; }
-        public Expression NextExpression { get; private set; }
+        public Expression? NextExpression { get; private set; }
         public Block LoopBody { get; private set; }
 
         public ForStatement (Statement initStatement, Expression continueExpr, Block body)
@@ -56,8 +56,10 @@ namespace CLanguage.Syntax
 
             LoopBody.Emit (ec);
 
-			NextExpression.Emit (ec);
-			ec.Emit (OpCode.Pop);
+            if (NextExpression != null) {
+                NextExpression.Emit (ec);
+                ec.Emit (OpCode.Pop);
+            }
 			ec.Emit (OpCode.Jump, contLabel);
 
 			ec.EmitLabel (endLabel);

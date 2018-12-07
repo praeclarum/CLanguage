@@ -9,7 +9,7 @@ using CLanguage.Syntax;
 using CLanguage.Types;
 
 #pragma warning disable 162
-
+#nullable disable
 namespace CLanguage.Parser
 {
 	/// <summary>
@@ -1661,9 +1661,7 @@ void case_138()
 void case_147()
 #line 589 "CParser.jay"
 {
-		var d = new FunctionDeclarator();
-		d.InnerDeclarator = (Declarator)yyVals[-3+yyTop];
-		d.Parameters = (List<ParameterDeclaration>)yyVals[-1+yyTop];
+		var d = new FunctionDeclarator((Declarator)yyVals[-3 + yyTop], (List<ParameterDeclaration>)yyVals[-1 + yyTop]);
 		yyVal = d;
 	}
 
@@ -1853,21 +1851,22 @@ void case_228()
 void case_231()
 #line 964 "CParser.jay"
 {
-		var f = new FunctionDefinition();
-		f.Specifiers = (DeclarationSpecifiers)yyVals[-3+yyTop];
-		f.Declarator = (Declarator)yyVals[-2+yyTop];
-		f.ParameterDeclarations = (List<Declaration>)yyVals[-1+yyTop];
-		f.Body = (Block)yyVals[0+yyTop];
+		var f = new FunctionDefinition(
+		(DeclarationSpecifiers)yyVals[-3+yyTop],
+		(Declarator)yyVals[-2+yyTop],
+		(List<Declaration>)yyVals[-1+yyTop],
+		(Block)yyVals[0+yyTop]);
 		yyVal = f;
 	}
 
 void case_232()
 #line 973 "CParser.jay"
 {
-		var f = new FunctionDefinition();
-		f.Specifiers = (DeclarationSpecifiers)yyVals[-2+yyTop];
-		f.Declarator = (Declarator)yyVals[-1+yyTop];
-		f.Body = (Block)yyVals[0+yyTop];
+		var f = new FunctionDefinition(
+		(DeclarationSpecifiers)yyVals[-2+yyTop],
+		(Declarator)yyVals[-1+yyTop],
+            null,
+		(Block)yyVals[0+yyTop]);
 		yyVal = f;
 	}
 

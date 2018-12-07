@@ -16,7 +16,7 @@ namespace CLanguage.Interpreter
 	{
 		public OpCode Op;
 		public Value X;
-		public Label Label;
+		public Label? Label;
 
 		public Instruction (OpCode op, Value x)
 		{

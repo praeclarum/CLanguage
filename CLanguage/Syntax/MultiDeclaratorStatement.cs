@@ -9,7 +9,7 @@ namespace CLanguage.Syntax
     public class MultiDeclaratorStatement : Statement
     {
         public DeclarationSpecifiers Specifiers;
-        public List<InitDeclarator> InitDeclarators;
+        public List<InitDeclarator>? InitDeclarators;
 
         public override bool AlwaysReturns => false;
 
@@ -53,7 +53,7 @@ namespace CLanguage.Syntax
     public class InitDeclarator
     {
         public Declarator Declarator;
-        public Initializer Initializer;
+        public Initializer? Initializer;
 
         public override string ToString ()
         {
