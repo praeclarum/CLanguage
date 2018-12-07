@@ -21,11 +21,14 @@ namespace CLanguage.Interpreter
 
         public ExecutionFrame? ActiveFrame { get { return (0 <= FI && FI < Frames.Length) ? Frames[FI] : null; } }
 
+        static readonly BaseFunction unusedStackFrameFunction = new InternalFunction ("unused", "", Types.CFunctionType.VoidProcedure);
+
+
         public CInterpreter (Executable exe, int maxStack = 1024, int maxFrames = 24)
         {
             this.exe = exe;
             Stack = new Value[maxStack];
-            Frames = (from i in Enumerable.Range (0, maxFrames) select new ExecutionFrame ()).ToArray ();
+            Frames = (from i in Enumerable.Range (0, maxFrames) select new ExecutionFrame (unusedStackFrameFunction)).ToArray ();
         }
 
         public Value ReadMemory (int address)

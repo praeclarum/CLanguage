@@ -259,7 +259,9 @@ namespace CLanguage.Compiler
             var name = decl.DeclaredIdentifier;
             var ftype = new CFunctionType (returnType, isInstance);
             foreach (var pdecl in fdecl.Parameters) {
-                var pt = MakeCType (pdecl.DeclarationSpecifiers, pdecl.Declarator, null, block);
+                var pt = pdecl.DeclarationSpecifiers != null
+                    ? MakeCType (pdecl.DeclarationSpecifiers, pdecl.Declarator, null, block)
+                    : CBasicType.SignedInt;
                 if (!pt.IsVoid) {
                     ftype.AddParameter (pdecl.Name, pt);
                 }
