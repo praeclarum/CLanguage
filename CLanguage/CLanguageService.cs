@@ -97,8 +97,15 @@ namespace CLanguage
                     default:
                         if (token.Kind < 128 || Lexer.OperatorTokens.Contains (token.Kind))
                             return SyntaxColor.Operator;
-                        else if (Lexer.KeywordTokens.Contains (token.Kind))
-                            return SyntaxColor.Keyword;
+                        else if (Lexer.KeywordTokens.Contains (token.Kind)) {
+                            switch ((string)token.Value) {
+                                case "unsigned":
+                                case "signed":
+                                    return SyntaxColor.Type;
+                                default:
+                                    return SyntaxColor.Keyword;
+                            }
+                        }
                         break;
                 }
                 return SyntaxColor.Comment;

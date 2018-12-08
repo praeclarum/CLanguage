@@ -144,5 +144,19 @@ namespace CLanguage.Tests
                                 SyntaxColor.Operator,
                                 SyntaxColor.Number);
         }
+
+        [TestMethod]
+        public void UnsignedSigned ()
+        {
+            AssertColorization ("signed int x; unsigned int y;",
+                                SyntaxColor.Type,
+                                SyntaxColor.Type,
+                                SyntaxColor.Identifier,
+                                SyntaxColor.Operator,
+                                SyntaxColor.Type,
+                                SyntaxColor.Type,
+                                SyntaxColor.Identifier,
+                                SyntaxColor.Operator);
+        }
     }
 }
