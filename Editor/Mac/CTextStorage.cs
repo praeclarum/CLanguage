@@ -22,7 +22,7 @@ namespace CLanguage.Editor
 {
 	public class CTextStorage : NSTextStorage
 	{
-		static readonly NativeFont CodeFont = Font ("Menlo-Regular", (int)(NativeFont.SystemFontSize * 0.85f + 0.5));
+		static readonly NativeFont CodeFont = Font ("Menlo-Regular", (int)(NativeFont.SystemFontSize + 0.5));
 
 		static readonly NSDictionary defaultAttrs = new NativeStringAttributes {
 			Font = CodeFont,
@@ -83,7 +83,8 @@ namespace CLanguage.Editor
 		[Export ("attributesAtIndex:effectiveRange:")]
 		IntPtr GetAttributes (nint index, IntPtr rangePointer)
 		{
-			var range = new NSRange (index, adata.Length - index);
+            //Console.WriteLine ("GA " + Thread.CurrentThread.ManagedThreadId + ": " + index);
+            var range = new NSRange (index, adata.Length - index);
 
 			var i = (int)index;
 			var e = i + 1;
