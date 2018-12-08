@@ -7,21 +7,51 @@ namespace CEditor
 {
     public partial class ViewController : NSViewController
     {
-        public Document Document { get; set; }
+        private Document document;
 
-        public ViewController(IntPtr handle) : base(handle)
-        {
+        public Document Document {
+            get => document;
+            set {
+                if (ReferenceEquals (document, value))
+                    return;
+                UnbindDocument ();
+                document = value;
+                BindDocument ();
+            }
         }
 
-        public override void ViewDidLoad()
-        {
-            base.ViewDidLoad();
-        }
-
-        public override NSObject RepresentedObject
-        {
+        public override NSObject RepresentedObject {
             get => Document;
             set => Document = value as Document;
+        }
+
+        public ViewController (IntPtr handle) : base (handle)
+        {
+        }
+
+        public override void ViewDidLoad ()
+        {
+            base.ViewDidLoad ();
+        }
+
+        void BindDocument ()
+        {
+            if (document == null)
+                return;
+            document.CodeChanged += Document_CodeChanged;
+            textEditor.Text = document.Code;
+        }
+
+        void UnbindDocument ()
+        {
+            if (document == null)
+                return;
+            document.CodeChanged -= Document_CodeChanged;
+        }
+
+        void Document_CodeChanged (object sender, EventArgs e)
+        {
+            textEditor.Text = document.Code;
         }
     }
 }

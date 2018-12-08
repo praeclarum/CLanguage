@@ -12,6 +12,9 @@ namespace CEditor
     {
         Encoding encoding = Encoding.UTF8;
         string code = "";
+        public string Code => code;
+
+        public event EventHandler CodeChanged;
 
         public Document (IntPtr handle) : base (handle)
         {
@@ -56,6 +59,7 @@ namespace CEditor
                     encoding = r.CurrentEncoding;
                 }
                 outError = null;
+                BeginInvokeOnMainThread (() => CodeChanged?.Invoke (this, EventArgs.Empty));
                 return true;
             }
             catch (Exception ex) {
