@@ -7,6 +7,8 @@ namespace CEditor
 {
     public partial class ViewController : NSViewController
     {
+        public Document Document { get; set; }
+
         public ViewController(IntPtr handle) : base(handle)
         {
         }
@@ -14,21 +16,12 @@ namespace CEditor
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-
-            // Do any additional setup after loading the view.
         }
 
         public override NSObject RepresentedObject
         {
-            get
-            {
-                return base.RepresentedObject;
-            }
-            set
-            {
-                base.RepresentedObject = value;
-                // Update the view, if already loaded.
-            }
+            get => Document;
+            set => Document = value as Document;
         }
     }
 }

@@ -15,11 +15,12 @@ using AppKit;
 using NativeColor = AppKit.NSColor;
 using NativeFont = AppKit.NSFont;
 using NativeStringAttributes = AppKit.NSStringAttributes;
+using System.Diagnostics;
 #endif
 
-namespace Circuit.Mac
+namespace CLanguage.Editor
 {
-	public class CodeTextStorage : NSTextStorage
+	public class CTextStorage : NSTextStorage
 	{
 		static readonly NativeFont CodeFont = Font ("Menlo-Regular", (int)(NativeFont.SystemFontSize * 0.85f + 0.5));
 
@@ -39,25 +40,25 @@ namespace Circuit.Mac
 		public override IntPtr LowLevelValue => adata.LowLevelValue;
 		public override bool FixesAttributesLazily => true;
 
-		public CodeTextStorage ()
+		public CTextStorage ()
 		{
 			Initialize ();
 		}
 
-		public CodeTextStorage (CLanguage.MachineInfo machineInfo, bool isDark)
+		public CTextStorage (CLanguage.MachineInfo machineInfo, bool isDark)
 		{
 			this.machineInfo = machineInfo;
 			this.isDark = isDark;
 			Initialize ();
 		}
 
-		public CodeTextStorage (IntPtr handle)
+		public CTextStorage (IntPtr handle)
 			: base (handle)
 		{
 			Initialize ();
 		}
 
-		public CodeTextStorage (NSCoder coder)
+		public CTextStorage (NSCoder coder)
 			: base (coder)
 		{
 			Initialize ();
@@ -154,7 +155,7 @@ namespace Circuit.Mac
 					});
 				}
 				catch (Exception ex) {
-					Log.Error (ex);
+					Debug.WriteLine (ex);
 				}
 			});
 		}
