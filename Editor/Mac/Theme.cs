@@ -47,22 +47,22 @@ namespace CLanguage.Editor
 
             defaultAttrs = new NativeStringAttributes {
                 Font = codeFont,
-                ForegroundColor = !isDark ? Gray (0xA0) : Gray (0x70),
+                ForegroundColor = !isDark ? Rgb (101, 121, 140) : Rgb (127, 140, 152),
             }.Dictionary;
             SelectedAttributes = new NativeStringAttributes {
-                BackgroundColor = !isDark ? Gray (0xDD) : Gray (0x44),
+                BackgroundColor = !isDark ? NSColor.SelectedTextBackground : NSColor.SelectedTextBackground.ColorWithAlphaComponent (0.5f),
             }.Dictionary;
 
             BackgroundColor = NativeColor.TextBackground;
-            LineNumberColor = isDark ? Gray (50) : Gray (220);
+            LineNumberColor = isDark ? Gray (75) : Gray (200);
             LineNumberAttributes = MakeLineNumberAttrs ();
             ColorAttributes = Enumerable.Repeat (defaultAttrs, 16).ToArray ();
-            ColorAttributes[(int)CLanguage.Syntax.SyntaxColor.Number] = MakeAttrs (Rgb (197, 0, 11), Rgb (255, 211, 32));
-            ColorAttributes[(int)CLanguage.Syntax.SyntaxColor.String] = MakeAttrs (Rgb (197, 0, 11), Rgb (255, 211, 32));
+            ColorAttributes[(int)CLanguage.Syntax.SyntaxColor.Number] = MakeAttrs (Rgb (38, 42, 215), Rgb (166, 157, 247));
+            ColorAttributes[(int)CLanguage.Syntax.SyntaxColor.String] = MakeAttrs (Rgb (197, 0, 11), Rgb (255, 128, 112));
             ColorAttributes[(int)CLanguage.Syntax.SyntaxColor.Identifier] = MakeAttrs (Gray (0x33), Gray(0xE0));
             ColorAttributes[(int)CLanguage.Syntax.SyntaxColor.Operator] = MakeAttrs (Gray (0x88), Gray (0xAA));
-            ColorAttributes[(int)CLanguage.Syntax.SyntaxColor.Keyword] = MakeAttrs (Rgb (52, 120, 184), Rgb (72, 144, 204));
-            ColorAttributes[(int)CLanguage.Syntax.SyntaxColor.Type] = MakeAttrs (Rgb (0, 128, 128), Rgb (0, 164, 164));
+            ColorAttributes[(int)CLanguage.Syntax.SyntaxColor.Keyword] = MakeAttrs (Rgb (173, 61, 164), Rgb (255, 122, 178));
+            ColorAttributes[(int)CLanguage.Syntax.SyntaxColor.Type] = MakeAttrs (Rgb (0, 128, 128), Rgb (0, 192, 164));
             ColorAttributes[(int)CLanguage.Syntax.SyntaxColor.Function] = MakeAttrs (Rgb (204, 102, 0), Rgb (204, 102, 0));
         }
 
