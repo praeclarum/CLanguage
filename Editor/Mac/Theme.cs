@@ -69,7 +69,8 @@ namespace CLanguage.Editor
         public NSDictionary ErrorAttributes (string message)
         {
             return new NativeStringAttributes {
-                UnderlineColor = !isDark ? Rgb (0xC5, 0x00, 0x0B) : Rgb (0xC4, 0x00, 0x0B),
+                BackgroundColor = !isDark ? Rgb (0x99, 0x00, 0x00) : Rgb (0x66, 0x00, 0x00),
+                UnderlineColor = !isDark ? Rgb (0xFE, 0x00, 0x0B) : Rgb (0xFF, 0x00, 0x0B),
                 UnderlineStyle = (int)NSUnderlineStyle.Thick,
                 ToolTip = message,
             }.Dictionary;
