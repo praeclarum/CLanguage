@@ -50,6 +50,7 @@
     <Compile Include="CTextEditor.cs" />
     <Compile Include="Theme.cs" />
     <Compile Include="MarginView.cs" />
+    <Compile Include="EditorTextView.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\CLanguage\CLanguage.csproj">

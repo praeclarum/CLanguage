@@ -55,7 +55,7 @@ namespace CLanguage.Editor
             ColorAttributes[(int)CLanguage.Syntax.SyntaxColor.Number] = MakeAttrs (Rgb (197, 0, 11), Rgb (255, 211, 32));
             ColorAttributes[(int)CLanguage.Syntax.SyntaxColor.String] = MakeAttrs (Rgb (197, 0, 11), Rgb (255, 211, 32));
             ColorAttributes[(int)CLanguage.Syntax.SyntaxColor.Identifier] = MakeAttrs (Gray (0x33), Gray(0xEE));
-            ColorAttributes[(int)CLanguage.Syntax.SyntaxColor.Operator] = MakeAttrs (Gray (0x88), Gray (0xBB));
+            ColorAttributes[(int)CLanguage.Syntax.SyntaxColor.Operator] = MakeAttrs (Gray (0x88), Gray (0xAA));
             ColorAttributes[(int)CLanguage.Syntax.SyntaxColor.Keyword] = MakeAttrs (Rgb (52, 120, 184), Rgb (72, 144, 204));
             ColorAttributes[(int)CLanguage.Syntax.SyntaxColor.Type] = MakeAttrs (Rgb (0, 128, 128), Rgb (0, 164, 164));
             ColorAttributes[(int)CLanguage.Syntax.SyntaxColor.Function] = MakeAttrs (Rgb (204, 102, 0), Rgb (204, 102, 0));

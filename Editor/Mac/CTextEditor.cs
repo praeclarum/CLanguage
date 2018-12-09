@@ -24,9 +24,9 @@ using NativeStringAttributes = AppKit.NSStringAttributes;
 namespace CLanguage.Editor
 {
     [Register ("CTextEditor")]
-    public partial class CTextEditor : NativeView, INSTextStorageDelegate, INSLayoutManagerDelegate
+    public partial class CTextEditor : NativeView, INSTextViewDelegate, INSTextStorageDelegate
     {
-        readonly NativeTextView textView;
+        readonly EditorTextView textView;
 
         public string Text {
             get => textView.Value;
@@ -62,25 +62,26 @@ namespace CLanguage.Editor
 #elif __MACOS__
         readonly NSScrollView scroll;
         IDisposable scrolledSubscription;
+        IDisposable appearanceObserver;
 #endif
 
         public CTextEditor (NSCoder coder) : base (coder)
         {
-            textView = new NativeTextView (Bounds);
+            textView = new EditorTextView (Bounds);
             scroll = new NSScrollView (Bounds);
             Initialize ();
         }
 
         public CTextEditor (IntPtr handle) : base (handle)
         {
-            textView = new NativeTextView (Bounds);
+            textView = new EditorTextView (Bounds);
             scroll = new NSScrollView (Bounds);
             Initialize ();
         }
 
         public CTextEditor (CGRect frameRect) : base (frameRect)
         {
-            textView = new NativeTextView (Bounds);
+            textView = new EditorTextView (Bounds);
             scroll = new NSScrollView (Bounds);
             Initialize ();
         }
@@ -106,6 +107,7 @@ namespace CLanguage.Editor
             textView.AutomaticDashSubstitutionEnabled = false;
             textView.AutomaticQuoteSubstitutionEnabled = false;
             textView.AutomaticSpellingCorrectionEnabled = false;
+            textView.SmartInsertDeleteEnabled = false;
             textView.HorizontallyResizable = true;
             textView.TextContainer.ContainerSize = new CGSize (nfloat.MaxValue, nfloat.MaxValue);
             textView.TextContainer.WidthTracksTextView = false;
@@ -136,6 +138,7 @@ namespace CLanguage.Editor
             AddConstraint (NSLayoutConstraint.Create (margin, NSLayoutAttribute.Bottom, NSLayoutRelation.Equal, scroll, NSLayoutAttribute.Bottom, 1, 0));
 
             textView.TextDidChange += TextView_TextDidChange;
+            textView.Delegate = this;
 
             scroll.ContentView.PostsBoundsChangedNotifications = true;
             scrolledSubscription = NativeView.Notifications.ObserveBoundsChanged (scroll.ContentView, (sender, e) => {
@@ -149,8 +152,6 @@ namespace CLanguage.Editor
                 }
             });
         }
-
-        IDisposable appearanceObserver;
 
         void UpdateMargin ()
         {
@@ -203,6 +204,7 @@ namespace CLanguage.Editor
                 }
             }
         }
+
 
 #if __IOS__
         static NativeColor Rgb (int r, int g, int b) => NativeColor.FromRGB (r, g, b);
