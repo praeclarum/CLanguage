@@ -113,6 +113,7 @@ namespace CLanguage.Editor
             textView.Font = theme.CodeFont;
             textView.TypingAttributes = theme.TypingAttributes;
 
+            textView.MaxSize = new CGSize (nfloat.MaxValue, nfloat.MaxValue);
             textView.VerticallyResizable = true;
             textView.HorizontallyResizable = true;
             textView.AutoresizingMask = NSViewResizingMask.WidthSizable;
