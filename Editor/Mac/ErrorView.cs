@@ -43,12 +43,13 @@ namespace CLanguage.Editor
             NSColor.Clear.Set ();
             NSGraphics.RectFill (dirtyRect);
 
-            var la = Theme.ErrorBubbleTextAttributes;
-
             var bounds = Bounds;
-            var p = CGPath.FromRoundedRect (bounds, 16, 16);
+            if (bounds.Width < bounds.Height)
+                return;
+
+            var p = CGPath.FromRoundedRect (bounds, bounds.Height / 2, bounds.Height / 2);
             c.AddPath (p);
-            Theme.ErrorBubbleBackgroundColor.SetFill ();
+            Theme.ErrorBubbleBackgroundColor.ColorWithAlphaComponent (0.875f).SetFill ();
             c.FillPath ();
 
             var mt = message.Text;
@@ -56,7 +57,7 @@ namespace CLanguage.Editor
                 return;
 
             bounds.Inflate (-18, -6);
-            mt.DrawInRect (bounds, la);
+            mt.DrawInRect (bounds, Theme.ErrorBubbleTextAttributes);
         }
     }
 }

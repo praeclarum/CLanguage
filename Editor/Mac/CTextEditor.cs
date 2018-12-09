@@ -32,8 +32,8 @@ namespace CLanguage.Editor
 
         readonly ErrorView errorView = new ErrorView () { AlphaValue = 0 };
         nfloat errorHeight = (nfloat)32;
-        nfloat errorHMargin = (nfloat)72;
-        nfloat errorVMargin = (nfloat)18;
+        nfloat errorHMargin = (nfloat)16;
+        nfloat errorVMargin = (nfloat)8;
 
         readonly MarginView margin = new MarginView ();
         nfloat marginWidth = (nfloat)36;
