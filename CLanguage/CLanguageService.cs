@@ -8,7 +8,7 @@ namespace CLanguage
 {
     public static class CLanguageService
     {
-        const string DefaultName = "main.cpp";
+        public const string DefaultCodePath = "main.cpp";
 
         public static TranslationUnit ParseTranslationUnit (string code)
         {
@@ -18,7 +18,7 @@ namespace CLanguage
         public static TranslationUnit ParseTranslationUnit (string code, Report report)
         {
             var parser = new CParser ();
-            return parser.ParseTranslationUnit (DefaultName, code, report);
+            return parser.ParseTranslationUnit (DefaultCodePath, code, report);
         }
 
         public static TranslationUnit ParseTranslationUnit (string code, Report.Printer printer)
@@ -40,7 +40,7 @@ namespace CLanguage
             var report = new Report (printer);
 
             var mi = machineInfo ?? new MachineInfo ();
-            var doc = new Document (DefaultName, code);
+            var doc = new Document (DefaultCodePath, code);
             var options = new Compiler.CompilerOptions (mi, report, new[] { doc });
 
             var c = new Compiler.CCompiler (options);
@@ -55,8 +55,8 @@ namespace CLanguage
 
             var mi = machineInfo ?? new MachineInfo ();
 
-            var name = "colorize.cpp";
-            var lexed = new LexedDocument (new Document (name, code), report);
+            var doc = new Document (DefaultCodePath, code);
+            var lexed = new LexedDocument (doc, report);
 
             var funcs = new HashSet<string> (mi.InternalFunctions.Where (x => string.IsNullOrEmpty (x.NameContext)).Select (x => x.Name));
 

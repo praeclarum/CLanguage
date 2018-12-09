@@ -19,6 +19,8 @@ using NativeView = AppKit.NSView;
 using NativeColor = AppKit.NSColor;
 using NativeFont = AppKit.NSFont;
 using NativeStringAttributes = AppKit.NSStringAttributes;
+using CLanguage.Compiler;
+using CLanguage.Syntax;
 #endif
 
 namespace CLanguage.Editor
@@ -52,6 +54,15 @@ namespace CLanguage.Editor
             set => textView.SelectedRange = value;
         }
 
+        CompilerOptions options = new CompilerOptions (new MachineInfo (), new Report (), Enumerable.Empty<Document> ());
+        public CompilerOptions Options {
+            get => options;
+            set {
+                options = value;
+                ColorizeCode (textView.TextStorage);
+            }
+        }
+
         Theme theme;
         public Theme Theme {
             get => theme;
@@ -74,6 +85,7 @@ namespace CLanguage.Editor
         readonly NSScrollView scroll;
         IDisposable scrolledSubscription;
         IDisposable appearanceObserver;
+
 #endif
 
         public CTextEditor (NSCoder coder) : base (coder)
@@ -133,6 +145,8 @@ namespace CLanguage.Editor
             scroll.HasVerticalScroller = true;
             scroll.HasHorizontalScroller = true;
             scroll.DocumentView = textView;
+            scroll.BackgroundColor = textView.BackgroundColor;
+            scroll.DrawsBackground = true;
 
             TranslatesAutoresizingMaskIntoConstraints = false;
             scroll.TranslatesAutoresizingMaskIntoConstraints = false;
@@ -196,6 +210,10 @@ namespace CLanguage.Editor
         {
             var code = textStorage.Value;
             var managers = textStorage.LayoutManagers;
+
+            //
+            // Count the lines
+            //
             var lc = 1;
             var li = code.IndexOf ('\n');
             while (li >= 0) {
@@ -203,9 +221,19 @@ namespace CLanguage.Editor
                 li = li + 1 < code.Length ? code.IndexOf ('\n', li + 1) : -1;
             }
             lineCount = lc;
-            var spans = CLanguage.CLanguageService.Colorize (code, new MachineInfo ());
+
+            //
+            // Use the language service to determine colors and errors
+            //
+            var printer = new EditorPrinter ();
+            var spans = CLanguage.CLanguageService.Colorize (code, options.MachineInfo, printer);
+
+            //
+            // Color the text
+            //
             foreach (var lm in managers) {
-                lm.RemoveTemporaryAttribute (NSStringAttributeKey.ForegroundColor, new NSRange (0, code.Length));
+                lm.RemoveTemporaryAttribute (NSStringAttributeKey.ToolTip, new NSRange (0, code.Length));
+                lm.RemoveTemporaryAttribute (NSStringAttributeKey.UnderlineStyle, new NSRange (0, code.Length));
             }
             var colorAttrs = theme.ColorAttributes;
             foreach (var s in spans) {
@@ -213,6 +241,21 @@ namespace CLanguage.Editor
                 var range = new NSRange (s.Index, s.Length);
                 foreach (var lm in managers) {
                     lm.SetTemporaryAttributes (attrs, range);
+                }
+            }
+
+            //
+            // Mark errors
+            //
+            foreach (var m in printer.Messages) {
+                if (m.Location.IsNull || m.EndLocation.IsNull)
+                    continue;
+                if (m.Location.Document.Path != CLanguageService.DefaultCodePath)
+                    continue;
+                var range = new NSRange (m.Location.Index, m.EndLocation.Index - m.Location.Index);
+                var attrs = theme.ErrorAttributes (m.Text);
+                foreach (var lm in managers) {
+                    lm.AddTemporaryAttributes (attrs, range);
                 }
             }
         }

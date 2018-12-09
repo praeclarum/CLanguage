@@ -15,8 +15,14 @@ namespace CLanguage.Parser
 
             var tokens = new List<Token> ();
             var lexer = new Lexer (Document, report);
-            while (lexer.Advance ()) {
-                tokens.Add (lexer.CurrentToken);
+            try {
+                while (lexer.Advance ()) {
+                    tokens.Add (lexer.CurrentToken);
+                }
+            }
+            catch (Exception ex) {
+                var t = lexer.CurrentToken;
+                report.Error (9000, t.Location, t.EndLocation, ex.Message);
             }
             Tokens = tokens.ToArray ();
         }

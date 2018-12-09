@@ -66,6 +66,15 @@ namespace CLanguage.Editor
             ColorAttributes[(int)CLanguage.Syntax.SyntaxColor.Function] = MakeAttrs (Rgb (204, 102, 0), Rgb (204, 102, 0));
         }
 
+        public NSDictionary ErrorAttributes (string message)
+        {
+            return new NativeStringAttributes {
+                UnderlineColor = !isDark ? Rgb (0xC5, 0x00, 0x0B) : Rgb (0xC4, 0x00, 0x0B),
+                UnderlineStyle = (int)NSUnderlineStyle.Thick,
+                ToolTip = message,
+            }.Dictionary;
+        }
+
         NSDictionary MakeAttrs (NativeColor color, NativeColor darkColor) => new NativeStringAttributes {
             Font = codeFont,
             ForegroundColor = isDark ? darkColor : color,

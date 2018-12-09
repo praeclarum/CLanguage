@@ -236,11 +236,18 @@ namespace CLanguage.Parser
 
                 var vals = new string (_chbuf, 0, _chbuflen);
                 var icult = System.Globalization.CultureInfo.InvariantCulture;
+                endLocation = new Location (location.Document, _lastR >= 0 ? nextPosition - 1 : location.Document.Content.Length, line, column);
                 if (onlydigits) {
                     var style = ishex ? System.Globalization.NumberStyles.HexNumber : System.Globalization.NumberStyles.None;
                     if (islong) {
                         if (isunsigned) {
-                            _value = ulong.Parse (vals, style, icult);
+                            if (ulong.TryParse (vals, style, icult, out var v)) {
+                                _value = v;
+                            }
+                            else {
+                                _value = (ulong)0;
+                                Report.Error (1021, location, endLocation, "Integral constant is too large");
+                            }
                         }
                         else {
                             _value = long.Parse (vals, style, icult);
