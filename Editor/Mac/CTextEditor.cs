@@ -30,6 +30,15 @@ namespace CLanguage.Editor
     {
         readonly EditorTextView textView;
 
+        readonly ErrorView errorView = new ErrorView () { AlphaValue = 0 };
+        nfloat errorHeight = (nfloat)32;
+        nfloat errorHMargin = (nfloat)72;
+        nfloat errorVMargin = (nfloat)18;
+
+        readonly MarginView margin = new MarginView ();
+        nfloat marginWidth = (nfloat)36;
+        NSLayoutConstraint marginWidthConstraint;
+
         public string Text {
             get => textView.Value;
             set {
@@ -76,10 +85,6 @@ namespace CLanguage.Editor
 
         public event EventHandler TextChanged;
 
-        MarginView margin = new MarginView ();
-        nfloat marginWidth = (nfloat)44;
-        NSLayoutConstraint marginWidthConstraint;
-
 #if __IOS__
 #elif __MACOS__
         readonly NSScrollView scroll;
@@ -116,9 +121,11 @@ namespace CLanguage.Editor
         {
             var sframe = Bounds;
             var mframe = sframe;
+            var eframe = sframe;
             mframe.Width = marginWidth;
             sframe.X += marginWidth;
             sframe.Width -= marginWidth;
+            eframe.Height = errorHeight;
 
             //textView.LayoutManager.ReplaceTextStorage (storage);
             textView.LayoutManager.TextStorage.Delegate = this;
@@ -151,20 +158,30 @@ namespace CLanguage.Editor
             TranslatesAutoresizingMaskIntoConstraints = false;
             scroll.TranslatesAutoresizingMaskIntoConstraints = false;
             margin.TranslatesAutoresizingMaskIntoConstraints = false;
+            errorView.TranslatesAutoresizingMaskIntoConstraints = false;
 
             scroll.Frame = sframe;
             margin.Frame = mframe;
+            errorView.Frame = eframe;
 
             AddSubview (scroll);
             AddSubview (margin);
+            AddSubview (errorView);
+
             AddConstraint (NSLayoutConstraint.Create (margin, NSLayoutAttribute.Trailing, NSLayoutRelation.Equal, scroll, NSLayoutAttribute.Leading, 1, 0));
             AddConstraint (NSLayoutConstraint.Create (this, NSLayoutAttribute.Trailing, NSLayoutRelation.Equal, scroll, NSLayoutAttribute.Trailing, 1, 0));
             AddConstraint (NSLayoutConstraint.Create (this, NSLayoutAttribute.Top, NSLayoutRelation.Equal, scroll, NSLayoutAttribute.Top, 1, 0));
             AddConstraint (NSLayoutConstraint.Create (this, NSLayoutAttribute.Bottom, NSLayoutRelation.Equal, scroll, NSLayoutAttribute.Bottom, 1, 0));
+
             AddConstraint (NSLayoutConstraint.Create (this, NSLayoutAttribute.Leading, NSLayoutRelation.Equal, margin, NSLayoutAttribute.Leading, 1, 0));
             AddConstraint (marginWidthConstraint = NSLayoutConstraint.Create (margin, NSLayoutAttribute.Width, NSLayoutRelation.Equal, 1, marginWidth));
             AddConstraint (NSLayoutConstraint.Create (margin, NSLayoutAttribute.Top, NSLayoutRelation.Equal, scroll, NSLayoutAttribute.Top, 1, 0));
             AddConstraint (NSLayoutConstraint.Create (margin, NSLayoutAttribute.Bottom, NSLayoutRelation.Equal, scroll, NSLayoutAttribute.Bottom, 1, 0));
+
+            AddConstraint (NSLayoutConstraint.Create (this, NSLayoutAttribute.Leading, NSLayoutRelation.Equal, errorView, NSLayoutAttribute.Leading, 1, -errorHMargin));
+            AddConstraint (NSLayoutConstraint.Create (this, NSLayoutAttribute.Trailing, NSLayoutRelation.Equal, errorView, NSLayoutAttribute.Trailing, 1, errorHMargin));
+            AddConstraint (NSLayoutConstraint.Create (errorView, NSLayoutAttribute.Height, NSLayoutRelation.Equal, 1, errorHeight));
+            AddConstraint (NSLayoutConstraint.Create (this, NSLayoutAttribute.Bottom, NSLayoutRelation.Equal, errorView, NSLayoutAttribute.Bottom, 1, errorVMargin));
 
             textView.Delegate = this;
 
@@ -260,11 +277,17 @@ namespace CLanguage.Editor
                     lm.AddTemporaryAttributes (attrs, range);
                 }
             }
+
+            //
+            // Inform the error view
+            //
+            errorView.Message = printer.Messages.FirstOrDefault (x => x.MessageType == "Error") ?? new Report.AbstractMessage ("Info", "");
         }
 
         void OnThemeChanged ()
         {
             margin.Theme = theme;
+            errorView.Theme = theme;
             ColorizeCode (textView.TextStorage);
             textView.SelectedTextAttributes = theme.SelectedAttributes;
             scroll.BackgroundColor = textView.BackgroundColor;

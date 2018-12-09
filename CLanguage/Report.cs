@@ -78,7 +78,7 @@ namespace CLanguage
             Error (code, m, args);
         }
 
-        public abstract class AbstractMessage
+        public class AbstractMessage
         {
             public string MessageType { get; protected set; }
             public Syntax.Location Location { get; protected set; }
@@ -87,6 +87,16 @@ namespace CLanguage
             public int Code { get; protected set; }
             public string Text { get; protected set; }
             public List<string> RelatedSymbols { get; protected set; }
+
+            public AbstractMessage (string type, string text)
+            {
+                MessageType = type;
+                Text = text;
+            }
+
+            protected AbstractMessage ()
+            {
+            }
 
             public override bool Equals (object obj)
             {

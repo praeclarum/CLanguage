@@ -24,6 +24,9 @@ namespace CLanguage.Editor
     {
         readonly bool isDark;
 
+        public NativeColor ErrorBubbleBackgroundColor { get; }
+        public readonly NSDictionary ErrorBubbleTextAttributes;
+
         public NativeColor BackgroundColor { get; }
         public NativeColor LineNumberColor { get; }
 
@@ -54,7 +57,12 @@ namespace CLanguage.Editor
             }.Dictionary;
 
             BackgroundColor = NativeColor.TextBackground;
-            LineNumberColor = isDark ? Gray (75) : Gray (200);
+            ErrorBubbleBackgroundColor = !isDark ? Rgb (0xC5, 0, 0xB) : Rgb (0xC5 * 2 /4, 0, 0xB);
+            ErrorBubbleTextAttributes = new NativeStringAttributes {
+                ForegroundColor = Gray (255).ColorWithAlphaComponent (0.75f),
+                Font = NativeFont.BoldSystemFontOfSize (NativeFont.SystemFontSize),
+            }.Dictionary;
+            LineNumberColor = isDark ? Gray (85) : Gray (200);
             LineNumberAttributes = MakeLineNumberAttrs ();
             ColorAttributes = Enumerable.Repeat (defaultAttrs, 16).ToArray ();
             ColorAttributes[(int)CLanguage.Syntax.SyntaxColor.Number] = MakeAttrs (Rgb (38, 42, 215), Rgb (166, 157, 247));
@@ -69,7 +77,7 @@ namespace CLanguage.Editor
         public NSDictionary ErrorAttributes (string message)
         {
             return new NativeStringAttributes {
-                BackgroundColor = !isDark ? Rgb (0xFF, 0xCC, 0xCC) : Rgb (0x55, 0x00, 0x00),
+                //BackgroundColor = !isDark ? Rgb (0xFF, 0xCC, 0xCC) : Rgb (0x55, 0x00, 0x00),
                 UnderlineColor = !isDark ? Rgb (0xFE, 0x00, 0x0B) : Rgb (0xFF, 0x00, 0x0B),
                 UnderlineStyle = (int)NSUnderlineStyle.Thick,
                 ToolTip = message,
