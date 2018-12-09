@@ -27,7 +27,7 @@ namespace CLanguage.Editor
         public NativeColor BackgroundColor { get; }
         public NativeColor LineNumberColor { get; }
 
-        static readonly NativeFont codeFont = Font ("Menlo-Regular", (int)(NativeFont.SystemFontSize + 0.5));
+        static readonly NativeFont codeFont = Font (FindFontFamily (), (int)(NativeFont.SystemFontSize + 0.5));
 
         public NativeFont CodeFont => codeFont;
 
@@ -73,6 +73,18 @@ namespace CLanguage.Editor
                 Alignment = NSTextAlignment.Right,
             }
         }.Dictionary;
+
+        static string FindFontFamily ()
+        {
+            var fonts = NSFontManager.SharedFontManager.AvailableFonts;
+            if (NSScreen.MainScreen.BackingScaleFactor > 1.1 && fonts.Contains ("FiraCode-Retina")) {
+                return "FiraCode-Retina";
+            }
+            if (fonts.Contains ("FiraCode-Regular")) {
+                return "FiraCode-Regular";
+            }
+            return "Menlo-Regular";
+        }
 
 #if __IOS__
         static NativeColor Rgb (int r, int g, int b) => NativeColor.FromRGB (r, g, b);
