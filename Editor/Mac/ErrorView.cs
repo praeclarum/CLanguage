@@ -56,6 +56,9 @@ namespace CLanguage.Editor
             if (string.IsNullOrWhiteSpace (mt))
                 return;
 
+            if (!message.Location.IsNull)
+                mt = $"Line {message.Location.Line:#,0}: {mt}";
+
             bounds.Inflate (-18, -6);
             mt.DrawInRect (bounds, Theme.ErrorBubbleTextAttributes);
         }

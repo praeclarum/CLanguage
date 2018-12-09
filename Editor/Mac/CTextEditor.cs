@@ -144,6 +144,7 @@ namespace CLanguage.Editor
             textView.SmartInsertDeleteEnabled = false;
             textView.TextContainer.ContainerSize = new CGSize (nfloat.MaxValue, nfloat.MaxValue);
             textView.TextContainer.WidthTracksTextView = false;
+            textView.TextContainer.LineBreakMode = NSLineBreakMode.Clipping;
             textView.AllowsUndo = true;
             textView.SelectedTextAttributes = theme.SelectedAttributes;
 
@@ -272,9 +273,11 @@ namespace CLanguage.Editor
                 if (m.Location.Document.Path != CLanguageService.DefaultCodePath)
                     continue;
                 var range = new NSRange (m.Location.Index, m.EndLocation.Index - m.Location.Index);
-                var attrs = theme.ErrorAttributes (m.Text);
-                foreach (var lm in managers) {
-                    lm.AddTemporaryAttributes (attrs, range);
+                if (range.Location >= 0 && range.Length > 0 && range.Location < code.Length && range.Location + range.Length <= code.Length) {
+                    var attrs = theme.ErrorAttributes (m.Text);
+                    foreach (var lm in managers) {
+                        lm.AddTemporaryAttributes (attrs, range);
+                    }
                 }
             }
 
