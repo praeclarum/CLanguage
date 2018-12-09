@@ -199,6 +199,71 @@ namespace CLanguage.Editor
             OnThemeChanged ();
         }
 
+        [Export ("toggleComment:")]
+        public void ToggleComment (NSObject sender)
+        {
+            textView.ChangeSelectedLines (ToggleCommentMapper);
+        }
+
+        IEnumerable<string> ToggleCommentMapper (string code, NSRange range, List<string> lines)
+        {
+            var line0T = lines[0].TrimStart ();
+            var remove = line0T.Length > 1 && line0T[0] == '/' && line0T[1] == '/';
+            foreach (var line in lines) {
+                var indent = line.GetIndent ();
+                var nline = indent;
+                var s = indent.Length;
+                if (remove) {
+                    var hasComment = s + 1 < line.Length && line[s] == '/' && line[s] == '/';
+                    if (hasComment) {
+                        nline = indent + line.Substring (s + 2);
+                    }
+                }
+                else {
+                    nline = indent + "//" + line.Substring (s);
+                }
+                yield return nline;
+            }
+        }
+
+        [Export ("indent:")]
+        public void Indent (NSObject sender)
+        {
+            textView.ChangeSelectedLines (IndentMapper);
+        }
+
+        IEnumerable<string> IndentMapper (string code, NSRange range, List<string> lines)
+        {
+            return from line in lines
+                   let indent = line.GetIndent ()
+                   select indent + "  " + line.Substring (indent.Length);
+        }
+
+        [Export ("outdent:")]
+        public void Outdent (NSObject sender)
+        {
+            textView.ChangeSelectedLines (OutdentMapper);
+        }
+
+        List<string> OutdentMapper (string code, NSRange range, List<string> lines)
+        {
+            var r = new List<string> (lines.Count);
+            foreach (var line in lines) {
+                var indent = line.GetIndent ();
+                if (indent.Length == 0) {
+                    r.Add (line);
+                }
+                else if (indent.Length == 1) {
+                    r.Add (line.Substring (1));
+                }
+                else {
+                    var newIndent = indent.Substring (0, indent.Length - 2);
+                    r.Add (newIndent + line.Substring (indent.Length));
+                }
+            }
+            return r;
+        }
+
         static bool IsDark (NSAppearance a) => a.Name.Contains ("dark", StringComparison.InvariantCultureIgnoreCase);
 
         [Export ("textStorage:didProcessEditing:range:changeInLength:")]

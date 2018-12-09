@@ -168,6 +168,22 @@
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="uyl-h8-XO2"/>
+                                        <menuItem title="Toggle Comment" keyEquivalent="/" id="qga-TL-mgo">
+                                            <connections>
+                                                <action selector="toggleComment:" target="Ady-hI-5gd" id="ki5-Ej-YWP"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Indent" keyEquivalent="]" id="G6b-Gb-FMH">
+                                            <connections>
+                                                <action selector="indent:" target="Ady-hI-5gd" id="Rda-3A-n8y"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Outdent" keyEquivalent="[" id="ox6-ym-Clg">
+                                            <connections>
+                                                <action selector="outdent:" target="Ady-hI-5gd" id="nk0-Cx-bai"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="Q21-ut-g1o"/>
                                         <menuItem title="Find" id="4EN-yA-p0u">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <menu key="submenu" title="Find" id="1b7-l0-nxx">

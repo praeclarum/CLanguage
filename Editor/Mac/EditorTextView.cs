@@ -134,14 +134,6 @@ namespace CLanguage.Editor
             }
         }
 
-        static string GetLineIndent (string line)
-        {
-            var e = 0;
-            while (e < line.Length && char.IsWhiteSpace (line[e]))
-                e++;
-            return line.Substring (0, e);
-        }
-
         class LinesInRange
         {
             public NSRange Range;
@@ -152,12 +144,27 @@ namespace CLanguage.Editor
             public bool AtEndOfLines (nint location) => location == (Range.Location + Range.Length);
         }
 
-        public void MutateLinesInRange (NSRange range, Action<List<string>> mutator)
+        void ChangeLinesInRange (NSRange range, Func<string, NSRange, List<string>, IEnumerable<string>> map)
         {
-            var lines = GetLinesInRange (range);
-            mutator (lines.Lines);
-            var newLinesText = string.Join ("\n", lines.Lines);
-            TextStorage.Replace (lines.Range, newLinesText);
+            try {
+                var lines = GetLinesInRange (range);
+                var newLines = map (lines.AllText, lines.Range, lines.Lines).ToArray ();
+                if (!newLines.SequenceEqual (lines.Lines)) {
+                    var newLinesText = string.Join ("\n", newLines);
+                    TextStorage.Replace (lines.Range, newLinesText);
+                    if (lines.Lines.Count > 0) {
+                        SelectedRange = new NSRange (lines.Range.Location, newLinesText.Length);
+                    }
+                }
+            }
+            catch (Exception ex) {
+                Debug.WriteLine (ex);
+            }
+        }
+
+        public void ChangeSelectedLines (Func<string, NSRange, List<string>, IEnumerable<string>> map)
+        {
+            ChangeLinesInRange (SelectedRange, map);
         }
 
         LinesInRange GetLinesInRange (NSRange range)
@@ -182,7 +189,8 @@ namespace CLanguage.Editor
             while (i < lineEndIndex) {
                 if (text[i] == '\n') {
                     lines.Lines.Add (text.Substring (s, i - s));
-                    s = i + 1;
+                    i++;
+                    s = i;
                 }
                 else {
                     i++;
@@ -196,7 +204,7 @@ namespace CLanguage.Editor
             var outCharCount = lines.Lines.Sum (x => x.Length) + lines.Lines.Count - 1;
             Debug.Assert (outCharCount == inCharCount, $"Line output char count doesn't match: {outCharCount} != {inCharCount}");
 
-            lines.Indent = GetLineIndent (lines.Lines[0]);
+            lines.Indent = lines.Lines[0].GetIndent ();
             lines.AllText = text;
             return lines;
         }
