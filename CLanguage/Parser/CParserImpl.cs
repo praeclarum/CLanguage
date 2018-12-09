@@ -35,6 +35,9 @@ namespace CLanguage.Parser
 
             _tu = new TranslationUnit (name);
 
+            if (lexer.Tokens.Length == 0)
+                return _tu;
+
             try {
                 yyparse (lexer);
             }

@@ -12,7 +12,14 @@ namespace CLanguage.Tests
 	[TestClass]
 	public class ParserTests
 	{
-		[TestMethod]
+        [TestMethod]
+        public void BlankTranslationUnit ()
+        {
+            var tu = ParseTranslationUnit (@"", new TestPrinter ());
+            Assert.IsNotNull (tu);
+        }
+
+        [TestMethod]
 		public void BadFunction ()
 		{
 			var failed = false;

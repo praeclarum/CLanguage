@@ -3,6 +3,7 @@ using CLanguage.Syntax;
 using CLanguage.Parser;
 using System.Collections.Generic;
 using System.Linq;
+using CLanguage.Compiler;
 
 namespace CLanguage
 {
@@ -57,6 +58,9 @@ namespace CLanguage
 
             var doc = new Document (DefaultCodePath, code);
             var lexed = new LexedDocument (doc, report);
+
+            var compiler = new CCompiler (new CompilerOptions (mi, report, new[] { doc }));
+            var exe = compiler.Compile ();
 
             var funcs = new HashSet<string> (mi.InternalFunctions.Where (x => string.IsNullOrEmpty (x.NameContext)).Select (x => x.Name));
 

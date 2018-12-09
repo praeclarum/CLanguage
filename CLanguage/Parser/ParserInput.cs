@@ -7,18 +7,18 @@ namespace CLanguage.Parser
 {
     public class ParserInput : yyParser.yyInput
     {
-        Token[] tokens;
+        public readonly Token[] Tokens;
         int index = -1;
         readonly HashSet<string> typedefs = new HashSet<string> ();
 
         public ParserInput (Token[] tokens)
         {
-            this.tokens = tokens;
+            this.Tokens = tokens;
         }
 
         public bool advance ()
         {
-            if (index + 1 < tokens.Length) {
+            if (index + 1 < Tokens.Length) {
                 index++;
                 return true;
             }
@@ -29,9 +29,9 @@ namespace CLanguage.Parser
 
         public object value () => CurrentToken.Value;
 
-        public Token CurrentToken => tokens[index].Kind == TokenKind.IDENTIFIER && typedefs.Contains((string)tokens[index].Value) ?
-            tokens[index].AsKind (TokenKind.TYPE_NAME) :
-            tokens[index];
+        public Token CurrentToken => Tokens[index].Kind == TokenKind.IDENTIFIER && typedefs.Contains((string)Tokens[index].Value) ?
+            Tokens[index].AsKind (TokenKind.TYPE_NAME) :
+            Tokens[index];
 
         public void AddTypedef (string declaredIdentifier)
         {
