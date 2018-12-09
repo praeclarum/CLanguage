@@ -47,10 +47,10 @@ namespace CLanguage.Editor
 
             defaultAttrs = new NativeStringAttributes {
                 Font = codeFont,
-                ForegroundColor = !isDark ? Gray (0xA0) : Gray (0x66),
+                ForegroundColor = !isDark ? Gray (0xA0) : Gray (0x70),
             }.Dictionary;
             SelectedAttributes = new NativeStringAttributes {
-                BackgroundColor = !isDark ? Gray (0xDD) : Gray (0x50),
+                BackgroundColor = !isDark ? Gray (0xDD) : Gray (0x44),
             }.Dictionary;
 
             BackgroundColor = NativeColor.TextBackground;
