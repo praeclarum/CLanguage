@@ -39,11 +39,20 @@ namespace CLanguage.Editor
             }
         }
 
+        public CTheme Theme {
+            get => theme;
+            set { 
+                theme = value;
+                margin.Theme = value;
+                ColorizeCode (textView.TextStorage);
+            }
+        }
+
         int lineCount = 1;
 
         public event EventHandler TextChanged;
 
-        CTheme theme = new CTheme ();
+        CTheme theme = new CTheme (isDark: false);
 
         MarginView margin = new MarginView ();
         nfloat marginWidth = (nfloat)44;
@@ -132,7 +141,16 @@ namespace CLanguage.Editor
             scrolledSubscription = NativeView.Notifications.ObserveBoundsChanged (scroll.ContentView, (sender, e) => {
                 UpdateMargin ();
             });
+
+            appearanceObserver = this.AddObserver ("effectiveAppearance", NSKeyValueObservingOptions.Initial | NSKeyValueObservingOptions.New, change => {
+                if (change.NewValue is NSAppearance a) {
+                    var isDark = a.Name.Contains ("dark", StringComparison.InvariantCultureIgnoreCase);
+                    Theme = new CTheme (isDark: isDark);
+                }
+            });
         }
+
+        IDisposable appearanceObserver;
 
         void UpdateMargin ()
         {

@@ -15,7 +15,15 @@ namespace CLanguage.Editor
 {
     class MarginView : NativeView
     {
-        CTheme theme = new CTheme ();
+        CTheme theme = new CTheme (isDark: false);
+        public CTheme Theme {
+            get => theme;
+            set {
+                theme = value;
+                SetNeedsDisplayInRect (Bounds);
+            }
+        }
+
         nfloat lineHeight = 15;
         nfloat baseline = 12;
         CGRect textBounds = new CGRect (0, 0, 100, 1000);
@@ -25,7 +33,7 @@ namespace CLanguage.Editor
 
         public override void DrawRect (CGRect dirtyRect)
         {
-            theme.BackgroundColor.Set ();
+            Theme.BackgroundColor.Set ();
             NSGraphics.RectFill (dirtyRect);
 
             var y = -textBounds.Y - (lineHeight - baseline);
@@ -33,7 +41,7 @@ namespace CLanguage.Editor
             var hpad = (nfloat)4;
             var frame = new CGRect (0, y, width - hpad, lineHeight);
 
-            var la = theme.LineNumberAttributes;
+            var la = Theme.LineNumberAttributes;
 
             for (var line = 1; line <= lineCount; line++) {
                 line.ToString ().DrawInRect (frame, la);

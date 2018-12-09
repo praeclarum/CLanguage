@@ -1,6 +1,7 @@
 ﻿using System;
 
 using AppKit;
+using CLanguage.Editor;
 using Foundation;
 
 namespace CEditor
@@ -8,6 +9,8 @@ namespace CEditor
     public partial class ViewController : NSViewController
     {
         private Document document;
+
+        IDisposable appearanceObserver;
 
         public Document Document {
             get => document;
@@ -32,6 +35,8 @@ namespace CEditor
         public override void ViewDidLoad ()
         {
             base.ViewDidLoad ();
+
+            ;
         }
 
         void BindDocument ()
@@ -59,6 +64,10 @@ namespace CEditor
         void TextEditor_TextChanged (object sender, EventArgs e)
         {
             document.Code = textEditor.Text;
+
+
         }
+
+
     }
 }
