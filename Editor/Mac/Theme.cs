@@ -33,6 +33,7 @@ namespace CLanguage.Editor
 
         public NSDictionary TypingAttributes => defaultAttrs;
         public NSDictionary CommentAttributes => defaultAttrs;
+        public readonly NSDictionary SelectedAttributes;
 
         public readonly NSDictionary[] ColorAttributes;
 
@@ -43,9 +44,13 @@ namespace CLanguage.Editor
         public Theme (bool isDark)
         {
             this.isDark = isDark;
+
             defaultAttrs = new NativeStringAttributes {
                 Font = codeFont,
                 ForegroundColor = !isDark ? Gray (0xA0) : Gray (0x66),
+            }.Dictionary;
+            SelectedAttributes = new NativeStringAttributes {
+                BackgroundColor = !isDark ? Gray (0xDD) : Gray (0x50),
             }.Dictionary;
 
             BackgroundColor = NativeColor.TextBackground;
@@ -54,7 +59,7 @@ namespace CLanguage.Editor
             ColorAttributes = Enumerable.Repeat (defaultAttrs, 16).ToArray ();
             ColorAttributes[(int)CLanguage.Syntax.SyntaxColor.Number] = MakeAttrs (Rgb (197, 0, 11), Rgb (255, 211, 32));
             ColorAttributes[(int)CLanguage.Syntax.SyntaxColor.String] = MakeAttrs (Rgb (197, 0, 11), Rgb (255, 211, 32));
-            ColorAttributes[(int)CLanguage.Syntax.SyntaxColor.Identifier] = MakeAttrs (Gray (0x33), Gray(0xEE));
+            ColorAttributes[(int)CLanguage.Syntax.SyntaxColor.Identifier] = MakeAttrs (Gray (0x33), Gray(0xE0));
             ColorAttributes[(int)CLanguage.Syntax.SyntaxColor.Operator] = MakeAttrs (Gray (0x88), Gray (0xAA));
             ColorAttributes[(int)CLanguage.Syntax.SyntaxColor.Keyword] = MakeAttrs (Rgb (52, 120, 184), Rgb (72, 144, 204));
             ColorAttributes[(int)CLanguage.Syntax.SyntaxColor.Type] = MakeAttrs (Rgb (0, 128, 128), Rgb (0, 164, 164));

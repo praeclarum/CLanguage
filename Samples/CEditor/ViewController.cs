@@ -10,8 +10,6 @@ namespace CEditor
     {
         private Document document;
 
-        IDisposable appearanceObserver;
-
         public Document Document {
             get => document;
             set {
@@ -30,13 +28,6 @@ namespace CEditor
 
         public ViewController (IntPtr handle) : base (handle)
         {
-        }
-
-        public override void ViewDidLoad ()
-        {
-            base.ViewDidLoad ();
-
-            ;
         }
 
         void BindDocument ()
@@ -64,10 +55,6 @@ namespace CEditor
         void TextEditor_TextChanged (object sender, EventArgs e)
         {
             document.Code = textEditor.Text;
-
-
         }
-
-
     }
 }

@@ -31,28 +31,40 @@ namespace CLanguage.Editor
         public string Text {
             get => textView.Value;
             set {
+                value = value ?? "";
+                var oldText = textView.Value;
+                if (oldText == value)
+                    return;
                 textView.TextStorage.SetString (new NSAttributedString (value ?? "", theme.CommentAttributes));
                 BeginInvokeOnMainThread (() => {
                     ColorizeCode (textView.TextStorage);
                     UpdateMargin ();
+                    if (oldText.Length == 0 && value.Length > 0) {
+                        textView.SelectedRange = new NSRange (0, 0);
+                    }
                 });
             }
         }
 
+        public NSRange SelectedRange {
+            get => textView.SelectedRange;
+            set => textView.SelectedRange = value;
+        }
+
+        Theme theme;
         public Theme Theme {
             get => theme;
             set { 
                 theme = value;
                 margin.Theme = value;
                 ColorizeCode (textView.TextStorage);
+                textView.SelectedTextAttributes = value.SelectedAttributes;
             }
         }
 
         int lineCount = 1;
 
         public event EventHandler TextChanged;
-
-        Theme theme = new Theme (isDark: false);
 
         MarginView margin = new MarginView ();
         nfloat marginWidth = (nfloat)44;
@@ -69,6 +81,7 @@ namespace CLanguage.Editor
         {
             textView = new EditorTextView (Bounds);
             scroll = new NSScrollView (Bounds);
+            theme = new Theme (IsDark (EffectiveAppearance));
             Initialize ();
         }
 
@@ -76,6 +89,7 @@ namespace CLanguage.Editor
         {
             textView = new EditorTextView (Bounds);
             scroll = new NSScrollView (Bounds);
+            theme = new Theme (IsDark (EffectiveAppearance));
             Initialize ();
         }
 
@@ -83,6 +97,7 @@ namespace CLanguage.Editor
         {
             textView = new EditorTextView (Bounds);
             scroll = new NSScrollView (Bounds);
+            theme = new Theme (IsDark (EffectiveAppearance));
             Initialize ();
         }
 
@@ -112,6 +127,7 @@ namespace CLanguage.Editor
             textView.TextContainer.ContainerSize = new CGSize (nfloat.MaxValue, nfloat.MaxValue);
             textView.TextContainer.WidthTracksTextView = false;
             textView.AllowsUndo = true;
+            textView.SelectedTextAttributes = theme.SelectedAttributes;
 
             scroll.VerticalScrollElasticity = NSScrollElasticity.Allowed;
             scroll.HorizontalScrollElasticity = NSScrollElasticity.Allowed;
@@ -147,18 +163,12 @@ namespace CLanguage.Editor
 
             appearanceObserver = this.AddObserver ("effectiveAppearance", NSKeyValueObservingOptions.Initial | NSKeyValueObservingOptions.New, change => {
                 if (change.NewValue is NSAppearance a) {
-                    var isDark = a.Name.Contains ("dark", StringComparison.InvariantCultureIgnoreCase);
-                    Theme = new Theme (isDark: isDark);
+                    Theme = new Theme (isDark: IsDark (a));
                 }
             });
         }
 
-        void UpdateMargin ()
-        {
-            var lineHeight = textView.LayoutManager.DefaultLineHeightForFont (theme.CodeFont);
-            var baseline = textView.LayoutManager.DefaultBaselineOffsetForFont (theme.CodeFont);
-            margin.SetLinePositions (lineHeight, baseline, scroll.ContentView.Bounds, lineCount);
-        }
+        static bool IsDark (NSAppearance a) => a.Name.Contains ("dark", StringComparison.InvariantCultureIgnoreCase);
 
         void TextView_TextDidChange (object sender, EventArgs e)
         {
@@ -170,7 +180,7 @@ namespace CLanguage.Editor
         {
             if (editedMask.HasFlag (NSTextStorageEditActions.Characters)) {
                 //
-                // Have to yield here because this is called *before* the layout managers.
+                // Have to yield here because this is called *before* the layout managers are updated.
                 // And we need them to be in sync. So we yield and catch the next run loop.
                 //
                 await Task.Yield ();
@@ -178,6 +188,13 @@ namespace CLanguage.Editor
                 ColorizeCode (textStorage);
                 UpdateMargin ();
             }
+        }
+
+        void UpdateMargin ()
+        {
+            var lineHeight = textView.LayoutManager.DefaultLineHeightForFont (theme.CodeFont);
+            var baseline = textView.LayoutManager.DefaultBaselineOffsetForFont (theme.CodeFont);
+            margin.SetLinePositions (lineHeight, baseline, scroll.ContentView.Bounds, lineCount);
         }
 
         void ColorizeCode (NSTextStorage textStorage)
