@@ -69,6 +69,18 @@ namespace CLanguage.Editor
                             r = "{\n" + tabIndent + "\n}";
                             nsr = new NSRange (sr.Location + 2 + tabIndent.Length, 0);
                             break;
+                        case "\"" when sr.Length == 0:
+                            r = "\"\"";
+                            nsr = new NSRange (sr.Location + 1, 0);
+                            ac = (int)sr.Location + 1;
+                            autoChars[ac] = '\"';
+                            break;
+                        case "\'" when sr.Length == 0:
+                            r = "\'\'";
+                            nsr = new NSRange (sr.Location + 1, 0);
+                            ac = (int)sr.Location + 1;
+                            autoChars[ac] = '\'';
+                            break;
                     }
                 }
                 if (insert) {

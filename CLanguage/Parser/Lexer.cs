@@ -512,12 +512,17 @@ namespace CLanguage.Parser
                             ch = (char)r;
                         }
                     }
+                    else if (ch == '\n') {
+                        endLocation = new Location (location.Document, _lastR >= 0 ? nextPosition - 1 : location.Document.Content.Length, line, column);
+                        Report.Error (1010, location, endLocation, "Newline in constant");
+                        done = true;
+                    }
                     else {
                         _chbuf[_chbuflen++] = ch;
                         r = Read ();
                         ch = (char)r;
                     }
-                    done = r < 0 || ch == '\"';
+                    done = done || r < 0 || ch == '\"';
                 }
 
                 _lastR = Read ();
