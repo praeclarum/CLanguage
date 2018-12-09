@@ -82,7 +82,7 @@ namespace CLanguage.Editor
         }.Dictionary;
 
         NSDictionary MakeLineNumberAttrs () => new NativeStringAttributes {
-            Font = codeFont,
+            Font = Font (codeFont.FontName, (int)(NativeFont.SystemFontSize * 0.8 + 0.5)),
             ForegroundColor = LineNumberColor,
             ParagraphStyle = new NSMutableParagraphStyle {
                 Alignment = NSTextAlignment.Right,

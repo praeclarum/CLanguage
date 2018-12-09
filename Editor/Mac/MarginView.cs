@@ -36,16 +36,22 @@ namespace CLanguage.Editor
             Theme.BackgroundColor.Set ();
             NSGraphics.RectFill (dirtyRect);
 
-            var y = -textBounds.Y - (lineHeight - baseline);
+            var la = Theme.LineNumberAttributes;
+            var fontHeight = "123".StringSize (la).Height;
+
+            var y = -textBounds.Y + (lineHeight - fontHeight);
+            var bottom = Bounds.Bottom;
             var width = Bounds.Width;
             var hpad = (nfloat)4;
             var frame = new CGRect (0, y, width - hpad, lineHeight);
 
-            var la = Theme.LineNumberAttributes;
-
             for (var line = 1; line <= lineCount; line++) {
-                line.ToString ().DrawInRect (frame, la);
+                if (frame.Bottom > 0) {
+                    line.ToString ().DrawInRect (frame, la);
+                }
                 frame.Y += lineHeight;
+                if (frame.Y > bottom)
+                    break;
             }
         }
 
