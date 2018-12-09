@@ -20,7 +20,7 @@ using System.Diagnostics;
 
 namespace CLanguage.Editor
 {
-	public class CTextStorage : NSTextStorage
+	class EditorTextStorage : NSTextStorage
 	{
 		static readonly NativeFont CodeFont = Font ("Menlo-Regular", (int)(NativeFont.SystemFontSize + 0.5));
 
@@ -40,25 +40,25 @@ namespace CLanguage.Editor
 		public override IntPtr LowLevelValue => adata.LowLevelValue;
 		public override bool FixesAttributesLazily => true;
 
-		public CTextStorage ()
+		public EditorTextStorage ()
 		{
 			Initialize ();
 		}
 
-		public CTextStorage (CLanguage.MachineInfo machineInfo, bool isDark)
+		public EditorTextStorage (CLanguage.MachineInfo machineInfo, bool isDark)
 		{
 			this.machineInfo = machineInfo;
 			this.isDark = isDark;
 			Initialize ();
 		}
 
-		public CTextStorage (IntPtr handle)
+		public EditorTextStorage (IntPtr handle)
 			: base (handle)
 		{
 			Initialize ();
 		}
 
-		public CTextStorage (NSCoder coder)
+		public EditorTextStorage (NSCoder coder)
 			: base (coder)
 		{
 			Initialize ();
