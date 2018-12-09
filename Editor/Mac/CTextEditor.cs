@@ -31,10 +31,14 @@ namespace CLanguage.Editor
         public string Text {
             get => textView.Value;
             set {
-                textView.TextStorage.SetString (new NSAttributedString (value ?? "", defaultAttrs));
+                textView.TextStorage.SetString (new NSAttributedString (value ?? "", theme.CommentAttributes));
                 BeginInvokeOnMainThread (() => ColorizeCode (textView.TextStorage));
             }
         }
+
+        public event EventHandler TextChanged;
+
+        CTheme theme = new CTheme ();
 
 #if __IOS__
 #elif __MACOS__
@@ -64,14 +68,12 @@ namespace CLanguage.Editor
 
         void Initialize ()
         {
-            InitializeColors ();
-
             var bounds = Bounds;
 
             //textView.LayoutManager.ReplaceTextStorage (storage);
             textView.LayoutManager.TextStorage.Delegate = this;
-            textView.Font = CodeFont;
-            textView.TypingAttributes = defaultAttrs;
+            textView.Font = theme.CodeFont;
+            textView.TypingAttributes = theme.TypingAttributes;
 
             textView.MinSize = new CGSize (bounds.Width, bounds.Height);
             textView.MaxSize = new CGSize (nfloat.MaxValue, nfloat.MaxValue);
@@ -84,6 +86,7 @@ namespace CLanguage.Editor
             textView.HorizontallyResizable = true;
             textView.TextContainer.ContainerSize = new CGSize (nfloat.MaxValue, nfloat.MaxValue);
             textView.TextContainer.WidthTracksTextView = false;
+            textView.AllowsUndo = true;
 
             scrollView.VerticalScrollElasticity = NSScrollElasticity.Allowed;
             scrollView.HorizontalScrollElasticity = NSScrollElasticity.Allowed;
@@ -103,42 +106,9 @@ namespace CLanguage.Editor
             textView.TextDidChange += TextView_TextDidChange;
         }
 
-        void InitializeColors ()
-        {
-            colorAttrs[(int)CLanguage.Syntax.SyntaxColor.Number] = MakeAttrs (Rgb (197, 0, 11), Rgb (255, 211, 32));
-            colorAttrs[(int)CLanguage.Syntax.SyntaxColor.String] = MakeAttrs (Rgb (197, 0, 11), Rgb (255, 211, 32));
-            colorAttrs[(int)CLanguage.Syntax.SyntaxColor.Comment] = MakeAttrs (Rgb (255, 0, 11), Rgb (255, 0, 0));
-            colorAttrs[(int)CLanguage.Syntax.SyntaxColor.Identifier] = MakeAttrs (NativeColor.Black, NativeColor.White);
-            colorAttrs[(int)CLanguage.Syntax.SyntaxColor.Keyword] = MakeAttrs (Rgb (52, 120, 184), Rgb (52, 120, 184));
-            colorAttrs[(int)CLanguage.Syntax.SyntaxColor.Type] = MakeAttrs (Rgb (0, 128, 128), Rgb (0, 164, 164));
-            colorAttrs[(int)CLanguage.Syntax.SyntaxColor.Function] = MakeAttrs (Rgb (204, 102, 0), Rgb (204, 102, 0));
-            colorAttrs[(int)CLanguage.Syntax.SyntaxColor.Operator] = MakeAttrs (Rgb (96, 96, 96), Rgb (164, 164, 192));
-        }
-
-        static readonly NativeFont CodeFont = Font ("Menlo-Regular", (int)(NativeFont.SystemFontSize + 0.5));
-
-        static readonly NSDictionary defaultAttrs = new NativeStringAttributes {
-            Font = CodeFont,
-            ForegroundColor = Rgb (128, 128, 128),
-        }.Dictionary;
-
-        readonly NSDictionary[] colorAttrs = Enumerable.Repeat (defaultAttrs, 16).ToArray ();
-
-        readonly bool isDark = true;
-
-        NSDictionary MakeAttrs (NativeColor color, NativeColor darkColor) => new NativeStringAttributes {
-            Font = CodeFont,
-            ForegroundColor = isDark ? darkColor : color,
-        }.Dictionary;
-
-
-        public override bool AcceptsFirstResponder ()
-        {
-            return true;
-        }
-
         void TextView_TextDidChange (object sender, EventArgs e)
         {
+            TextChanged?.Invoke (this, e);
         }
 
         [Export ("textStorage:didProcessEditing:range:changeInLength:")]
@@ -163,6 +133,7 @@ namespace CLanguage.Editor
             foreach (var lm in managers) {
                 lm.RemoveTemporaryAttribute (NSStringAttributeKey.ForegroundColor, new NSRange (0, code.Length));
             }
+            var colorAttrs = theme.ColorAttributes;
             foreach (var s in spans) {
                 var attrs = colorAttrs[(int)s.Color];
                 var range = new NSRange (s.Index, s.Length);
@@ -170,14 +141,6 @@ namespace CLanguage.Editor
                     lm.SetTemporaryAttributes (attrs, range);
                 }
             }
-        }
-
-        [Export ("layoutManager:shouldUseTemporaryAttributes:forDrawingToScreen:atCharacterIndex:effectiveRange:")]
-        NSDictionary ShouldUseTemporaryAttributes (NSLayoutManager layoutManager, NSDictionary temporaryAttributes, bool drawingToScreen, nint charIndex, IntPtr effectiveCharRange)
-        {
-            if (drawingToScreen)
-                return temporaryAttributes;
-            return null;
         }
 
 #if __IOS__

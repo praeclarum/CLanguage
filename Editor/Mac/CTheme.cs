@@ -1,0 +1,70 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+
+using Foundation;
+
+#if __IOS__
+using UIKit;
+using NativeColor = UIKit.UIColor;
+using NativeFont = UIKit.UIFont;
+using NativeStringAttributes = UIKit.UIStringAttributes;
+#elif __MACOS__
+using AppKit;
+using NativeColor = AppKit.NSColor;
+using NativeFont = AppKit.NSFont;
+using NativeStringAttributes = AppKit.NSStringAttributes;
+using System.Diagnostics;
+#endif
+
+namespace CLanguage.Editor
+{
+    public class CTheme
+    {
+        public CTheme ()
+        {
+            ColorAttributes[(int)CLanguage.Syntax.SyntaxColor.Number] = MakeAttrs (Rgb (197, 0, 11), Rgb (255, 211, 32));
+            ColorAttributes[(int)CLanguage.Syntax.SyntaxColor.String] = MakeAttrs (Rgb (197, 0, 11), Rgb (255, 211, 32));
+            ColorAttributes[(int)CLanguage.Syntax.SyntaxColor.Comment] = MakeAttrs (Rgb (255, 0, 11), Rgb (255, 0, 0));
+            ColorAttributes[(int)CLanguage.Syntax.SyntaxColor.Identifier] = MakeAttrs (NativeColor.Black, NativeColor.White);
+            ColorAttributes[(int)CLanguage.Syntax.SyntaxColor.Keyword] = MakeAttrs (Rgb (52, 120, 184), Rgb (52, 120, 184));
+            ColorAttributes[(int)CLanguage.Syntax.SyntaxColor.Type] = MakeAttrs (Rgb (0, 128, 128), Rgb (0, 164, 164));
+            ColorAttributes[(int)CLanguage.Syntax.SyntaxColor.Function] = MakeAttrs (Rgb (204, 102, 0), Rgb (204, 102, 0));
+            ColorAttributes[(int)CLanguage.Syntax.SyntaxColor.Operator] = MakeAttrs (Rgb (96, 96, 96), Rgb (164, 164, 192));
+        }
+
+        static readonly NativeFont codeFont = Font ("Menlo-Regular", (int)(NativeFont.SystemFontSize + 0.5));
+
+        public NativeFont CodeFont => codeFont;
+
+        static readonly NSDictionary defaultAttrs = new NativeStringAttributes {
+            Font = codeFont,
+            ForegroundColor = Rgb (128, 128, 128),
+        }.Dictionary;
+
+        public NSDictionary TypingAttributes => defaultAttrs;
+        public NSDictionary CommentAttributes => defaultAttrs;
+
+        public readonly NSDictionary[] ColorAttributes = Enumerable.Repeat (defaultAttrs, 16).ToArray ();
+
+        readonly bool isDark = true;
+
+        NSDictionary MakeAttrs (NativeColor color, NativeColor darkColor) => new NativeStringAttributes {
+            Font = codeFont,
+            ForegroundColor = isDark ? darkColor : color,
+        }.Dictionary;
+
+#if __IOS__
+        static NativeColor Rgb (int r, int g, int b) => NativeColor.FromRGB (r, g, b);
+        static NativeFont Font (string name, int size) => NativeFont.FromName (name, size);
+        static readonly NSTextStorageEditActions CharsEdited = NSTextStorageEditActions.Characters;
+        static readonly NSTextStorageEditActions AttrsEdited = NSTextStorageEditActions.Attributes;
+#else
+        static NativeColor Rgb (int r, int g, int b) => NativeColor.FromRgb (r, g, b);
+        static NativeFont Font (string name, int size) => NativeFont.FromFontName (name, size);
+        static readonly nuint CharsEdited = (nuint)(int)(NSTextStorageEditedFlags.EditedCharacters);
+        static readonly nuint AttrsEdited = (nuint)(int)(NSTextStorageEditedFlags.EditedAttributed);
+#endif
+    }
+}

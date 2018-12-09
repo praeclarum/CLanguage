@@ -48,6 +48,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CTextStorage.cs" />
     <Compile Include="CTextEditor.cs" />
+    <Compile Include="CTheme.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\CLanguage\CLanguage.csproj">

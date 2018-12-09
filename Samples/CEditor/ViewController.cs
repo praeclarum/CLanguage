@@ -40,18 +40,25 @@ namespace CEditor
                 return;
             document.CodeChanged += Document_CodeChanged;
             textEditor.Text = document.Code;
+            textEditor.TextChanged += TextEditor_TextChanged;
         }
 
         void UnbindDocument ()
         {
             if (document == null)
                 return;
+            textEditor.TextChanged -= TextEditor_TextChanged;
             document.CodeChanged -= Document_CodeChanged;
         }
 
         void Document_CodeChanged (object sender, EventArgs e)
         {
             textEditor.Text = document.Code;
+        }
+
+        void TextEditor_TextChanged (object sender, EventArgs e)
+        {
+            document.Code = textEditor.Text;
         }
     }
 }

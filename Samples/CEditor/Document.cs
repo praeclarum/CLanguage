@@ -11,8 +11,7 @@ namespace CEditor
     public class Document : NSDocument
     {
         Encoding encoding = Encoding.UTF8;
-        string code = "";
-        public string Code => code;
+        public string Code { get; set; }
 
         public event EventHandler CodeChanged;
 
@@ -38,7 +37,7 @@ namespace CEditor
         public override NSData GetAsData(string typeName, out NSError outError)
         {
             try {
-                var bytes = encoding.GetBytes (code);
+                var bytes = encoding.GetBytes (Code);
                 var data = NSData.FromArray (bytes);
                 outError = null;
                 return data;
@@ -55,7 +54,7 @@ namespace CEditor
             try {
                 using (var s = data.AsStream ())
                 using (var r = new StreamReader (s)) {
-                    code = r.ReadToEnd ();
+                    Code = r.ReadToEnd ();
                     encoding = r.CurrentEncoding;
                 }
                 outError = null;
