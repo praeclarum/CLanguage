@@ -24,7 +24,7 @@ using NativeStringAttributes = AppKit.NSStringAttributes;
 namespace CLanguage.Editor
 {
     [Register ("CTextEditor")]
-    public class CTextEditor : NativeView, INSTextStorageDelegate, INSLayoutManagerDelegate
+    public partial class CTextEditor : NativeView, INSTextStorageDelegate, INSLayoutManagerDelegate
     {
         readonly NativeTextView textView;
 
@@ -32,50 +32,64 @@ namespace CLanguage.Editor
             get => textView.Value;
             set {
                 textView.TextStorage.SetString (new NSAttributedString (value ?? "", theme.CommentAttributes));
-                BeginInvokeOnMainThread (() => ColorizeCode (textView.TextStorage));
+                BeginInvokeOnMainThread (() => {
+                    ColorizeCode (textView.TextStorage);
+                    UpdateMargin ();
+                });
             }
         }
+
+        int lineCount = 1;
 
         public event EventHandler TextChanged;
 
         CTheme theme = new CTheme ();
 
+        MarginView margin = new MarginView ();
+        nfloat marginWidth = (nfloat)44;
+        NSLayoutConstraint marginWidthConstraint;
+
 #if __IOS__
 #elif __MACOS__
-        readonly NSScrollView scrollView;
+        readonly NSScrollView scroll;
+        IDisposable scrolledSubscription;
 #endif
 
         public CTextEditor (NSCoder coder) : base (coder)
         {
             textView = new NativeTextView (Bounds);
-            scrollView = new NSScrollView (Bounds);
+            scroll = new NSScrollView (Bounds);
             Initialize ();
         }
 
         public CTextEditor (IntPtr handle) : base (handle)
         {
             textView = new NativeTextView (Bounds);
-            scrollView = new NSScrollView (Bounds);
+            scroll = new NSScrollView (Bounds);
             Initialize ();
         }
 
         public CTextEditor (CGRect frameRect) : base (frameRect)
         {
             textView = new NativeTextView (Bounds);
-            scrollView = new NSScrollView (Bounds);
+            scroll = new NSScrollView (Bounds);
             Initialize ();
         }
 
         void Initialize ()
         {
-            var bounds = Bounds;
+            var sframe = Bounds;
+            var mframe = sframe;
+            mframe.Width = marginWidth;
+            sframe.X += marginWidth;
+            sframe.Width -= marginWidth;
 
             //textView.LayoutManager.ReplaceTextStorage (storage);
             textView.LayoutManager.TextStorage.Delegate = this;
             textView.Font = theme.CodeFont;
             textView.TypingAttributes = theme.TypingAttributes;
 
-            textView.MinSize = new CGSize (bounds.Width, bounds.Height);
+            textView.MinSize = new CGSize (sframe.Width, sframe.Height);
             textView.MaxSize = new CGSize (nfloat.MaxValue, nfloat.MaxValue);
             textView.VerticallyResizable = true;
             textView.AutoresizingMask = NSViewResizingMask.WidthSizable;
@@ -88,22 +102,43 @@ namespace CLanguage.Editor
             textView.TextContainer.WidthTracksTextView = false;
             textView.AllowsUndo = true;
 
-            scrollView.VerticalScrollElasticity = NSScrollElasticity.Allowed;
-            scrollView.HorizontalScrollElasticity = NSScrollElasticity.Allowed;
-            scrollView.HasVerticalScroller = true;
-            scrollView.HasHorizontalScroller = true;
-            scrollView.DocumentView = textView;
+            scroll.VerticalScrollElasticity = NSScrollElasticity.Allowed;
+            scroll.HorizontalScrollElasticity = NSScrollElasticity.Allowed;
+            scroll.HasVerticalScroller = true;
+            scroll.HasHorizontalScroller = true;
+            scroll.DocumentView = textView;
 
             TranslatesAutoresizingMaskIntoConstraints = false;
-            scrollView.TranslatesAutoresizingMaskIntoConstraints = false;
-            scrollView.Frame = Bounds;
-            AddSubview (scrollView);
-            AddConstraint (NSLayoutConstraint.Create (this, NSLayoutAttribute.Leading, NSLayoutRelation.Equal, scrollView, NSLayoutAttribute.Leading, 1, 0));
-            AddConstraint (NSLayoutConstraint.Create (this, NSLayoutAttribute.Trailing, NSLayoutRelation.Equal, scrollView, NSLayoutAttribute.Trailing, 1, 0));
-            AddConstraint (NSLayoutConstraint.Create (this, NSLayoutAttribute.Top, NSLayoutRelation.Equal, scrollView, NSLayoutAttribute.Top, 1, 0));
-            AddConstraint (NSLayoutConstraint.Create (this, NSLayoutAttribute.Bottom, NSLayoutRelation.Equal, scrollView, NSLayoutAttribute.Bottom, 1, 0));
+            scroll.TranslatesAutoresizingMaskIntoConstraints = false;
+            margin.TranslatesAutoresizingMaskIntoConstraints = false;
+
+            scroll.Frame = sframe;
+            margin.Frame = mframe;
+
+            AddSubview (scroll);
+            AddSubview (margin);
+            AddConstraint (NSLayoutConstraint.Create (margin, NSLayoutAttribute.Trailing, NSLayoutRelation.Equal, scroll, NSLayoutAttribute.Leading, 1, 0));
+            AddConstraint (NSLayoutConstraint.Create (this, NSLayoutAttribute.Trailing, NSLayoutRelation.Equal, scroll, NSLayoutAttribute.Trailing, 1, 0));
+            AddConstraint (NSLayoutConstraint.Create (this, NSLayoutAttribute.Top, NSLayoutRelation.Equal, scroll, NSLayoutAttribute.Top, 1, 0));
+            AddConstraint (NSLayoutConstraint.Create (this, NSLayoutAttribute.Bottom, NSLayoutRelation.Equal, scroll, NSLayoutAttribute.Bottom, 1, 0));
+            AddConstraint (NSLayoutConstraint.Create (this, NSLayoutAttribute.Leading, NSLayoutRelation.Equal, margin, NSLayoutAttribute.Leading, 1, 0));
+            AddConstraint (marginWidthConstraint = NSLayoutConstraint.Create (margin, NSLayoutAttribute.Width, NSLayoutRelation.Equal, 1, marginWidth));
+            AddConstraint (NSLayoutConstraint.Create (margin, NSLayoutAttribute.Top, NSLayoutRelation.Equal, scroll, NSLayoutAttribute.Top, 1, 0));
+            AddConstraint (NSLayoutConstraint.Create (margin, NSLayoutAttribute.Bottom, NSLayoutRelation.Equal, scroll, NSLayoutAttribute.Bottom, 1, 0));
 
             textView.TextDidChange += TextView_TextDidChange;
+
+            scroll.ContentView.PostsBoundsChangedNotifications = true;
+            scrolledSubscription = NativeView.Notifications.ObserveBoundsChanged (scroll.ContentView, (sender, e) => {
+                UpdateMargin ();
+            });
+        }
+
+        void UpdateMargin ()
+        {
+            var lineHeight = textView.LayoutManager.DefaultLineHeightForFont (theme.CodeFont);
+            var baseline = textView.LayoutManager.DefaultBaselineOffsetForFont (theme.CodeFont);
+            margin.SetLinePositions (lineHeight, baseline, scroll.ContentView.Bounds, lineCount);
         }
 
         void TextView_TextDidChange (object sender, EventArgs e)
@@ -122,6 +157,7 @@ namespace CLanguage.Editor
                 await Task.Yield ();
 
                 ColorizeCode (textStorage);
+                UpdateMargin ();
             }
         }
 
@@ -129,6 +165,13 @@ namespace CLanguage.Editor
         {
             var code = textStorage.Value;
             var managers = textStorage.LayoutManagers;
+            var lc = 1;
+            var li = code.IndexOf ('\n');
+            while (li >= 0) {
+                lc++;
+                li = li + 1 < code.Length ? code.IndexOf ('\n', li + 1) : -1;
+            }
+            lineCount = lc;
             var spans = CLanguage.CLanguageService.Colorize (code, new MachineInfo ());
             foreach (var lm in managers) {
                 lm.RemoveTemporaryAttribute (NSStringAttributeKey.ForegroundColor, new NSRange (0, code.Length));

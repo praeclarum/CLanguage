@@ -49,6 +49,7 @@
     <Compile Include="CTextStorage.cs" />
     <Compile Include="CTextEditor.cs" />
     <Compile Include="CTheme.cs" />
+    <Compile Include="MarginView.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\CLanguage\CLanguage.csproj">

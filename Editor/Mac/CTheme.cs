@@ -22,8 +22,12 @@ namespace CLanguage.Editor
 {
     public class CTheme
     {
+        public NativeColor BackgroundColor => NativeColor.TextBackground;
+        public NativeColor LineNumberColor => NativeColor.Text.ColorWithAlphaComponent (0.125f);
+
         public CTheme ()
         {
+            LineNumberAttributes = MakeLineNumberAttrs ();
             ColorAttributes[(int)CLanguage.Syntax.SyntaxColor.Number] = MakeAttrs (Rgb (197, 0, 11), Rgb (255, 211, 32));
             ColorAttributes[(int)CLanguage.Syntax.SyntaxColor.String] = MakeAttrs (Rgb (197, 0, 11), Rgb (255, 211, 32));
             ColorAttributes[(int)CLanguage.Syntax.SyntaxColor.Comment] = MakeAttrs (Rgb (255, 0, 11), Rgb (255, 0, 0));
@@ -50,9 +54,19 @@ namespace CLanguage.Editor
 
         readonly bool isDark = true;
 
-        NSDictionary MakeAttrs (NativeColor color, NativeColor darkColor) => new NativeStringAttributes {
+        public NSDictionary LineNumberAttributes { get; }
+
+        static NSDictionary MakeAttrs (NativeColor color, NativeColor darkColor) => new NativeStringAttributes {
             Font = codeFont,
-            ForegroundColor = isDark ? darkColor : color,
+            ForegroundColor = true ? darkColor : color,
+        }.Dictionary;
+
+        NSDictionary MakeLineNumberAttrs () => new NativeStringAttributes {
+            Font = codeFont,
+            ForegroundColor = LineNumberColor,
+            ParagraphStyle = new NSMutableParagraphStyle {
+                Alignment = NSTextAlignment.Right,
+            }
         }.Dictionary;
 
 #if __IOS__
