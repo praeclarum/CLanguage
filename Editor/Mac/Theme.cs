@@ -20,7 +20,7 @@ using System.Diagnostics;
 
 namespace CLanguage.Editor
 {
-    public class CTheme
+    public class Theme
     {
         readonly bool isDark;
 
@@ -40,7 +40,7 @@ namespace CLanguage.Editor
 
         readonly NSDictionary defaultAttrs;
 
-        public CTheme (bool isDark)
+        public Theme (bool isDark)
         {
             this.isDark = isDark;
             defaultAttrs = new NativeStringAttributes {

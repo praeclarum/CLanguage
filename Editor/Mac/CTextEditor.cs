@@ -39,7 +39,7 @@ namespace CLanguage.Editor
             }
         }
 
-        public CTheme Theme {
+        public Theme Theme {
             get => theme;
             set { 
                 theme = value;
@@ -52,7 +52,7 @@ namespace CLanguage.Editor
 
         public event EventHandler TextChanged;
 
-        CTheme theme = new CTheme (isDark: false);
+        Theme theme = new Theme (isDark: false);
 
         MarginView margin = new MarginView ();
         nfloat marginWidth = (nfloat)44;
@@ -145,7 +145,7 @@ namespace CLanguage.Editor
             appearanceObserver = this.AddObserver ("effectiveAppearance", NSKeyValueObservingOptions.Initial | NSKeyValueObservingOptions.New, change => {
                 if (change.NewValue is NSAppearance a) {
                     var isDark = a.Name.Contains ("dark", StringComparison.InvariantCultureIgnoreCase);
-                    Theme = new CTheme (isDark: isDark);
+                    Theme = new Theme (isDark: isDark);
                 }
             });
         }

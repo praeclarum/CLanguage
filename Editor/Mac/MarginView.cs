@@ -15,8 +15,8 @@ namespace CLanguage.Editor
 {
     class MarginView : NativeView
     {
-        CTheme theme = new CTheme (isDark: false);
-        public CTheme Theme {
+        Theme theme = new Theme (isDark: false);
+        public Theme Theme {
             get => theme;
             set {
                 theme = value;
