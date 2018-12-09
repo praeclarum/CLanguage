@@ -153,7 +153,6 @@ namespace CLanguage.Editor
             AddConstraint (NSLayoutConstraint.Create (margin, NSLayoutAttribute.Top, NSLayoutRelation.Equal, scroll, NSLayoutAttribute.Top, 1, 0));
             AddConstraint (NSLayoutConstraint.Create (margin, NSLayoutAttribute.Bottom, NSLayoutRelation.Equal, scroll, NSLayoutAttribute.Bottom, 1, 0));
 
-            textView.TextDidChange += TextView_TextDidChange;
             textView.Delegate = this;
 
             scroll.ContentView.PostsBoundsChangedNotifications = true;
@@ -170,11 +169,6 @@ namespace CLanguage.Editor
 
         static bool IsDark (NSAppearance a) => a.Name.Contains ("dark", StringComparison.InvariantCultureIgnoreCase);
 
-        void TextView_TextDidChange (object sender, EventArgs e)
-        {
-            TextChanged?.Invoke (this, e);
-        }
-
         [Export ("textStorage:didProcessEditing:range:changeInLength:")]
         async void DidProcessEditing (NSTextStorage textStorage, NSTextStorageEditActions editedMask, NSRange editedRange, nint delta)
         {
@@ -187,6 +181,7 @@ namespace CLanguage.Editor
 
                 ColorizeCode (textStorage);
                 UpdateMargin ();
+                TextChanged?.Invoke (this, EventArgs.Empty);
             }
         }
 
