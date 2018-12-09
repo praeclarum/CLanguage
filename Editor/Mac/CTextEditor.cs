@@ -42,6 +42,7 @@ namespace CLanguage.Editor
                     if (oldText.Length == 0 && value.Length > 0) {
                         textView.SelectedRange = new NSRange (0, 0);
                     }
+                    NeedsLayout = true;
                 });
             }
         }
@@ -54,11 +55,9 @@ namespace CLanguage.Editor
         Theme theme;
         public Theme Theme {
             get => theme;
-            set { 
+            set {
                 theme = value;
-                margin.Theme = value;
-                ColorizeCode (textView.TextStorage);
-                textView.SelectedTextAttributes = value.SelectedAttributes;
+                OnThemeChanged ();
             }
         }
 
@@ -114,16 +113,15 @@ namespace CLanguage.Editor
             textView.Font = theme.CodeFont;
             textView.TypingAttributes = theme.TypingAttributes;
 
-            textView.MinSize = new CGSize (sframe.Width, sframe.Height);
-            textView.MaxSize = new CGSize (nfloat.MaxValue, nfloat.MaxValue);
             textView.VerticallyResizable = true;
+            textView.HorizontallyResizable = true;
             textView.AutoresizingMask = NSViewResizingMask.WidthSizable;
+            textView.TranslatesAutoresizingMaskIntoConstraints = true;
             textView.AutomaticTextReplacementEnabled = false;
             textView.AutomaticDashSubstitutionEnabled = false;
             textView.AutomaticQuoteSubstitutionEnabled = false;
             textView.AutomaticSpellingCorrectionEnabled = false;
             textView.SmartInsertDeleteEnabled = false;
-            textView.HorizontallyResizable = true;
             textView.TextContainer.ContainerSize = new CGSize (nfloat.MaxValue, nfloat.MaxValue);
             textView.TextContainer.WidthTracksTextView = false;
             textView.AllowsUndo = true;
@@ -165,6 +163,7 @@ namespace CLanguage.Editor
                     Theme = new Theme (isDark: IsDark (a));
                 }
             });
+            OnThemeChanged ();
         }
 
         static bool IsDark (NSAppearance a) => a.Name.Contains ("dark", StringComparison.InvariantCultureIgnoreCase);
@@ -215,6 +214,16 @@ namespace CLanguage.Editor
                     lm.SetTemporaryAttributes (attrs, range);
                 }
             }
+        }
+
+        void OnThemeChanged ()
+        {
+            margin.Theme = theme;
+            ColorizeCode (textView.TextStorage);
+            textView.SelectedTextAttributes = theme.SelectedAttributes;
+            scroll.BackgroundColor = textView.BackgroundColor;
+            scroll.DrawsBackground = true;
+            SetNeedsDisplayInRect (Bounds);
         }
 
 
