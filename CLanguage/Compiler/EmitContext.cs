@@ -383,7 +383,7 @@ namespace CLanguage.Compiler
             //
             // Rest
             //
-            throw new NotImplementedException ();
+            throw new NotImplementedException (GetType ().Name);
         }
 
         void AddStructMember (CStructType st, Statement s, Block block)

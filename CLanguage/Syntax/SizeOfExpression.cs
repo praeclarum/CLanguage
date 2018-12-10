@@ -24,7 +24,7 @@ namespace CLanguage.Syntax
 
         protected override void DoEmit(EmitContext ec)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException(GetType ().Name + ": Emit");
         }
     }
 }

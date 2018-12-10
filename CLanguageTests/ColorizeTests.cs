@@ -158,5 +158,13 @@ namespace CLanguage.Tests
                                 SyntaxColor.Identifier,
                                 SyntaxColor.Operator);
         }
+
+        [TestMethod]
+        public void UnterminatedString ()
+        {
+            AssertColorization ("\"sdfsdfsd\nx",
+                                SyntaxColor.String,
+                                SyntaxColor.Identifier);
+        }
     }
 }

@@ -35,16 +35,19 @@ namespace CLanguage.Parser
 
             _tu = new TranslationUnit (name);
 
+            if (lexer.Tokens.Length == 0)
+                return _tu;
+
             try {
                 yyparse (lexer);
             }
             catch (NotImplementedException err) {
                 report.Error (9000, lexer.CurrentToken.Location, lexer.CurrentToken.EndLocation, 
-                    "Feature not implemented: " + err.Message);
+                    "Not Supported: " + err.Message);
             }
             catch (NotSupportedException err) {
                 report.Error (9002, lexer.CurrentToken.Location, lexer.CurrentToken.EndLocation,
-                    "Feature not supported: " + err.Message);
+                    "Not Supported: " + err.Message);
             }
             catch (Exception err) when (err.Message == "irrecoverable syntax error") {
                 report.Error (1001, lexer.CurrentToken.Location, lexer.CurrentToken.EndLocation,
@@ -52,7 +55,7 @@ namespace CLanguage.Parser
             }
             catch (Exception err) {
                 report.Error (9001, lexer.CurrentToken.Location, lexer.CurrentToken.EndLocation,
-                    "Internal compiler error: " + err.Message);
+                    "Internal Error: " + err.Message);
             }
 
             return _tu;

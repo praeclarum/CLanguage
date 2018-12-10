@@ -29,6 +29,9 @@ namespace CLanguage.Syntax
             return $"{Document}({Line},{Column})";
         }
 
+        public static Location operator + (Location location, int columnOffset) =>
+            new Location (location.Document, location.Index + columnOffset, location.Line, location.Column + columnOffset);
+
         public static readonly Location Null = new Location ();
 
         public static bool operator == (Location x, Location y) => x.Line == y.Line && x.Column == y.Column && x.Document?.Path == y.Document?.Path;

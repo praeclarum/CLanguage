@@ -25,7 +25,7 @@ namespace CLanguage.Syntax
         {
             if (IsDo)
             {
-                throw new NotImplementedException();
+                throw new NotImplementedException(GetType ().Name + ": Do Emit");
             }
             else
             {

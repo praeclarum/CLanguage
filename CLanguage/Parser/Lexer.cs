@@ -236,11 +236,18 @@ namespace CLanguage.Parser
 
                 var vals = new string (_chbuf, 0, _chbuflen);
                 var icult = System.Globalization.CultureInfo.InvariantCulture;
+                endLocation = new Location (location.Document, _lastR >= 0 ? nextPosition - 1 : location.Document.Content.Length, line, column);
                 if (onlydigits) {
                     var style = ishex ? System.Globalization.NumberStyles.HexNumber : System.Globalization.NumberStyles.None;
                     if (islong) {
                         if (isunsigned) {
-                            _value = ulong.Parse (vals, style, icult);
+                            if (ulong.TryParse (vals, style, icult, out var v)) {
+                                _value = v;
+                            }
+                            else {
+                                _value = (ulong)0;
+                                Report.Error (1021, location, endLocation, "Integral constant is too large");
+                            }
                         }
                         else {
                             _value = long.Parse (vals, style, icult);
@@ -311,10 +318,21 @@ namespace CLanguage.Parser
                 _lastR = Read ();
             }
             else if (r == '.') {
-                var nr = Read ();
+                var nr = Read (); // Dot #2
 
                 if (nr == '.' && Peek () == '.') {
-                    throw new NotImplementedException ();
+                    r = Read (); // Dot #3
+                    if (r == '.') {
+                        _token = TokenKind.ELLIPSIS;
+                        _value = null;
+                        _lastR = Read ();
+                    }
+                    else {
+                        _token = '.';
+                        _value = null;
+                        _lastR = r;
+                        Report.Error (1001, location + 1, location + 2, "Identifier expected");
+                    }
                 }
                 else {
                     _token = r;
@@ -343,7 +361,7 @@ namespace CLanguage.Parser
                     nr = Read ();
 
                     if (nr == '=') {
-                        throw new NotImplementedException ();
+                        throw new NotImplementedException (GetType ().Name + ": &&=");
                     }
                     else {
                         _token = TokenKind.AND_OP;
@@ -352,7 +370,7 @@ namespace CLanguage.Parser
                     }
                 }
                 else if (nr == '=') {
-                    throw new NotImplementedException ();
+                    throw new NotImplementedException (GetType ().Name + ": &=");
                 }
                 else {
                     _token = r;
@@ -367,7 +385,7 @@ namespace CLanguage.Parser
                     nr = Read ();
 
                     if (nr == '=') {
-                        throw new NotImplementedException ();
+                        throw new NotImplementedException (GetType ().Name + ": ||=");
                     }
                     else {
                         _token = TokenKind.OR_OP;
@@ -376,7 +394,7 @@ namespace CLanguage.Parser
                     }
                 }
                 else if (nr == '=') {
-                    throw new NotImplementedException ();
+                    throw new NotImplementedException (GetType ().Name + ": |=");
                 }
                 else {
                     _token = r;
@@ -505,12 +523,17 @@ namespace CLanguage.Parser
                             ch = (char)r;
                         }
                     }
+                    else if (ch == '\n') {
+                        endLocation = new Location (location.Document, _lastR >= 0 ? nextPosition - 1 : location.Document.Content.Length, line, column);
+                        Report.Error (1010, location, endLocation, "Newline in constant");
+                        done = true;
+                    }
                     else {
                         _chbuf[_chbuflen++] = ch;
                         r = Read ();
                         ch = (char)r;
                     }
-                    done = r < 0 || ch == '\"';
+                    done = done || r < 0 || ch == '\"';
                 }
 
                 _lastR = Read ();
