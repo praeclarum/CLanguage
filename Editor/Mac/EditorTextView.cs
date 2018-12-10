@@ -57,7 +57,8 @@ namespace CLanguage.Editor
                         case "\t" when sr.Length == 0:
                             r = userIndent;
                             break;
-                        case "\n" when sr.Location > 0 && sr.Length == 0 && lines.AllText[(int)sr.Location - 1] == '{':
+                        case "\n" when sr.Location > 0 && sr.Length == 0 
+                            && (lines.AllText[(int)sr.Location - 1] == '{' || lines.AllText[(int)sr.Location - 1] == ':'):
                             r = "\n" + lines.Indent + userIndent;
                             nsr = new NSRange (sr.Location + 1 + lines.Indent.Length + userIndent.Length, 0);
                             break;
