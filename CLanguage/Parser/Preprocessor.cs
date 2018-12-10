@@ -78,7 +78,8 @@ namespace CLanguage.Parser
                         i++;
                     }
                 }
-                else if (t.Kind == '#' && i + 1 < tokens.Count && tokens[i + 1].Kind == TokenKind.IDENTIFIER) {
+                else if (t.Kind == '#' && i + 1 < tokens.Count &&
+                    (tokens[i + 1].Kind == TokenKind.IDENTIFIER || tokens[i + 1].Kind == TokenKind.IF || tokens[i + 1].Kind == TokenKind.ELSE)) {
                     var eol = i + 1;
                     while (eol < tokens.Count && tokens[eol].Kind != TokenKind.EOL) {
                         if (tokens[eol].Kind == '\\' && eol + 1 < tokens.Count && tokens[eol + 1].Kind == TokenKind.EOL) {
