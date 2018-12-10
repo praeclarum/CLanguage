@@ -10,8 +10,10 @@ namespace CLanguage.Parser
     public class Preprocessor
     {
         readonly List<Token> tokens;
-
+        private readonly Include include;
         private readonly Report report;
+
+        public delegate Token[] Include (string filePath, bool relative);
 
         class Define
         {
@@ -25,22 +27,31 @@ namespace CLanguage.Parser
             }
         }
 
-        public Preprocessor (Report report, params Token[][] tokens)
+        public Preprocessor (Include include, Report report, params Token[][] tokens)
         {
             this.tokens = tokens.SelectMany (x => x).ToList ();
+            this.include = include;
             this.report = report;
         }
 
         public Token[] Preprocess ()
         {
             var defines = new Dictionary<string, Define> ();
-            while (PreprocessIteration (defines, tokens, report)) {
+            while (PreprocessIteration (defines, IncludeBuiltins, tokens, report)) {
                 // Keep going until nothing changes
             }
             return tokens.ToArray ();
         }
 
-        static bool PreprocessIteration (Dictionary<string, Define> defines, List<Token> tokens, Report report)
+        Token[] IncludeBuiltins (string filePath, bool relative)
+        {
+            if (filePath == "stdint.h") {
+                return Array.Empty<Token> ();
+            }
+            return include (filePath, relative);
+        }
+
+        static bool PreprocessIteration (Dictionary<string, Define> defines, Include include, List<Token> tokens, Report report)
         {
             var anotherIterationNeeded = false;
 
@@ -62,7 +73,7 @@ namespace CLanguage.Parser
                                 newDefines[args[ai].Name] = args[ai];
                             }
                             var newBody = define.Body.ToList ();
-                            while (PreprocessIteration (newDefines, newBody, report)) {
+                            while (PreprocessIteration (newDefines, include, newBody, report)) {
                                 // Do as much as we can
                             }
                             tokens.RemoveRange (i, len + 1);
@@ -87,6 +98,7 @@ namespace CLanguage.Parser
                         }
                         eol++;
                     }
+                    var insertTokens = default (Token[]);
                     switch (tokens[i + 1].Value.ToString ()) {
                         case "define":
                             if (eol - i > 2) {
@@ -116,13 +128,38 @@ namespace CLanguage.Parser
                                 report.Warning (1025, tokens[i].Location, tokens[eol - 1].EndLocation, "Incomplete #define");
                             }
                             break;
+                        case "include":
+                            if (eol - i > 2) {
+                                var relative = tokens[i + 2].Kind == TokenKind.STRING_LITERAL;
+                                var iname = "";
+                                for (var j = i + 2; j < eol; j++) {
+                                    var k = tokens[j].Kind;
+                                    if (k == '/' || k == '\\' || k == '.') {
+                                        iname += (char)k;
+                                    }
+                                    else if (k == TokenKind.IDENTIFIER || k == TokenKind.STRING_LITERAL) {
+                                        iname += tokens[j].Value.ToString ();
+                                    }
+                                }
+                                insertTokens = include (iname, relative);
+                                if (insertTokens == null) {
+                                    report.Warning (1027, tokens[i + 2].Location, tokens[eol - 1].EndLocation, "Failed to find file");
+                                }
+                            }
+                            else {
+                                report.Warning (1026, tokens[i].Location, tokens[eol - 1].EndLocation, "Incomplete #include");
+                            }
+                            break;
                         default:
-                            report.Warning (1024, tokens[i].Location, tokens[eol-1].EndLocation, "Cannot understand preprocessor");
+                            report.Warning (1024, tokens[i].Location, tokens[eol - 1].EndLocation, "Cannot understand preprocessor");
                             break;
                     }
                     if (eol < tokens.Count)
                         eol++;
                     tokens.RemoveRange (i, eol - i);
+                    if (insertTokens != null) {
+                        tokens.InsertRange (i, insertTokens);
+                    }
                     anotherIterationNeeded = true;
                 }
                 else {

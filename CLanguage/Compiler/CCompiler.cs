@@ -23,7 +23,7 @@ namespace CLanguage.Compiler
             this.options = options;
 			tus = new List<TranslationUnit> ();
 
-            ProcessDocument (new Document ("_machine.h", options.MachineInfo.HeaderCode));
+            ProcessDocument (new Document ("_machine.h", options.MachineInfo.GeneratedHeaderCode));
             foreach (var d in options.Documents) {
                 ProcessDocument (d);
             }
@@ -49,8 +49,13 @@ namespace CLanguage.Compiler
 
                 var name = System.IO.Path.GetFileNameWithoutExtension (document.Path);
 
-                Add (parser.ParseTranslationUnit (options.Report, name, lexedDocuments["_machine.h"].Tokens, lexed.Tokens));
+                Add (parser.ParseTranslationUnit (options.Report, name, Include, lexedDocuments["_machine.h"].Tokens, lexed.Tokens));
             }
+        }
+
+        Token[] Include (string filePath, bool relative)
+        {
+            return null;
         }
 
         public void AddCode (string name, string code)

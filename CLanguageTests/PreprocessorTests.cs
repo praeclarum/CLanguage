@@ -131,6 +131,40 @@ void main() {
 }
 ", 1025);
         }
+
+        [TestMethod]
+        public void IncludeRelativeFileUnknown ()
+        {
+            Run (@"
+#include ""doesntexist.h""
+void main() {
+}
+", 1027);
+        }
+
+        [TestMethod]
+        public void IncludeRelativeStdint ()
+        {
+            Run (@"
+#include ""stdint.h""
+void main() {
+    int16_t x = 2000;
+    assertAreEqual(2000, x);
+}
+");
+        }
+
+        [TestMethod]
+        public void IncludeAbsoluteStdint ()
+        {
+            Run (@"
+#include <stdint.h>
+void main() {
+    int16_t x = 2000;
+    assertAreEqual(2000, x);
+}
+");
+        }
     }
 }
 

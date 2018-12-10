@@ -19,7 +19,7 @@ namespace CLanguage
         public static TranslationUnit ParseTranslationUnit (string code, Report report)
         {
             var parser = new CParser ();
-            return parser.ParseTranslationUnit (DefaultCodePath, code, report);
+            return parser.ParseTranslationUnit (DefaultCodePath, code, ((_, __) => null), report);
         }
 
         public static TranslationUnit ParseTranslationUnit (string code, Report.Printer printer)
@@ -84,6 +84,7 @@ namespace CLanguage
                     case TokenKind.FLOAT:
                     case TokenKind.DOUBLE:
                     case TokenKind.BOOL:
+                    case TokenKind.TYPE_NAME:
                         return SyntaxColor.Type;
                     case TokenKind.IDENTIFIER:
                         if (token.Value is string s && funcs.Contains (s))

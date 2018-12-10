@@ -22,15 +22,15 @@ namespace CLanguage.Parser
             //debug = new yydebug.yyDebugSimple();
         }
 		
-        public TranslationUnit ParseTranslationUnit (string name, string code, Report report)
+        public TranslationUnit ParseTranslationUnit (string name, string code, Preprocessor.Include include, Report report)
         {
             var lexed = new LexedDocument (new Document (name, code), report);
-            return ParseTranslationUnit (report, System.IO.Path.GetFileNameWithoutExtension (name), lexed.Tokens);
+            return ParseTranslationUnit (report, System.IO.Path.GetFileNameWithoutExtension (name), include, lexed.Tokens);
         }
 
-        public TranslationUnit ParseTranslationUnit (Report report, string name, params Token[][] tokens)
+        public TranslationUnit ParseTranslationUnit (Report report, string name, Preprocessor.Include include, params Token[][] tokens)
         {
-            var preprocessor = new Preprocessor (report, tokens);
+            var preprocessor = new Preprocessor (include, report, tokens);
             lexer = new ParserInput (preprocessor.Preprocess ());
 
             _tu = new TranslationUnit (name);

@@ -26,8 +26,29 @@ namespace CLanguage
 		public string HeaderCode { get; set; }
 
 		public Collection<BaseFunction> InternalFunctions { get; set; }
+        public string GeneratedHeaderCode {
+            get {
+                var w = new CodeWriter ();
+                w.WriteLine ("typedef char int8_t;");
+                w.WriteLine ("typedef unsigned char uint8_t;");
+                if (ShortIntSize == 2) {
+                    w.WriteLine ("typedef short int16_t;");
+                    w.WriteLine ("typedef unsigned short uint16_t;");
+                }
+                if (IntSize == 4) {
+                    w.WriteLine ("typedef int int32_t;");
+                    w.WriteLine ("typedef unsigned int uint32_t;");
+                }
+                else if (LongIntSize == 4) {
+                    w.WriteLine ("typedef long int32_t;");
+                    w.WriteLine ("typedef unsigned long uint32_t;");
+                }
+                w.Write (HeaderCode);
+                return w.Code;
+            }
+        }
 
-		public MachineInfo ()
+        public MachineInfo ()
 		{
 			InternalFunctions = new Collection<BaseFunction> ();
 			HeaderCode = "";
