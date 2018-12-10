@@ -86,8 +86,22 @@ namespace CLanguage
                     case TokenKind.BOOL:
                         return SyntaxColor.Type;
                     case TokenKind.IDENTIFIER:
-                        if (token.Value is string s && funcs.Contains (s))
-                            return SyntaxColor.Function;
+                        if (token.Value is string s) {
+                            if (funcs.Contains (s))
+                                return SyntaxColor.Function;
+                            switch (s) {
+                                case "uint8_t":
+                                case "uint16_t":
+                                case "uint32_t":
+                                case "uint64_t":
+                                case "int8_t":
+                                case "int16_t":
+                                case "int32_t":
+                                case "int64_t":
+                                case "boolean":
+                                    return SyntaxColor.Type;
+                            }
+                        }
                         return SyntaxColor.Identifier;
                     case TokenKind.CONSTANT:
                         if (token.Value is char)
