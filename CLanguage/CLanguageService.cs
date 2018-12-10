@@ -101,6 +101,12 @@ namespace CLanguage
                                 case "int64_t":
                                 case "boolean":
                                     return SyntaxColor.Type;
+                                case "include":
+                                case "define":
+                                case "ifdef":
+                                case "indef":
+                                case "endif":
+                                    return SyntaxColor.Keyword;
                             }
                         }
                         return SyntaxColor.Identifier;
