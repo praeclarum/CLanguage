@@ -59,7 +59,7 @@ namespace CLanguage.Editor
             BackgroundColor = NativeColor.TextBackground;
             ErrorBubbleBackgroundColor = !isDark ? Rgb (0xC5, 0, 0xB) : Rgb (0xC5 * 2 /4, 0, 0xB);
             ErrorBubbleTextAttributes = new NativeStringAttributes {
-                ForegroundColor = Gray (255).ColorWithAlphaComponent (0.875f),
+                ForegroundColor = Gray (255).ColorWithAlphaComponent (0.9375f),
                 Font = NativeFont.BoldSystemFontOfSize (NativeFont.SystemFontSize),
             }.Dictionary;
             LineNumberColor = isDark ? Gray (85) : Gray (200);

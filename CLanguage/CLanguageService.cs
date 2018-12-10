@@ -104,7 +104,8 @@ namespace CLanguage
                                 case "include":
                                 case "define":
                                 case "ifdef":
-                                case "indef":
+                                case "ifndef":
+                                case "elif":
                                 case "endif":
                                     return SyntaxColor.Keyword;
                             }
