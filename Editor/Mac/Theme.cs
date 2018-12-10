@@ -84,6 +84,15 @@ namespace CLanguage.Editor
             }.Dictionary;
         }
 
+        public NSDictionary WarningAttributes (string message)
+        {
+            return new NativeStringAttributes {
+                UnderlineColor = NativeColor.SystemYellowColor,// !isDark ? Rgb (120, 73, 42) : Rgb (0xFF, 0xD3, 0x20),
+                UnderlineStyle = (int)NSUnderlineStyle.Thick,
+                ToolTip = message,
+            }.Dictionary;
+        }
+
         NSDictionary MakeAttrs (NativeColor color, NativeColor darkColor) => new NativeStringAttributes {
             Font = codeFont,
             ForegroundColor = isDark ? darkColor : color,
