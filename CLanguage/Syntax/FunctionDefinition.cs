@@ -14,7 +14,7 @@ namespace CLanguage.Syntax
 
         protected override void DoEmit (EmitContext ec)
         {
-            throw new System.NotImplementedException ();
+            // Emitted by the compiler
         }
     }
 }

@@ -20,6 +20,11 @@ namespace CLanguage.Parser
                     tokens.Add (lexer.CurrentToken);
                 }
             }
+            catch (NotImplementedException err) {
+                var t = lexer.CurrentToken;
+                report.Error (9000, t.Location, t.EndLocation,
+                    "Not Supported: " + err.Message);
+            }
             catch (Exception ex) {
                 var t = lexer.CurrentToken;
                 report.Error (9000, t.Location, t.EndLocation, ex.Message);

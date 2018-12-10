@@ -321,7 +321,7 @@ namespace CLanguage.Parser
                 var nr = Read ();
 
                 if (nr == '.' && Peek () == '.') {
-                    throw new NotImplementedException ();
+                    throw new NotImplementedException (GetType().Name + ": ..");
                 }
                 else {
                     _token = r;
@@ -350,7 +350,7 @@ namespace CLanguage.Parser
                     nr = Read ();
 
                     if (nr == '=') {
-                        throw new NotImplementedException ();
+                        throw new NotImplementedException (GetType ().Name + ": &&=");
                     }
                     else {
                         _token = TokenKind.AND_OP;
@@ -359,7 +359,7 @@ namespace CLanguage.Parser
                     }
                 }
                 else if (nr == '=') {
-                    throw new NotImplementedException ();
+                    throw new NotImplementedException (GetType ().Name + ": &=");
                 }
                 else {
                     _token = r;
@@ -374,7 +374,7 @@ namespace CLanguage.Parser
                     nr = Read ();
 
                     if (nr == '=') {
-                        throw new NotImplementedException ();
+                        throw new NotImplementedException (GetType ().Name + ": ||=");
                     }
                     else {
                         _token = TokenKind.OR_OP;
@@ -383,7 +383,7 @@ namespace CLanguage.Parser
                     }
                 }
                 else if (nr == '=') {
-                    throw new NotImplementedException ();
+                    throw new NotImplementedException (GetType ().Name + ": |=");
                 }
                 else {
                     _token = r;
