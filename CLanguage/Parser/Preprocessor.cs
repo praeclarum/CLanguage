@@ -88,27 +88,32 @@ namespace CLanguage.Parser
                         eol++;
                     }
                     switch (tokens[i + 1].Value.ToString ()) {
-                        case "define" when eol - i >= 2:
-                            var nameToken = tokens[i + 2];
-                            var body = tokens.Skip (i + 3).Take (eol - i - 3).ToList ();
-                            var ps = Array.Empty<string> ();
-                            var hasPs = false;
-                            if (body.Count >= 2 && body[0].Kind == '(' && body[0].Location.Index == nameToken.EndLocation.Index) {
-                                var endParam = body.FindIndex (1, x => x.Kind == ')');
-                                if (endParam >= 0 && endParam + 1 < body.Count) {
-                                    ps = body.Take (endParam).Where (x => x.Kind == TokenKind.IDENTIFIER).Select (x => (string)x.Value).ToArray ();
-                                    body.RemoveRange (0, endParam + 1);
-                                    hasPs = true;
+                        case "define":
+                            if (eol - i > 2) {
+                                var nameToken = tokens[i + 2];
+                                var body = tokens.Skip (i + 3).Take (eol - i - 3).ToList ();
+                                var ps = Array.Empty<string> ();
+                                var hasPs = false;
+                                if (body.Count >= 2 && body[0].Kind == '(' && body[0].Location.Index == nameToken.EndLocation.Index) {
+                                    var endParam = body.FindIndex (1, x => x.Kind == ')');
+                                    if (endParam >= 0 && endParam + 1 < body.Count) {
+                                        ps = body.Take (endParam).Where (x => x.Kind == TokenKind.IDENTIFIER).Select (x => (string)x.Value).ToArray ();
+                                        body.RemoveRange (0, endParam + 1);
+                                        hasPs = true;
+                                    }
+                                }
+                                var define = new Define {
+                                    Name = nameToken.Value?.ToString (),
+                                    Body = body,
+                                    Parameters = ps,
+                                    HasParameters = hasPs,
+                                };
+                                if (!string.IsNullOrWhiteSpace (define.Name)) {
+                                    defines[define.Name] = define;
                                 }
                             }
-                            var define = new Define {
-                                Name = nameToken.Value?.ToString (),
-                                Body = body,
-                                Parameters = ps,
-                                HasParameters = hasPs,
-                            };
-                            if (!string.IsNullOrWhiteSpace (define.Name)) {
-                                defines[define.Name] = define;
+                            else {
+                                report.Warning (1025, tokens[i].Location, tokens[eol - 1].EndLocation, "Incomplete #define");
                             }
                             break;
                         default:

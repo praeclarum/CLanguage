@@ -121,6 +121,16 @@ void main() {
 }
 ");
         }
+
+        [TestMethod]
+        public void IncompleteDefine ()
+        {
+            Run (@"
+#define
+void main() {
+}
+", 1025);
+        }
     }
 }
 
