@@ -51,6 +51,9 @@
     <Compile Include="Theme.cs" />
     <Compile Include="MarginView.cs" />
     <Compile Include="EditorTextView.cs" />
+    <Compile Include="Extensions.cs" />
+    <Compile Include="ErrorView.cs" />
+    <Compile Include="EditorPrinter.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\CLanguage\CLanguage.csproj">

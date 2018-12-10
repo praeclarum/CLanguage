@@ -7,9 +7,9 @@ using static CLanguage.CLanguageService;
 
 namespace CLanguage.Tests
 {
-	[TestClass]
-	public class PreprocessorTests : TestsBase
-	{
+    [TestClass]
+    public class PreprocessorTests : TestsBase
+    {
         [TestMethod]
         public void AssignToDefines ()
         {
@@ -94,6 +94,32 @@ void main() {
     assertAreEqual(1, i);
 }
 ", 1024);
+        }
+
+        [TestMethod]
+        public void VaArgs ()
+        {
+            Run (@"
+#define DEBUG_PRINT(...) __VA_ARGS__
+void main() {
+    //TODO: __VA_ARGS__
+    //auto i = DEBUG_PRINT(100);
+    //assertAreEqual(100, i);
+}
+");
+        }
+
+        [TestMethod]
+        public void BadVaArgs ()
+        {
+            Run (@"
+#define DEBUG_PRINT(..) __VA_ARGS__
+void main() {
+    //TODO: __VA_ARGS__
+    //auto i = DEBUG_PRINT(100);
+    //assertAreEqual(100, i);
+}
+");
         }
     }
 }

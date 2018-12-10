@@ -27,7 +27,7 @@ namespace CLanguage.Parser
             }
             catch (Exception ex) {
                 var t = lexer.CurrentToken;
-                report.Error (9000, t.Location, t.EndLocation, ex.Message);
+                report.Error (9000, t.Location, t.EndLocation, "Internal Error: " + ex.Message);
             }
             Tokens = tokens.ToArray ();
         }

@@ -318,10 +318,21 @@ namespace CLanguage.Parser
                 _lastR = Read ();
             }
             else if (r == '.') {
-                var nr = Read ();
+                var nr = Read (); // Dot #2
 
                 if (nr == '.' && Peek () == '.') {
-                    throw new NotImplementedException (GetType().Name + ": ..");
+                    r = Read (); // Dot #3
+                    if (r == '.') {
+                        _token = TokenKind.ELLIPSIS;
+                        _value = null;
+                        _lastR = Read ();
+                    }
+                    else {
+                        _token = '.';
+                        _value = null;
+                        _lastR = r;
+                        Report.Error (1001, location + 1, location + 2, "Identifier expected");
+                    }
                 }
                 else {
                     _token = r;
