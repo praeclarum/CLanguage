@@ -99,7 +99,8 @@ namespace CLanguage.Parser
                         eol++;
                     }
                     var insertTokens = default (Token[]);
-                    switch (tokens[i + 1].Value.ToString ()) {
+                    var tokenValueString = tokens[i + 1].Value?.ToString () ?? "";
+                    switch (tokenValueString) {
                         case "define":
                             if (eol - i > 2) {
                                 var nameToken = tokens[i + 2];
@@ -154,8 +155,10 @@ namespace CLanguage.Parser
                         case "else":
                             report.Warning (1028, tokens[i].Location, tokens[eol - 1].EndLocation, "Unexpected preprocessor directive");
                             break;
+                        case "ifdef":
                         case "ifndef": {
-                                var isTrue = !(i + 2 < tokens.Count && tokens[i + 2].Value is string s && defines.ContainsKey(s));
+                                var isDefined = (i + 2 < tokens.Count && tokens[i + 2].Value is string s && defines.ContainsKey(s));
+                                var isTrue = tokenValueString == "ifdef" ? isDefined : !isDefined;
 
                                 //
                                 // Look for else and endif

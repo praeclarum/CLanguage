@@ -110,6 +110,34 @@ void main() {
         }
 
         [TestMethod]
+        public void IfdefTrue ()
+        {
+            Run (@"
+#define FOO
+#ifdef FOO
+#define DO(x) x++;
+#endif
+void main() {
+    auto i = 10;
+    DO(i)
+    assertAreEqual(11, i);
+}
+");
+        }
+
+        [TestMethod]
+        public void IfdefFalse ()
+        {
+            Run (@"
+#ifdef FOO
+error
+#endif
+void main() {
+}
+");
+        }
+
+        [TestMethod]
         public void VaArgs ()
         {
             Run (@"
