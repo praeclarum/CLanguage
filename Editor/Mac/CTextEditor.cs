@@ -289,6 +289,8 @@ namespace CLanguage.Editor
             margin.SetLinePositions (lineHeight, baseline, scroll.ContentView.Bounds, lineCount);
         }
 
+        static readonly char[] newlineChars = { '\n', (char)8232 };
+
         void ColorizeCode (NSTextStorage textStorage)
         {
             var code = textStorage.Value;
@@ -298,10 +300,10 @@ namespace CLanguage.Editor
             // Count the lines
             //
             var lc = 1;
-            var li = code.IndexOf ('\n');
+            var li = code.IndexOfAny (newlineChars);
             while (li >= 0) {
                 lc++;
-                li = li + 1 < code.Length ? code.IndexOf ('\n', li + 1) : -1;
+                li = li + 1 < code.Length ? code.IndexOfAny (newlineChars, li + 1) : -1;
             }
             lineCount = lc;
 

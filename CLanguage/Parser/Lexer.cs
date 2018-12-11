@@ -139,7 +139,7 @@ namespace CLanguage.Parser
                 // Skip white
                 //
                 while (r >= 0 && r <= ' ') {
-                    if (r == '\n') {
+                    if (r == '\n' && r != 8232) {
                         break;
                     }
                     r = Read ();
@@ -149,7 +149,7 @@ namespace CLanguage.Parser
 
                 if (r == '/' && Peek () == '/') {
                     var nr = Read ();
-                    while (nr > 0 && nr != '\n') {
+                    while (nr > 0 && nr != '\n' && nr != 8232) {
                         nr = Read ();
                     }
                     r = Read ();
@@ -160,7 +160,7 @@ namespace CLanguage.Parser
                 else if (r == '/' && Peek () == '*') {
                     var nr = Read ();
                     while (nr > 0 && !(nr == '*' && Peek () == '/')) {
-                        if (nr == '\n') {
+                        if (nr == '\n' || nr == 8232) {
                             line++;
                             column = 1;
                         }
@@ -197,7 +197,7 @@ namespace CLanguage.Parser
             // Make sense of it
             //
             var ch = (char)r;
-            if (ch == '\n') {
+            if (ch == '\n' || ch == 8232) {
                 _token = TokenKind.EOL;
                 _value = null;
                 _lastR = Read ();
@@ -509,7 +509,7 @@ namespace CLanguage.Parser
                                     break;
                                 default: {
                                         if (char.IsWhiteSpace ((char)r)) {
-                                            while (r > 0 && r != '\n') {
+                                            while (r > 0 && r != '\n' && r != 8232) {
                                                 r = Read ();
                                             }
                                         }
@@ -523,7 +523,7 @@ namespace CLanguage.Parser
                             ch = (char)r;
                         }
                     }
-                    else if (ch == '\n') {
+                    else if (ch == '\n' || ch == 8232) {
                         endLocation = new Location (location.Document, _lastR >= 0 ? nextPosition - 1 : location.Document.Content.Length, line, column);
                         Report.Error (1010, location, endLocation, "Newline in constant");
                         done = true;
