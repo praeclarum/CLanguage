@@ -163,7 +163,8 @@ namespace CLanguage.Parser
                                 //
                                 // Look for else and endif
                                 //
-                                //int elseStartIndex = -1;
+                                int elseStartIndex = -1;
+                                int elseEndIndex = -1;
                                 int endifStartIndex = tokens.Count;
                                 int endifEndIndex = tokens.Count;
                                 int ifDepth = 1;
@@ -174,6 +175,12 @@ namespace CLanguage.Parser
                                             case "ifdef":
                                             case "ifndef":
                                                 ifDepth++;
+                                                break;
+                                            case "else":
+                                                if (ifDepth == 1) {
+                                                    elseStartIndex = j;
+                                                    elseEndIndex = j + 2;
+                                                }
                                                 break;
                                             case "endif":
                                                 ifDepth--;
@@ -190,9 +197,17 @@ namespace CLanguage.Parser
                                 // Do the replacement
                                 //
                                 if (isTrue) {
-                                    insertTokens = tokens.Skip (eol).Take (endifStartIndex - eol).ToArray ();
+                                    if (elseStartIndex >= eol) {
+                                        insertTokens = tokens.Skip (eol).Take (elseStartIndex - eol).ToArray ();
+                                    }
+                                    else {
+                                        insertTokens = tokens.Skip (eol).Take (endifStartIndex - eol).ToArray ();
+                                    }
                                 }
                                 else {
+                                    if (elseEndIndex >= eol) {
+                                        insertTokens = tokens.Skip (elseEndIndex).Take (endifStartIndex - elseEndIndex).ToArray ();
+                                    }
                                 }
                                 eol = endifEndIndex;
                             }

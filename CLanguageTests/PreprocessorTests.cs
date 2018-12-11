@@ -138,6 +138,41 @@ void main() {
         }
 
         [TestMethod]
+        public void IfdefTrueElse ()
+        {
+            Run (@"
+#define FOO
+#ifdef FOO
+#define DO(x) x++;
+#else
+#define DO(x) x = x * 20;
+#endif
+void main() {
+    auto i = 10;
+    DO(i)
+    assertAreEqual(11, i);
+}
+");
+        }
+
+        [TestMethod]
+        public void IfdefFalseElse ()
+        {
+            Run (@"
+#ifdef FOO
+#define DO(x) x++;
+#else
+#define DO(x) x = x * 20;
+#endif
+void main() {
+    auto i = 10;
+    DO(i)
+    assertAreEqual(200, i);
+}
+");
+        }
+
+        [TestMethod]
         public void VaArgs ()
         {
             Run (@"

@@ -147,6 +147,8 @@ namespace CLanguage.Editor
             textView.TextContainer.LineBreakMode = NSLineBreakMode.Clipping;
             textView.AllowsUndo = true;
             textView.SelectedTextAttributes = theme.SelectedAttributes;
+            NSUserDefaults.StandardUserDefaults.SetInt (50, "NSInitialToolTipDelay");
+            textView.DisplaysLinkToolTips = true;
 
             scroll.VerticalScrollElasticity = NSScrollElasticity.Allowed;
             scroll.HorizontalScrollElasticity = NSScrollElasticity.Allowed;
