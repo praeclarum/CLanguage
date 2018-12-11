@@ -69,7 +69,7 @@ namespace CLanguage
             string m = "";
             switch (code) {
                 case 103:
-                    m = "The name '{0}' does not exist in the current context";
+                    m = "'{0}' cannot be found";
                     break;
                 default:
                     Error (code, string.Join (", ", args));

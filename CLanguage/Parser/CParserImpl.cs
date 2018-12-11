@@ -61,7 +61,7 @@ namespace CLanguage.Parser
             return _tu;
         }
 
-        public static Expression ParseExpression (Report report, Token[] tokens)
+        public static Expression TryParseExpression (Report report, Token[] tokens)
         {
             var p = new CParser ();
             var prefix = new[] { new Token (TokenKind.AUTO, "auto"), new Token (TokenKind.IDENTIFIER, "_"), new Token ('=') };
@@ -70,26 +70,7 @@ namespace CLanguage.Parser
             if (tu.Statements.FirstOrDefault () is MultiDeclaratorStatement mds && mds.InitDeclarators.Count == 1 && mds.InitDeclarators[0].Initializer is ExpressionInitializer ei) {
                 return ei.Expression;
             }
-            report.Error (9010, "Expression could not be parsed");
-            return ConstantExpression.False;
-        }
-
-        public static Dictionary<string, Expression> ParseExpressions (Report report, IEnumerable<(string VariableName, Token[] Tokens)> tokens)
-        {
-            var p = new CParser ();
-            var suffix = new[] { new Token (';') };
-            var q = from t in tokens
-                    let prefix = new[] { new Token (TokenKind.AUTO, "auto"), new Token (TokenKind.IDENTIFIER, t.VariableName), new Token ('=') }
-                    from x in prefix.Concat (t.Tokens).Concat (suffix)
-                    select x;
-            var allTokens = q.ToArray ();
-            var tu = p.ParseTranslationUnit (report, CLanguageService.DefaultCodePath, ((_, __) => null), allTokens);
-            var r = from s in tu.Statements.OfType<MultiDeclaratorStatement> ()
-                    where s.InitDeclarators.Count == 1
-                    let init = s.InitDeclarators[0].Initializer as ExpressionInitializer
-                    where init != null
-                    select (s.InitDeclarators[0].Declarator.DeclaredIdentifier, init.Expression);
-            return r.ToDictionary (x => x.Item1, x => x.Item2);
+            return null;
         }
 
         void AddDeclaration (object a)

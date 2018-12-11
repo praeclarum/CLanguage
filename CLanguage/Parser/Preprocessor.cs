@@ -24,7 +24,7 @@ namespace CLanguage.Parser
             public string Name;
             public string[] Parameters;
             public bool HasParameters;
-            public List<Token> Body;
+            public Token[] Body;
             public override string ToString ()
             {
                 return Name + ": [" + string.Join (", ", Body) + "]";
@@ -121,7 +121,7 @@ namespace CLanguage.Parser
                                 }
                                 var define = new Define {
                                     Name = nameToken.Value?.ToString (),
-                                    Body = body,
+                                    Body = body.ToArray (),
                                     Parameters = ps,
                                     HasParameters = hasPs,
                                 };
@@ -246,14 +246,18 @@ namespace CLanguage.Parser
         static bool EvalIfCondition (Dictionary<string, Define> defines, Token[] tokens)
         {
             try {
-                var r = new Report ();
-                var code = string.Join ("", tokens.Select (x => x.Text));
-                var q = from kv in defines
-                        where kv.Value.Body.Count > 0
-                        select (kv.Key, kv.Value.Body.ToArray ());
-                var expressions = CParser.ParseExpressions (r, q.Concat (new[] { ("__value__", tokens) }));
-                var expression = expressions["__value__"];
-                var context = new PreprocessorContext (r, expressions);
+                var report = new Report ();
+                var expressions = new Dictionary<string, Expression> ();
+                foreach (var d in defines) {
+                    if (d.Value.Body.Length == 0)
+                        continue;
+                    var e = CParser.TryParseExpression (report, d.Value.Body);
+                    if (e != null) {
+                        expressions[d.Key] = e;
+                    }
+                }
+                var expression = CParser.TryParseExpression (report, tokens);
+                var context = new PreprocessorContext (report, defines, expressions);
                 var value = expression.EvalConstant (context);
                 return value.Int32Value != 0;
             }
@@ -265,10 +269,12 @@ namespace CLanguage.Parser
 
         class PreprocessorContext : EmitContext
         {
+            readonly Dictionary<string, Define> defines;
             readonly Dictionary<string, Expression> expressions;
 
-            public PreprocessorContext (Report report, Dictionary<string, Expression> expressions) : base (new MachineInfo (), report, null, null)
+            public PreprocessorContext (Report report, Dictionary<string, Define> defines, Dictionary<string, Expression> expressions) : base (new MachineInfo (), report, null, null)
             {
+                this.defines = defines;
                 this.expressions = expressions;
             }
 
@@ -277,7 +283,7 @@ namespace CLanguage.Parser
                 if (expressions.TryGetValue (name, out var expression)) {
                     // New context to prevent infinitie recursion
                     var nex = new Dictionary<string, Expression> (expressions);
-                    var nctx = new PreprocessorContext (Report, nex);
+                    var nctx = new PreprocessorContext (Report, defines, nex);
                     var value = expression.EvalConstant (nctx);
                     return new ResolvedVariable (value, CBasicType.SignedInt);
                 }
@@ -302,7 +308,7 @@ namespace CLanguage.Parser
                         break;
                     case ',':
                         if (parenDepth == 1) {
-                            var body = tokens.Skip (startArgIndex).Take (i - startArgIndex).ToList ();
+                            var body = tokens.Skip (startArgIndex).Take (i - startArgIndex).ToArray ();
                             defines.Add (new Define { Body = body });
                             startArgIndex = i + 1;
                         }
@@ -310,7 +316,7 @@ namespace CLanguage.Parser
                     case ')':
                         parenDepth--;
                         if (parenDepth == 0) {
-                            var body = tokens.Skip (startArgIndex).Take (i - startArgIndex).ToList ();
+                            var body = tokens.Skip (startArgIndex).Take (i - startArgIndex).ToArray ();
                             defines.Add (new Define { Body = body });
                             startArgIndex = -1;
                         }
