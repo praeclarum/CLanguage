@@ -42,7 +42,7 @@ namespace CLanguage.Editor
         readonly ErrorView errorView = new ErrorView () { AlphaValue = 0 };
         nfloat errorHeight = (nfloat)32;
         nfloat errorHMargin = (nfloat)16;
-        nfloat errorVMargin = (nfloat)8;
+        nfloat errorVMargin = (nfloat)16;
 
         readonly MarginView margin = new MarginView ();
         nfloat marginWidth = (nfloat)36;
@@ -382,7 +382,10 @@ namespace CLanguage.Editor
                 }
             }
 #elif __IOS__
-            var printer = new EditorPrinter ();
+            var ts = (EditorTextStorage)textView.TextStorage;
+            ts.MachineInfo = options.MachineInfo;
+            ts.Theme = Theme;
+            var printer = ts.LastPrinter;
 #endif
 
             //

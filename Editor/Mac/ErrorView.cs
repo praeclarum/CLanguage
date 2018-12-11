@@ -31,6 +31,11 @@ namespace CLanguage.Editor
             }
         }
 
+        public ErrorView ()
+        {
+            BackgroundColor = NativeColor.Clear;
+        }
+
         protected override void DrawDirtyRect (CGRect dirtyRect)
         {
             var c = NativeGraphicsCGContext;

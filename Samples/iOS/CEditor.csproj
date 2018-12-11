@@ -103,6 +103,12 @@
     <Compile Include="Main.cs" />
     <Compile Include="AppDelegate.cs" />
     <Compile Include="ViewController.cs" />
+    <Compile Include="..\..\CLanguageTests\ArduinoTestMachineInfo.cs">
+      <Link>ArduinoTestMachineInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\Mac\TestMachineInfo.cs">
+      <Link>TestMachineInfo.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\CLanguage\CLanguage.csproj">

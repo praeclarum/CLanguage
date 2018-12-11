@@ -31,26 +31,26 @@ namespace CLanguage.Editor
 			ForegroundColor = Rgb (128, 128, 128),
 		}.Dictionary;
 
-		readonly NSDictionary[] colorAttrs = Enumerable.Repeat (defaultAttrs, 16).ToArray ();
-
 		readonly bool isDark = false;
-		readonly CLanguage.MachineInfo machineInfo = new MachineInfo ();
-
-		readonly NSMutableAttributedString adata = new NSMutableAttributedString ();
+        readonly NSMutableAttributedString adata = new NSMutableAttributedString ();
 		List<NSDictionary> cdata = new List<NSDictionary> ();
 
 		public override IntPtr LowLevelValue => adata.LowLevelValue;
 		public override bool FixesAttributesLazily => true;
 
-		public EditorTextStorage ()
-		{
-			Initialize ();
-		}
+        Theme theme = new Theme (isDark: false);
+        public Theme Theme {
+            get => theme;
+            set {
+                theme = value;
+            }
+        }
 
-		public EditorTextStorage (CLanguage.MachineInfo machineInfo, bool isDark)
+        public MachineInfo MachineInfo { get; set; } = new MachineInfo ();
+        public EditorPrinter LastPrinter { get; private set; } = new EditorPrinter ();
+
+        public EditorTextStorage ()
 		{
-			this.machineInfo = machineInfo;
-			this.isDark = isDark;
 			Initialize ();
 		}
 
@@ -68,13 +68,6 @@ namespace CLanguage.Editor
 
 		void Initialize ()
 		{
-			colorAttrs[(int)CLanguage.Syntax.SyntaxColor.Number] = MakeAttrs (Rgb (197, 0, 11), Rgb (255, 211, 32));
-			colorAttrs[(int)CLanguage.Syntax.SyntaxColor.String] = MakeAttrs (Rgb (197, 0, 11), Rgb (255, 211, 32));
-			colorAttrs[(int)CLanguage.Syntax.SyntaxColor.Identifier] = MakeAttrs (NativeColor.Black, NativeColor.White);
-			colorAttrs[(int)CLanguage.Syntax.SyntaxColor.Keyword] = MakeAttrs (Rgb (52, 120, 184), Rgb (52, 120, 184));
-			colorAttrs[(int)CLanguage.Syntax.SyntaxColor.Type] = MakeAttrs (Rgb (0, 128, 128), Rgb (0, 164, 164));
-			colorAttrs[(int)CLanguage.Syntax.SyntaxColor.Function] = MakeAttrs (Rgb (204, 102, 0), Rgb (204, 102, 0));
-			colorAttrs[(int)CLanguage.Syntax.SyntaxColor.Operator] = MakeAttrs (Rgb (96, 96, 96), Rgb (164, 164, 192));
 		}
 
 		NSDictionary MakeAttrs (NativeColor color, NativeColor darkColor) => new NativeStringAttributes {
@@ -130,10 +123,13 @@ namespace CLanguage.Editor
 			var code = adata.Value;
 			ThreadPool.QueueUserWorkItem (_ => {
 				try {
-					//Console.WriteLine ("BEGIN FORMATTING");
+                    //Console.WriteLine ("BEGIN FORMATTING");
+                    var colorAttrs = theme.ColorAttributes;
 
-					// Parse the file
-					var spans = CLanguage.CLanguageService.Colorize (code, machineInfo);
+                    // Parse the file
+                    var printer = new EditorPrinter ();
+					var spans = CLanguage.CLanguageService.Colorize (code, MachineInfo, printer);
+                    LastPrinter = printer;
 
 					// Flatten the spans
 					var ncdata = new List<NSDictionary> (Enumerable.Repeat (defaultAttrs, code.Length));

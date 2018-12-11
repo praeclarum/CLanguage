@@ -1,5 +1,6 @@
 ﻿using System;
-
+using System.Linq;
+using CLanguage.Tests;
 using UIKit;
 
 namespace CEditor
@@ -10,6 +11,10 @@ namespace CEditor
 
         public ViewController()
         {
+            textEditor.Options = new CLanguage.Compiler.CompilerOptions (
+                new ArduinoTestMachineInfo (),
+                new CLanguage.Report (),
+                Enumerable.Empty<CLanguage.Syntax.Document> ());
         }
 
         public override void ViewDidLoad()

@@ -12,6 +12,7 @@ using NativeView = UIKit.UIView;
 #elif __MACOS__
 using AppKit;
 using NativeView = AppKit.NSView;
+using NativeColor = AppKit.NSColor;
 #endif
 
 namespace CLanguage.Editor
@@ -28,6 +29,14 @@ namespace CLanguage.Editor
         }
 
 #if __MACOS__
+        NativeColor backgroundColor = NativeColor.Black;
+        public NativeColor BackgroundColor {
+            get => backgroundColor;
+            set {
+                backgroundColor = value;
+                SetNeedsDisplayInRect (Bounds);
+            }
+        }
         public override bool IsFlipped => true;
         public override void DrawRect (CGRect dirtyRect)
         {
@@ -35,6 +44,10 @@ namespace CLanguage.Editor
         }
 #elif __IOS__
         public nfloat AlphaValue { get => Alpha; set => Alpha = value; }
+        protected DrawingView ()
+        {
+            Opaque = false;
+        }
         public override void Draw (CGRect rect)
         {
             DrawDirtyRect (rect);
