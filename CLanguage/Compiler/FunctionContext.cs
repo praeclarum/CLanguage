@@ -7,7 +7,7 @@ using CLanguage.Interpreter;
 
 namespace CLanguage.Compiler
 {
-    class FunctionContext : EmitContext
+    class FunctionContext : BlockContext
     {
         Executable exe;
         CompiledFunction fexe;
@@ -24,7 +24,7 @@ namespace CLanguage.Compiler
         public IEnumerable<CompiledVariable> LocalVariables { get { return allLocals; } }
 
         public FunctionContext (Executable exe, CompiledFunction fexe, EmitContext parentContext)
-            : base (parentContext.MachineInfo, parentContext.Report, fexe, parentContext)
+            : base (fexe.Body, parentContext.MachineInfo, parentContext.Report, fexe, parentContext)
         {
             this.exe = exe;
             this.fexe = fexe;
@@ -52,10 +52,10 @@ namespace CLanguage.Compiler
             //    }
             //}
 
-            return null;
+            return base.ResolveTypeName (typeName);
         }
 
-        public override ResolvedVariable ResolveVariable (string name, CType[] argTypes)
+        public override ResolvedVariable TryResolveVariable (string name, CType[] argTypes)
         {
             //
             // Look for function parameters
@@ -80,7 +80,7 @@ namespace CLanguage.Compiler
                 }
             }
 
-            return base.ResolveVariable (name, argTypes);
+            return base.TryResolveVariable (name, argTypes);
         }
 
         public override void BeginBlock (Block b)

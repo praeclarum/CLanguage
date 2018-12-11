@@ -33,7 +33,7 @@ namespace CLanguage.Compiler
             return base.ResolveMethodFunction (structType, method);
         }
 
-        public override ResolvedVariable ResolveVariable (string name, CType[] argTypes)
+        public override ResolvedVariable TryResolveVariable (string name, CType[] argTypes)
         {
             //
             // Look for global variables
@@ -65,7 +65,7 @@ namespace CLanguage.Compiler
                 return new ResolvedVariable (ff, fi);
             }
 
-            return base.ResolveVariable (name, argTypes);
+            return base.TryResolveVariable (name, argTypes);
         }
     }
 }

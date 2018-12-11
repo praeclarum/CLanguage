@@ -13,9 +13,9 @@ namespace CLanguage.Interpreter
 
         public CompiledVariable (string name, int offset, CType type)
         {
-            Name = name;
+            Name = name ?? throw new ArgumentNullException (nameof (name));
             Offset = offset;
-            VariableType = type;
+            VariableType = type ?? throw new ArgumentNullException (nameof (type));
         }
 
         public override string ToString ()

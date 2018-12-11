@@ -278,7 +278,7 @@ namespace CLanguage.Parser
                 this.expressions = expressions;
             }
 
-            public override ResolvedVariable ResolveVariable (string name, CType[] argTypes)
+            public override ResolvedVariable TryResolveVariable (string name, CType[] argTypes)
             {
                 if (expressions.TryGetValue (name, out var expression)) {
                     // New context to prevent infinitie recursion
@@ -287,7 +287,7 @@ namespace CLanguage.Parser
                     var value = expression.EvalConstant (nctx);
                     return new ResolvedVariable (value, CBasicType.SignedInt);
                 }
-                return base.ResolveVariable (name, argTypes);
+                return base.TryResolveVariable (name, argTypes);
             }
         }
 

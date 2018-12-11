@@ -7,6 +7,7 @@ using CLanguage.Syntax;
 using CLanguage.Types;
 using CLanguage.Parser;
 using CLanguage.Interpreter;
+using System.Diagnostics;
 
 namespace CLanguage.Compiler
 {
@@ -69,8 +70,20 @@ namespace CLanguage.Compiler
         }
 
         public Executable Compile ()
-		{
-			var exe = new Executable (options.MachineInfo);
+        {
+            try {
+                return CompileExecutable ();
+            }
+            catch (Exception ex) {
+                Debug.WriteLine (ex);
+                options.Report.Error (9000, "Compiler error: " + ex.Message);
+                return new Executable (options.MachineInfo);
+            }
+        }
+
+        Executable CompileExecutable ()
+        {
+            var exe = new Executable (options.MachineInfo);
             var exeContext = new ExecutableContext (exe, options.Report);
 
             // Put something at the zero address so we don't get 0 addresses of globals
@@ -79,14 +92,14 @@ namespace CLanguage.Compiler
             //
             // Find Variables, Functions, Types
             //
-            var exeInitBody = new Block ();
+            var exeInitBody = new Block (VariableScope.Local);
             var tucs = tus.Select (x => new TranslationUnitContext (x, exeContext));
             var tuInits = new List<(CompiledFunction, EmitContext)> ();
             foreach (var tuc in tucs) {
                 var tu = tuc.TranslationUnit;
-                AddStatementDeclarations (tu, tu, tuc);
+                AddStatementDeclarations (tuc);
                 if (tu.InitStatements.Count > 0) {
-                    var tuInitBody = new Block ();
+                    var tuInitBody = new Block (VariableScope.Local);
                     tuInitBody.AddStatements (tu.InitStatements);
                     var tuInit = new CompiledFunction ($"__{tu.Name}__cinit", CFunctionType.VoidProcedure, tuInitBody);
                     exeInitBody.AddStatement (new ExpressionStatement (new FuncallExpression (new VariableExpression (tuInit.Name))));
@@ -122,16 +135,15 @@ namespace CLanguage.Compiler
             // Compile functions
             //
             foreach (var (f, pc) in functionsToCompile) {
-                AddStatementDeclarations (f.Body, pc);
-
-				var c = new FunctionContext (exe, f, pc);
-				f.Body.Emit (c);
-				f.LocalVariables.AddRange (c.LocalVariables);
+                var fc = new FunctionContext (exe, f, pc);
+                AddStatementDeclarations (fc);
+				f.Body.Emit (fc);
+				f.LocalVariables.AddRange (fc.LocalVariables);
 
 				// Make sure it returns
 				if (f.Body.Statements.Count == 0 || !f.Body.AlwaysReturns) {
 					if (f.FunctionType.ReturnType.IsVoid) {
-						c.Emit (OpCode.Return);
+						fc.Emit (OpCode.Return);
 					}
 					else {
 						options.Report.Error (161, "'" + f.Name + "' not all code paths return a value");
@@ -142,15 +154,17 @@ namespace CLanguage.Compiler
 			return exe;
 		}
 
-        void AddStatementDeclarations (Block block, EmitContext context)
+        void AddStatementDeclarations (BlockContext context)
         {
+            var block = context.Block;
             foreach (var s in block.Statements) {
-                AddStatementDeclarations (s, block, context);
+                AddStatementDeclarations (s, context);
             }
         }
 
-        void AddStatementDeclarations (Statement statement, Block block, EmitContext context)
+        void AddStatementDeclarations (Statement statement, BlockContext context)
         {
+            var block = context.Block;
             if (statement is MultiDeclaratorStatement multi) {
                 if (multi.InitDeclarators != null) {
                     foreach (var idecl in multi.InitDeclarators) {
@@ -234,8 +248,9 @@ namespace CLanguage.Compiler
                 AddStatementDeclarations (fors.InitBlock, context);
                 AddStatementDeclarations (fors.LoopBody, context);
             }
-            else if (statement is Block subblock) {
-                AddStatementDeclarations (subblock, context);
+            else if (statement is Block subBlock) {
+                var subContext = new BlockContext (subBlock, context);
+                AddStatementDeclarations (subContext);
             }
         }
 

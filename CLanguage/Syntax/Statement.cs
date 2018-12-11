@@ -23,7 +23,7 @@ namespace CLanguage.Syntax
         {
             var b = this as Block;
             if (b != null) return b;
-            b = new Block ();
+            b = new Block (VariableScope.Local);
             b.AddStatement (this);
             return b;
         }

@@ -18,14 +18,14 @@ namespace CLanguage.Compiler
             this.emitContext = emitContext;
         }
 
-        public override ResolvedVariable ResolveVariable (string name, CType[] argTypes)
+        public override ResolvedVariable TryResolveVariable (string name, CType[] argTypes)
         {
             var r = et.Members.FirstOrDefault (x => x.Name == name);
             if (r != null) {
                 return new ResolvedVariable ((Value)r.Value, et);
             }
 
-            return base.ResolveVariable (name, argTypes);
+            return base.TryResolveVariable (name, argTypes);
         }
     }
 }

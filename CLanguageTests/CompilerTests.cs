@@ -98,7 +98,19 @@ void f () {
 			Assert.AreEqual (f.LocalVariables.Count, 3);
 		}
 
-		[TestMethod]
+        [TestMethod]
+        public void LocalVariablesWithAuto ()
+        {
+            var exe = Compile (@"
+void f () {
+    auto i = 1;
+    auto j = i + 1;
+}");
+            var f = exe.Functions.OfType<CompiledFunction> ().First (x => x.Name == "f");
+            Assert.AreEqual (f.LocalVariables.Count, 2);
+        }
+
+        [TestMethod]
 		public void ArduinoBlink ()
 		{
 			var exe = Compile (ArduinoInterpreterTests.BlinkCode);

@@ -10,8 +10,12 @@ namespace CLanguage.Syntax
 {
     public class Block : Statement
     {
+        public VariableScope VariableScope { get; }
+        public List<Statement> Statements { get; } = new List<Statement> ();
+
         public Block Parent { get; set; }
-        public List<Statement> Statements { get; private set; } = new List<Statement> ();
+
+        public override bool AlwaysReturns => Statements.Any (s => s.AlwaysReturns);
 
         public List<CompiledVariable> Variables { get; private set; } = new List<CompiledVariable> ();
         public List<CompiledFunction> Functions { get; private set; } = new List<CompiledFunction> ();
@@ -20,13 +24,15 @@ namespace CLanguage.Syntax
         public Dictionary<string, CStructType> Structures { get; private set; } = new Dictionary<string, CStructType> ();
         public Dictionary<string, CEnumType> Enums { get; private set; } = new Dictionary<string, CEnumType> ();
 
-        public Block (IEnumerable<Statement> statements)
+        public Block (VariableScope variableScope, IEnumerable<Statement> statements)
         {
             AddStatements (statements);
+            VariableScope = variableScope;
         }
 
-        public Block ()
+        public Block (VariableScope variableScope)
         {
+            VariableScope = variableScope;
         }
 
         public void AddStatement (Statement stmt)
@@ -55,12 +61,6 @@ namespace CLanguage.Syntax
                 s.Emit (ec);
             }
             ec.EndBlock ();
-        }
-
-        public override bool AlwaysReturns {
-            get {
-                return Statements.Any (s => s.AlwaysReturns);
-            }
         }
 
         public void AddVariable (string name, CType ctype)

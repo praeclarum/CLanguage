@@ -17,7 +17,7 @@ namespace CLanguage.Syntax
 
         public ForStatement (Statement initStatement, Expression continueExpr, Block body)
         {
-            InitBlock = new Block ();
+            InitBlock = new Block (VariableScope.Local);
             if (initStatement != null) {
                 InitBlock.AddStatement (initStatement);
             }
@@ -27,7 +27,7 @@ namespace CLanguage.Syntax
 
         public ForStatement (Statement initStatement, Expression continueExpr, Expression nextExpr, Block body)
         {
-            InitBlock = new Block ();
+            InitBlock = new Block (VariableScope.Local);
             if (initStatement != null) {
                 InitBlock.AddStatement (initStatement);
             }

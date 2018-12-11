@@ -499,7 +499,7 @@ enum_specifier
 enumerator_list
 	: enumerator
     {
-        var l = new Block ();
+        var l = new Block (Compiler.VariableScope.Global);
         l.AddStatement((Statement)$1);
         $$ = l;
     }
@@ -859,11 +859,11 @@ labeled_statement
 compound_statement
 	: '{' '}'
 	{
-		$$ = new Block ();
+		$$ = new Block (Compiler.VariableScope.Local);
 	}
 	| '{' block_item_list '}'
 	{
-        $$ = new Block ((List<Statement>)$2);
+        $$ = new Block (Compiler.VariableScope.Local, (List<Statement>)$2);
 	}
 	;
 
