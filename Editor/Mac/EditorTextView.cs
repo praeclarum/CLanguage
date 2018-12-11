@@ -58,7 +58,7 @@ namespace CLanguage.Editor
         {
             var r = InsertTextIntoSelection (text, SelectedRange);
             if (r.Insert.HasValue) {
-                base.InsertText (r.Insert.Value.Text);
+                base.InsertText (r.Insert.Value.Text ?? text);
             }
             if (r.SelectRange.HasValue) {
                 BeginInvokeOnMainThread (() => SelectedRange = r.SelectRange.Value);

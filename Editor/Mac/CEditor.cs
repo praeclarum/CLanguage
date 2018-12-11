@@ -182,11 +182,6 @@ namespace CLanguage.Editor
             scroll.BackgroundColor = textView.BackgroundColor;
             scroll.DrawsBackground = true;
 
-            TranslatesAutoresizingMaskIntoConstraints = false;
-            scroll.TranslatesAutoresizingMaskIntoConstraints = false;
-            margin.TranslatesAutoresizingMaskIntoConstraints = false;
-            errorView.TranslatesAutoresizingMaskIntoConstraints = false;
-
             scroll.ContentView.PostsBoundsChangedNotifications = true;
             scrolledSubscription = NativeView.Notifications.ObserveBoundsChanged (scroll.ContentView, (sender, e) => {
                 UpdateMargin ();
@@ -199,11 +194,19 @@ namespace CLanguage.Editor
             });
 #elif __IOS__
             var scroll = textView;
+            textView.AlwaysBounceVertical = true;
+            textView.AlwaysBounceHorizontal = false;
+            textView.AutocorrectionType = UITextAutocorrectionType.No;
+            textView.AutocapitalizationType = UITextAutocapitalizationType.None;
 #endif
 
             scroll.Frame = sframe;
             margin.Frame = mframe;
             errorView.Frame = eframe;
+
+            scroll.TranslatesAutoresizingMaskIntoConstraints = false;
+            margin.TranslatesAutoresizingMaskIntoConstraints = false;
+            errorView.TranslatesAutoresizingMaskIntoConstraints = false;
 
             AddSubview (scroll);
             AddSubview (margin);
