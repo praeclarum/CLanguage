@@ -14,6 +14,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{4542
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CEditor", "Samples\Mac\CEditor.csproj", "{E2A5AB72-C825-47F7-96BD-D102192C4B99}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CLanguage.Editor.iOS", "Editor\iOS\CLanguage.Editor.iOS.csproj", "{82DEEC57-00B6-4878-A3A2-BB8616BFA1A0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -72,6 +74,18 @@ Global
 		{E2A5AB72-C825-47F7-96BD-D102192C4B99}.Release|x64.Build.0 = Release|x86
 		{E2A5AB72-C825-47F7-96BD-D102192C4B99}.Release|x86.ActiveCfg = Release|x86
 		{E2A5AB72-C825-47F7-96BD-D102192C4B99}.Release|x86.Build.0 = Release|x86
+		{82DEEC57-00B6-4878-A3A2-BB8616BFA1A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{82DEEC57-00B6-4878-A3A2-BB8616BFA1A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{82DEEC57-00B6-4878-A3A2-BB8616BFA1A0}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{82DEEC57-00B6-4878-A3A2-BB8616BFA1A0}.Debug|x64.Build.0 = Debug|Any CPU
+		{82DEEC57-00B6-4878-A3A2-BB8616BFA1A0}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{82DEEC57-00B6-4878-A3A2-BB8616BFA1A0}.Debug|x86.Build.0 = Debug|Any CPU
+		{82DEEC57-00B6-4878-A3A2-BB8616BFA1A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{82DEEC57-00B6-4878-A3A2-BB8616BFA1A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{82DEEC57-00B6-4878-A3A2-BB8616BFA1A0}.Release|x64.ActiveCfg = Release|Any CPU
+		{82DEEC57-00B6-4878-A3A2-BB8616BFA1A0}.Release|x64.Build.0 = Release|Any CPU
+		{82DEEC57-00B6-4878-A3A2-BB8616BFA1A0}.Release|x86.ActiveCfg = Release|Any CPU
+		{82DEEC57-00B6-4878-A3A2-BB8616BFA1A0}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -100,5 +114,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{13FC4538-EA48-4F84-9F1A-109701F9285F} = {708F9D6D-D03E-4C60-AEEE-85276AD55A24}
 		{E2A5AB72-C825-47F7-96BD-D102192C4B99} = {45420E5C-B4D7-4E1B-A850-80B74885D96C}
+		{82DEEC57-00B6-4878-A3A2-BB8616BFA1A0} = {708F9D6D-D03E-4C60-AEEE-85276AD55A24}
 	EndGlobalSection
 EndGlobal

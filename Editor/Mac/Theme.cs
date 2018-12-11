@@ -54,10 +54,14 @@ namespace CLanguage.Editor
                 ForegroundColor = !isDark ? Rgb (101, 121, 140) : Rgb (127, 140, 152),
             }.Dictionary;
             SelectedAttributes = new NativeStringAttributes {
-                BackgroundColor = !isDark ? NSColor.SelectedTextBackground : NSColor.SelectedTextBackground.ColorWithAlphaComponent (0.5f),
+#if __MACOS__
+                BackgroundColor = !isDark ? NativeColor.SelectedTextBackground : NativeColor.SelectedTextBackground.ColorWithAlphaComponent (0.5f),
+#elif __IOS__
+                BackgroundColor = Rgb (0, 0x84, 0xD1).ColorWithAlpha (0.5f),
+#endif
             }.Dictionary;
 
-            BackgroundColor = NativeColor.TextBackground;
+            BackgroundColor = !isDark ? Rgb (0xFF, 0xFF, 0xFF) : Rgb (41, 42, 47);
             ErrorBubbleBackgroundColor = !isDark ? Rgb (0xC5, 0, 0xB) : Rgb (0xC5 * 2 /4, 0, 0xB);
             ErrorBubbleTextAttributes = new NativeStringAttributes {
                 ForegroundColor = Gray (255).ColorWithAlphaComponent (0.9375f),
@@ -75,12 +79,13 @@ namespace CLanguage.Editor
             ColorAttributes[(int)CLanguage.Syntax.SyntaxColor.Function] = MakeAttrs (Rgb (204, 102, 0), Rgb (255, 161, 79));
         }
 
+#if __MACOS__
         public NSDictionary ErrorAttributes (string message)
         {
             return new NativeStringAttributes {
                 //BackgroundColor = !isDark ? Rgb (0xFF, 0xCC, 0xCC) : Rgb (0x55, 0x00, 0x00),
                 UnderlineColor = !isDark ? Rgb (0xFE, 0x00, 0x0B) : Rgb (0xFF, 0x00, 0x0B),
-                UnderlineStyle = (int)NSUnderlineStyle.Thick,
+                UnderlineStyle = NSUnderlineStyle.Thick.ToKit (),
                 ToolTip = message,
             }.Dictionary;
         }
@@ -89,10 +94,28 @@ namespace CLanguage.Editor
         {
             return new NativeStringAttributes {
                 UnderlineColor = NativeColor.SystemYellowColor,// !isDark ? Rgb (120, 73, 42) : Rgb (0xFF, 0xD3, 0x20),
-                UnderlineStyle = (int)NSUnderlineStyle.Thick,
+                UnderlineStyle = NSUnderlineStyle.Thick.ToKit (),
                 ToolTip = message,
             }.Dictionary;
         }
+#elif __IOS__
+        public NSDictionary ErrorAttributes (string message)
+        {
+            return new NativeStringAttributes {
+                //BackgroundColor = !isDark ? Rgb (0xFF, 0xCC, 0xCC) : Rgb (0x55, 0x00, 0x00),
+                UnderlineColor = !isDark ? Rgb (0xFE, 0x00, 0x0B) : Rgb (0xFF, 0x00, 0x0B),
+                UnderlineStyle = NSUnderlineStyle.Thick.ToKit (),
+            }.Dictionary;
+        }
+
+        public NSDictionary WarningAttributes (string message)
+        {
+            return new NativeStringAttributes {
+                UnderlineColor = NativeColor.Yellow,// !isDark ? Rgb (120, 73, 42) : Rgb (0xFF, 0xD3, 0x20),
+                UnderlineStyle = NSUnderlineStyle.Thick.ToKit (),
+            }.Dictionary;
+        }
+#endif
 
         NSDictionary MakeAttrs (NativeColor color, NativeColor darkColor) => new NativeStringAttributes {
             Font = codeFont,
@@ -100,15 +123,16 @@ namespace CLanguage.Editor
         }.Dictionary;
 
         NSDictionary MakeLineNumberAttrs () => new NativeStringAttributes {
-            Font = Font (codeFont.FontName, (int)(NativeFont.SystemFontSize * 0.8 + 0.5)),
+            Font = Font (codeFont.GetFontName (), (int)(NativeFont.SystemFontSize * 0.8 + 0.5)),
             ForegroundColor = LineNumberColor,
             ParagraphStyle = new NSMutableParagraphStyle {
-                Alignment = NSTextAlignment.Right,
+                Alignment = TextAlignmentRight,
             }
         }.Dictionary;
 
         static string FindFontFamily ()
         {
+#if __MACOS__
             var fonts = NSFontManager.SharedFontManager.AvailableFonts;
             if (NSScreen.MainScreen.BackingScaleFactor > 1.1 && fonts.Contains ("FiraCode-Retina")) {
                 return "FiraCode-Retina";
@@ -116,6 +140,7 @@ namespace CLanguage.Editor
             if (fonts.Contains ("FiraCode-Regular")) {
                 return "FiraCode-Regular";
             }
+#endif
             return "Menlo-Regular";
         }
     }
