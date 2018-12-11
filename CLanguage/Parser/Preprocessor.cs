@@ -257,6 +257,8 @@ namespace CLanguage.Parser
                     }
                 }
                 var expression = CParser.TryParseExpression (report, tokens);
+                if (expression == null)
+                    return false;
                 var context = new PreprocessorContext (report, defines, expressions);
                 var value = expression.EvalConstant (context);
                 return value.Int32Value != 0;
