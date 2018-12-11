@@ -3,6 +3,8 @@
 using AppKit;
 using CLanguage.Editor;
 using Foundation;
+using CLanguage.Tests;
+using System.Linq;
 
 namespace CEditor
 {
@@ -35,6 +37,10 @@ namespace CEditor
             if (document == null)
                 return;
             document.CodeChanged += Document_CodeChanged;
+            textEditor.Options = new CLanguage.Compiler.CompilerOptions (
+                new ArduinoTestMachineInfo (),
+                new CLanguage.Report (),
+                Enumerable.Empty<CLanguage.Syntax.Document> ());
             textEditor.Text = document.Code;
             textEditor.TextChanged += TextEditor_TextChanged;
         }

@@ -79,6 +79,10 @@
       <DependentUpon>ViewController.cs</DependentUpon>
     </Compile>
     <Compile Include="Document.cs" />
+    <Compile Include="..\..\CLanguageTests\ArduinoTestMachineInfo.cs">
+      <Link>ArduinoTestMachineInfo.cs</Link>
+    </Compile>
+    <Compile Include="TestMachineInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Main.storyboard" />
