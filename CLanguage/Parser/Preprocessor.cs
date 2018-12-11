@@ -4,6 +4,9 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using CLanguage.Syntax;
+using CLanguage.Compiler;
+using CLanguage.Interpreter;
+using System.Diagnostics;
 
 namespace CLanguage.Parser
 {
@@ -155,10 +158,17 @@ namespace CLanguage.Parser
                         case "else":
                             report.Warning (1028, tokens[i].Location, tokens[eol - 1].EndLocation, "Unexpected preprocessor directive");
                             break;
+                        case "if":
                         case "ifdef":
                         case "ifndef": {
-                                var isDefined = (i + 2 < tokens.Count && tokens[i + 2].Value is string s && defines.ContainsKey(s));
-                                var isTrue = tokenValueString == "ifdef" ? isDefined : !isDefined;
+                                var isTrue = true;
+                                if (tokenValueString == "if") {
+                                    isTrue = EvalIfCondition (defines, tokens.Skip (i + 2).Take (eol - (i + 2)).ToArray ());
+                                }
+                                else {
+                                    var isDefined = (i + 2 < tokens.Count && tokens[i + 2].Value is string s && defines.ContainsKey (s));
+                                    isTrue = tokenValueString == "ifdef" ? isDefined : !isDefined;
+                                }
 
                                 //
                                 // Look for else and endif
@@ -230,6 +240,29 @@ namespace CLanguage.Parser
             }
 
             return anotherIterationNeeded;
+        }
+
+        static bool EvalIfCondition (Dictionary<string, Define> defines, Token[] tokens)
+        {
+            try {
+                var r = new Report ();
+                var code = string.Join ("", tokens.Select (x => x.Text));
+                var expression = CParser.ParseExpression (r, tokens);
+                var context = new PreprocessorContext (r);
+                var value = expression.EvalConstant (context);
+                return value.Int32Value != 0;
+            }
+            catch (Exception ex) {
+                Debug.WriteLine (ex);
+                return false;
+            }
+        }
+
+        class PreprocessorContext : EmitContext
+        {
+            public PreprocessorContext (Report report) : base (new MachineInfo (), report, null, null)
+            {
+            }
         }
 
         static (List<Define> Defines, int TokenLength) ReadDefineArgs (int startIndex, List<Token> tokens)

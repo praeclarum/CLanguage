@@ -18,6 +18,22 @@ namespace CLanguage.Syntax
             EndLocation = endLocation;
         }
 
+        public Token (int kind, object value)
+        {
+            Kind = kind;
+            Value = value;
+            Location = Location.Null;
+            EndLocation = Location.Null;
+        }
+
+        public Token (char kind)
+        {
+            Kind = kind;
+            Value = null;
+            Location = Location.Null;
+            EndLocation = Location.Null;
+        }
+
         public string Text => Location.IsNull || EndLocation.IsNull || Location.Document.Path != EndLocation.Document.Path ? "" :
             Location.Document.Content.Substring (Location.Index, EndLocation.Index - Location.Index);
 

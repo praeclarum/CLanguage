@@ -61,7 +61,20 @@ namespace CLanguage.Parser
             return _tu;
         }
 
-        void AddDeclaration(object a)
+        public static Expression ParseExpression (Report report, Token[] tokens)
+        {
+            var p = new CParser ();
+            var prefix = new[] { new Token (TokenKind.AUTO, "auto"), new Token (TokenKind.IDENTIFIER, "_"), new Token ('=') };
+            var suffix = new[] { new Token (';') };
+            var tu = p.ParseTranslationUnit (report, CLanguageService.DefaultCodePath, ((_,__) => null), prefix, tokens, suffix);
+            if (tu.Statements.FirstOrDefault () is MultiDeclaratorStatement mds && mds.InitDeclarators.Count == 1 && mds.InitDeclarators[0].Initializer is ExpressionInitializer ei) {
+                return ei.Expression;
+            }
+            report.Error (9010, "Expression could not be parsed");
+            return ConstantExpression.False;
+        }
+
+        void AddDeclaration (object a)
         {
             _tu.AddStatement ((Statement)a);
 

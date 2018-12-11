@@ -173,6 +173,64 @@ void main() {
         }
 
         [TestMethod]
+        public void If1 ()
+        {
+            Run (@"
+#if 1
+#define DO(x) x++;
+#endif
+void main() {
+    auto i = 10;
+    DO(i)
+    assertAreEqual(11, i);
+}
+");
+        }
+
+        [TestMethod]
+        public void IfTrue ()
+        {
+            Run (@"
+#if true
+#define DO(x) x++;
+#endif
+void main() {
+    auto i = 10;
+    DO(i)
+    assertAreEqual(11, i);
+}
+");
+        }
+
+        [TestMethod]
+        public void IfFalseMath ()
+        {
+            Run (@"
+#if 1-1
+error
+#endif
+void main() {
+}
+");
+        }
+
+        [TestMethod]
+        public void IfFalseElse ()
+        {
+            Run (@"
+#if false
+#else
+#define DO(x) x++;
+#endif
+void main() {
+    auto i = 10;
+    DO(i)
+    assertAreEqual(11, i);
+}
+");
+        }
+
+        [TestMethod]
         public void VaArgs ()
         {
             Run (@"
