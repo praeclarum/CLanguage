@@ -137,7 +137,7 @@ namespace CLanguage.Tests
         {
             AssertColorization ("#define FOOFOO 100\n\nFOOFOO + 3",
                                 SyntaxColor.Operator,
-                                SyntaxColor.Identifier,
+                                SyntaxColor.Keyword,
                                 SyntaxColor.Identifier,
                                 SyntaxColor.Number,
                                 SyntaxColor.Identifier,
