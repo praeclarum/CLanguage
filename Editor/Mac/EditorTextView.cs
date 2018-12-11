@@ -28,6 +28,12 @@ namespace CLanguage.Editor
         {
         }
 
+        public override string[] ReadablePasteboardTypes ()
+        {
+            var types = NSString.ReadableTypeIdentifiers;
+            return types;
+        }
+
         public override void InsertText (NSObject text, NSRange replacementRange)
         {
             var sr = SelectedRange;
