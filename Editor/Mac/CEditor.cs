@@ -312,16 +312,18 @@ namespace CLanguage.Editor
         {
 #if __MACOS__
             var lineHeight = textView.LayoutManager.DefaultLineHeightForFont (theme.CodeFont);
-            margin.SetLinePositions (lineHeight, scroll.ContentView.Bounds, lineCount);
+            var bounds = scroll.ContentView.Bounds;
 #elif __IOS__
+            var lineHeight = (nfloat)NativeFont.SystemFontSize;
+            var bounds = textView.Bounds;
 #endif
+            margin.SetLinePositions (lineHeight, bounds, lineCount);
         }
 
         static readonly char[] newlineChars = { '\n', (char)8232 };
 
         void ColorizeCode (NSTextStorage textStorage)
         {
-#if __MACOS__
             var code = textStorage.Value;
             var managers = textStorage.LayoutManagers;
 
@@ -336,6 +338,7 @@ namespace CLanguage.Editor
             }
             lineCount = lc;
 
+#if __MACOS__
             //
             // Use the language service to determine colors and errors
             //
