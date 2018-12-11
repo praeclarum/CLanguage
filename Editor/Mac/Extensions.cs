@@ -4,14 +4,14 @@
 using UIKit;
 using NativeColor = UIKit.UIColor;
 using NativeFont = UIKit.UIFont;
-using NativeGraphicsContext = UIKit.UIGraphics;
+using NativeGraphics = UIKit.UIGraphics;
 using NativeStringAttributes = UIKit.UIStringAttributes;
 using NativeTextAlignment = UIKit.UITextAlignment;
 #elif __MACOS__
 using AppKit;
 using NativeColor = AppKit.NSColor;
 using NativeFont = AppKit.NSFont;
-using NativeGraphicsContext = AppKit.NSGraphics;
+using NativeGraphics = AppKit.NSGraphics;
 using NativeStringAttributes = AppKit.NSStringAttributes;
 using NativeTextAlignment = AppKit.NSTextAlignment;
 #endif
@@ -38,11 +38,15 @@ namespace CLanguage.Editor
         public static NativeColor Gray (int g) => NativeColor.FromWhiteAlpha (g / ((nfloat)255), 1);
         public static NativeColor ColorWithAlphaComponent (this NativeColor color, nfloat alpha) => color.ColorWithAlpha (alpha);
         public static void Set (this NativeColor color) => color.SetColor ();
-        public static CGContext NativeGraphicsCGContext => NativeGraphicsContext.GetCurrentContext ();
+        public static CGContext NativeGraphicsCGContext => NativeGraphics.GetCurrentContext ();
         public static NativeFont Font (string name, int size) => NativeFont.FromName (name, size);
         public static string GetFontName (this NativeFont f) => f.Name;
         public static NSUnderlineStyle ToKit (this NSUnderlineStyle s) => s;
         public static NativeTextAlignment TextAlignmentRight = NativeTextAlignment.Right;
+        public static CGSize StringSize (this string text, NSDictionary attributes) =>
+            new NSAttributedString (text, attributes).Size;
+        public static void DrawInRect (this string text, CGRect rect, NSDictionary attributes) =>
+            new NSAttributedString (text, attributes).DrawString (rect);
 #else
         public static NativeColor Rgb (int r, int g, int b) => NativeColor.FromRgb (r, g, b);
         public static NativeColor Gray (int g) => NativeColor.FromWhite (g / ((nfloat)255), 1);

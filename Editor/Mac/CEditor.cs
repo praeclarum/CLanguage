@@ -96,6 +96,9 @@ namespace CLanguage.Editor
 
 #if __IOS__
         readonly EditorTextStorage storage = new EditorTextStorage ();
+        NativeColor EffectiveAppearance => TintColor;
+        static bool IsDark (NativeColor a) => false;
+        bool NeedsLayout { get => false; set => SetNeedsLayout (); }
 #elif __MACOS__
         readonly NSScrollView scroll;
         IDisposable scrolledSubscription;
@@ -106,7 +109,10 @@ namespace CLanguage.Editor
         public CEditor (NSCoder coder) : base (coder)
         {
             textView = new EditorTextView (Bounds);
+#if __MACOS__
             scroll = new NSScrollView (Bounds);
+#elif __IOS__
+#endif
             theme = new Theme (IsDark (EffectiveAppearance));
             Initialize ();
         }
@@ -114,7 +120,10 @@ namespace CLanguage.Editor
         public CEditor (IntPtr handle) : base (handle)
         {
             textView = new EditorTextView (Bounds);
+#if __MACOS__
             scroll = new NSScrollView (Bounds);
+#elif __IOS__
+#endif
             theme = new Theme (IsDark (EffectiveAppearance));
             Initialize ();
         }
@@ -122,7 +131,10 @@ namespace CLanguage.Editor
         public CEditor (CGRect frameRect) : base (frameRect)
         {
             textView = new EditorTextView (Bounds);
+#if __MACOS__
             scroll = new NSScrollView (Bounds);
+#elif __IOS__
+#endif
             theme = new Theme (IsDark (EffectiveAppearance));
             Initialize ();
         }
@@ -298,8 +310,11 @@ namespace CLanguage.Editor
 
         void UpdateMargin ()
         {
+#if __MACOS__
             var lineHeight = textView.LayoutManager.DefaultLineHeightForFont (theme.CodeFont);
             margin.SetLinePositions (lineHeight, scroll.ContentView.Bounds, lineCount);
+#elif __IOS__
+#endif
         }
 
         static readonly char[] newlineChars = { '\n', (char)8232 };
