@@ -7,6 +7,7 @@ using CLanguage.Syntax;
 using CLanguage.Types;
 
 #pragma warning disable 162
+#nullable disable
 
 namespace CLanguage.Parser
 {
@@ -330,16 +331,11 @@ constant_expression
 declaration
 	: declaration_specifiers ';'
 	{
-		var d = new MultiDeclaratorStatement ();
-		d.Specifiers = (DeclarationSpecifiers)$1;
-		$$ = d;
+		$$ = new MultiDeclaratorStatement ((DeclarationSpecifiers)$1, null);
 	}
 	| declaration_specifiers init_declarator_list ';'
 	{
-		var d = new MultiDeclaratorStatement ();
-		d.Specifiers = (DeclarationSpecifiers)$1;
-		d.InitDeclarators = (List<InitDeclarator>)$2;
-		$$ = d;
+		$$ = new MultiDeclaratorStatement ((DeclarationSpecifiers)$1, (List<InitDeclarator>)$2);
 	}
 	;
 
@@ -412,16 +408,11 @@ init_declarator_list
 init_declarator
 	: declarator
 	{
-		var id = new InitDeclarator();
-		id.Declarator = (Declarator)$1;
-		$$ = id;
+		$$ = new InitDeclarator((Declarator)$1, null);
 	}
 	| declarator '=' initializer
 	{
-		var id = new InitDeclarator();
-		id.Declarator = (Declarator)$1;
-		id.Initializer = (Initializer)$3;
-		$$ = id;
+		$$ = new InitDeclarator((Declarator)$1, (Initializer)$3);
 	}
 	;
 
@@ -587,16 +578,11 @@ direct_declarator
 	}
 	| direct_declarator '(' parameter_type_list ')'
 	{
-		var d = new FunctionDeclarator();
-		d.InnerDeclarator = (Declarator)$1;
-		d.Parameters = (List<ParameterDeclaration>)$3;
-		$$ = d;
+		$$ = new FunctionDeclarator(innerDeclarator: (Declarator)$1, parameters: (List<ParameterDeclaration>)$3);
 	}
 	| direct_declarator '(' identifier_list ')'
 	{
-		var d = new FunctionDeclarator();
-		d.InnerDeclarator = (Declarator)$1;
-		d.Parameters = new List<ParameterDeclaration>();
+		var d = new FunctionDeclarator(innerDeclarator: (Declarator)$1, parameters: new List<ParameterDeclaration>());
 		foreach (var n in (List<string>)$3) {
 			d.Parameters.Add(new ParameterDeclaration(n));
 		}
@@ -604,10 +590,7 @@ direct_declarator
 	}
 	| direct_declarator '(' ')'
 	{
-		var d = new FunctionDeclarator();
-		d.InnerDeclarator = (Declarator)$1;
-		d.Parameters = new List<ParameterDeclaration>();
-		$$ = d;
+		$$ = new FunctionDeclarator(innerDeclarator: (Declarator)$1, parameters: new List<ParameterDeclaration>());
 	}
 	;
 
@@ -749,30 +732,19 @@ direct_abstract_declarator
 	}
 	| '(' ')'
 	{
-		var d = new FunctionDeclarator();
-		d.InnerDeclarator = (Declarator)$1;
-		d.Parameters = new List<ParameterDeclaration>();
-		$$ = d;
+		$$ = new FunctionDeclarator(parameters: new List<ParameterDeclaration>());
 	}
 	| '(' parameter_type_list ')'
 	{
-		var d = new FunctionDeclarator();
-		d.Parameters = (List<ParameterDeclaration>)$2;
-		$$ = d;
+		$$ = new FunctionDeclarator(parameters: (List<ParameterDeclaration>)$2);
 	}
 	| direct_abstract_declarator '(' ')'
 	{
-		var d = new FunctionDeclarator();
-		d.InnerDeclarator = (Declarator)$1;
-		d.Parameters = new List<ParameterDeclaration> ();
-		$$ = d;
+		$$ = new FunctionDeclarator(innerDeclarator: (Declarator)$1, parameters: new List<ParameterDeclaration>());
 	}
 	| direct_abstract_declarator '(' parameter_type_list ')'
 	{
-		var d = new FunctionDeclarator();
-		d.InnerDeclarator = (Declarator)$1;
-		d.Parameters = (List<ParameterDeclaration>)$3;
-		$$ = d;
+		$$ = new FunctionDeclarator(innerDeclarator: (Declarator)$1, parameters: (List<ParameterDeclaration>)$3);
 	}
 	;
 	
@@ -962,19 +934,20 @@ external_declaration
 function_definition
 	: declaration_specifiers declarator declaration_list compound_statement
 	{
-		var f = new FunctionDefinition();
-		f.Specifiers = (DeclarationSpecifiers)$1;
-		f.Declarator = (Declarator)$2;
-		f.ParameterDeclarations = (List<Declaration>)$3;
-		f.Body = (Block)$4;
+		var f = new FunctionDefinition(
+			(DeclarationSpecifiers)$1,
+			(Declarator)$2,
+			(List<Declaration>)$3,
+			(Block)$4);
 		$$ = f;
 	}
 	| declaration_specifiers declarator compound_statement
 	{
-		var f = new FunctionDefinition();
-		f.Specifiers = (DeclarationSpecifiers)$1;
-		f.Declarator = (Declarator)$2;
-		f.Body = (Block)$3;
+		var f = new FunctionDefinition(
+			(DeclarationSpecifiers)$1,
+			(Declarator)$2,
+			null,
+			(Block)$3);
 		$$ = f;
 	}
 	;

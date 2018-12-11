@@ -9,8 +9,9 @@ namespace CLanguage.Types
         public string Name { get; set; }
         public List<CStructMember> Members { get; set; } = new List<CStructMember> ();
 
-        public CStructType ()
+        public CStructType (string name)
         {
+            Name = name;
         }
 
         public override int NumValues {

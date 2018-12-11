@@ -9,6 +9,7 @@ using CLanguage.Syntax;
 using CLanguage.Types;
 
 #pragma warning disable 162
+#nullable disable
 
 namespace CLanguage.Parser
 {
@@ -521,85 +522,85 @@ namespace CLanguage.Parser
         yyVal = yyV > yyTop ? null : yyVals[yyV]; // yyVal = yyDefault(yyV > yyTop ? null : yyVals[yyV]);
         switch (yyN) {
 case 1:
-#line 42 "CParser.jay"
+#line 43 "CParser.jay"
   { yyVal = new VariableExpression((yyVals[0+yyTop]).ToString()); }
   break;
 case 2:
-#line 43 "CParser.jay"
-  { yyVal = new ConstantExpression(yyVals[0+yyTop]); }
-  break;
-case 3:
 #line 44 "CParser.jay"
   { yyVal = new ConstantExpression(yyVals[0+yyTop]); }
   break;
-case 4:
+case 3:
 #line 45 "CParser.jay"
+  { yyVal = new ConstantExpression(yyVals[0+yyTop]); }
+  break;
+case 4:
+#line 46 "CParser.jay"
   { yyVal = ConstantExpression.True; }
   break;
 case 5:
-#line 46 "CParser.jay"
+#line 47 "CParser.jay"
   { yyVal = ConstantExpression.False; }
   break;
 case 6:
-#line 47 "CParser.jay"
+#line 48 "CParser.jay"
   { yyVal = yyVals[-1+yyTop]; }
   break;
 case 7:
-#line 54 "CParser.jay"
+#line 55 "CParser.jay"
   {
 		yyVal = yyVals[0+yyTop];
 	}
   break;
 case 8:
-#line 58 "CParser.jay"
+#line 59 "CParser.jay"
   {
 		yyVal = new ArrayElementExpression((Expression)yyVals[-3+yyTop], (Expression)yyVals[-1+yyTop]);
 	}
   break;
 case 9:
-#line 62 "CParser.jay"
+#line 63 "CParser.jay"
   {
 		yyVal = new FuncallExpression((Expression)yyVals[-2+yyTop]);
 	}
   break;
 case 10:
-#line 66 "CParser.jay"
+#line 67 "CParser.jay"
   {
 		yyVal = new FuncallExpression((Expression)yyVals[-3+yyTop], (List<Expression>)yyVals[-1+yyTop]);
 	}
   break;
 case 11:
-#line 70 "CParser.jay"
+#line 71 "CParser.jay"
   {
 		yyVal = new MemberFromReferenceExpression((Expression)yyVals[-2+yyTop], (yyVals[0+yyTop]).ToString());
 	}
   break;
 case 12:
-#line 74 "CParser.jay"
+#line 75 "CParser.jay"
   {
 		throw new NotSupportedException ("Syntax: postfix_expression PTR_OP IDENTIFIER");
 	}
   break;
 case 13:
-#line 78 "CParser.jay"
+#line 79 "CParser.jay"
   {
 		yyVal = new UnaryExpression(Unop.PostIncrement, (Expression)yyVals[-1+yyTop]);
 	}
   break;
 case 14:
-#line 82 "CParser.jay"
+#line 83 "CParser.jay"
   {
 		yyVal = new UnaryExpression(Unop.PostDecrement, (Expression)yyVals[-1+yyTop]);
 	}
   break;
 case 15:
-#line 86 "CParser.jay"
+#line 87 "CParser.jay"
   {
 		throw new NotSupportedException ("Syntax: '(' type_name ')' '{' initializer_list '}'");
 	}
   break;
 case 16:
-#line 90 "CParser.jay"
+#line 91 "CParser.jay"
   {
 		throw new NotSupportedException ("Syntax: '(' type_name ')' '{' initializer_list ',' '}'");
 	}
@@ -611,203 +612,203 @@ case 18:
   case_18();
   break;
 case 19:
-#line 112 "CParser.jay"
+#line 113 "CParser.jay"
   {
 		yyVal = yyVals[0+yyTop];
 	}
   break;
 case 20:
-#line 116 "CParser.jay"
+#line 117 "CParser.jay"
   {
 		yyVal = new UnaryExpression(Unop.PreIncrement, (Expression)yyVals[0+yyTop]);
 	}
   break;
 case 21:
-#line 120 "CParser.jay"
+#line 121 "CParser.jay"
   {
 		yyVal = new UnaryExpression(Unop.PreDecrement, (Expression)yyVals[0+yyTop]);
 	}
   break;
 case 22:
-#line 124 "CParser.jay"
+#line 125 "CParser.jay"
   {
 		yyVal = new AddressOfExpression((Expression)yyVals[0+yyTop]);
 	}
   break;
 case 23:
-#line 128 "CParser.jay"
+#line 129 "CParser.jay"
   {
         yyVal = new DereferenceExpression((Expression)yyVals[0+yyTop]);
 	}
   break;
 case 24:
-#line 132 "CParser.jay"
+#line 133 "CParser.jay"
   {
 		yyVal = new UnaryExpression((Unop)yyVals[-1+yyTop], (Expression)yyVals[0+yyTop]);
 	}
   break;
 case 25:
-#line 136 "CParser.jay"
+#line 137 "CParser.jay"
   {
 		yyVal = new SizeOfExpression((Expression)yyVals[0+yyTop]);
 	}
   break;
 case 26:
-#line 140 "CParser.jay"
+#line 141 "CParser.jay"
   {
 		yyVal = new SizeOfTypeExpression((TypeName)yyVals[-1+yyTop]);
 	}
   break;
 case 27:
-#line 144 "CParser.jay"
+#line 145 "CParser.jay"
   { yyVal = Unop.None; }
   break;
 case 28:
-#line 145 "CParser.jay"
+#line 146 "CParser.jay"
   { yyVal = Unop.Negate; }
   break;
 case 29:
-#line 146 "CParser.jay"
+#line 147 "CParser.jay"
   { yyVal = Unop.BinaryComplement; }
   break;
 case 30:
-#line 147 "CParser.jay"
+#line 148 "CParser.jay"
   { yyVal = Unop.Not; }
   break;
 case 31:
-#line 154 "CParser.jay"
+#line 155 "CParser.jay"
   {
 		yyVal = yyVals[0+yyTop];
 	}
   break;
 case 32:
-#line 158 "CParser.jay"
+#line 159 "CParser.jay"
   {
 		yyVal = new CastExpression ((TypeName)yyVals[-2+yyTop], (Expression)yyVals[0+yyTop]);
 	}
   break;
 case 33:
-#line 165 "CParser.jay"
+#line 166 "CParser.jay"
   {
 		yyVal = yyVals[0+yyTop];
 	}
   break;
 case 34:
-#line 169 "CParser.jay"
+#line 170 "CParser.jay"
   {
 		yyVal = new BinaryExpression((Expression)yyVals[-2+yyTop], Binop.Multiply, (Expression)yyVals[0+yyTop]);
 	}
   break;
 case 35:
-#line 173 "CParser.jay"
+#line 174 "CParser.jay"
   {
 		yyVal = new BinaryExpression((Expression)yyVals[-2+yyTop], Binop.Divide, (Expression)yyVals[0+yyTop]);
 	}
   break;
 case 36:
-#line 177 "CParser.jay"
+#line 178 "CParser.jay"
   {
 		yyVal = new BinaryExpression((Expression)yyVals[-2+yyTop], Binop.Mod, (Expression)yyVals[0+yyTop]);
 	}
   break;
 case 38:
-#line 185 "CParser.jay"
+#line 186 "CParser.jay"
   {
 		yyVal = new BinaryExpression((Expression)yyVals[-2+yyTop], Binop.Add, (Expression)yyVals[0+yyTop]);
 	}
   break;
 case 39:
-#line 189 "CParser.jay"
+#line 190 "CParser.jay"
   {
 		yyVal = new BinaryExpression((Expression)yyVals[-2+yyTop], Binop.Subtract, (Expression)yyVals[0+yyTop]);
 	}
   break;
 case 41:
-#line 197 "CParser.jay"
+#line 198 "CParser.jay"
   {
 		yyVal = new BinaryExpression((Expression)yyVals[-2+yyTop], Binop.ShiftLeft, (Expression)yyVals[0+yyTop]);
 	}
   break;
 case 42:
-#line 201 "CParser.jay"
+#line 202 "CParser.jay"
   {
 		yyVal = new BinaryExpression((Expression)yyVals[-2+yyTop], Binop.ShiftRight, (Expression)yyVals[0+yyTop]);
 	}
   break;
 case 44:
-#line 209 "CParser.jay"
+#line 210 "CParser.jay"
   {
 		yyVal = new RelationalExpression((Expression)yyVals[-2+yyTop], RelationalOp.LessThan, (Expression)yyVals[0+yyTop]);
 	}
   break;
 case 45:
-#line 213 "CParser.jay"
+#line 214 "CParser.jay"
   {
 		yyVal = new RelationalExpression((Expression)yyVals[-2+yyTop], RelationalOp.GreaterThan, (Expression)yyVals[0+yyTop]);
 	}
   break;
 case 46:
-#line 217 "CParser.jay"
+#line 218 "CParser.jay"
   {
 		yyVal = new RelationalExpression((Expression)yyVals[-2+yyTop], RelationalOp.LessThanOrEqual, (Expression)yyVals[0+yyTop]);
 	}
   break;
 case 47:
-#line 221 "CParser.jay"
+#line 222 "CParser.jay"
   {
 		yyVal = new RelationalExpression((Expression)yyVals[-2+yyTop], RelationalOp.GreaterThanOrEqual, (Expression)yyVals[0+yyTop]);
 	}
   break;
 case 49:
-#line 229 "CParser.jay"
+#line 230 "CParser.jay"
   {
 		yyVal = new RelationalExpression((Expression)yyVals[-2+yyTop], RelationalOp.Equals, (Expression)yyVals[0+yyTop]);
 	}
   break;
 case 50:
-#line 233 "CParser.jay"
+#line 234 "CParser.jay"
   {
 		yyVal = new RelationalExpression((Expression)yyVals[-2+yyTop], RelationalOp.NotEquals, (Expression)yyVals[0+yyTop]);
 	}
   break;
 case 52:
-#line 241 "CParser.jay"
+#line 242 "CParser.jay"
   {
 		yyVal = new BinaryExpression((Expression)yyVals[-2+yyTop], Binop.BinaryAnd, (Expression)yyVals[0+yyTop]);
 	}
   break;
 case 54:
-#line 249 "CParser.jay"
+#line 250 "CParser.jay"
   {
 		yyVal = new BinaryExpression((Expression)yyVals[-2+yyTop], Binop.BinaryXor, (Expression)yyVals[0+yyTop]);
 	}
   break;
 case 56:
-#line 257 "CParser.jay"
+#line 258 "CParser.jay"
   {
 		yyVal = new BinaryExpression((Expression)yyVals[-2+yyTop], Binop.BinaryOr, (Expression)yyVals[0+yyTop]);
 	}
   break;
 case 58:
-#line 265 "CParser.jay"
+#line 266 "CParser.jay"
   {
 		yyVal = new LogicExpression((Expression)yyVals[-2+yyTop], LogicOp.And, (Expression)yyVals[0+yyTop]);
 	}
   break;
 case 60:
-#line 273 "CParser.jay"
+#line 274 "CParser.jay"
   {
 		yyVal = new LogicExpression((Expression)yyVals[-2+yyTop], LogicOp.Or, (Expression)yyVals[0+yyTop]);
 	}
   break;
 case 61:
-#line 280 "CParser.jay"
+#line 281 "CParser.jay"
   {
 		yyVal = yyVals[0+yyTop];
 	}
   break;
 case 62:
-#line 284 "CParser.jay"
+#line 285 "CParser.jay"
   {
 		yyVal = new ConditionalExpression ((Expression)yyVals[-4+yyTop], (Expression)yyVals[-2+yyTop], (Expression)yyVals[0+yyTop]);
 	}
@@ -816,66 +817,72 @@ case 64:
   case_64();
   break;
 case 65:
-#line 302 "CParser.jay"
+#line 303 "CParser.jay"
   { yyVal = RelationalOp.Equals; }
   break;
 case 66:
-#line 303 "CParser.jay"
+#line 304 "CParser.jay"
   { yyVal = Binop.Multiply; }
   break;
 case 67:
-#line 304 "CParser.jay"
+#line 305 "CParser.jay"
   { yyVal = Binop.Divide; }
   break;
 case 68:
-#line 305 "CParser.jay"
+#line 306 "CParser.jay"
   { yyVal = Binop.Mod; }
   break;
 case 69:
-#line 306 "CParser.jay"
+#line 307 "CParser.jay"
   { yyVal = Binop.Add; }
   break;
 case 70:
-#line 307 "CParser.jay"
+#line 308 "CParser.jay"
   { yyVal = Binop.Subtract; }
   break;
 case 71:
-#line 308 "CParser.jay"
+#line 309 "CParser.jay"
   { yyVal = Binop.ShiftLeft; }
   break;
 case 72:
-#line 309 "CParser.jay"
+#line 310 "CParser.jay"
   { yyVal = Binop.ShiftRight; }
   break;
 case 73:
-#line 310 "CParser.jay"
+#line 311 "CParser.jay"
   { yyVal = Binop.BinaryAnd; }
   break;
 case 74:
-#line 311 "CParser.jay"
+#line 312 "CParser.jay"
   { yyVal = Binop.BinaryXor; }
   break;
 case 75:
-#line 312 "CParser.jay"
+#line 313 "CParser.jay"
   { yyVal = Binop.BinaryOr; }
   break;
 case 76:
-#line 319 "CParser.jay"
+#line 320 "CParser.jay"
   {
 		yyVal = yyVals[0+yyTop];
 	}
   break;
 case 77:
-#line 323 "CParser.jay"
+#line 324 "CParser.jay"
   {
 		yyVal = new SequenceExpression ((Expression)yyVals[-2+yyTop], (Expression)yyVals[0+yyTop]);
 	}
   break;
 case 79:
-  case_79();
+#line 335 "CParser.jay"
+  {
+		yyVal = new MultiDeclaratorStatement ((DeclarationSpecifiers)yyVals[-1+yyTop], null);
+	}
   break;
 case 80:
-  case_80();
+#line 339 "CParser.jay"
+  {
+		yyVal = new MultiDeclaratorStatement ((DeclarationSpecifiers)yyVals[-2+yyTop], (List<InitDeclarator>)yyVals[-1+yyTop]);
+	}
   break;
 case 81:
   case_81();
@@ -908,105 +915,111 @@ case 90:
   case_90();
   break;
 case 91:
-  case_91();
+#line 412 "CParser.jay"
+  {
+		yyVal = new InitDeclarator((Declarator)yyVals[0+yyTop], null);
+	}
   break;
 case 92:
-  case_92();
+#line 416 "CParser.jay"
+  {
+		yyVal = new InitDeclarator((Declarator)yyVals[-2+yyTop], (Initializer)yyVals[0+yyTop]);
+	}
   break;
 case 93:
-#line 429 "CParser.jay"
+#line 420 "CParser.jay"
   { yyVal = StorageClassSpecifier.Typedef; }
   break;
 case 94:
-#line 430 "CParser.jay"
+#line 421 "CParser.jay"
   { yyVal = StorageClassSpecifier.Extern; }
   break;
 case 95:
-#line 431 "CParser.jay"
+#line 422 "CParser.jay"
   { yyVal = StorageClassSpecifier.Static; }
   break;
 case 96:
-#line 432 "CParser.jay"
+#line 423 "CParser.jay"
   { yyVal = StorageClassSpecifier.Auto; }
   break;
 case 97:
-#line 433 "CParser.jay"
+#line 424 "CParser.jay"
   { yyVal = StorageClassSpecifier.Register; }
   break;
 case 98:
-#line 437 "CParser.jay"
+#line 428 "CParser.jay"
   { yyVal = new TypeSpecifier(TypeSpecifierKind.Builtin, "void"); }
   break;
 case 99:
-#line 438 "CParser.jay"
+#line 429 "CParser.jay"
   { yyVal = new TypeSpecifier(TypeSpecifierKind.Builtin, "char"); }
   break;
 case 100:
-#line 439 "CParser.jay"
+#line 430 "CParser.jay"
   { yyVal = new TypeSpecifier(TypeSpecifierKind.Builtin, "short"); }
   break;
 case 101:
-#line 440 "CParser.jay"
+#line 431 "CParser.jay"
   { yyVal = new TypeSpecifier(TypeSpecifierKind.Builtin, "int"); }
   break;
 case 102:
-#line 441 "CParser.jay"
+#line 432 "CParser.jay"
   { yyVal = new TypeSpecifier(TypeSpecifierKind.Builtin, "long"); }
   break;
 case 103:
-#line 442 "CParser.jay"
+#line 433 "CParser.jay"
   { yyVal = new TypeSpecifier(TypeSpecifierKind.Builtin, "float"); }
   break;
 case 104:
-#line 443 "CParser.jay"
+#line 434 "CParser.jay"
   { yyVal = new TypeSpecifier(TypeSpecifierKind.Builtin, "double"); }
   break;
 case 105:
-#line 444 "CParser.jay"
+#line 435 "CParser.jay"
   { yyVal = new TypeSpecifier(TypeSpecifierKind.Builtin, "signed"); }
   break;
 case 106:
-#line 445 "CParser.jay"
+#line 436 "CParser.jay"
   { yyVal = new TypeSpecifier(TypeSpecifierKind.Builtin, "unsigned"); }
   break;
 case 107:
-#line 446 "CParser.jay"
+#line 437 "CParser.jay"
   { yyVal = new TypeSpecifier(TypeSpecifierKind.Builtin, "bool"); }
   break;
 case 108:
-#line 447 "CParser.jay"
+#line 438 "CParser.jay"
   { yyVal = new TypeSpecifier(TypeSpecifierKind.Builtin, "complex"); }
   break;
 case 109:
-#line 448 "CParser.jay"
+#line 439 "CParser.jay"
   { yyVal = new TypeSpecifier(TypeSpecifierKind.Builtin, "imaginary"); }
   break;
 case 112:
-#line 451 "CParser.jay"
+#line 442 "CParser.jay"
   { yyVal = new TypeSpecifier(TypeSpecifierKind.Typename, (yyVals[0+yyTop]).ToString()); }
   break;
 case 113:
-#line 455 "CParser.jay"
+#line 446 "CParser.jay"
   { yyVal = new TypeSpecifier((TypeSpecifierKind)yyVals[-2+yyTop], (yyVals[-1+yyTop]).ToString(), (Block)yyVals[0+yyTop]); }
   break;
 case 114:
-#line 456 "CParser.jay"
+#line 447 "CParser.jay"
   { yyVal = new TypeSpecifier((TypeSpecifierKind)yyVals[-1+yyTop], "", (Block)yyVals[0+yyTop]); }
   break;
 case 115:
-#line 457 "CParser.jay"
+#line 448 "CParser.jay"
   { yyVal = new TypeSpecifier((TypeSpecifierKind)yyVals[-1+yyTop], (yyVals[0+yyTop]).ToString()); }
   break;
 case 116:
-#line 461 "CParser.jay"
+#line 452 "CParser.jay"
   { yyVal = TypeSpecifierKind.Struct; }
   break;
 case 117:
-#line 462 "CParser.jay"
+#line 453 "CParser.jay"
   { yyVal = TypeSpecifierKind.Class; }
   break;
 case 118:
-#line 463 "CParser.jay"
+#line 454 "CParser.jay"
   { yyVal = TypeSpecifierKind.Union; }
   break;
 case 119:
@@ -1022,23 +1035,23 @@ case 122:
   case_122();
   break;
 case 123:
-#line 492 "CParser.jay"
+#line 483 "CParser.jay"
   { yyVal = new TypeSpecifier(TypeSpecifierKind.Enum, "", (Block)yyVals[-1+yyTop]); }
   break;
 case 124:
-#line 493 "CParser.jay"
+#line 484 "CParser.jay"
   { yyVal = new TypeSpecifier(TypeSpecifierKind.Enum, (yyVals[-3+yyTop]).ToString(), (Block)yyVals[-1+yyTop]); }
   break;
 case 125:
-#line 494 "CParser.jay"
+#line 485 "CParser.jay"
   { yyVal = new TypeSpecifier(TypeSpecifierKind.Enum, "", (Block)yyVals[-2+yyTop]); }
   break;
 case 126:
-#line 495 "CParser.jay"
+#line 486 "CParser.jay"
   { yyVal = new TypeSpecifier(TypeSpecifierKind.Enum, (yyVals[-4+yyTop]).ToString(), (Block)yyVals[-2+yyTop]); }
   break;
 case 127:
-#line 496 "CParser.jay"
+#line 487 "CParser.jay"
   { yyVal = new TypeSpecifier(TypeSpecifierKind.Enum, (yyVals[0+yyTop]).ToString()); }
   break;
 case 128:
@@ -1048,139 +1061,145 @@ case 129:
   case_129();
   break;
 case 130:
-#line 518 "CParser.jay"
+#line 509 "CParser.jay"
   {
         yyVal = new EnumeratorStatement ((string)yyVals[0+yyTop]);
     }
   break;
 case 131:
-#line 522 "CParser.jay"
+#line 513 "CParser.jay"
   {
         yyVal = new EnumeratorStatement ((string)yyVals[-2+yyTop], (Expression)yyVals[0+yyTop]);
     }
   break;
 case 132:
-#line 526 "CParser.jay"
+#line 517 "CParser.jay"
   { yyVal = FunctionSpecifier.Inline; }
   break;
 case 133:
-#line 533 "CParser.jay"
+#line 524 "CParser.jay"
   {
 		yyVal = new PointerDeclarator((Pointer)yyVals[-1+yyTop], (Declarator)yyVals[0+yyTop]);
 	}
   break;
 case 134:
-#line 534 "CParser.jay"
+#line 525 "CParser.jay"
   { yyVal = yyVals[0+yyTop]; }
   break;
 case 135:
-#line 539 "CParser.jay"
+#line 530 "CParser.jay"
   { yyVal = new IdentifierDeclarator((yyVals[0+yyTop]).ToString()); }
   break;
 case 136:
-#line 540 "CParser.jay"
+#line 531 "CParser.jay"
   { yyVal = ((IdentifierDeclarator)(yyVals[-2+yyTop])).Push ((yyVals[0+yyTop]).ToString()); }
   break;
 case 138:
   case_138();
   break;
 case 139:
-#line 559 "CParser.jay"
+#line 550 "CParser.jay"
   {
 		yyVal = MakeArrayDeclarator((Declarator)yyVals[-4+yyTop], (TypeQualifiers)yyVals[-2+yyTop], (Expression)yyVals[-1+yyTop], false);
 	}
   break;
 case 140:
-#line 563 "CParser.jay"
+#line 554 "CParser.jay"
   {
 		yyVal = MakeArrayDeclarator((Declarator)yyVals[-3+yyTop], TypeQualifiers.None, null, false);
 	}
   break;
 case 141:
-#line 567 "CParser.jay"
+#line 558 "CParser.jay"
   {
 		yyVal = MakeArrayDeclarator((Declarator)yyVals[-3+yyTop], TypeQualifiers.None, (Expression)yyVals[-1+yyTop], false);
 	}
   break;
 case 142:
-#line 571 "CParser.jay"
+#line 562 "CParser.jay"
   {
 		yyVal = MakeArrayDeclarator((Declarator)yyVals[-5+yyTop], (TypeQualifiers)yyVals[-2+yyTop], (Expression)yyVals[-1+yyTop], true);
 	}
   break;
 case 143:
-#line 575 "CParser.jay"
+#line 566 "CParser.jay"
   {
 		yyVal = MakeArrayDeclarator((Declarator)yyVals[-5+yyTop], (TypeQualifiers)yyVals[-3+yyTop], (Expression)yyVals[-1+yyTop], true);
 	}
   break;
 case 144:
-#line 579 "CParser.jay"
+#line 570 "CParser.jay"
   {
 		yyVal = MakeArrayDeclarator((Declarator)yyVals[-4+yyTop], (TypeQualifiers)yyVals[-2+yyTop], null, false);
 	}
   break;
 case 145:
-#line 583 "CParser.jay"
+#line 574 "CParser.jay"
   {
 		yyVal = MakeArrayDeclarator((Declarator)yyVals[-3+yyTop], TypeQualifiers.None, null, false);
 	}
   break;
 case 146:
-#line 587 "CParser.jay"
+#line 578 "CParser.jay"
   {
 		yyVal = MakeArrayDeclarator((Declarator)yyVals[-2+yyTop], TypeQualifiers.None, null, false);
 	}
   break;
 case 147:
-  case_147();
+#line 582 "CParser.jay"
+  {
+		yyVal = new FunctionDeclarator(innerDeclarator: (Declarator)yyVals[-3+yyTop], parameters: (List<ParameterDeclaration>)yyVals[-1+yyTop]);
+	}
   break;
 case 148:
   case_148();
   break;
 case 149:
-  case_149();
+#line 594 "CParser.jay"
+  {
+		yyVal = new FunctionDeclarator(innerDeclarator: (Declarator)yyVals[-2+yyTop], parameters: new List<ParameterDeclaration>());
+	}
   break;
 case 150:
-#line 615 "CParser.jay"
+#line 598 "CParser.jay"
   { yyVal = new Pointer(TypeQualifiers.None); }
   break;
 case 151:
-#line 616 "CParser.jay"
+#line 599 "CParser.jay"
   { yyVal = new Pointer((TypeQualifiers)yyVals[0+yyTop]); }
   break;
 case 152:
-#line 617 "CParser.jay"
+#line 600 "CParser.jay"
   { yyVal = new Pointer(TypeQualifiers.None, (Pointer)yyVals[0+yyTop]); }
   break;
 case 153:
-#line 618 "CParser.jay"
+#line 601 "CParser.jay"
   { yyVal = new Pointer((TypeQualifiers)yyVals[-1+yyTop], (Pointer)yyVals[0+yyTop]); }
   break;
 case 154:
-#line 622 "CParser.jay"
+#line 605 "CParser.jay"
   { yyVal = yyVals[0+yyTop]; }
   break;
 case 155:
-#line 626 "CParser.jay"
+#line 609 "CParser.jay"
   {
 		yyVal = (TypeQualifiers)(yyVals[-1+yyTop]) | (TypeQualifiers)(yyVals[0+yyTop]);
 	}
   break;
 case 156:
-#line 630 "CParser.jay"
+#line 613 "CParser.jay"
   { yyVal = TypeQualifiers.Const; }
   break;
 case 157:
-#line 631 "CParser.jay"
+#line 614 "CParser.jay"
   { yyVal = TypeQualifiers.Restrict; }
   break;
 case 158:
-#line 632 "CParser.jay"
+#line 615 "CParser.jay"
   { yyVal = TypeQualifiers.Volatile; }
   break;
 case 159:
-#line 639 "CParser.jay"
+#line 622 "CParser.jay"
   {
 		yyVal = yyVals[0+yyTop];
 	}
@@ -1210,13 +1229,13 @@ case 167:
   case_167();
   break;
 case 168:
-#line 700 "CParser.jay"
+#line 683 "CParser.jay"
   {
         yyVal = new TypeName ((DeclarationSpecifiers)yyVals[0+yyTop], null);
     }
   break;
 case 169:
-#line 704 "CParser.jay"
+#line 687 "CParser.jay"
   {
         yyVal = new TypeName ((DeclarationSpecifiers)yyVals[-1+yyTop], (Declarator)yyVals[0+yyTop]);
     }
@@ -1225,67 +1244,79 @@ case 173:
   case_173();
   break;
 case 174:
-#line 729 "CParser.jay"
+#line 712 "CParser.jay"
   {
 		yyVal = MakeArrayDeclarator(null, TypeQualifiers.None, null, false);
 	}
   break;
 case 175:
-#line 733 "CParser.jay"
+#line 716 "CParser.jay"
   {
 		yyVal = MakeArrayDeclarator(null, TypeQualifiers.None, (Expression)yyVals[-1+yyTop], false);
 	}
   break;
 case 176:
-#line 737 "CParser.jay"
+#line 720 "CParser.jay"
   {
 		yyVal = MakeArrayDeclarator((Declarator)yyVals[-2+yyTop], TypeQualifiers.None, null, false);
 	}
   break;
 case 177:
-#line 741 "CParser.jay"
+#line 724 "CParser.jay"
   {
 		yyVal = MakeArrayDeclarator((Declarator)yyVals[-3+yyTop], TypeQualifiers.None, (Expression)yyVals[-1+yyTop], false);
 	}
   break;
 case 178:
-#line 745 "CParser.jay"
+#line 728 "CParser.jay"
   {
 		yyVal = MakeArrayDeclarator(null, TypeQualifiers.None, null, false);
 	}
   break;
 case 179:
-#line 749 "CParser.jay"
+#line 732 "CParser.jay"
   {
 		yyVal = MakeArrayDeclarator((Declarator)yyVals[-3+yyTop], TypeQualifiers.None, null, false);
 	}
   break;
 case 180:
-  case_180();
+#line 736 "CParser.jay"
+  {
+		yyVal = new FunctionDeclarator(parameters: new List<ParameterDeclaration>());
+	}
   break;
 case 181:
-  case_181();
+#line 740 "CParser.jay"
+  {
+		yyVal = new FunctionDeclarator(parameters: (List<ParameterDeclaration>)yyVals[-1+yyTop]);
+	}
   break;
 case 182:
-  case_182();
+#line 744 "CParser.jay"
+  {
+		yyVal = new FunctionDeclarator(innerDeclarator: (Declarator)yyVals[-2+yyTop], parameters: new List<ParameterDeclaration>());
+	}
   break;
 case 183:
-  case_183();
+#line 748 "CParser.jay"
+  {
+		yyVal = new FunctionDeclarator(innerDeclarator: (Declarator)yyVals[-3+yyTop], parameters: (List<ParameterDeclaration>)yyVals[-1+yyTop]);
+	}
   break;
 case 184:
-#line 783 "CParser.jay"
+#line 755 "CParser.jay"
   {
 		yyVal = new ExpressionInitializer((Expression)yyVals[0+yyTop]);
 	}
   break;
 case 185:
-#line 787 "CParser.jay"
+#line 759 "CParser.jay"
   {
 		yyVal = yyVals[-1+yyTop];
 	}
   break;
 case 186:
-#line 791 "CParser.jay"
+#line 763 "CParser.jay"
   {
 		yyVal = yyVals[-2+yyTop];
 	}
@@ -1303,99 +1334,99 @@ case 190:
   case_190();
   break;
 case 191:
-#line 831 "CParser.jay"
+#line 803 "CParser.jay"
   {
 		yyVal = new InitializerDesignation((List<InitializerDesignator>)yyVals[-1+yyTop]);
 	}
   break;
 case 205:
-#line 863 "CParser.jay"
+#line 835 "CParser.jay"
   {
 		yyVal = new Block (Compiler.VariableScope.Local);
 	}
   break;
 case 206:
-#line 867 "CParser.jay"
+#line 839 "CParser.jay"
   {
         yyVal = new Block (Compiler.VariableScope.Local, (List<Statement>)yyVals[-1+yyTop]);
 	}
   break;
 case 207:
-#line 871 "CParser.jay"
+#line 843 "CParser.jay"
   { yyVal = new List<Statement> (1) { (Statement)yyVals[0+yyTop] }; }
   break;
 case 208:
-#line 872 "CParser.jay"
+#line 844 "CParser.jay"
   { ((List<Statement>)yyVals[-1+yyTop]).Add ((Statement)yyVals[0+yyTop]); yyVal = yyVals[-1+yyTop]; }
   break;
 case 211:
-#line 884 "CParser.jay"
+#line 856 "CParser.jay"
   {
 		yyVal = null;
 	}
   break;
 case 212:
-#line 888 "CParser.jay"
+#line 860 "CParser.jay"
   {
 		yyVal = new ExpressionStatement((Expression)yyVals[-1+yyTop]);
 	}
   break;
 case 213:
-#line 895 "CParser.jay"
+#line 867 "CParser.jay"
   {
 		yyVal = new IfStatement((Expression)yyVals[-2+yyTop], (Statement)yyVals[0+yyTop], GetLocation(yyVals[-4+yyTop]));
 	}
   break;
 case 214:
-#line 899 "CParser.jay"
+#line 871 "CParser.jay"
   {
 		yyVal = new IfStatement((Expression)yyVals[-4+yyTop], (Statement)yyVals[-2+yyTop], (Statement)yyVals[0+yyTop], GetLocation(yyVals[-6+yyTop]));
 	}
   break;
 case 216:
-#line 907 "CParser.jay"
+#line 879 "CParser.jay"
   {
 		yyVal = new WhileStatement(false, (Expression)yyVals[-2+yyTop], ((Statement)yyVals[0+yyTop]).ToBlock ());
 	}
   break;
 case 217:
-#line 911 "CParser.jay"
+#line 883 "CParser.jay"
   {
 		yyVal = new WhileStatement(true, (Expression)yyVals[-2+yyTop], ((Statement)yyVals[-5+yyTop]).ToBlock ());
 	}
   break;
 case 218:
-#line 915 "CParser.jay"
+#line 887 "CParser.jay"
   {
 		yyVal = new ForStatement((Statement)yyVals[-3+yyTop], ((ExpressionStatement)yyVals[-2+yyTop]).Expression, ((Statement)yyVals[0+yyTop]).ToBlock ());
 	}
   break;
 case 219:
-#line 919 "CParser.jay"
+#line 891 "CParser.jay"
   {
 		yyVal = new ForStatement((Statement)yyVals[-4+yyTop], ((ExpressionStatement)yyVals[-3+yyTop]).Expression, (Expression)yyVals[-2+yyTop], ((Statement)yyVals[0+yyTop]).ToBlock ());
 	}
   break;
 case 220:
-#line 923 "CParser.jay"
+#line 895 "CParser.jay"
   {
 		yyVal = new ForStatement((Statement)yyVals[-3+yyTop], ((ExpressionStatement)yyVals[-2+yyTop]).Expression, ((Statement)yyVals[0+yyTop]).ToBlock ());
 	}
   break;
 case 221:
-#line 927 "CParser.jay"
+#line 899 "CParser.jay"
   {
         yyVal = new ForStatement((Statement)yyVals[-4+yyTop], ((ExpressionStatement)yyVals[-3+yyTop]).Expression, (Expression)yyVals[-2+yyTop], ((Statement)yyVals[0+yyTop]).ToBlock ());
 	}
   break;
 case 225:
-#line 937 "CParser.jay"
+#line 909 "CParser.jay"
   {
 		yyVal = new ReturnStatement ();
 	}
   break;
 case 226:
-#line 941 "CParser.jay"
+#line 913 "CParser.jay"
   {
 		yyVal = new ReturnStatement ((Expression)yyVals[-1+yyTop]);
 	}
@@ -1457,7 +1488,7 @@ case 235:
  All more than 3 lines long rules are wrapped into a method
 */
 void case_17()
-#line 95 "CParser.jay"
+#line 96 "CParser.jay"
 {
 		var l = new List<Expression>();
 		l.Add((Expression)yyVals[0+yyTop]);
@@ -1465,7 +1496,7 @@ void case_17()
 	}
 
 void case_18()
-#line 101 "CParser.jay"
+#line 102 "CParser.jay"
 {
 		var l = (List<Expression>)yyVals[-2+yyTop];
 		l.Add((Expression)yyVals[0+yyTop]);
@@ -1473,7 +1504,7 @@ void case_18()
 	}
 
 void case_64()
-#line 290 "CParser.jay"
+#line 291 "CParser.jay"
 {
 		if (yyVals[-1+yyTop] is RelationalOp && ((RelationalOp)yyVals[-1+yyTop]) == RelationalOp.Equals) {
 			yyVal = new AssignExpression((Expression)yyVals[-2+yyTop], (Expression)yyVals[0+yyTop]);
@@ -1484,25 +1515,8 @@ void case_64()
 		}
 	}
 
-void case_79()
-#line 332 "CParser.jay"
-{
-		var d = new MultiDeclaratorStatement ();
-		d.Specifiers = (DeclarationSpecifiers)yyVals[-1+yyTop];
-		yyVal = d;
-	}
-
-void case_80()
-#line 338 "CParser.jay"
-{
-		var d = new MultiDeclaratorStatement ();
-		d.Specifiers = (DeclarationSpecifiers)yyVals[-2+yyTop];
-		d.InitDeclarators = (List<InitDeclarator>)yyVals[-1+yyTop];
-		yyVal = d;
-	}
-
 void case_81()
-#line 348 "CParser.jay"
+#line 344 "CParser.jay"
 {
 		var ds = new DeclarationSpecifiers();
 		ds.StorageClassSpecifier = (StorageClassSpecifier)yyVals[0+yyTop];
@@ -1510,7 +1524,7 @@ void case_81()
 	}
 
 void case_82()
-#line 354 "CParser.jay"
+#line 350 "CParser.jay"
 {
 		var ds = (DeclarationSpecifiers)yyVals[0+yyTop];
 		ds.StorageClassSpecifier = ds.StorageClassSpecifier | (StorageClassSpecifier)yyVals[-1+yyTop];
@@ -1518,7 +1532,7 @@ void case_82()
 	}
 
 void case_83()
-#line 360 "CParser.jay"
+#line 356 "CParser.jay"
 {
 		var ds = new DeclarationSpecifiers();
 		ds.TypeSpecifiers.Add((TypeSpecifier)yyVals[0+yyTop]);
@@ -1526,7 +1540,7 @@ void case_83()
 	}
 
 void case_84()
-#line 366 "CParser.jay"
+#line 362 "CParser.jay"
 {
 		var ds = (DeclarationSpecifiers)yyVals[0+yyTop];
 		ds.TypeSpecifiers.Add((TypeSpecifier)yyVals[-1+yyTop]);
@@ -1534,7 +1548,7 @@ void case_84()
 	}
 
 void case_85()
-#line 372 "CParser.jay"
+#line 368 "CParser.jay"
 {
 		var ds = new DeclarationSpecifiers();
 		ds.TypeQualifiers = (TypeQualifiers)yyVals[0+yyTop];
@@ -1542,7 +1556,7 @@ void case_85()
 	}
 
 void case_86()
-#line 378 "CParser.jay"
+#line 374 "CParser.jay"
 {
 		var ds = (DeclarationSpecifiers)yyVals[0+yyTop];
 		ds.TypeQualifiers = (TypeQualifiers)yyVals[-1+yyTop];
@@ -1550,7 +1564,7 @@ void case_86()
 	}
 
 void case_87()
-#line 384 "CParser.jay"
+#line 380 "CParser.jay"
 {
 		var ds = new DeclarationSpecifiers();
 		ds.FunctionSpecifier = (FunctionSpecifier)yyVals[0+yyTop];
@@ -1558,7 +1572,7 @@ void case_87()
 	}
 
 void case_88()
-#line 390 "CParser.jay"
+#line 386 "CParser.jay"
 {
 		var ds = (DeclarationSpecifiers)yyVals[0+yyTop];
 		ds.FunctionSpecifier = (FunctionSpecifier)yyVals[-1+yyTop];
@@ -1566,7 +1580,7 @@ void case_88()
 	}
 
 void case_89()
-#line 399 "CParser.jay"
+#line 395 "CParser.jay"
 {
 		var idl = new List<InitDeclarator>();
 		idl.Add((InitDeclarator)yyVals[0+yyTop]);
@@ -1574,39 +1588,22 @@ void case_89()
 	}
 
 void case_90()
-#line 405 "CParser.jay"
+#line 401 "CParser.jay"
 {
 		var idl = (List<InitDeclarator>)yyVals[-2+yyTop];
 		idl.Add((InitDeclarator)yyVals[0+yyTop]);
 		yyVal = idl;
 	}
 
-void case_91()
-#line 414 "CParser.jay"
-{
-		var id = new InitDeclarator();
-		id.Declarator = (Declarator)yyVals[0+yyTop];
-		yyVal = id;
-	}
-
-void case_92()
-#line 420 "CParser.jay"
-{
-		var id = new InitDeclarator();
-		id.Declarator = (Declarator)yyVals[-2+yyTop];
-		id.Initializer = (Initializer)yyVals[0+yyTop];
-		yyVal = id;
-	}
-
 void case_119()
-#line 468 "CParser.jay"
+#line 459 "CParser.jay"
 {
         ((DeclarationSpecifiers)yyVals[0+yyTop]).TypeSpecifiers.Add ((TypeSpecifier)yyVals[-1+yyTop]);
         yyVal = yyVals[0+yyTop];
     }
 
 void case_120()
-#line 473 "CParser.jay"
+#line 464 "CParser.jay"
 {
         var list = new DeclarationSpecifiers ();
         list.TypeSpecifiers.Add ((TypeSpecifier)yyVals[0+yyTop]);
@@ -1614,14 +1611,14 @@ void case_120()
     }
 
 void case_121()
-#line 479 "CParser.jay"
+#line 470 "CParser.jay"
 {
         ((DeclarationSpecifiers)yyVals[0+yyTop]).TypeQualifiers = ((DeclarationSpecifiers)yyVals[0+yyTop]).TypeQualifiers | ((TypeQualifiers)yyVals[-1+yyTop]);
         yyVal = yyVals[0+yyTop];
     }
 
 void case_122()
-#line 484 "CParser.jay"
+#line 475 "CParser.jay"
 {
         var list = new DeclarationSpecifiers ();
         list.TypeQualifiers = (TypeQualifiers)yyVals[0+yyTop];
@@ -1629,7 +1626,7 @@ void case_122()
     }
 
 void case_128()
-#line 501 "CParser.jay"
+#line 492 "CParser.jay"
 {
         var l = new Block (Compiler.VariableScope.Global);
         l.AddStatement((Statement)yyVals[0+yyTop]);
@@ -1637,7 +1634,7 @@ void case_128()
     }
 
 void case_129()
-#line 507 "CParser.jay"
+#line 498 "CParser.jay"
 {
         var l = (Block)yyVals[-2+yyTop];
         l.AddStatement((Statement)yyVals[0+yyTop]);
@@ -1645,7 +1642,7 @@ void case_129()
     }
 
 void case_138()
-#line 545 "CParser.jay"
+#line 536 "CParser.jay"
 {
 		var d = (Declarator)yyVals[-1+yyTop];
 		var f = FixPointerAndArrayPrecedence(d);
@@ -1658,38 +1655,18 @@ void case_138()
 		}		
 	}
 
-void case_147()
-#line 589 "CParser.jay"
-{
-		var d = new FunctionDeclarator();
-		d.InnerDeclarator = (Declarator)yyVals[-3+yyTop];
-		d.Parameters = (List<ParameterDeclaration>)yyVals[-1+yyTop];
-		yyVal = d;
-	}
-
 void case_148()
-#line 596 "CParser.jay"
+#line 584 "CParser.jay"
 {
-		var d = new FunctionDeclarator();
-		d.InnerDeclarator = (Declarator)yyVals[-3+yyTop];
-		d.Parameters = new List<ParameterDeclaration>();
+		var d = new FunctionDeclarator(innerDeclarator: (Declarator)yyVals[-3+yyTop], parameters: new List<ParameterDeclaration>());
 		foreach (var n in (List<string>)yyVals[-1+yyTop]) {
 			d.Parameters.Add(new ParameterDeclaration(n));
 		}
 		yyVal = d;
 	}
 
-void case_149()
-#line 606 "CParser.jay"
-{
-		var d = new FunctionDeclarator();
-		d.InnerDeclarator = (Declarator)yyVals[-2+yyTop];
-		d.Parameters = new List<ParameterDeclaration>();
-		yyVal = d;
-	}
-
 void case_160()
-#line 641 "CParser.jay"
+#line 624 "CParser.jay"
 {
 		var l = (List<ParameterDeclaration>)yyVals[-2+yyTop];
 		l.Add(new VarParameter());
@@ -1697,7 +1674,7 @@ void case_160()
 	}
 
 void case_161()
-#line 650 "CParser.jay"
+#line 633 "CParser.jay"
 {
 		var l = new List<ParameterDeclaration>();
 		l.Add((ParameterDeclaration)yyVals[0+yyTop]);
@@ -1705,7 +1682,7 @@ void case_161()
 	}
 
 void case_162()
-#line 656 "CParser.jay"
+#line 639 "CParser.jay"
 {
 		var l = (List<ParameterDeclaration>)yyVals[-2+yyTop];
 		l.Add((ParameterDeclaration)yyVals[0+yyTop]);
@@ -1713,28 +1690,28 @@ void case_162()
 	}
 
 void case_163()
-#line 665 "CParser.jay"
+#line 648 "CParser.jay"
 {
 		var p = new ParameterDeclaration((DeclarationSpecifiers)yyVals[-1+yyTop], (Declarator)yyVals[0+yyTop]);
 		yyVal = p;
 	}
 
 void case_164()
-#line 670 "CParser.jay"
+#line 653 "CParser.jay"
 {
 		var p = new ParameterDeclaration((DeclarationSpecifiers)yyVals[-1+yyTop], (Declarator)yyVals[0+yyTop]);
 		yyVal = p;
 	}
 
 void case_165()
-#line 675 "CParser.jay"
+#line 658 "CParser.jay"
 {
 		var p = new ParameterDeclaration((DeclarationSpecifiers)yyVals[0+yyTop]);
 		yyVal = p;
 	}
 
 void case_166()
-#line 683 "CParser.jay"
+#line 666 "CParser.jay"
 {
 		var l = new List<string>();
 		l.Add((yyVals[0+yyTop]).ToString());
@@ -1742,7 +1719,7 @@ void case_166()
 	}
 
 void case_167()
-#line 689 "CParser.jay"
+#line 672 "CParser.jay"
 {
 		var l = (List<string>)yyVals[-2+yyTop];
 		l.Add((yyVals[0+yyTop]).ToString());
@@ -1750,7 +1727,7 @@ void case_167()
 	}
 
 void case_173()
-#line 715 "CParser.jay"
+#line 698 "CParser.jay"
 {
 		var d = (Declarator)yyVals[-1+yyTop];
 		var f = FixPointerAndArrayPrecedence(d);
@@ -1763,43 +1740,8 @@ void case_173()
 		}		
 	}
 
-void case_180()
-#line 751 "CParser.jay"
-{
-		var d = new FunctionDeclarator();
-		d.InnerDeclarator = (Declarator)yyVals[-1+yyTop];
-		d.Parameters = new List<ParameterDeclaration>();
-		yyVal = d;
-	}
-
-void case_181()
-#line 758 "CParser.jay"
-{
-		var d = new FunctionDeclarator();
-		d.Parameters = (List<ParameterDeclaration>)yyVals[-1+yyTop];
-		yyVal = d;
-	}
-
-void case_182()
-#line 764 "CParser.jay"
-{
-		var d = new FunctionDeclarator();
-		d.InnerDeclarator = (Declarator)yyVals[-2+yyTop];
-		d.Parameters = new List<ParameterDeclaration> ();
-		yyVal = d;
-	}
-
-void case_183()
-#line 771 "CParser.jay"
-{
-		var d = new FunctionDeclarator();
-		d.InnerDeclarator = (Declarator)yyVals[-3+yyTop];
-		d.Parameters = (List<ParameterDeclaration>)yyVals[-1+yyTop];
-		yyVal = d;
-	}
-
 void case_187()
-#line 796 "CParser.jay"
+#line 768 "CParser.jay"
 {
 		var l = new StructuredInitializer();
 		var i = (Initializer)yyVals[0+yyTop];
@@ -1808,7 +1750,7 @@ void case_187()
 	}
 
 void case_188()
-#line 803 "CParser.jay"
+#line 775 "CParser.jay"
 {
 		var l = new StructuredInitializer();
 		var i = (Initializer)yyVals[0+yyTop];
@@ -1818,7 +1760,7 @@ void case_188()
 	}
 
 void case_189()
-#line 811 "CParser.jay"
+#line 783 "CParser.jay"
 {
 		var l = (StructuredInitializer)yyVals[-2+yyTop];
 		var i = (Initializer)yyVals[0+yyTop];
@@ -1827,7 +1769,7 @@ void case_189()
 	}
 
 void case_190()
-#line 818 "CParser.jay"
+#line 790 "CParser.jay"
 {
 		var l = (StructuredInitializer)yyVals[-3+yyTop];
 		var i = (Initializer)yyVals[0+yyTop];
@@ -1837,42 +1779,43 @@ void case_190()
 	}
 
 void case_227()
-#line 946 "CParser.jay"
+#line 918 "CParser.jay"
 {
 		AddDeclaration(yyVals[0+yyTop]);
 		yyVal = _tu;
 	}
 
 void case_228()
-#line 951 "CParser.jay"
+#line 923 "CParser.jay"
 {
 		AddDeclaration(yyVals[0+yyTop]);
 		yyVal = _tu;
 	}
 
 void case_231()
-#line 964 "CParser.jay"
+#line 936 "CParser.jay"
 {
-		var f = new FunctionDefinition();
-		f.Specifiers = (DeclarationSpecifiers)yyVals[-3+yyTop];
-		f.Declarator = (Declarator)yyVals[-2+yyTop];
-		f.ParameterDeclarations = (List<Declaration>)yyVals[-1+yyTop];
-		f.Body = (Block)yyVals[0+yyTop];
+		var f = new FunctionDefinition(
+			(DeclarationSpecifiers)yyVals[-3+yyTop],
+			(Declarator)yyVals[-2+yyTop],
+			(List<Declaration>)yyVals[-1+yyTop],
+			(Block)yyVals[0+yyTop]);
 		yyVal = f;
 	}
 
 void case_232()
-#line 973 "CParser.jay"
+#line 945 "CParser.jay"
 {
-		var f = new FunctionDefinition();
-		f.Specifiers = (DeclarationSpecifiers)yyVals[-2+yyTop];
-		f.Declarator = (Declarator)yyVals[-1+yyTop];
-		f.Body = (Block)yyVals[0+yyTop];
+		var f = new FunctionDefinition(
+			(DeclarationSpecifiers)yyVals[-2+yyTop],
+			(Declarator)yyVals[-1+yyTop],
+			null,
+			(Block)yyVals[0+yyTop]);
 		yyVal = f;
 	}
 
 void case_233()
-#line 984 "CParser.jay"
+#line 957 "CParser.jay"
 {
 		var l = new List<Declaration>();
 		l.Add((Declaration)yyVals[0+yyTop]);
@@ -1880,7 +1823,7 @@ void case_233()
 	}
 
 void case_234()
-#line 990 "CParser.jay"
+#line 963 "CParser.jay"
 {
         var l = new List<Declaration>();
         l.Add((Declaration)yyVals[0+yyTop]);
@@ -1888,7 +1831,7 @@ void case_234()
     }
 
 void case_235()
-#line 996 "CParser.jay"
+#line 969 "CParser.jay"
 {
 		var l = (List<Declaration>)yyVals[-1+yyTop];
 		l.Add((Declaration)yyVals[0+yyTop]);
@@ -2685,7 +2628,7 @@ void case_235()
    -1,   -1,  271,  272,
   };
 
-#line 1012 "CParser.jay"
+#line 985 "CParser.jay"
 
 }
 

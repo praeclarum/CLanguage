@@ -8,12 +8,12 @@ namespace CLanguage.Interpreter
 {
     public class CompiledFunction : BaseFunction
     {
-        public Block Body { get; private set; }
+        public Block? Body { get; }
 
-        public List<CompiledVariable> LocalVariables { get; private set; }
-        public List<Instruction> Instructions { get; private set; }
+        public List<CompiledVariable> LocalVariables { get; }
+        public List<Instruction> Instructions { get; }
 
-        public CompiledFunction (string name, CFunctionType functionType, Block body = null)
+        public CompiledFunction (string name, CFunctionType functionType, Block? body)
         {
             Name = name;
             FunctionType = functionType;
@@ -22,8 +22,8 @@ namespace CLanguage.Interpreter
             Instructions = new List<Instruction> ();
         }
 
-        public CompiledFunction (string name, string nameContext, CFunctionType functionType, Block body = null)
-            : this (name, functionType, body)
+        public CompiledFunction (string name, string nameContext, CFunctionType functionType)
+            : this (name, functionType, null)
         {
             NameContext = nameContext;
         }
@@ -51,9 +51,8 @@ namespace CLanguage.Interpreter
             }
         }
 
-        public override void Step (CInterpreter state)
+        public override void Step (CInterpreter state, ExecutionFrame frame)
         {
-            var frame = state.ActiveFrame;
             var ip = frame.IP;
 
             var done = false;
@@ -78,13 +77,19 @@ namespace CLanguage.Interpreter
                         ip++;
                         break;
                     case OpCode.Jump:
-                        ip = i.Label.Index;
+                        if (i.Label != null)
+                            ip = i.Label.Index;
+                        else
+                            throw new InvalidOperationException ($"Jump label not set");
                         break;
                     case OpCode.BranchIfFalse:
                         a = state.Stack[state.SP - 1];
                         state.SP--;
                         if (a.UInt8Value == 0) {
-                            ip = i.Label.Index;
+                            if (i.Label != null)
+                                ip = i.Label.Index;
+                            else
+                                throw new InvalidOperationException ($"BranchIfFalse label not set");
                         }
                         else {
                             ip++;

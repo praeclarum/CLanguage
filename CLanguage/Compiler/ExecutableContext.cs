@@ -30,10 +30,14 @@ namespace CLanguage.Compiler
                 }
             }
 
-            return base.ResolveMethodFunction (structType, method);
+            Report.Error (9000, $"No definition for '{structType.Name}::{method.Name}' found");
+            return new ResolvedVariable (UnresolvedMethod (structType.Name, method.Name), 0);
         }
 
-        public override ResolvedVariable TryResolveVariable (string name, CType[] argTypes)
+        BaseFunction UnresolvedMethod (string typeName, string methodName) =>
+            new InternalFunction (MachineInfo, "void " + typeName + "::" + methodName + "()");
+
+        public override ResolvedVariable? TryResolveVariable (string name, CType[]? argTypes)
         {
             //
             // Look for global variables
@@ -47,7 +51,7 @@ namespace CLanguage.Compiler
             //
             // Look for global functions
             //
-            BaseFunction ff = null;
+            BaseFunction? ff = null;
             var fi = -1;
             var fs = 0;
             for (var i = 0; i < Executable.Functions.Count; i++) {

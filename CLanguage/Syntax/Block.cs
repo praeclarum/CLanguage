@@ -13,7 +13,7 @@ namespace CLanguage.Syntax
         public VariableScope VariableScope { get; }
         public List<Statement> Statements { get; } = new List<Statement> ();
 
-        public Block Parent { get; set; }
+        public Block? Parent { get; set; }
 
         public override bool AlwaysReturns => Statements.Any (s => s.AlwaysReturns);
 
@@ -66,11 +66,6 @@ namespace CLanguage.Syntax
         public void AddVariable (string name, CType ctype)
         {
             Variables.Add (new CompiledVariable (name, 0, ctype));
-        }
-
-        public CType LookupTypename (string name)
-        {
-            return Typedefs.TryGetValue (name, out var t) ? t : Parent?.LookupTypename (name);
         }
     }
 }

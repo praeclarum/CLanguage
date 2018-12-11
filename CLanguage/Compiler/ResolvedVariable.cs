@@ -9,7 +9,7 @@ namespace CLanguage.Compiler
         public VariableScope Scope { get; }
         public int Address { get; }
         public CType VariableType { get; }
-        public BaseFunction Function { get; }
+        public BaseFunction? Function { get; }
         public Value Constant { get; }
 
         public ResolvedVariable (VariableScope scope, int address, CType variableType)

@@ -19,5 +19,9 @@ namespace CLanguage.Types
         {
             return CBasicType.SignedInt.GetByteSize (c);
         }
+        public CEnumType (string name)
+        {
+            Name = name;
+        }
     }
 }

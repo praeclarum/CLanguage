@@ -27,7 +27,7 @@ namespace CLanguage
             return ParseTranslationUnit (code, new Report (printer));
         }
 
-        public static Interpreter.CInterpreter CreateInterpreter (string code, MachineInfo machineInfo = null, Report.Printer printer = null)
+        public static Interpreter.CInterpreter CreateInterpreter (string code, MachineInfo? machineInfo = null, Report.Printer? printer = null)
         {
             var exe = Compile (code, machineInfo, printer);
 
@@ -36,7 +36,7 @@ namespace CLanguage
             return i;
         }
 
-        public static Interpreter.Executable Compile (string code, MachineInfo machineInfo = null, Report.Printer printer = null)
+        public static Interpreter.Executable Compile (string code, MachineInfo? machineInfo = null, Report.Printer? printer = null)
         {
             var report = new Report (printer);
 
@@ -50,7 +50,7 @@ namespace CLanguage
             return exe;
         }
 
-        public static ColorSpan[] Colorize (string code, MachineInfo machineInfo = null, Report.Printer printer = null)
+        public static ColorSpan[] Colorize (string code, MachineInfo? machineInfo = null, Report.Printer? printer = null)
         {
             var report = new Report (printer);
 
@@ -124,7 +124,7 @@ namespace CLanguage
                         if (token.Kind < 128 || Lexer.OperatorTokens.Contains (token.Kind))
                             return SyntaxColor.Operator;
                         else if (Lexer.KeywordTokens.Contains (token.Kind)) {
-                            switch ((string)token.Value) {
+                            switch (token.StringValue) {
                                 case "unsigned":
                                 case "signed":
                                     return SyntaxColor.Type;

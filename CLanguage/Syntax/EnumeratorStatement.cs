@@ -11,11 +11,11 @@ namespace CLanguage.Syntax
     public class EnumeratorStatement : Statement
     {
         public string Name { get; }
-        public Expression LiteralValue { get; }
+        public Expression? LiteralValue { get; }
 
         public override bool AlwaysReturns => false;
 
-        public EnumeratorStatement (string left, Expression right = null)
+        public EnumeratorStatement (string left, Expression? right = null)
         {
             Name = left ?? throw new ArgumentNullException (nameof (left));
             LiteralValue = right;

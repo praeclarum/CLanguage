@@ -21,7 +21,7 @@ namespace CLanguage.Compiler
             Block = block;
         }
 
-        public override ResolvedVariable TryResolveVariable (string name, CType[] argTypes)
+        public override ResolvedVariable? TryResolveVariable (string name, CType[]? argTypes)
         {
             foreach (var s in Block.Statements) {
                 if (s is MultiDeclaratorStatement mds && mds.InitDeclarators != null) {

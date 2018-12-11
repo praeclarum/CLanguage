@@ -4,9 +4,9 @@
     {
         public TypeSpecifierKind Kind { get; private set; }
         public string Name { get; private set; }
-        public Block Body { get; private set; }
+        public Block? Body { get; private set; }
 
-        public TypeSpecifier (TypeSpecifierKind kind, string name, Block body = null)
+        public TypeSpecifier (TypeSpecifierKind kind, string name, Block? body = null)
         {
             Kind = kind;
             Name = name;

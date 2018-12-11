@@ -8,17 +8,19 @@ namespace CLanguage.Syntax
         public readonly int Kind;
         public readonly Location Location;
         public readonly Location EndLocation;
-        public readonly object Value;
+        public readonly object? Value;
 
-        public Token (int kind, object value, Location location, Location endLocation)
+        public string StringValue => Value is string s ? s : (Value != null ? Convert.ToString (Value, System.Globalization.CultureInfo.InvariantCulture) : "");
+
+        public Token (int kind, object? value, Location location, Location endLocation)
         {
             Kind = kind;
-            Value = value;
+            Value = value ?? "";
             Location = location;
             EndLocation = endLocation;
         }
 
-        public Token (int kind, object value)
+        public Token (int kind, object? value)
         {
             Kind = kind;
             Value = value;
@@ -54,7 +56,8 @@ namespace CLanguage.Syntax
         {
             return Kind == other.Kind &&
                    Location.Equals (other.Location) &&
-                   EqualityComparer<object>.Default.Equals (Value, other.Value);
+                   ((Value == null && other.Value == null) ||
+                    (Value != null && Value.Equals (other)));
         }
 
         public override int GetHashCode ()
@@ -62,7 +65,7 @@ namespace CLanguage.Syntax
             var hashCode = 666775603;
             hashCode = hashCode * -1521134295 + Kind.GetHashCode ();
             hashCode = hashCode * -1521134295 + EqualityComparer<Location>.Default.GetHashCode (Location);
-            hashCode = hashCode * -1521134295 + EqualityComparer<object>.Default.GetHashCode (Value);
+            hashCode = hashCode * -1521134295 + (Value != null ? EqualityComparer<object>.Default.GetHashCode (Value) : 0);
             return hashCode;
         }
 

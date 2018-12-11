@@ -54,7 +54,7 @@ namespace CLanguage.Compiler
             }
         }
 
-        Token[] Include (string filePath, bool relative)
+        Token[]? Include (string filePath, bool relative)
         {
             return null;
         }
@@ -135,13 +135,16 @@ namespace CLanguage.Compiler
             // Compile functions
             //
             foreach (var (f, pc) in functionsToCompile) {
+                var body = f.Body;
+                if (body == null)
+                    continue;
                 var fc = new FunctionContext (exe, f, pc);
                 AddStatementDeclarations (fc);
-				f.Body.Emit (fc);
+				body.Emit (fc);
 				f.LocalVariables.AddRange (fc.LocalVariables);
 
 				// Make sure it returns
-				if (f.Body.Statements.Count == 0 || !f.Body.AlwaysReturns) {
+				if (body.Statements.Count == 0 || !body.AlwaysReturns) {
 					if (f.FunctionType.ReturnType.IsVoid) {
 						fc.Emit (OpCode.Return);
 					}
@@ -176,7 +179,7 @@ namespace CLanguage.Compiler
                             }
                         }
                         else {
-                            var ctype = context.MakeCType (multi.Specifiers, idecl.Declarator, idecl.Initializer, block);
+                            CType ctype = context.MakeCType (multi.Specifiers, idecl.Declarator, idecl.Initializer, block);
                             var name = idecl.Declarator.DeclaredIdentifier;
 
                             if (ctype is CFunctionType ftype && !HasStronglyBoundPointer (idecl.Declarator)) {
@@ -209,7 +212,7 @@ namespace CLanguage.Compiler
                                     }
                                 }
                                 //var init = GetInitExpression(idecl.Initializer);
-                                block.AddVariable (name, ctype);
+                                block.AddVariable (name, ctype ?? CBasicType.SignedInt);
                             }
 
                             if (idecl.Initializer != null) {
@@ -268,16 +271,13 @@ namespace CLanguage.Compiler
                     var e = GetInitializerExpression (i);
 
                     if (i.Designation == null || i.Designation.Designators.Count == 0) {
-                        var ie = new StructureExpression.Item ();
-                        ie.Expression = GetInitializerExpression (i);
+                        var ie = new StructureExpression.Item (null, GetInitializerExpression (i));
                         sexpr.Items.Add (ie);
                     }
                     else {
 
                         foreach (var d in i.Designation.Designators) {
-                            var ie = new StructureExpression.Item ();
-                            ie.Field = d.ToString ();
-                            ie.Expression = e;
+                            var ie = new StructureExpression.Item (d.ToString (), e);
                             sexpr.Items.Add (ie);
                         }
                     }
@@ -290,14 +290,14 @@ namespace CLanguage.Compiler
             }
         }
 
-        FunctionDeclarator GetFunctionDeclarator (Declarator d)
+        FunctionDeclarator? GetFunctionDeclarator (Declarator? d)
         {
             if (d == null) return null;
             else if (d is FunctionDeclarator) return (FunctionDeclarator)d;
             else return GetFunctionDeclarator (d.InnerDeclarator);
         }
 
-        bool HasStronglyBoundPointer (Declarator d)
+        bool HasStronglyBoundPointer (Declarator? d)
         {
             if (d == null) return false;
             else if (d is PointerDeclarator && ((PointerDeclarator)d).StrongBinding) return true;

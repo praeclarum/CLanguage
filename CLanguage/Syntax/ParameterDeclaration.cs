@@ -9,8 +9,8 @@ namespace CLanguage.Syntax
     public class ParameterDeclaration
     {
         public string Name { get; private set; }
-        public DeclarationSpecifiers DeclarationSpecifiers { get; private set; }
-        public Declarator Declarator { get; private set; }
+        public DeclarationSpecifiers? DeclarationSpecifiers { get; private set; }
+        public Declarator? Declarator { get; private set; }
 
         public ParameterDeclaration (string name)
         {

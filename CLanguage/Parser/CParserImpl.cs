@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using CLanguage.Syntax;
@@ -19,6 +20,10 @@ namespace CLanguage.Parser
 
         public CParser()
         {
+            yyVals = Array.Empty<object> ();
+            yyVal = String.Empty;
+            _tu = new TranslationUnit ("uninitialized.c");
+            lexer = new ParserInput (Array.Empty<Token> ());
             //debug = new yydebug.yyDebugSimple();
         }
 		
@@ -54,20 +59,21 @@ namespace CLanguage.Parser
                     "Syntax error");
             }
             catch (Exception err) {
+                Debug.WriteLine (err);
                 report.Error (9001, lexer.CurrentToken.Location, lexer.CurrentToken.EndLocation,
-                    "Internal Error: " + err.Message);
+                    "Parser Error: " + err.Message);
             }
 
             return _tu;
         }
 
-        public static Expression TryParseExpression (Report report, Token[] tokens)
+        public static Expression? TryParseExpression (Report report, Token[] tokens)
         {
             var p = new CParser ();
             var prefix = new[] { new Token (TokenKind.AUTO, "auto"), new Token (TokenKind.IDENTIFIER, "_"), new Token ('=') };
             var suffix = new[] { new Token (';') };
             var tu = p.ParseTranslationUnit (report, CLanguageService.DefaultCodePath, ((_,__) => null), prefix, tokens, suffix);
-            if (tu.Statements.FirstOrDefault () is MultiDeclaratorStatement mds && mds.InitDeclarators.Count == 1 && mds.InitDeclarators[0].Initializer is ExpressionInitializer ei) {
+            if (tu.Statements.FirstOrDefault () is MultiDeclaratorStatement mds && mds.InitDeclarators != null && mds.InitDeclarators.Count == 1 && mds.InitDeclarators[0].Initializer is ExpressionInitializer ei) {
                 return ei.Expression;
             }
             return null;
@@ -79,7 +85,7 @@ namespace CLanguage.Parser
 
             if (a is MultiDeclaratorStatement mds) {
                 switch (mds.Specifiers.StorageClassSpecifier) {
-                    case StorageClassSpecifier.Typedef:
+                    case StorageClassSpecifier.Typedef when mds.InitDeclarators != null:
                         foreach (var i in mds.InitDeclarators) {
                             lexer.AddTypedef (i.Declarator.DeclaredIdentifier);
                         }
@@ -88,7 +94,7 @@ namespace CLanguage.Parser
             }
         }
 
-        Declarator FixPointerAndArrayPrecedence (Declarator d)
+        Declarator? FixPointerAndArrayPrecedence (Declarator d)
         {
             if (d is PointerDeclarator && d.InnerDeclarator != null && d.InnerDeclarator is ArrayDeclarator)
             {
@@ -105,22 +111,18 @@ namespace CLanguage.Parser
             }
         }
 
-        Declarator MakeArrayDeclarator(Declarator left, TypeQualifiers tq, Expression len, bool isStatic)
+        Declarator MakeArrayDeclarator(Declarator? left, TypeQualifiers tq, Expression? len, bool isStatic)
         {
-            var a = new ArrayDeclarator();
-            a.LengthExpression = len;
-
-            if (left.StrongBinding)
+            if (left != null && left.StrongBinding)
             {
                 var i = left.InnerDeclarator;
-                a.InnerDeclarator = i;
+                var a = new ArrayDeclarator (i, len);
                 left.InnerDeclarator = a;
                 return left;
             }
             else
             {
-                a.InnerDeclarator = left;
-                return a;
+                return new ArrayDeclarator (left, len);
             }
         }
 

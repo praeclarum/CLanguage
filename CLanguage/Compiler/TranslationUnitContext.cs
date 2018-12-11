@@ -22,7 +22,7 @@ namespace CLanguage.Compiler
             return base.ResolveTypeName (typeName);
         }
 
-        public override ResolvedVariable TryResolveVariable (string name, CType[] argTypes)
+        public override ResolvedVariable? TryResolveVariable (string name, CType[]? argTypes)
         {
             // HACK: There is some confusion about when and why we're looking up variables
             // Sometimes, we just need the type when we're building types

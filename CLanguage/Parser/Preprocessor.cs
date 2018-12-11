@@ -17,14 +17,31 @@ namespace CLanguage.Parser
         private readonly Include include;
         private readonly Report report;
 
-        public delegate Token[] Include (string filePath, bool relative);
+        public delegate Token[]? Include (string filePath, bool relative);
 
         class Define
         {
             public string Name;
-            public string[] Parameters;
-            public bool HasParameters;
-            public Token[] Body;
+            public readonly string[] Parameters;
+            public readonly bool HasParameters;
+            public readonly Token[] Body;
+
+            public Define(Token[] body)
+            {
+                Name = "";
+                HasParameters = false;
+                Parameters = Array.Empty<string> ();
+                Body = body;
+            }
+
+            public Define (string name, bool hasParameters, string[] parameters, Token[] body)
+            {
+                Name = name;
+                HasParameters = hasParameters;
+                Parameters = parameters;
+                Body = body;
+            }
+
             public override string ToString ()
             {
                 return Name + ": [" + string.Join (", ", Body) + "]";
@@ -47,7 +64,7 @@ namespace CLanguage.Parser
             return tokens.ToArray ();
         }
 
-        Token[] IncludeBuiltins (string filePath, bool relative)
+        Token[]? IncludeBuiltins (string filePath, bool relative)
         {
             if (filePath == "stdint.h") {
                 return Array.Empty<Token> ();
@@ -66,8 +83,8 @@ namespace CLanguage.Parser
                     tokens.RemoveAt (i);
                 }
                 else if (t.Kind == TokenKind.IDENTIFIER) {
-                    var ident = t.Value.ToString ();
-                    if (defines.TryGetValue (ident, out var define)) {
+                    var ident = t.Value?.ToString ();
+                    if (ident != null && defines.TryGetValue (ident, out var define)) {
                         if (define.HasParameters) {
                             var (args, len) = ReadDefineArgs (i + 1, tokens);
                             var newDefines = new Dictionary<string, Define> (defines);
@@ -114,17 +131,17 @@ namespace CLanguage.Parser
                                 if (body.Count >= 2 && body[0].Kind == '(' && body[0].Location.Index == nameToken.EndLocation.Index) {
                                     var endParam = body.FindIndex (1, x => x.Kind == ')');
                                     if (endParam >= 0 && endParam + 1 < body.Count) {
-                                        ps = body.Take (endParam).Where (x => x.Kind == TokenKind.IDENTIFIER).Select (x => (string)x.Value).ToArray ();
+                                        ps = body.Take (endParam).Where (x => x.Kind == TokenKind.IDENTIFIER).Select (x => x.StringValue).ToArray ();
                                         body.RemoveRange (0, endParam + 1);
                                         hasPs = true;
                                     }
                                 }
-                                var define = new Define {
-                                    Name = nameToken.Value?.ToString (),
-                                    Body = body.ToArray (),
-                                    Parameters = ps,
-                                    HasParameters = hasPs,
-                                };
+                                var define = new Define (
+                                    name: nameToken.StringValue,
+                                    hasParameters: hasPs,
+                                    parameters: ps,
+                                    body: body.ToArray ()
+                                );
                                 if (!string.IsNullOrWhiteSpace (define.Name)) {
                                     defines[define.Name] = define;
                                 }
@@ -143,7 +160,7 @@ namespace CLanguage.Parser
                                         iname += (char)k;
                                     }
                                     else if (k == TokenKind.IDENTIFIER || k == TokenKind.STRING_LITERAL) {
-                                        iname += tokens[j].Value.ToString ();
+                                        iname += tokens[j].StringValue;
                                     }
                                 }
                                 insertTokens = include (iname, relative);
@@ -280,7 +297,7 @@ namespace CLanguage.Parser
                 this.expressions = expressions;
             }
 
-            public override ResolvedVariable TryResolveVariable (string name, CType[] argTypes)
+            public override ResolvedVariable? TryResolveVariable (string name, CType[]? argTypes)
             {
                 if (expressions.TryGetValue (name, out var expression)) {
                     // New context to prevent infinitie recursion
@@ -311,7 +328,7 @@ namespace CLanguage.Parser
                     case ',':
                         if (parenDepth == 1) {
                             var body = tokens.Skip (startArgIndex).Take (i - startArgIndex).ToArray ();
-                            defines.Add (new Define { Body = body });
+                            defines.Add (new Define (body));
                             startArgIndex = i + 1;
                         }
                         break;
@@ -319,7 +336,7 @@ namespace CLanguage.Parser
                         parenDepth--;
                         if (parenDepth == 0) {
                             var body = tokens.Skip (startArgIndex).Take (i - startArgIndex).ToArray ();
-                            defines.Add (new Define { Body = body });
+                            defines.Add (new Define (body));
                             startArgIndex = -1;
                         }
                         break;

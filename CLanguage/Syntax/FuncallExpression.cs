@@ -40,7 +40,7 @@ namespace CLanguage.Syntax
             }
             else
             {
-                return CType.Void;
+                return CBasicType.SignedInt;
             }
         }
 
@@ -114,13 +114,12 @@ namespace CLanguage.Syntax
                         else {
                             var res = ec.ResolveMethodFunction (structType, method);
                             if (res != null) {
-                                return new Overload {
-                                    CType = res.Function?.FunctionType,
-                                    Emit = nec => {
+                                return new Overload (
+                                    res.Function?.FunctionType,
+                                    nec => {
                                         memr.Left.EmitPointer (nec);
                                         nec.Emit (OpCode.LoadConstant, Value.Pointer (res.Address));
-                                    },
-                                };
+                                    });                                
                             }
                             else {
                                 return Overload.Error;
@@ -136,31 +135,34 @@ namespace CLanguage.Syntax
             else if (function is VariableExpression v) {
                 var res = ec.ResolveVariable (v.VariableName, argTypes);
                 if (res != null) {
-                    return new Overload {
-                        CType = res.VariableType,
-                        Emit = res.EmitPointer
-                    };
+                    return new Overload (
+                        res.VariableType,
+                        res.EmitPointer);
                 }
                 else {
                     return Overload.Error;
                 }
             }
             else {
-                return new Overload {
-                    CType = function.GetEvaluatedCType (ec),
-                    Emit = function.Emit
-                };
+                return new Overload (
+                    function?.GetEvaluatedCType (ec),
+                    function != null ? function.Emit : Overload.NoEmit);
             }
         }
 
         class Overload
         {
-            public CType CType;
-            public Action<EmitContext> Emit;
-            public static readonly Overload Error = new Overload {
-                CType = CBasicType.SignedInt,
-                Emit = _ => { },
-            };
+            public readonly CType? CType;
+            public readonly Action<EmitContext> Emit;
+
+            public static readonly Action<EmitContext> NoEmit = _ => { };
+            public static readonly Overload Error = new Overload (CBasicType.SignedInt, NoEmit);
+
+            public Overload (CType? type, Action<EmitContext> emit)
+            {
+                CType = type;
+                Emit = emit ?? throw new ArgumentNullException (nameof (emit));
+            }
         }
 
         public override string ToString()

@@ -34,7 +34,7 @@ namespace CLanguage.Syntax
                 return member.MemberType;
             }
             else {
-                throw new NotImplementedException ("Member type on " + targetType.GetType ().Name);
+                throw new NotImplementedException ("Member type on " + targetType?.GetType ().Name);
             }
         }
 
@@ -63,7 +63,7 @@ namespace CLanguage.Syntax
                 }
             }
             else {
-                throw new NotSupportedException ("Member access on " + targetType.GetType ().Name);
+                throw new NotSupportedException ("Member access on " + targetType?.GetType ().Name);
             }
         }
 

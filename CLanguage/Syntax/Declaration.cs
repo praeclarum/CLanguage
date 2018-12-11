@@ -11,11 +11,7 @@ namespace CLanguage.Syntax
 
         public override bool AlwaysReturns => false;
 
-        public Declaration ()
-        {
-        }
-
-        public Declaration (DeclarationSpecifiers specs, Declarator decl, Initializer init)
+        protected Declaration (DeclarationSpecifiers specs, Declarator decl, Initializer init)
         {
             Specifiers = specs;
             Declarator = decl;

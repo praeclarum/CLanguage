@@ -54,7 +54,7 @@ namespace CLanguage
 			HeaderCode = "";
 		}
 
-        public void AddInternalFunction (string prototype, InternalFunctionAction action = null)
+        public void AddInternalFunction (string prototype, InternalFunctionAction? action = null)
         {
             InternalFunctions.Add (new InternalFunction (this, prototype, action));
         }
@@ -71,7 +71,7 @@ namespace CLanguage
             AddTargetMethods (name.Trim (), target);
         }
 
-        void AddTargetMethods (string name, object target)
+        void AddTargetMethods (string? name, object target)
         {
             if (target == null)
                 throw new ArgumentNullException (nameof (target));
@@ -171,7 +171,7 @@ namespace CLanguage
             return ee.Compile ();
         }
 
-        string ClrTypeToCode (Type type)
+        string? ClrTypeToCode (Type type)
         {
             if (type == typeof (void))
                 return "void";
@@ -224,7 +224,7 @@ namespace CLanguage
 			PointerSize = 8,
 		};
 
-        public virtual ResolvedVariable GetUnresolvedVariable (string name, CType[] argTypes, EmitContext context)
+        public virtual ResolvedVariable? GetUnresolvedVariable (string name, CType[]? argTypes, EmitContext context)
         {
             return null;
         }

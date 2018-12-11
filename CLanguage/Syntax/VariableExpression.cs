@@ -20,13 +20,7 @@ namespace CLanguage.Syntax
 
 		public override CType GetEvaluatedCType (EmitContext ec)
 		{
-			var v = ec.ResolveVariable (VariableName, null);
-			if (v != null) {
-				return v.VariableType;
-			}
-			else {
-				return CBasicType.SignedInt;
-			}
+			return ec.ResolveVariable (VariableName, null).VariableType;
         }
 
         protected override void DoEmit(EmitContext ec)
