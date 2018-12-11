@@ -37,7 +37,11 @@ namespace CLanguage.Syntax
         public string Text => Location.IsNull || EndLocation.IsNull || Location.Document.Path != EndLocation.Document.Path ? "" :
             Location.Document.Content.Substring (Location.Index, EndLocation.Index - Location.Index);
 
-        public override string ToString () => Kind < 127 ? $"\"{Text}\"" : $"\"{Text}\": {Parser.CParser.yyname (Kind)}";
+        public override string ToString ()
+        {
+            var text = Location.IsNull ? (Value?.ToString () ?? (Kind < 127 ? ((char)Kind).ToString () : "")) : Text;
+            return Kind < 127 ? $"\"{text}\"" : $"\"{text}\": {Parser.CParser.yyname (Kind)}";
+        }
 
         public Token AsKind (int kind)
         {

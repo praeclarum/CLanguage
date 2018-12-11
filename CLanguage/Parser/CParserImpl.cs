@@ -74,6 +74,24 @@ namespace CLanguage.Parser
             return ConstantExpression.False;
         }
 
+        public static Dictionary<string, Expression> ParseExpressions (Report report, IEnumerable<(string VariableName, Token[] Tokens)> tokens)
+        {
+            var p = new CParser ();
+            var suffix = new[] { new Token (';') };
+            var q = from t in tokens
+                    let prefix = new[] { new Token (TokenKind.AUTO, "auto"), new Token (TokenKind.IDENTIFIER, t.VariableName), new Token ('=') }
+                    from x in prefix.Concat (t.Tokens).Concat (suffix)
+                    select x;
+            var allTokens = q.ToArray ();
+            var tu = p.ParseTranslationUnit (report, CLanguageService.DefaultCodePath, ((_, __) => null), allTokens);
+            var r = from s in tu.Statements.OfType<MultiDeclaratorStatement> ()
+                    where s.InitDeclarators.Count == 1
+                    let init = s.InitDeclarators[0].Initializer as ExpressionInitializer
+                    where init != null
+                    select (s.InitDeclarators[0].Declarator.DeclaredIdentifier, init.Expression);
+            return r.ToDictionary (x => x.Item1, x => x.Item2);
+        }
+
         void AddDeclaration (object a)
         {
             _tu.AddStatement ((Statement)a);

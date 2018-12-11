@@ -70,7 +70,37 @@ namespace CLanguage.Syntax
 			}
 		}
 
-		public override CType GetEvaluatedCType (EmitContext ec)
+        public override Value EvalConstant (EmitContext ec)
+        {
+            var leftType = Left.GetEvaluatedCType (ec);
+            var rightType = Right.GetEvaluatedCType (ec);
+
+            if (leftType.IsIntegral && rightType.IsIntegral) {
+                var left = (int)Left.EvalConstant (ec);
+                var right = (int)Right.EvalConstant (ec);
+
+                switch (Op) {
+                    case RelationalOp.Equals:
+                        return left == right;
+                    case RelationalOp.NotEquals:
+                        return left != right;
+                    case RelationalOp.LessThan:
+                        return left < right;
+                    case RelationalOp.LessThanOrEqual:
+                        return left <= right;
+                    case RelationalOp.GreaterThan:
+                        return left > right;
+                    case RelationalOp.GreaterThanOrEqual:
+                        return left >= right;
+                    default:
+                        throw new NotSupportedException ("Unsupported relational operator '" + Op + "'");
+                }
+            }
+
+            return base.EvalConstant (ec);
+        }
+
+        public override CType GetEvaluatedCType (EmitContext ec)
 		{
             return CBasicType.Bool;
 		}
@@ -79,5 +109,5 @@ namespace CLanguage.Syntax
 		{
 			return string.Format("({0} {1} {2})", Left, Op, Right);
 		}
-	}
+    }
 }

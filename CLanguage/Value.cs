@@ -39,6 +39,13 @@ namespace CLanguage
             return Int32Value.ToString ();
         }
 
+        public static implicit operator Value (bool v)
+        {
+            return new Value {
+                Int32Value = v ? 1 : 0,
+            };
+        }
+
         public static implicit operator Value (string v)
         {
             // Used for marshalling, but not actually allowed

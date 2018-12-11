@@ -231,6 +231,22 @@ void main() {
         }
 
         [TestMethod]
+        public void IfTrueVariable ()
+        {
+            Run (@"
+#define FOO 1
+#if FOO
+#define DO(x) x++;
+#endif
+void main() {
+    auto i = 10;
+    DO(i)
+    assertAreEqual(11, i);
+}
+");
+        }
+
+        [TestMethod]
         public void VaArgs ()
         {
             Run (@"

@@ -7,6 +7,7 @@ using CLanguage.Syntax;
 using CLanguage.Compiler;
 using CLanguage.Interpreter;
 using System.Diagnostics;
+using CLanguage.Types;
 
 namespace CLanguage.Parser
 {
@@ -247,8 +248,12 @@ namespace CLanguage.Parser
             try {
                 var r = new Report ();
                 var code = string.Join ("", tokens.Select (x => x.Text));
-                var expression = CParser.ParseExpression (r, tokens);
-                var context = new PreprocessorContext (r);
+                var q = from kv in defines
+                        where kv.Value.Body.Count > 0
+                        select (kv.Key, kv.Value.Body.ToArray ());
+                var expressions = CParser.ParseExpressions (r, q.Concat (new[] { ("__value__", tokens) }));
+                var expression = expressions["__value__"];
+                var context = new PreprocessorContext (r, expressions);
                 var value = expression.EvalConstant (context);
                 return value.Int32Value != 0;
             }
@@ -260,8 +265,23 @@ namespace CLanguage.Parser
 
         class PreprocessorContext : EmitContext
         {
-            public PreprocessorContext (Report report) : base (new MachineInfo (), report, null, null)
+            readonly Dictionary<string, Expression> expressions;
+
+            public PreprocessorContext (Report report, Dictionary<string, Expression> expressions) : base (new MachineInfo (), report, null, null)
             {
+                this.expressions = expressions;
+            }
+
+            public override ResolvedVariable ResolveVariable (string name, CType[] argTypes)
+            {
+                if (expressions.TryGetValue (name, out var expression)) {
+                    // New context to prevent infinitie recursion
+                    var nex = new Dictionary<string, Expression> (expressions);
+                    var nctx = new PreprocessorContext (Report, nex);
+                    var value = expression.EvalConstant (nctx);
+                    return new ResolvedVariable (value, CBasicType.SignedInt);
+                }
+                return base.ResolveVariable (name, argTypes);
             }
         }
 
