@@ -82,7 +82,7 @@ void main() {
         }
 
         [TestMethod]
-        public void Ifndef ()
+        public void IfndefTrue ()
         {
             Run (@"
 #ifndef DO
@@ -93,7 +93,20 @@ void main() {
     DO(i)
     assertAreEqual(1, i);
 }
-", 1024);
+");
+        }
+
+        [TestMethod]
+        public void IfndefFalse ()
+        {
+            Run (@"
+#define FOO
+#ifndef FOO
+error
+#endif
+void main() {
+}
+");
         }
 
         [TestMethod]
@@ -165,6 +178,8 @@ void main() {
 }
 ");
         }
+
+
     }
 }
 

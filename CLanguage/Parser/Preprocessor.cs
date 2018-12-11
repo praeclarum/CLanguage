@@ -150,6 +150,50 @@ namespace CLanguage.Parser
                                 report.Warning (1026, tokens[i].Location, tokens[eol - 1].EndLocation, "Incomplete #include");
                             }
                             break;
+                        case "endif":
+                        case "else":
+                            report.Warning (1028, tokens[i].Location, tokens[eol - 1].EndLocation, "Unexpected preprocessor directive");
+                            break;
+                        case "ifndef": {
+                                var isTrue = !(i + 2 < tokens.Count && tokens[i + 2].Value is string s && defines.ContainsKey(s));
+
+                                //
+                                // Look for else and endif
+                                //
+                                //int elseStartIndex = -1;
+                                int endifStartIndex = tokens.Count;
+                                int endifEndIndex = tokens.Count;
+                                int ifDepth = 1;
+                                for (var j = i + 3; j < tokens.Count - 1 && endifEndIndex == tokens.Count; j++) {
+                                    if (tokens[j].Kind == '#' && tokens[j+1].Value is string eis) {
+                                        switch (eis) {
+                                            case "if":
+                                            case "ifdef":
+                                            case "ifndef":
+                                                ifDepth++;
+                                                break;
+                                            case "endif":
+                                                ifDepth--;
+                                                if (ifDepth == 0) {
+                                                    endifStartIndex = j;
+                                                    endifEndIndex = j + 2;
+                                                }
+                                                break;
+                                        }
+                                    }
+                                }
+
+                                //
+                                // Do the replacement
+                                //
+                                if (isTrue) {
+                                    insertTokens = tokens.Skip (eol).Take (endifStartIndex - eol).ToArray ();
+                                }
+                                else {
+                                }
+                                eol = endifEndIndex;
+                            }
+                            break;
                         default:
                             report.Warning (1024, tokens[i].Location, tokens[eol - 1].EndLocation, "Cannot understand preprocessor");
                             break;
