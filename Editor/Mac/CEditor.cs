@@ -95,7 +95,6 @@ namespace CLanguage.Editor
         public event EventHandler TextChanged;
 
 #if __IOS__
-        readonly EditorTextStorage storage = new EditorTextStorage ();
         NativeColor EffectiveAppearance => TintColor;
         static bool IsDark (NativeColor a) => false;
         bool NeedsLayout { get => false; set => SetNeedsLayout (); }

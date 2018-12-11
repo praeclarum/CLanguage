@@ -8,6 +8,7 @@ using Foundation;
 using CoreGraphics;
 
 #if __IOS__
+using UIKit;
 using NativeTextView = UIKit.UITextView;
 using NativeColor = UIKit.UIColor;
 using NativeFont = UIKit.UIFont;
@@ -24,7 +25,12 @@ namespace CLanguage.Editor
 
         Dictionary<int, char> autoChars = new Dictionary<int, char> ();
 
-        public EditorTextView (CGRect frameRect) : base (frameRect)
+        public EditorTextView (CGRect frameRect)
+#if __MACOS__
+            : base (frameRect)
+#elif __IOS__
+            : base (frameRect, CreateContainer (frameRect.Size))
+#endif
         {
         }
 
@@ -54,6 +60,18 @@ namespace CLanguage.Editor
             }
         }
 #elif __IOS__
+        static NSTextContainer CreateContainer (CGSize size)
+        {
+            var storage = new EditorTextStorage ();
+            var container = new NSTextContainer (new CGSize (size.Width, nfloat.MaxValue)) {
+                WidthTracksTextView = true,
+            };
+            var layout = new NSLayoutManager ();
+            storage.AddLayoutManager (layout);
+            layout.AddTextContainer (container);
+            return container;
+        }
+
         public override void InsertText (string text)
         {
             var r = InsertTextIntoSelection (text, SelectedRange);

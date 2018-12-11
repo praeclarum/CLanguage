@@ -34,7 +34,7 @@ namespace CLanguage.Editor
 		readonly NSDictionary[] colorAttrs = Enumerable.Repeat (defaultAttrs, 16).ToArray ();
 
 		readonly bool isDark = false;
-		readonly CLanguage.MachineInfo machineInfo = null;
+		readonly CLanguage.MachineInfo machineInfo = new MachineInfo ();
 
 		readonly NSMutableAttributedString adata = new NSMutableAttributedString ();
 		List<NSDictionary> cdata = new List<NSDictionary> ();
