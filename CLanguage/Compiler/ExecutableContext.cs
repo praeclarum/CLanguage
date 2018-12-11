@@ -34,7 +34,10 @@ namespace CLanguage.Compiler
             return new ResolvedVariable (UnresolvedMethod (structType.Name, method.Name), 0);
         }
 
-        public override ResolvedVariable TryResolveVariable (string name, CType[] argTypes)
+        BaseFunction UnresolvedMethod (string typeName, string methodName) =>
+            new InternalFunction (MachineInfo, "void " + typeName + "::" + methodName + "()");
+
+        public override ResolvedVariable? TryResolveVariable (string name, CType[]? argTypes)
         {
             //
             // Look for global variables

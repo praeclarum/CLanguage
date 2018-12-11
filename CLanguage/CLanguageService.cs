@@ -124,7 +124,7 @@ namespace CLanguage
                         if (token.Kind < 128 || Lexer.OperatorTokens.Contains (token.Kind))
                             return SyntaxColor.Operator;
                         else if (Lexer.KeywordTokens.Contains (token.Kind)) {
-                            switch ((string)token.Value) {
+                            switch (token.StringValue) {
                                 case "unsigned":
                                 case "signed":
                                     return SyntaxColor.Type;

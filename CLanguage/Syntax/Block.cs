@@ -13,7 +13,7 @@ namespace CLanguage.Syntax
         public VariableScope VariableScope { get; }
         public List<Statement> Statements { get; } = new List<Statement> ();
 
-        public Block Parent { get; set; }
+        public Block? Parent { get; set; }
 
         public override bool AlwaysReturns => Statements.Any (s => s.AlwaysReturns);
 

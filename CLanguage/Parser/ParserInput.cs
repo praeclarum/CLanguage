@@ -29,7 +29,7 @@ namespace CLanguage.Parser
 
         public object value () => CurrentToken.Value ?? "";
 
-        public Token CurrentToken => Tokens[index].Kind == TokenKind.IDENTIFIER && typedefs.Contains((string)Tokens[index].Value) ?
+        public Token CurrentToken => Tokens[index].Kind == TokenKind.IDENTIFIER && typedefs.Contains(Tokens[index].StringValue) ?
             Tokens[index].AsKind (TokenKind.TYPE_NAME) :
             Tokens[index];
 

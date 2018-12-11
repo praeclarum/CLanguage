@@ -24,7 +24,7 @@ namespace CLanguage.Compiler
         public IEnumerable<CompiledVariable> LocalVariables { get { return allLocals; } }
 
         public FunctionContext (Executable exe, CompiledFunction fexe, EmitContext parentContext)
-            : base (fexe.Body, parentContext.MachineInfo, parentContext.Report, fexe, parentContext)
+            : base (fexe.Body ?? new Block (VariableScope.Local), parentContext.MachineInfo, parentContext.Report, fexe, parentContext)
         {
             this.exe = exe;
             this.fexe = fexe;
@@ -55,7 +55,7 @@ namespace CLanguage.Compiler
             return base.ResolveTypeName (typeName);
         }
 
-        public override ResolvedVariable TryResolveVariable (string name, CType[] argTypes)
+        public override ResolvedVariable? TryResolveVariable (string name, CType[]? argTypes)
         {
             //
             // Look for function parameters

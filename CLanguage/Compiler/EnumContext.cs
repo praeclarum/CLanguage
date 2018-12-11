@@ -18,7 +18,7 @@ namespace CLanguage.Compiler
             this.emitContext = emitContext;
         }
 
-        public override ResolvedVariable TryResolveVariable (string name, CType[] argTypes)
+        public override ResolvedVariable? TryResolveVariable (string name, CType[]? argTypes)
         {
             var r = et.Members.FirstOrDefault (x => x.Name == name);
             if (r != null) {

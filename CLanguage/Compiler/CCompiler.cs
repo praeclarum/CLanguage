@@ -54,7 +54,7 @@ namespace CLanguage.Compiler
             }
         }
 
-        Token[] Include (string filePath, bool relative)
+        Token[]? Include (string filePath, bool relative)
         {
             return null;
         }
@@ -135,13 +135,16 @@ namespace CLanguage.Compiler
             // Compile functions
             //
             foreach (var (f, pc) in functionsToCompile) {
+                var body = f.Body;
+                if (body == null)
+                    continue;
                 var fc = new FunctionContext (exe, f, pc);
                 AddStatementDeclarations (fc);
-				f.Body.Emit (fc);
+				body.Emit (fc);
 				f.LocalVariables.AddRange (fc.LocalVariables);
 
 				// Make sure it returns
-				if (f.Body.Statements.Count == 0 || !f.Body.AlwaysReturns) {
+				if (body.Statements.Count == 0 || !body.AlwaysReturns) {
 					if (f.FunctionType.ReturnType.IsVoid) {
 						fc.Emit (OpCode.Return);
 					}

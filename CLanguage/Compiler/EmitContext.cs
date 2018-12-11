@@ -30,7 +30,7 @@ namespace CLanguage.Compiler
 
         public virtual CType ResolveTypeName (TypeName typeName)
         {
-            return MakeCType (typeName.Specifiers, typeName.Declarator, null, new Block ());
+            return MakeCType (typeName.Specifiers, typeName.Declarator, null, new Block (VariableScope.Global));
         }
 
         public virtual CType ResolveTypeName (string typeName)
@@ -43,7 +43,7 @@ namespace CLanguage.Compiler
             return CBasicType.SignedInt;
         }
 
-        public ResolvedVariable ResolveVariable (string name, CType[] argTypes)
+        public ResolvedVariable ResolveVariable (string name, CType[]? argTypes)
         {
             var v = TryResolveVariable (name, argTypes);
             if (v != null)
@@ -52,7 +52,7 @@ namespace CLanguage.Compiler
             return new ResolvedVariable (VariableScope.Global, 0, CBasicType.SignedInt);
         }
 
-        public virtual ResolvedVariable TryResolveVariable (string name, CType[] argTypes)
+        public virtual ResolvedVariable? TryResolveVariable (string name, CType[]? argTypes)
         {
             var r = ParentContext?.ResolveVariable (name, argTypes);
             if (r != null)

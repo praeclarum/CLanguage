@@ -54,7 +54,7 @@ namespace CLanguage
 			HeaderCode = "";
 		}
 
-        public void AddInternalFunction (string prototype, InternalFunctionAction action = null)
+        public void AddInternalFunction (string prototype, InternalFunctionAction? action = null)
         {
             InternalFunctions.Add (new InternalFunction (this, prototype, action));
         }

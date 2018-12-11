@@ -120,14 +120,6 @@ namespace CLanguage.Parser
             return -1;
         }
 
-        int Peek ()
-        {
-            if (nextPosition < Document.Content.Length) {
-                return Document.Content[nextPosition];
-            }
-            return -1;
-        }
-
         public void SkipWhiteSpace ()
         {
             //
