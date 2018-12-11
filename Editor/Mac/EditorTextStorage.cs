@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 
 using Foundation;
+
+using static CLanguage.Editor.Extensions;
 
 #if __IOS__
 using UIKit;
@@ -15,7 +18,6 @@ using AppKit;
 using NativeColor = AppKit.NSColor;
 using NativeFont = AppKit.NSFont;
 using NativeStringAttributes = AppKit.NSStringAttributes;
-using System.Diagnostics;
 #endif
 
 namespace CLanguage.Editor
@@ -162,13 +164,9 @@ namespace CLanguage.Editor
 		}
 
 #if __IOS__
-		static NativeColor Rgb (int r, int g, int b) => NativeColor.FromRGB (r, g, b);
-		static NativeFont Font (string name, int size) => NativeFont.FromName (name, size);
 		static readonly NSTextStorageEditActions CharsEdited = NSTextStorageEditActions.Characters;
 		static readonly NSTextStorageEditActions AttrsEdited = NSTextStorageEditActions.Attributes;
 #else
-		static NativeColor Rgb (int r, int g, int b) => NativeColor.FromRgb (r, g, b);
-		static NativeFont Font (string name, int size) => NativeFont.FromFontName (name, size);
 		static readonly nuint CharsEdited = (nuint)(int)(NSTextStorageEditedFlags.EditedCharacters);
 		static readonly nuint AttrsEdited = (nuint)(int)(NSTextStorageEditedFlags.EditedAttributed);
 #endif

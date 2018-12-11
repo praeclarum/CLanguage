@@ -13,6 +13,8 @@ using static CLanguage.Editor.Extensions;
 
 #if __IOS__
 using UIKit;
+using NativeTextView = UIKit.UITextView;
+using NativeView = UIKit.UIView;
 using NativeColor = UIKit.UIColor;
 using NativeFont = UIKit.UIFont;
 using NativeStringAttributes = UIKit.UIStringAttributes;
@@ -28,7 +30,12 @@ using NativeStringAttributes = AppKit.NSStringAttributes;
 namespace CLanguage.Editor
 {
     [Register ("CEditor")]
-    public partial class CEditor : NativeView, INSTextViewDelegate, INSTextStorageDelegate
+    public partial class CEditor : NativeView, INSTextStorageDelegate,
+#if __MACOS__
+        INSTextViewDelegate
+#elif __IOS__
+        IUITextViewDelegate
+#endif
     {
         readonly EditorTextView textView;
 
@@ -42,10 +49,10 @@ namespace CLanguage.Editor
         NSLayoutConstraint marginWidthConstraint;
 
         public string Text {
-            get => textView.Value;
+            get => textView.TextStorage.Value;
             set {
                 value = value ?? "";
-                var oldText = textView.Value;
+                var oldText = textView.TextStorage.Value;
                 if (oldText == value)
                     return;
                 textView.TextStorage.SetString (new NSAttributedString (value ?? "", theme.CommentAttributes));
@@ -88,11 +95,12 @@ namespace CLanguage.Editor
         public event EventHandler TextChanged;
 
 #if __IOS__
+        readonly EditorTextStorage storage = new EditorTextStorage ();
 #elif __MACOS__
         readonly NSScrollView scroll;
         IDisposable scrolledSubscription;
         IDisposable appearanceObserver;
-
+        static bool IsDark (NSAppearance a) => a.Name.Contains ("dark", StringComparison.InvariantCultureIgnoreCase);
 #endif
 
         public CEditor (NSCoder coder) : base (coder)
@@ -129,11 +137,13 @@ namespace CLanguage.Editor
             sframe.Width -= marginWidth;
             eframe.Height = errorHeight;
 
-            //textView.LayoutManager.ReplaceTextStorage (storage);
-            textView.LayoutManager.TextStorage.Delegate = this;
             textView.Font = theme.CodeFont;
             textView.TypingAttributes = theme.TypingAttributes;
 
+            textView.Delegate = this;
+            textView.TextStorage.Delegate = this;
+
+#if __MACOS__
             textView.MaxSize = new CGSize (nfloat.MaxValue, nfloat.MaxValue);
             textView.VerticallyResizable = true;
             textView.HorizontallyResizable = true;
@@ -165,6 +175,20 @@ namespace CLanguage.Editor
             margin.TranslatesAutoresizingMaskIntoConstraints = false;
             errorView.TranslatesAutoresizingMaskIntoConstraints = false;
 
+            scroll.ContentView.PostsBoundsChangedNotifications = true;
+            scrolledSubscription = NativeView.Notifications.ObserveBoundsChanged (scroll.ContentView, (sender, e) => {
+                UpdateMargin ();
+            });
+
+            appearanceObserver = this.AddObserver ("effectiveAppearance", NSKeyValueObservingOptions.Initial | NSKeyValueObservingOptions.New, change => {
+                if (change.NewValue is NSAppearance a) {
+                    Theme = new Theme (isDark: IsDark (a));
+                }
+            });
+#elif __IOS__
+            var scroll = textView;
+#endif
+
             scroll.Frame = sframe;
             margin.Frame = mframe;
             errorView.Frame = eframe;
@@ -188,18 +212,6 @@ namespace CLanguage.Editor
             AddConstraint (NSLayoutConstraint.Create (errorView, NSLayoutAttribute.Height, NSLayoutRelation.Equal, 1, errorHeight));
             AddConstraint (NSLayoutConstraint.Create (this, NSLayoutAttribute.Bottom, NSLayoutRelation.Equal, errorView, NSLayoutAttribute.Bottom, 1, errorVMargin));
 
-            textView.Delegate = this;
-
-            scroll.ContentView.PostsBoundsChangedNotifications = true;
-            scrolledSubscription = NativeView.Notifications.ObserveBoundsChanged (scroll.ContentView, (sender, e) => {
-                UpdateMargin ();
-            });
-
-            appearanceObserver = this.AddObserver ("effectiveAppearance", NSKeyValueObservingOptions.Initial | NSKeyValueObservingOptions.New, change => {
-                if (change.NewValue is NSAppearance a) {
-                    Theme = new Theme (isDark: IsDark (a));
-                }
-            });
             OnThemeChanged ();
         }
 
@@ -268,8 +280,6 @@ namespace CLanguage.Editor
             return r;
         }
 
-        static bool IsDark (NSAppearance a) => a.Name.Contains ("dark", StringComparison.InvariantCultureIgnoreCase);
-
         [Export ("textStorage:didProcessEditing:range:changeInLength:")]
         async void DidProcessEditing (NSTextStorage textStorage, NSTextStorageEditActions editedMask, NSRange editedRange, nint delta)
         {
@@ -289,14 +299,14 @@ namespace CLanguage.Editor
         void UpdateMargin ()
         {
             var lineHeight = textView.LayoutManager.DefaultLineHeightForFont (theme.CodeFont);
-            var baseline = textView.LayoutManager.DefaultBaselineOffsetForFont (theme.CodeFont);
-            margin.SetLinePositions (lineHeight, baseline, scroll.ContentView.Bounds, lineCount);
+            margin.SetLinePositions (lineHeight, scroll.ContentView.Bounds, lineCount);
         }
 
         static readonly char[] newlineChars = { '\n', (char)8232 };
 
         void ColorizeCode (NSTextStorage textStorage)
         {
+#if __MACOS__
             var code = textStorage.Value;
             var managers = textStorage.LayoutManagers;
 
@@ -351,6 +361,9 @@ namespace CLanguage.Editor
                     }
                 }
             }
+#elif __IOS__
+            var printer = new EditorPrinter ();
+#endif
 
             //
             // Inform the error view
@@ -363,9 +376,13 @@ namespace CLanguage.Editor
             margin.Theme = theme;
             errorView.Theme = theme;
             ColorizeCode (textView.TextStorage);
+#if __MACOS__
             textView.SelectedTextAttributes = theme.SelectedAttributes;
-            scroll.BackgroundColor = textView.BackgroundColor;
             scroll.DrawsBackground = true;
+#elif __IOS__
+            var scroll = textView;
+#endif
+            scroll.BackgroundColor = textView.BackgroundColor;
             SetNeedsDisplayInRect (Bounds);
         }
     }

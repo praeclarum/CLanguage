@@ -1,29 +1,26 @@
 ﻿using System;
 using CoreGraphics;
 
+using static CLanguage.Editor.Extensions;
+
 #if __IOS__
 using UIKit;
 using NativeColor = UIKit.UIColor;
 using NativeFont = UIKit.UIFont;
+using NativeGraphics = UIKit.UIGraphics;
 using NativeStringAttributes = UIKit.UIStringAttributes;
 #elif __MACOS__
 using AppKit;
-using NativeView = AppKit.NSView;
+using NativeColor = AppKit.NSColor;
+using NativeFont = AppKit.NSFont;
+using NativeGraphics = AppKit.NSGraphics;
+using NativeStringAttributes = AppKit.NSStringAttributes;
 #endif
 
 namespace CLanguage.Editor
 {
-    class ErrorView : NativeView
+    class ErrorView : DrawingView
     {
-        Theme theme = new Theme (isDark: false);
-        public Theme Theme {
-            get => theme;
-            set {
-                theme = value;
-                SetNeedsDisplayInRect (Bounds);
-            }
-        }
-
         Report.AbstractMessage message = new Report.AbstractMessage ("Info", "");
         public Report.AbstractMessage Message {
             get => message;
@@ -34,14 +31,12 @@ namespace CLanguage.Editor
             }
         }
 
-        public override bool IsFlipped => true;
-
-        public override void DrawRect (CGRect dirtyRect)
+        protected override void DrawDirtyRect (CGRect dirtyRect)
         {
-            var c = NSGraphicsContext.CurrentContext.CGContext;
+            var c = NativeGraphicsCGContext;
 
-            NSColor.Clear.Set ();
-            NSGraphics.RectFill (dirtyRect);
+            NativeColor.Clear.Set ();
+            NativeGraphics.RectFill (dirtyRect);
 
             var bounds = Bounds;
             if (bounds.Width < bounds.Height)

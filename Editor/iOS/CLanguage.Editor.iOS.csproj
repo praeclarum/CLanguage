@@ -54,6 +54,27 @@
     <Compile Include="..\Mac\Extensions.cs">
       <Link>Extensions.cs</Link>
     </Compile>
+    <Compile Include="..\Mac\CEditor.cs">
+      <Link>CEditor.cs</Link>
+    </Compile>
+    <Compile Include="..\Mac\EditorTextStorage.cs">
+      <Link>EditorTextStorage.cs</Link>
+    </Compile>
+    <Compile Include="..\Mac\EditorTextView.cs">
+      <Link>EditorTextView.cs</Link>
+    </Compile>
+    <Compile Include="..\Mac\ErrorView.cs">
+      <Link>ErrorView.cs</Link>
+    </Compile>
+    <Compile Include="..\Mac\MarginView.cs">
+      <Link>MarginView.cs</Link>
+    </Compile>
+    <Compile Include="..\Mac\EditorPrinter.cs">
+      <Link>EditorPrinter.cs</Link>
+    </Compile>
+    <Compile Include="..\Mac\DrawingView.cs">
+      <Link>DrawingView.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\CLanguage\CLanguage.csproj">

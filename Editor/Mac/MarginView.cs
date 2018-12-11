@@ -1,40 +1,36 @@
 ﻿using System;
 using CoreGraphics;
 
+using static CLanguage.Editor.Extensions;
+
 #if __IOS__
 using UIKit;
 using NativeColor = UIKit.UIColor;
 using NativeFont = UIKit.UIFont;
+using NativeGraphics = UIKit.UIGraphics;
 using NativeStringAttributes = UIKit.UIStringAttributes;
+using NativeTextAlignment = UIKit.UITextAlignment;
 #elif __MACOS__
 using AppKit;
-using NativeView = AppKit.NSView;
+using NativeColor = AppKit.NSColor;
+using NativeFont = AppKit.NSFont;
+using NativeGraphics = AppKit.NSGraphics;
+using NativeStringAttributes = AppKit.NSStringAttributes;
+using NativeTextAlignment = AppKit.NSTextAlignment;
 #endif
 
 namespace CLanguage.Editor
 {
-    class MarginView : NativeView
+    class MarginView : DrawingView
     {
-        Theme theme = new Theme (isDark: false);
-        public Theme Theme {
-            get => theme;
-            set {
-                theme = value;
-                SetNeedsDisplayInRect (Bounds);
-            }
-        }
-
         nfloat lineHeight = 15;
-        nfloat baseline = 12;
         CGRect textBounds = new CGRect (0, 0, 100, 1000);
         int lineCount = 1;
 
-        public override bool IsFlipped => true;
-
-        public override void DrawRect (CGRect dirtyRect)
+        protected override void DrawDirtyRect (CGRect dirtyRect)
         {
             Theme.BackgroundColor.Set ();
-            NSGraphics.RectFill (dirtyRect);
+            NativeGraphics.RectFill (dirtyRect);
 
             var la = Theme.LineNumberAttributes;
             var fontHeight = "123".StringSize (la).Height;
@@ -55,10 +51,9 @@ namespace CLanguage.Editor
             }
         }
 
-        public void SetLinePositions (nfloat lineHeight, nfloat baseline, CGRect bounds, int lineCount)
+        public void SetLinePositions (nfloat lineHeight, CGRect bounds, int lineCount)
         {
             this.lineHeight = lineHeight;
-            this.baseline = baseline;
             this.textBounds = bounds;
             this.lineCount = lineCount;
             SetNeedsDisplayInRect (Bounds);

@@ -54,6 +54,7 @@
     <Compile Include="Extensions.cs" />
     <Compile Include="ErrorView.cs" />
     <Compile Include="EditorPrinter.cs" />
+    <Compile Include="DrawingView.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\CLanguage\CLanguage.csproj">

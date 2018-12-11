@@ -4,17 +4,20 @@
 using UIKit;
 using NativeColor = UIKit.UIColor;
 using NativeFont = UIKit.UIFont;
+using NativeGraphicsContext = UIKit.UIGraphics;
 using NativeStringAttributes = UIKit.UIStringAttributes;
 using NativeTextAlignment = UIKit.UITextAlignment;
 #elif __MACOS__
 using AppKit;
 using NativeColor = AppKit.NSColor;
 using NativeFont = AppKit.NSFont;
+using NativeGraphicsContext = AppKit.NSGraphics;
 using NativeStringAttributes = AppKit.NSStringAttributes;
 using NativeTextAlignment = AppKit.NSTextAlignment;
 #endif
 
 using Foundation;
+using CoreGraphics;
 
 namespace CLanguage.Editor
 {
@@ -33,14 +36,17 @@ namespace CLanguage.Editor
 #if __IOS__
         public static NativeColor Rgb (int r, int g, int b) => NativeColor.FromRGB (r, g, b);
         public static NativeColor Gray (int g) => NativeColor.FromWhiteAlpha (g / ((nfloat)255), 1);
+        public static NativeColor ColorWithAlphaComponent (this NativeColor color, nfloat alpha) => color.ColorWithAlpha (alpha);
+        public static void Set (this NativeColor color) => color.SetColor ();
+        public static CGContext NativeGraphicsCGContext => NativeGraphicsContext.GetCurrentContext ();
         public static NativeFont Font (string name, int size) => NativeFont.FromName (name, size);
         public static string GetFontName (this NativeFont f) => f.Name;
         public static NSUnderlineStyle ToKit (this NSUnderlineStyle s) => s;
-        public static NativeColor ColorWithAlphaComponent (this NativeColor color, nfloat alpha) => color.ColorWithAlpha (alpha);
         public static NativeTextAlignment TextAlignmentRight = NativeTextAlignment.Right;
 #else
         public static NativeColor Rgb (int r, int g, int b) => NativeColor.FromRgb (r, g, b);
         public static NativeColor Gray (int g) => NativeColor.FromWhite (g / ((nfloat)255), 1);
+        public static CGContext NativeGraphicsCGContext => NSGraphicsContext.CurrentContext.CGContext;
         public static NativeFont Font (string name, int size) => NativeFont.FromFontName (name, size);
         public static string GetFontName (this NativeFont f) => f.FontName;
         public static int ToKit (this NSUnderlineStyle s) => (int)s;
