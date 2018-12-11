@@ -27,8 +27,8 @@ using NativeStringAttributes = AppKit.NSStringAttributes;
 
 namespace CLanguage.Editor
 {
-    [Register ("CTextEditor")]
-    public partial class CTextEditor : NativeView, INSTextViewDelegate, INSTextStorageDelegate
+    [Register ("CEditor")]
+    public partial class CEditor : NativeView, INSTextViewDelegate, INSTextStorageDelegate
     {
         readonly EditorTextView textView;
 
@@ -95,7 +95,7 @@ namespace CLanguage.Editor
 
 #endif
 
-        public CTextEditor (NSCoder coder) : base (coder)
+        public CEditor (NSCoder coder) : base (coder)
         {
             textView = new EditorTextView (Bounds);
             scroll = new NSScrollView (Bounds);
@@ -103,7 +103,7 @@ namespace CLanguage.Editor
             Initialize ();
         }
 
-        public CTextEditor (IntPtr handle) : base (handle)
+        public CEditor (IntPtr handle) : base (handle)
         {
             textView = new EditorTextView (Bounds);
             scroll = new NSScrollView (Bounds);
@@ -111,7 +111,7 @@ namespace CLanguage.Editor
             Initialize ();
         }
 
-        public CTextEditor (CGRect frameRect) : base (frameRect)
+        public CEditor (CGRect frameRect) : base (frameRect)
         {
             textView = new EditorTextView (Bounds);
             scroll = new NSScrollView (Bounds);

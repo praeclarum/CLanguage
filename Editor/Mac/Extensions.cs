@@ -43,7 +43,7 @@ namespace CLanguage.Editor
         public static NativeColor Gray (int g) => NativeColor.FromWhite (g / ((nfloat)255), 1);
         public static NativeFont Font (string name, int size) => NativeFont.FromFontName (name, size);
         public static string GetFontName (this NativeFont f) => f.FontName;
-        public static NSUnderlineStyle ToKit (this NSUnderlineStyle s) => (nint)s;
+        public static int ToKit (this NSUnderlineStyle s) => (int)s;
         public static NativeTextAlignment TextAlignmentRight = NativeTextAlignment.Right;
 #endif
     }
