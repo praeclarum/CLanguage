@@ -398,14 +398,15 @@ namespace CLanguage.Editor
         {
             margin.Theme = theme;
             errorView.Theme = theme;
+            textView.BackgroundColor = theme.BackgroundColor;
             ColorizeCode (textView.TextStorage);
 #if __MACOS__
             textView.SelectedTextAttributes = theme.SelectedAttributes;
             scroll.DrawsBackground = true;
-#elif __IOS__
-            var scroll = textView;
-#endif
             scroll.BackgroundColor = textView.BackgroundColor;
+#elif __IOS__
+            ((EditorTextStorage)textView.TextStorage).Theme = theme;
+#endif
             SetNeedsDisplayInRect (Bounds);
         }
     }
