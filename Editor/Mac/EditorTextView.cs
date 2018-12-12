@@ -65,6 +65,7 @@ namespace CLanguage.Editor
             var storage = new EditorTextStorage ();
             var container = new NSTextContainer (new CGSize (size.Width, nfloat.MaxValue)) {
                 WidthTracksTextView = true,
+                LineBreakMode = UILineBreakMode.WordWrap,
             };
             var layout = new NSLayoutManager ();
             storage.AddLayoutManager (layout);
