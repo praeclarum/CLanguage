@@ -37,6 +37,11 @@ namespace CLanguage.Editor
             return line.Substring (0, e);
         }
 
+        public static string Localize (this string english)
+        {
+            return NSBundle.MainBundle.LocalizedString (key: english, comment: "");
+        }
+
 #if __IOS__
         public static NativeColor Rgb (int r, int g, int b) => NativeColor.FromRGB (r, g, b);
         public static NativeColor Gray (int g) => NativeColor.FromWhiteAlpha (g / ((nfloat)255), 1);
