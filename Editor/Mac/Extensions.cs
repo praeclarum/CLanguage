@@ -45,8 +45,12 @@ namespace CLanguage.Editor
         public static NativeTextAlignment TextAlignmentRight = NativeTextAlignment.Right;
         public static CGSize StringSize (this string text, NSDictionary attributes) =>
             new NSAttributedString (text, attributes).Size;
+        public static CGSize GetSize (this NSAttributedString text) =>
+            text.Size;
         public static void DrawInRect (this string text, CGRect rect, NSDictionary attributes) =>
             new NSAttributedString (text, attributes).DrawString (rect);
+        public static void DrawInRect (this NSAttributedString text, CGRect rect) =>
+            text.DrawString (rect);
 #else
         public static NativeColor Rgb (int r, int g, int b) => NativeColor.FromRgb (r, g, b);
         public static NativeColor Gray (int g) => NativeColor.FromWhite (g / ((nfloat)255), 1);
