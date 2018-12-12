@@ -182,7 +182,7 @@ namespace CLanguage.Editor
             }
         }
 
-        class LinesInRange
+        public class LinesInRange
         {
             public NSRange Range;
             public string Indent = "";
@@ -221,7 +221,7 @@ namespace CLanguage.Editor
             ChangeLinesInRange (SelectedRange, map);
         }
 
-        LinesInRange GetLinesInRange (NSRange range)
+        public LinesInRange GetLinesInRange (NSRange range)
         {
             var lines = new LinesInRange ();
 

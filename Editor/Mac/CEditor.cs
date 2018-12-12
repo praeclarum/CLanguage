@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -7,13 +8,10 @@ using System.Threading.Tasks;
 using Foundation;
 using CoreGraphics;
 
-using CLanguage.Compiler;
-using CLanguage.Syntax;
-using static CLanguage.Editor.Extensions;
-
 #if __IOS__
 using UIKit;
 using NativeTextView = UIKit.UITextView;
+using INativeTextViewDelegate = UIKit.IUITextViewDelegate;
 using NativeView = UIKit.UIView;
 using NativeColor = UIKit.UIColor;
 using NativeFont = UIKit.UIFont;
@@ -21,21 +19,21 @@ using NativeStringAttributes = UIKit.UIStringAttributes;
 #elif __MACOS__
 using AppKit;
 using NativeTextView = AppKit.NSTextView;
+using INativeTextViewDelegate = AppKit.INSTextViewDelegate;
 using NativeView = AppKit.NSView;
 using NativeColor = AppKit.NSColor;
 using NativeFont = AppKit.NSFont;
 using NativeStringAttributes = AppKit.NSStringAttributes;
 #endif
 
+using CLanguage.Compiler;
+using CLanguage.Syntax;
+using static CLanguage.Editor.Extensions;
+
 namespace CLanguage.Editor
 {
     [Register ("CEditor")]
-    public partial class CEditor : NativeView, INSTextStorageDelegate,
-#if __MACOS__
-        INSTextViewDelegate
-#elif __IOS__
-        IUITextViewDelegate
-#endif
+    public partial class CEditor : NativeView, INSTextStorageDelegate, INativeTextViewDelegate
     {
         readonly EditorTextView textView;
 
@@ -329,11 +327,13 @@ namespace CLanguage.Editor
             }
         }
 
+#if __IOS__
         [Export ("scrollViewDidScroll:")]
         public void Scrolled (UIScrollView scrollView)
         {
             UpdateMargin ();
         }
+#endif
 
         void UpdateMargin ()
         {
@@ -345,7 +345,32 @@ namespace CLanguage.Editor
             var tbounds = textView.Bounds;
             var bounds = tbounds;
 #endif
+            var visibleGlyphs = textView.LayoutManager.GlyphRangeForBoundingRect (bounds, textView.TextContainer);
+            //Console.WriteLine ("=========================");
+            //Console.WriteLine (visibleGlyphs);
+            //textView.LayoutManager.EnumerateLineFragments (visibleGlyphs, EnumerateLineFragments);
+            var visibleChars = textView.LayoutManager.CharacterRangeForGlyphRange (visibleGlyphs);
+            //Console.WriteLine (visibleChars);
+            var lines = textView.GetLinesInRange (visibleChars);
+            var index = lines.Range.Location;
+            var lineBounds = new List<CGRect> (lines.Lines.Count);
+            for (var i = 0; i < lines.Lines.Count && index < lines.AllText.Length; i++) {
+                var line = lines.Lines[i];
+                var cr = new NSRange (index, line.Length);
+                var gr = textView.LayoutManager.GlyphRangeForCharacterRange (cr);
+                var b = textView.LayoutManager.BoundingRectForGlyphRange (gr, textView.TextContainer);
+                lineBounds.Add (b);
+                index += line.Length + 1;
+                //Console.WriteLine (b);
+            }
+
             margin.SetLinePositions (lineHeight, bounds, lineCount);
+        }
+
+
+        void EnumerateLineFragments (CGRect rect, CGRect usedRectangle, NSTextContainer textContainer, NSRange glyphRange, ref bool stop)
+        {
+            Console.WriteLine ($"LINE {rect} --> {usedRectangle}");
         }
 
         static readonly char[] newlineChars = { '\n', (char)8232 };
@@ -358,12 +383,16 @@ namespace CLanguage.Editor
             //
             // Count the lines
             //
+            var lineStarts = new List<int> (code.Length / 20) { 0 };
             var lc = 1;
             var li = code.IndexOfAny (newlineChars);
             while (li >= 0) {
+                if (li + 1 <= code.Length)
+                    lineStarts.Add (li + 1);
                 lc++;
                 li = li + 1 < code.Length ? code.IndexOfAny (newlineChars, li + 1) : -1;
             }
+            Debug.Assert (lc == lineStarts.Count, $"Line count mismatch: {lc} != {lineStarts.Count}");
             lineCount = lc;
 
 #if __MACOS__

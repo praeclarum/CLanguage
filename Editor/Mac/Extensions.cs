@@ -7,6 +7,7 @@ using NativeFont = UIKit.UIFont;
 using NativeGraphics = UIKit.UIGraphics;
 using NativeStringAttributes = UIKit.UIStringAttributes;
 using NativeTextAlignment = UIKit.UITextAlignment;
+using NativeTextView = UIKit.UITextView;
 #elif __MACOS__
 using AppKit;
 using NativeColor = AppKit.NSColor;
@@ -14,6 +15,7 @@ using NativeFont = AppKit.NSFont;
 using NativeGraphics = AppKit.NSGraphics;
 using NativeStringAttributes = AppKit.NSStringAttributes;
 using NativeTextAlignment = AppKit.NSTextAlignment;
+using NativeTextView = AppKit.NSTextView;
 #endif
 
 using Foundation;
@@ -59,6 +61,8 @@ namespace CLanguage.Editor
         public static string GetFontName (this NativeFont f) => f.FontName;
         public static int ToKit (this NSUnderlineStyle s) => (int)s;
         public static NativeTextAlignment TextAlignmentRight = NativeTextAlignment.Right;
+        public static NSRange CharacterRangeForGlyphRange (this NSLayoutManager layoutManager, NSRange glyphRange) => layoutManager.CharacterRangeForGlyphRange (glyphRange, out var _);
+        public static NSRange GlyphRangeForCharacterRange (this NSLayoutManager layoutManager, NSRange charRange) => layoutManager.GlyphRangeForCharacterRange (charRange, out var _);
 #endif
     }
 }
