@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleName</key>
-	<string>CEditor</string>
+	<string>C++ Editor</string>
 	<key>CFBundleIdentifier</key>
 	<string>com.kruegersystems.CEditor</string>
 	<key>CFBundleShortVersionString</key>

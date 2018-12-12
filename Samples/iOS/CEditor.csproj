@@ -109,6 +109,7 @@
     <Compile Include="..\Mac\TestMachineInfo.cs">
       <Link>TestMachineInfo.cs</Link>
     </Compile>
+    <Compile Include="Document.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\CLanguage\CLanguage.csproj">

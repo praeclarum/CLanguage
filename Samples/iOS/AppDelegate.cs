@@ -1,5 +1,8 @@
-﻿using Foundation;
+﻿using System.Threading.Tasks;
+using Foundation;
 using UIKit;
+using System;
+using System.IO;
 
 namespace CEditor
 {
@@ -15,10 +18,22 @@ namespace CEditor
         public override bool FinishedLaunching(UIApplication application, NSDictionary launchOptions)
         {
             Window = new UIWindow(UIScreen.MainScreen.Bounds);
-            Window.RootViewController = new UINavigationController(new ViewController());
+            Window.RootViewController = new UINavigationController(new ViewController(GetInitialUrlAsync ()));
             Window.MakeKeyAndVisible();
 
             return true;
+        }
+
+        Task<NSUrl> GetInitialUrlAsync ()
+        {
+            return Task.Run (() => {
+                var docs = Environment.GetFolderPath (Environment.SpecialFolder.MyDocuments);
+                var file = Path.Combine (docs, "main.cpp");
+                if (!File.Exists (file)) {
+                    File.WriteAllText (file, "");
+                }
+                return NSUrl.FromFilename (file);
+            });
         }
 
         public override void OnResignActivation(UIApplication application)
