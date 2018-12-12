@@ -329,6 +329,12 @@ namespace CLanguage.Editor
             }
         }
 
+        [Export ("scrollViewDidScroll:")]
+        public void Scrolled (UIScrollView scrollView)
+        {
+            UpdateMargin ();
+        }
+
         void UpdateMargin ()
         {
 #if __MACOS__
@@ -336,7 +342,8 @@ namespace CLanguage.Editor
             var bounds = scroll.ContentView.Bounds;
 #elif __IOS__
             var lineHeight = (nfloat)NativeFont.SystemFontSize;
-            var bounds = textView.Bounds;
+            var tbounds = textView.Bounds;
+            var bounds = tbounds;
 #endif
             margin.SetLinePositions (lineHeight, bounds, lineCount);
         }
