@@ -47,6 +47,7 @@ namespace CLanguage.Editor
         protected DrawingView ()
         {
             Opaque = false;
+            ContentMode = UIViewContentMode.Redraw;
         }
         public override void Draw (CGRect rect)
         {

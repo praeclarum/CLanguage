@@ -30,7 +30,8 @@ namespace CEditor
             base.ViewDidLoad();
 
             View.AddSubview (textEditor);
-
+            textEditor.AutoresizingMask = UIViewAutoresizing.None;
+            textEditor.TranslatesAutoresizingMaskIntoConstraints = false;
             View.AddConstraint (NSLayoutConstraint.Create (View, NSLayoutAttribute.Leading, NSLayoutRelation.Equal, textEditor, NSLayoutAttribute.Leading, 1, 0));
             View.AddConstraint (NSLayoutConstraint.Create (View, NSLayoutAttribute.Trailing, NSLayoutRelation.Equal, textEditor, NSLayoutAttribute.Trailing, 1, 0));
             View.AddConstraint (NSLayoutConstraint.Create (View, NSLayoutAttribute.Top, NSLayoutRelation.Equal, textEditor, NSLayoutAttribute.Top, 1, 0));
