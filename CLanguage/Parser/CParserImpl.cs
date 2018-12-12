@@ -60,7 +60,7 @@ namespace CLanguage.Parser
             }
             catch (yyParser.yyUnexpectedEof) {
                 report.Error (1513, lexer.CurrentToken.Location, lexer.CurrentToken.EndLocation,
-                    "Expecting more");
+                    "Incomplete");
             }
             catch (Exception err) {
                 Debug.WriteLine (err);

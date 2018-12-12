@@ -51,6 +51,7 @@ namespace CEditor
                 var doc = new Document (url);
                 var opened = await doc.OpenAsync ();
                 document = doc;
+                Title = document.LocalizedName;
                 textEditor.Text = doc.Code;
                 textEditor.TextChanged += TextEditor_TextChanged;
             }
