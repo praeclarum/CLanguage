@@ -197,10 +197,15 @@ namespace CLanguage.Editor
             var scroll = textView;
             textView.AlwaysBounceVertical = true;
             textView.AlwaysBounceHorizontal = false;
+            textView.InputAssistantItem.LeadingBarButtonGroups = null;
+            textView.InputAssistantItem.TrailingBarButtonGroups = null;
             textView.AutocorrectionType = UITextAutocorrectionType.No;
             textView.AutocapitalizationType = UITextAutocapitalizationType.None;
+            textView.AllowsEditingTextAttributes = false;
             textView.KeyboardType = UIKeyboardType.Default;
             if (ios11) {
+                textView.SmartInsertDeleteType = UITextSmartInsertDeleteType.No;
+                textView.SmartDashesType = UITextSmartDashesType.No;
                 textView.SmartQuotesType = UITextSmartQuotesType.No;
                 errorVMargin = 0; // Safe area insets are used instead
             }
