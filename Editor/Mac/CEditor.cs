@@ -383,7 +383,7 @@ namespace CLanguage.Editor
             }
 #elif __IOS__
             var ts = (EditorTextStorage)textView.TextStorage;
-            ts.MachineInfo = options.MachineInfo;
+            ts.Options = options;
             ts.Theme = Theme;
             var printer = ts.LastPrinter;
 #endif

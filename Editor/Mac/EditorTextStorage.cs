@@ -6,6 +6,7 @@ using System.Threading;
 
 using Foundation;
 
+using CLanguage.Compiler;
 using static CLanguage.Editor.Extensions;
 
 #if __IOS__
@@ -46,7 +47,7 @@ namespace CLanguage.Editor
             }
         }
 
-        public MachineInfo MachineInfo { get; set; } = new MachineInfo ();
+        public CompilerOptions Options { get; set; } = new CompilerOptions (new MachineInfo (), new Report (), Enumerable.Empty<CLanguage.Syntax.Document> ());
         public EditorPrinter LastPrinter { get; private set; } = new EditorPrinter ();
 
         public EditorTextStorage ()
@@ -128,7 +129,7 @@ namespace CLanguage.Editor
 
                     // Parse the file
                     var printer = new EditorPrinter ();
-					var spans = CLanguage.CLanguageService.Colorize (code, MachineInfo, printer);
+					var spans = CLanguage.CLanguageService.Colorize (code, Options.MachineInfo, printer);
                     LastPrinter = printer;
 
                     // Flatten the spans
