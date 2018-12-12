@@ -18,7 +18,7 @@ namespace CLanguage.Parser
         TranslationUnit _tu;
         ParserInput lexer;
 
-        public CParser()
+        public CParser ()
         {
             yyVals = Array.Empty<object> ();
             yyVal = String.Empty;
@@ -26,7 +26,7 @@ namespace CLanguage.Parser
             lexer = new ParserInput (Array.Empty<Token> ());
             //debug = new yydebug.yyDebugSimple();
         }
-		
+
         public TranslationUnit ParseTranslationUnit (string name, string code, Preprocessor.Include include, Report report)
         {
             var lexed = new LexedDocument (new Document (name, code), report);
@@ -47,20 +47,24 @@ namespace CLanguage.Parser
                 yyparse (lexer);
             }
             catch (NotImplementedException err) {
-                report.Error (9000, lexer.CurrentToken.Location, lexer.CurrentToken.EndLocation, 
+                report.Error (9999, lexer.CurrentToken.Location, lexer.CurrentToken.EndLocation,
                     "Not Supported: " + err.Message);
             }
             catch (NotSupportedException err) {
-                report.Error (9002, lexer.CurrentToken.Location, lexer.CurrentToken.EndLocation,
+                report.Error (9001, lexer.CurrentToken.Location, lexer.CurrentToken.EndLocation,
                     "Not Supported: " + err.Message);
             }
             catch (Exception err) when (err.Message == "irrecoverable syntax error") {
                 report.Error (1001, lexer.CurrentToken.Location, lexer.CurrentToken.EndLocation,
                     "Syntax error");
             }
+            catch (yyParser.yyUnexpectedEof) {
+                report.Error (1513, lexer.CurrentToken.Location, lexer.CurrentToken.EndLocation,
+                    "Expecting more");
+            }
             catch (Exception err) {
                 Debug.WriteLine (err);
-                report.Error (9001, lexer.CurrentToken.Location, lexer.CurrentToken.EndLocation,
+                report.Error (9000, lexer.CurrentToken.Location, lexer.CurrentToken.EndLocation,
                     "Parser Error: " + err.Message);
             }
 
@@ -72,7 +76,7 @@ namespace CLanguage.Parser
             var p = new CParser ();
             var prefix = new[] { new Token (TokenKind.AUTO, "auto"), new Token (TokenKind.IDENTIFIER, "_"), new Token ('=') };
             var suffix = new[] { new Token (';') };
-            var tu = p.ParseTranslationUnit (report, CLanguageService.DefaultCodePath, ((_,__) => null), prefix, tokens, suffix);
+            var tu = p.ParseTranslationUnit (report, CLanguageService.DefaultCodePath, ((_, __) => null), prefix, tokens, suffix);
             if (tu.Statements.FirstOrDefault () is MultiDeclaratorStatement mds && mds.InitDeclarators != null && mds.InitDeclarators.Count == 1 && mds.InitDeclarators[0].Initializer is ExpressionInitializer ei) {
                 return ei.Expression;
             }
@@ -96,8 +100,7 @@ namespace CLanguage.Parser
 
         Declarator? FixPointerAndArrayPrecedence (Declarator d)
         {
-            if (d is PointerDeclarator && d.InnerDeclarator != null && d.InnerDeclarator is ArrayDeclarator)
-            {
+            if (d is PointerDeclarator && d.InnerDeclarator != null && d.InnerDeclarator is ArrayDeclarator) {
                 var a = d.InnerDeclarator;
                 var p = d;
                 var i = a.InnerDeclarator;
@@ -105,28 +108,25 @@ namespace CLanguage.Parser
                 p.InnerDeclarator = i;
                 return a;
             }
-            else
-            {
+            else {
                 return null;
             }
         }
 
-        Declarator MakeArrayDeclarator(Declarator? left, TypeQualifiers tq, Expression? len, bool isStatic)
+        Declarator MakeArrayDeclarator (Declarator? left, TypeQualifiers tq, Expression? len, bool isStatic)
         {
-            if (left != null && left.StrongBinding)
-            {
+            if (left != null && left.StrongBinding) {
                 var i = left.InnerDeclarator;
                 var a = new ArrayDeclarator (i, len);
                 left.InnerDeclarator = a;
                 return left;
             }
-            else
-            {
+            else {
                 return new ArrayDeclarator (left, len);
             }
         }
 
-        Location GetLocation(object obj)
+        Location GetLocation (object obj)
         {
             return Location.Null;
             /*
