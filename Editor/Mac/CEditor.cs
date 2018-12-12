@@ -375,7 +375,7 @@ namespace CLanguage.Editor
                     continue;
                 var range = new NSRange (m.Location.Index, m.EndLocation.Index - m.Location.Index);
                 if (range.Location >= 0 && range.Length > 0 && range.Location < code.Length && range.Location + range.Length <= code.Length) {
-                    var attrs = m.MessageType == "Error" ? theme.ErrorAttributes (m.Text) : theme.WarningAttributes (m.Text);
+                    var attrs = m.MessageType == "Error" ? theme.ErrorAttributes (m.Text, null) : theme.WarningAttributes (m.Text, null);
                     foreach (var lm in managers) {
                         lm.AddTemporaryAttributes (attrs, range);
                     }
