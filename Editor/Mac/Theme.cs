@@ -91,7 +91,7 @@ namespace CLanguage.Editor
         }
 
 #if __MACOS__
-        public NSDictionary ErrorAttributes (string message)
+        public NSDictionary ErrorAttributes (string message, NSDictionary existingAttributes)
         {
             return new NativeStringAttributes {
                 //BackgroundColor = !isDark ? Rgb (0xFF, 0xCC, 0xCC) : Rgb (0x55, 0x00, 0x00),
@@ -101,7 +101,7 @@ namespace CLanguage.Editor
             }.Dictionary;
         }
 
-        public NSDictionary WarningAttributes (string message)
+        public NSDictionary WarningAttributes (string message, NSDictionary existingAttributes)
         {
             return new NativeStringAttributes {
                 UnderlineColor = NativeColor.SystemYellowColor,// !isDark ? Rgb (120, 73, 42) : Rgb (0xFF, 0xD3, 0x20),
@@ -110,19 +110,19 @@ namespace CLanguage.Editor
             }.Dictionary;
         }
 #elif __IOS__
-        public NSDictionary ErrorAttributes (string message)
+        public NSDictionary ErrorAttributes (string message, NSDictionary existingAttributes)
         {
-            return new NativeStringAttributes {
+            return new NativeStringAttributes ((NSDictionary)existingAttributes.MutableCopy ()) {
                 //BackgroundColor = !isDark ? Rgb (0xFF, 0xCC, 0xCC) : Rgb (0x55, 0x00, 0x00),
                 UnderlineColor = !isDark ? Rgb (0xFE, 0x00, 0x0B) : Rgb (0xFF, 0x00, 0x0B),
                 UnderlineStyle = NSUnderlineStyle.Thick.ToKit (),
             }.Dictionary;
         }
 
-        public NSDictionary WarningAttributes (string message)
+        public NSDictionary WarningAttributes (string message, NSDictionary existingAttributes)
         {
-            return new NativeStringAttributes {
-                UnderlineColor = NativeColor.Yellow,// !isDark ? Rgb (120, 73, 42) : Rgb (0xFF, 0xD3, 0x20),
+            return new NativeStringAttributes ((NSDictionary)existingAttributes.MutableCopy ()) {
+                UnderlineColor = !isDark ? Rgb (0xFE, 0xD3, 0x20) : Rgb (0xFF, 0xD3, 0x20),
                 UnderlineStyle = NSUnderlineStyle.Thick.ToKit (),
             }.Dictionary;
         }

@@ -131,8 +131,8 @@ namespace CLanguage.Editor
 					var spans = CLanguage.CLanguageService.Colorize (code, MachineInfo, printer);
                     LastPrinter = printer;
 
-					// Flatten the spans
-					var ncdata = new List<NSDictionary> (Enumerable.Repeat (defaultAttrs, code.Length));
+                    // Flatten the spans
+                    var ncdata = new List<NSDictionary> (Enumerable.Repeat (defaultAttrs, code.Length));
 					foreach (var s in spans) {
 						var a = colorAttrs[(int)s.Color];
 						for (var i = s.Index; i < s.Index + s.Length; i++) {
@@ -140,8 +140,24 @@ namespace CLanguage.Editor
 						}
 					}
 
-					// Show the results
-					BeginInvokeOnMainThread (() => {
+                    // Add error and warning underlines
+                    foreach (var m in printer.Messages) {
+                        if (m.Location.IsNull || m.EndLocation.IsNull)
+                            continue;
+                        if (m.Location.Document.Path != CLanguageService.DefaultCodePath)
+                            continue;
+                        var s = new NSRange (m.Location.Index, m.EndLocation.Index - m.Location.Index);
+                        if (s.Location >= 0 && s.Length > 0 && s.Location < code.Length && s.Location + s.Length <= code.Length) {
+                            var existingA = ncdata[(int)s.Location];
+                            var a = m.MessageType == "Error" ? theme.ErrorAttributes (m.Text, existingA) : theme.WarningAttributes (m.Text, existingA);
+                            for (var i = s.Location; i < s.Location + s.Length; i++) {
+                                ncdata[(int)i] = a;
+                            }
+                        }
+                    }
+
+                    // Show the results
+                    BeginInvokeOnMainThread (() => {
 						var ccode = adata.Value;
 						if (ccode == code && cdata.Count == ncdata.Count) {
 							//Console.WriteLine ("SET FORMATTING");
