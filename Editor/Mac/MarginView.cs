@@ -2,6 +2,7 @@
 using CoreGraphics;
 
 using static CLanguage.Editor.Extensions;
+using System.Collections.Generic;
 
 #if __IOS__
 using UIKit;
@@ -23,9 +24,10 @@ namespace CLanguage.Editor
 {
     class MarginView : DrawingView
     {
-        nfloat lineHeight = 15;
+        int startIndex = 0;
+        List<CGRect> lineBounds = new List<CGRect> (1) { new CGRect (0, 0, 40, 16) };
+        List<int> lineStarts = new List<int> (1) { 0 };
         CGRect textBounds = new CGRect (0, 0, 100, 1000);
-        int lineCount = 1;
 
         protected override void DrawDirtyRect (CGRect dirtyRect)
         {
@@ -35,27 +37,33 @@ namespace CLanguage.Editor
             var la = Theme.LineNumberAttributes;
             var fontHeight = "123".StringSize (la).Height;
 
-            var y = -textBounds.Y + (lineHeight - fontHeight);
             var bottom = Bounds.Bottom;
             var width = Bounds.Width;
             var hpad = (nfloat)4;
-            var frame = new CGRect (0, y, width - hpad, lineHeight);
 
-            for (var line = 1; line <= lineCount; line++) {
-                if (frame.Bottom > 0) {
-                    line.ToString ().DrawInRect (frame, la);
+            var rline = 0;
+            for (var line = 0; line < lineStarts.Count; line++) {
+                var lineStartIndex = lineStarts[line];
+
+                if (lineStartIndex >= startIndex) {
+                    if (rline < lineBounds.Count) {
+                        var frame = new CGRect (0, lineBounds[rline].Y - textBounds.Y, width, 16);
+                        (line + 1).ToString ().DrawInRect (frame, la);
+                        rline++;
+                    }
+                    else {
+                        break;
+                    }
                 }
-                frame.Y += lineHeight;
-                if (frame.Y > bottom)
-                    break;
             }
         }
 
-        public void SetLinePositions (nfloat lineHeight, CGRect bounds, int lineCount)
+        public void SetLinePositions (int startIndex, List<CGRect> lineBounds, CGRect bounds, List<int> lineStarts)
         {
-            this.lineHeight = lineHeight;
+            this.startIndex = startIndex;
+            this.lineBounds = lineBounds;
+            this.lineStarts = lineStarts;
             this.textBounds = bounds;
-            this.lineCount = lineCount;
             SetNeedsDisplayInRect (Bounds);
         }
     }

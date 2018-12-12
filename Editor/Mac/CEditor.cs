@@ -89,13 +89,13 @@ namespace CLanguage.Editor
             }
         }
 
-        int lineCount = 1;
+        List<int> lineStarts = new List<int> (1) { 0 };
 
         public event EventHandler TextChanged;
 
 #if __IOS__
         NativeColor EffectiveAppearance => TintColor;
-        static bool IsDark (NativeColor a) => false;
+        static bool IsDark (NativeColor a) => true;
         bool NeedsLayout { get => false; set => SetNeedsLayout (); }
         static readonly bool ios11 = UIDevice.CurrentDevice.CheckSystemVersion (11, 0);
 #elif __MACOS__
@@ -345,26 +345,24 @@ namespace CLanguage.Editor
             var tbounds = textView.Bounds;
             var bounds = tbounds;
 #endif
-            var visibleGlyphs = textView.LayoutManager.GlyphRangeForBoundingRect (bounds, textView.TextContainer);
-            //Console.WriteLine ("=========================");
-            //Console.WriteLine (visibleGlyphs);
-            //textView.LayoutManager.EnumerateLineFragments (visibleGlyphs, EnumerateLineFragments);
-            var visibleChars = textView.LayoutManager.CharacterRangeForGlyphRange (visibleGlyphs);
-            //Console.WriteLine (visibleChars);
+            var layoutManager = textView.LayoutManager;
+            var textContainer = textView.TextContainer;
+            var visibleGlyphs = layoutManager.GlyphRangeForBoundingRect (bounds, textContainer);
+            var visibleChars = layoutManager.CharacterRangeForGlyphRange (visibleGlyphs);
             var lines = textView.GetLinesInRange (visibleChars);
             var index = lines.Range.Location;
             var lineBounds = new List<CGRect> (lines.Lines.Count);
             for (var i = 0; i < lines.Lines.Count && index < lines.AllText.Length; i++) {
                 var line = lines.Lines[i];
                 var cr = new NSRange (index, line.Length);
-                var gr = textView.LayoutManager.GlyphRangeForCharacterRange (cr);
-                var b = textView.LayoutManager.BoundingRectForGlyphRange (gr, textView.TextContainer);
+                var gr = layoutManager.GlyphRangeForCharacterRange (cr);
+                var b = layoutManager.BoundingRectForGlyphRange (gr, textContainer);
+                b.Y += 12;
                 lineBounds.Add (b);
                 index += line.Length + 1;
-                //Console.WriteLine (b);
             }
 
-            margin.SetLinePositions (lineHeight, bounds, lineCount);
+            margin.SetLinePositions ((int)lines.Range.Location, lineBounds, bounds, lineStarts);
         }
 
 
@@ -393,7 +391,7 @@ namespace CLanguage.Editor
                 li = li + 1 < code.Length ? code.IndexOfAny (newlineChars, li + 1) : -1;
             }
             Debug.Assert (lc == lineStarts.Count, $"Line count mismatch: {lc} != {lineStarts.Count}");
-            lineCount = lc;
+            this.lineStarts = lineStarts;
 
 #if __MACOS__
             //
