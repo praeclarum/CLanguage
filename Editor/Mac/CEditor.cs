@@ -40,7 +40,7 @@ namespace CLanguage.Editor
 
         readonly ErrorView errorView = new ErrorView () { AlphaValue = 0 };
         nfloat errorHeight = (nfloat)32;
-        nfloat errorHMargin = (nfloat)16;
+        nfloat errorHMargin = (nfloat)18;
         nfloat errorVMargin = (nfloat)16;
         NSLayoutConstraint errorBottomConstraint;
 
@@ -181,6 +181,7 @@ namespace CLanguage.Editor
             scroll.DocumentView = textView;
             scroll.BackgroundColor = textView.BackgroundColor;
             scroll.DrawsBackground = true;
+            scroll.AutomaticallyAdjustsContentInsets = true;
 
             scroll.ContentView.PostsBoundsChangedNotifications = true;
             scrolledSubscription = NativeView.Notifications.ObserveBoundsChanged (scroll.ContentView, (sender, e) => {
