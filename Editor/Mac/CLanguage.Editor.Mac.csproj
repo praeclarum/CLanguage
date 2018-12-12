@@ -47,13 +47,14 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="EditorTextStorage.cs" />
-    <Compile Include="CTextEditor.cs" />
+    <Compile Include="CEditor.cs" />
     <Compile Include="Theme.cs" />
     <Compile Include="MarginView.cs" />
     <Compile Include="EditorTextView.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="ErrorView.cs" />
     <Compile Include="EditorPrinter.cs" />
+    <Compile Include="DrawingView.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\CLanguage\CLanguage.csproj">

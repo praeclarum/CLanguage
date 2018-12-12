@@ -1,66 +1,84 @@
 ﻿using System;
 using CoreGraphics;
 
+using static CLanguage.Editor.Extensions;
+using System.Collections.Generic;
+
 #if __IOS__
 using UIKit;
 using NativeColor = UIKit.UIColor;
 using NativeFont = UIKit.UIFont;
+using NativeGraphics = UIKit.UIGraphics;
 using NativeStringAttributes = UIKit.UIStringAttributes;
+using NativeTextAlignment = UIKit.UITextAlignment;
 #elif __MACOS__
 using AppKit;
-using NativeView = AppKit.NSView;
+using NativeColor = AppKit.NSColor;
+using NativeFont = AppKit.NSFont;
+using NativeGraphics = AppKit.NSGraphics;
+using NativeStringAttributes = AppKit.NSStringAttributes;
+using NativeTextAlignment = AppKit.NSTextAlignment;
 #endif
 
 namespace CLanguage.Editor
 {
-    class MarginView : NativeView
+    class MarginView : DrawingView
     {
-        Theme theme = new Theme (isDark: false);
-        public Theme Theme {
-            get => theme;
-            set {
-                theme = value;
-                SetNeedsDisplayInRect (Bounds);
-            }
-        }
-
-        nfloat lineHeight = 15;
-        nfloat baseline = 12;
+        int startIndex = 0;
+        List<CGRect> lineBounds = new List<CGRect> (1) { new CGRect (0, 0, 40, 16) };
+        List<int> lineStarts = new List<int> (1) { 0 };
         CGRect textBounds = new CGRect (0, 0, 100, 1000);
-        int lineCount = 1;
 
-        public override bool IsFlipped => true;
-
-        public override void DrawRect (CGRect dirtyRect)
+        protected override void DrawDirtyRect (CGRect dirtyRect)
         {
             Theme.BackgroundColor.Set ();
-            NSGraphics.RectFill (dirtyRect);
+            NativeGraphics.RectFill (dirtyRect);
 
             var la = Theme.LineNumberAttributes;
             var fontHeight = "123".StringSize (la).Height;
 
-            var y = -textBounds.Y + (lineHeight - fontHeight);
             var bottom = Bounds.Bottom;
-            var width = Bounds.Width;
+            nfloat x = -100;
+            var width = Bounds.Width + 100;
             var hpad = (nfloat)4;
-            var frame = new CGRect (0, y, width - hpad, lineHeight);
+            var yoff = -textBounds.Y;
 
-            for (var line = 1; line <= lineCount; line++) {
-                if (frame.Bottom > 0) {
-                    line.ToString ().DrawInRect (frame, la);
+            var codeLineHeight = "0".StringSize (Theme.CommentAttributes).Height;
+            var numLineHeight = "0".StringSize (la).Height;
+
+#if __MACOS__
+            var tyoff = Theme.LineHeightMultiple * Theme.CodeFont.PointSize - numLineHeight * 0.8f;
+#elif __IOS__
+            var tyoff = codeLineHeight - numLineHeight;
+#endif
+
+            var c = NativeGraphicsCGContext;
+            var rline = 0;
+            //NativeColor.White.Set ();
+            for (var line = 0; line < lineStarts.Count; line++) {
+                var lineStartIndex = lineStarts[line];
+
+                if (lineStartIndex >= startIndex) {
+                    if (rline < lineBounds.Count) {
+                        var frame = new CGRect (x, lineBounds[rline].Y + yoff, width, lineBounds[rline].Height);
+                        //c.StrokeRect (frame);
+                        frame.Y = (nfloat)Math.Floor (frame.Y + tyoff);
+                        (line + 1).ToString ().DrawInRect (frame, la);
+                        rline++;
+                    }
+                    else {
+                        break;
+                    }
                 }
-                frame.Y += lineHeight;
-                if (frame.Y > bottom)
-                    break;
             }
         }
 
-        public void SetLinePositions (nfloat lineHeight, nfloat baseline, CGRect bounds, int lineCount)
+        public void SetLinePositions (int startIndex, List<CGRect> lineBounds, CGRect bounds, List<int> lineStarts)
         {
-            this.lineHeight = lineHeight;
-            this.baseline = baseline;
+            this.startIndex = startIndex;
+            this.lineBounds = lineBounds;
+            this.lineStarts = lineStarts;
             this.textBounds = bounds;
-            this.lineCount = lineCount;
             SetNeedsDisplayInRect (Bounds);
         }
     }

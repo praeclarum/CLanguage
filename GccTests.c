@@ -1,7 +1,5 @@
 #include <stdio.h>
 
-// This  klj dsdfsdfsd
-
 void printType (const char *name, const char *ty)
 {
   printf ("%s = %s\n", name, ty);

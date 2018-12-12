@@ -5,25 +5,24 @@ using CoreGraphics;
 using UIKit;
 using NativeColor = UIKit.UIColor;
 using NativeFont = UIKit.UIFont;
+using NativeGraphics = UIKit.UIGraphics;
 using NativeStringAttributes = UIKit.UIStringAttributes;
 #elif __MACOS__
 using AppKit;
-using NativeView = AppKit.NSView;
+using NativeColor = AppKit.NSColor;
+using NativeFont = AppKit.NSFont;
+using NativeGraphics = AppKit.NSGraphics;
+using NativeStringAttributes = AppKit.NSStringAttributes;
 #endif
+
+using static CLanguage.Editor.Extensions;
+
+using Foundation;
 
 namespace CLanguage.Editor
 {
-    class ErrorView : NativeView
+    class ErrorView : DrawingView
     {
-        Theme theme = new Theme (isDark: false);
-        public Theme Theme {
-            get => theme;
-            set {
-                theme = value;
-                SetNeedsDisplayInRect (Bounds);
-            }
-        }
-
         Report.AbstractMessage message = new Report.AbstractMessage ("Info", "");
         public Report.AbstractMessage Message {
             get => message;
@@ -34,16 +33,39 @@ namespace CLanguage.Editor
             }
         }
 
-        public override bool IsFlipped => true;
-
-        public override void DrawRect (CGRect dirtyRect)
+        public ErrorView ()
         {
-            var c = NSGraphicsContext.CurrentContext.CGContext;
+            BackgroundColor = NativeColor.Clear;
+        }
 
-            NSColor.Clear.Set ();
-            NSGraphics.RectFill (dirtyRect);
+        protected override void DrawDirtyRect (CGRect dirtyRect)
+        {
+            var c = NativeGraphicsCGContext;
+
+            NativeColor.Clear.Set ();
+            NativeGraphics.RectFill (dirtyRect);
 
             var bounds = Bounds;
+            if (bounds.Width < bounds.Height)
+                return;
+
+            var mt = message.Text;
+            if (string.IsNullOrWhiteSpace (mt))
+                return;
+
+            var hpad = (nfloat)18;
+
+            if (!message.Location.IsNull)
+                mt = $"Line {message.Location.Line:#,0}: {mt}";
+
+            var amt = new NSAttributedString (mt, Theme.ErrorBubbleTextAttributes);
+
+            var smt = amt.GetSize ();
+            bounds = new CGRect (bounds.X + bounds.Width - smt.Width - 2 * hpad, bounds.Y, smt.Width + 2 * hpad, bounds.Height);
+            if (bounds.X < 0) {
+                bounds.Width += bounds.X;
+                bounds.X = 0;
+            }
             if (bounds.Width < bounds.Height)
                 return;
 
@@ -52,15 +74,8 @@ namespace CLanguage.Editor
             Theme.ErrorBubbleBackgroundColor.ColorWithAlphaComponent (0.875f).SetFill ();
             c.FillPath ();
 
-            var mt = message.Text;
-            if (string.IsNullOrWhiteSpace (mt))
-                return;
-
-            if (!message.Location.IsNull)
-                mt = $"Line {message.Location.Line:#,0}: {mt}";
-
-            bounds.Inflate (-18, -6);
-            mt.DrawInRect (bounds, Theme.ErrorBubbleTextAttributes);
+            bounds.Inflate (-hpad, -6);
+            amt.DrawInRect (bounds);
         }
     }
 }

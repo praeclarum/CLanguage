@@ -13,7 +13,7 @@ namespace CEditor
 	partial class ViewController
 	{
 		[Outlet]
-		CLanguage.Editor.CTextEditor textEditor { get; set; }
+		CLanguage.Editor.CEditor textEditor { get; set; }
 		
 		void ReleaseDesignerOutlets ()
 		{
