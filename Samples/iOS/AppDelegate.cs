@@ -17,6 +17,7 @@ namespace CEditor
 
         public override bool FinishedLaunching(UIApplication application, NSDictionary launchOptions)
         {
+            UINavigationBar.Appearance.BarStyle = UIBarStyle.Black;
             Window = new UIWindow(UIScreen.MainScreen.Bounds);
             Window.RootViewController = new UINavigationController(new ViewController(GetInitialUrlAsync ()));
             Window.MakeKeyAndVisible();

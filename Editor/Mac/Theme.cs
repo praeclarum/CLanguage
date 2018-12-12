@@ -23,7 +23,7 @@ namespace CLanguage.Editor
 {
     public class Theme
     {
-        readonly bool isDark;
+        public readonly bool IsDark;
 
         public NativeColor ErrorBubbleBackgroundColor { get; }
         public readonly NSDictionary ErrorBubbleTextAttributes;
@@ -47,7 +47,7 @@ namespace CLanguage.Editor
 
         public Theme (bool isDark)
         {
-            this.isDark = isDark;
+            this.IsDark = isDark;
 
             defaultAttrs = new NativeStringAttributes {
                 Font = codeFont,
@@ -95,7 +95,7 @@ namespace CLanguage.Editor
         {
             return new NativeStringAttributes {
                 //BackgroundColor = !isDark ? Rgb (0xFF, 0xCC, 0xCC) : Rgb (0x55, 0x00, 0x00),
-                UnderlineColor = !isDark ? Rgb (0xFE, 0x00, 0x0B) : Rgb (0xFF, 0x00, 0x0B),
+                UnderlineColor = !IsDark ? Rgb (0xFE, 0x00, 0x0B) : Rgb (0xFF, 0x00, 0x0B),
                 UnderlineStyle = NSUnderlineStyle.Thick.ToKit (),
                 ToolTip = message,
             }.Dictionary;
@@ -114,7 +114,7 @@ namespace CLanguage.Editor
         {
             return new NativeStringAttributes ((NSDictionary)existingAttributes.MutableCopy ()) {
                 //BackgroundColor = !isDark ? Rgb (0xFF, 0xCC, 0xCC) : Rgb (0x55, 0x00, 0x00),
-                UnderlineColor = !isDark ? Rgb (0xFE, 0x00, 0x0B) : Rgb (0xFF, 0x00, 0x0B),
+                UnderlineColor = !IsDark ? Rgb (0xFE, 0x00, 0x0B) : Rgb (0xFF, 0x00, 0x0B),
                 UnderlineStyle = NSUnderlineStyle.Thick.ToKit (),
             }.Dictionary;
         }
@@ -122,7 +122,7 @@ namespace CLanguage.Editor
         public NSDictionary WarningAttributes (string message, NSDictionary existingAttributes)
         {
             return new NativeStringAttributes ((NSDictionary)existingAttributes.MutableCopy ()) {
-                UnderlineColor = !isDark ? Rgb (0xFE, 0xD3, 0x20) : Rgb (0xFF, 0xD3, 0x20),
+                UnderlineColor = !IsDark ? Rgb (0xFE, 0xD3, 0x20) : Rgb (0xFF, 0xD3, 0x20),
                 UnderlineStyle = NSUnderlineStyle.Thick.ToKit (),
             }.Dictionary;
         }
@@ -130,7 +130,7 @@ namespace CLanguage.Editor
 
         NSDictionary MakeAttrs (NativeColor color, NativeColor darkColor) => new NativeStringAttributes {
             Font = codeFont,
-            ForegroundColor = isDark ? darkColor : color,
+            ForegroundColor = IsDark ? darkColor : color,
         }.Dictionary;
 
         NSDictionary MakeLineNumberAttrs () => new NativeStringAttributes {

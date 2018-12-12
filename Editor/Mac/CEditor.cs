@@ -460,6 +460,7 @@ namespace CLanguage.Editor
 #elif __IOS__
             ((EditorTextStorage)textView.TextStorage).Theme = theme;
             BackgroundColor = theme.BackgroundColor;
+            textView.KeyboardAppearance = theme.IsDark ? UIKeyboardAppearance.Dark : UIKeyboardAppearance.Light;
 #endif
             SetNeedsDisplayInRect (Bounds);
         }
