@@ -48,6 +48,7 @@ namespace CLanguage.Editor
         {
             Opaque = false;
             ContentMode = UIViewContentMode.Redraw;
+            UserInteractionEnabled = false;
         }
         public override void Draw (CGRect rect)
         {

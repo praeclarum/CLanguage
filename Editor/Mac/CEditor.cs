@@ -33,9 +33,10 @@ using static CLanguage.Editor.Extensions;
 namespace CLanguage.Editor
 {
     [Register ("CEditor")]
-    public partial class CEditor : NativeView, INSTextStorageDelegate, INativeTextViewDelegate
+    public class CEditor : NativeView, INSTextStorageDelegate, INativeTextViewDelegate
     {
         readonly EditorTextView textView;
+        public NativeTextView TextView => textView;
 
         readonly ErrorView errorView = new ErrorView () { AlphaValue = 0 };
         nfloat errorHeight = (nfloat)32;
@@ -200,6 +201,7 @@ namespace CLanguage.Editor
             textView.KeyboardType = UIKeyboardType.Default;
             if (ios11) {
                 textView.SmartQuotesType = UITextSmartQuotesType.No;
+                errorVMargin = 0; // Safe area insets are used instead
             }
 #endif
 
