@@ -197,8 +197,10 @@ namespace CLanguage.Editor
             textView.AlwaysBounceHorizontal = false;
             textView.AutocorrectionType = UITextAutocorrectionType.No;
             textView.AutocapitalizationType = UITextAutocapitalizationType.None;
-            textView.SmartQuotesType = UITextSmartQuotesType.No;
             textView.KeyboardType = UIKeyboardType.Default;
+            if (ios11) {
+                textView.SmartQuotesType = UITextSmartQuotesType.No;
+            }
 #endif
 
             scroll.Frame = sframe;
