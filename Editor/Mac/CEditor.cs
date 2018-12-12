@@ -197,6 +197,8 @@ namespace CLanguage.Editor
             textView.AlwaysBounceHorizontal = false;
             textView.AutocorrectionType = UITextAutocorrectionType.No;
             textView.AutocapitalizationType = UITextAutocapitalizationType.None;
+            textView.SmartQuotesType = UITextSmartQuotesType.No;
+            textView.KeyboardType = UIKeyboardType.Default;
 #endif
 
             scroll.Frame = sframe;
@@ -231,7 +233,6 @@ namespace CLanguage.Editor
             if (ios11) {
                 AddConstraint (NSLayoutConstraint.Create (SafeAreaLayoutGuide, NSLayoutAttribute.Trailing, NSLayoutRelation.Equal, scroll, NSLayoutAttribute.Trailing, 1, 0));
                 AddConstraint (NSLayoutConstraint.Create (SafeAreaLayoutGuide, NSLayoutAttribute.Leading, NSLayoutRelation.Equal, margin, NSLayoutAttribute.Leading, 1, 0));
-                errorVMargin = 0;
                 AddConstraint (errorBottomConstraint = NSLayoutConstraint.Create (SafeAreaLayoutGuide, NSLayoutAttribute.Bottom, NSLayoutRelation.Equal, errorView, NSLayoutAttribute.Bottom, 1, errorVMargin));
                 AddConstraint (NSLayoutConstraint.Create (SafeAreaLayoutGuide, NSLayoutAttribute.Trailing, NSLayoutRelation.Equal, errorView, NSLayoutAttribute.Trailing, 1, errorHMargin));
             }
@@ -352,12 +353,11 @@ namespace CLanguage.Editor
             var lines = textView.GetLinesInRange (visibleChars);
             var index = lines.Range.Location;
             var lineBounds = new List<CGRect> (lines.Lines.Count);
-            for (var i = 0; i < lines.Lines.Count && index < lines.AllText.Length; i++) {
+            for (var i = 0; i < lines.Lines.Count && index <= lines.AllText.Length; i++) {
                 var line = lines.Lines[i];
                 var cr = new NSRange (index, line.Length);
                 var gr = layoutManager.GlyphRangeForCharacterRange (cr);
                 var b = layoutManager.BoundingRectForGlyphRange (gr, textContainer);
-                b.Y += 12;
                 lineBounds.Add (b);
                 index += line.Length + 1;
             }

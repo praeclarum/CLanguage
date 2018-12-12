@@ -67,7 +67,7 @@ namespace CLanguage.Editor
                 ForegroundColor = Gray (255).ColorWithAlphaComponent (0.9375f),
                 Font = NativeFont.BoldSystemFontOfSize (NativeFont.SystemFontSize),
             }.Dictionary;
-            LineNumberColor = isDark ? Gray (85) : Gray (200);
+            LineNumberColor = isDark ? Gray (85) : Gray (255).ColorWithAlpha (0.75f);
             LineNumberAttributes = MakeLineNumberAttrs ();
             ColorAttributes = Enumerable.Repeat (defaultAttrs, 16).ToArray ();
 

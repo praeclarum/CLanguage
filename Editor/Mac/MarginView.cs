@@ -47,7 +47,7 @@ namespace CLanguage.Editor
 
                 if (lineStartIndex >= startIndex) {
                     if (rline < lineBounds.Count) {
-                        var frame = new CGRect (0, lineBounds[rline].Y - textBounds.Y, width, 16);
+                        var frame = new CGRect (0, lineBounds[rline].Y - textBounds.Y + 11, width, 16);
                         (line + 1).ToString ().DrawInRect (frame, la);
                         rline++;
                     }
