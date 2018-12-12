@@ -199,7 +199,13 @@ namespace CLanguage.Editor
                 var newLines = map (lines.AllText, lines.Range, lines.Lines).ToArray ();
                 if (!newLines.SequenceEqual (lines.Lines)) {
                     var newLinesText = string.Join ("\n", newLines);
+#if __MACOS__
                     TextStorage.Replace (lines.Range, newLinesText);
+#elif __IOS__
+                    var rangeStart = GetPosition (BeginningOfDocument, lines.Range.Location);
+                    var rangeEnd = GetPosition (rangeStart, lines.Range.Length);
+                    ReplaceText (GetTextRange (rangeStart, rangeEnd), newLinesText);
+#endif
                     if (lines.Lines.Count > 0) {
                         SelectedRange = new NSRange (lines.Range.Location, newLinesText.Length);
                     }

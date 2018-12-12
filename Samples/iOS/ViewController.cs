@@ -12,17 +12,22 @@ namespace CEditor
     {
         readonly CLanguage.Editor.CEditor textEditor = new CLanguage.Editor.CEditor (UIScreen.MainScreen.Bounds);
 
-        private readonly Task<NSUrl> initialDocumentUrlTask;
+        readonly Task<NSUrl> initialDocumentUrlTask;
 
         Document document;
 
         public ViewController (Task<NSUrl> initialDocumentUrlTask)
         {
+            this.initialDocumentUrlTask = initialDocumentUrlTask;
+
+            AddKeyCommand (UIKeyCommand.Create (new NSString ("]"), UIKeyModifierFlags.Command, new ObjCRuntime.Selector ("indent:")));
+            AddKeyCommand (UIKeyCommand.Create (new NSString ("["), UIKeyModifierFlags.Command, new ObjCRuntime.Selector ("outdent:")));
+            AddKeyCommand (UIKeyCommand.Create (new NSString ("/"), UIKeyModifierFlags.Command, new ObjCRuntime.Selector ("toggleComment:")));
+
             textEditor.Options = new CLanguage.Compiler.CompilerOptions (
                 new ArduinoTestMachineInfo (),
                 new CLanguage.Report (),
                 Enumerable.Empty<CLanguage.Syntax.Document> ());
-            this.initialDocumentUrlTask = initialDocumentUrlTask;
         }
 
         public override void ViewDidLoad()
@@ -44,6 +49,15 @@ namespace CEditor
         {
             base.DidReceiveMemoryWarning();
         }
+
+        [Export ("indent:")]
+        void Indent (NSObject sender) => textEditor.Indent (sender);
+
+        [Export ("outdent:")]
+        void Outdent (NSObject sender) => textEditor.Outdent (sender);
+
+        [Export ("toggleComment:")]
+        void ToggleComment (NSObject sender) => textEditor.ToggleComment (sender);
 
         async Task LoadDocumentAsync ()
         {
