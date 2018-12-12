@@ -25,14 +25,6 @@ namespace CLanguage.Editor
 {
 	class EditorTextStorage : NSTextStorage
 	{
-		static readonly NativeFont CodeFont = Font ("Menlo-Regular", (int)(NativeFont.SystemFontSize + 0.5));
-
-		static readonly NSDictionary defaultAttrs = new NativeStringAttributes {
-			Font = CodeFont,
-			ForegroundColor = Rgb (128, 128, 128),
-		}.Dictionary;
-
-		readonly bool isDark = false;
         readonly NSMutableAttributedString adata = new NSMutableAttributedString ();
 		List<NSDictionary> cdata = new List<NSDictionary> ();
 
@@ -71,11 +63,6 @@ namespace CLanguage.Editor
 		{
 		}
 
-		NSDictionary MakeAttrs (NativeColor color, NativeColor darkColor) => new NativeStringAttributes {
-			Font = CodeFont,
-			ForegroundColor = isDark ? darkColor : color,
-		}.Dictionary;
-
 		[Export ("attributesAtIndex:effectiveRange:")]
 		IntPtr GetAttributes (nint index, IntPtr rangePointer)
 		{
@@ -84,7 +71,7 @@ namespace CLanguage.Editor
 
 			var i = (int)index;
 			var e = i + 1;
-			var a = defaultAttrs.Handle;
+			var a = theme.CommentAttributes.Handle;
 			if (i >= 0 && i < cdata.Count) {
 				a = cdata[i].Handle;
 				while (e < cdata.Count && cdata[e].Handle == a)
@@ -106,7 +93,7 @@ namespace CLanguage.Editor
 
 			int index = (int)range.Location;
 			cdata.RemoveRange (index, (int)range.Length);
-			var a = index >= 0 && index < cdata.Count ? cdata[index] : defaultAttrs;
+			var a = index >= 0 && index < cdata.Count ? cdata[index] : theme.CommentAttributes;
 			cdata.InsertRange (index, Enumerable.Repeat (a, (int)value.Length));
 
 			Edited (CharsEdited | AttrsEdited, range, value.Length - range.Length);
@@ -133,6 +120,7 @@ namespace CLanguage.Editor
                     LastPrinter = printer;
 
                     // Flatten the spans
+                    var defaultAttrs = theme.CommentAttributes;
                     var ncdata = new List<NSDictionary> (Enumerable.Repeat (defaultAttrs, code.Length));
 					foreach (var s in spans) {
 						var a = colorAttrs[(int)s.Color];

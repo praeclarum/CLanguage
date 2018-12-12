@@ -338,16 +338,15 @@ namespace CLanguage.Editor
 
         void UpdateMargin ()
         {
-#if __MACOS__
-            var lineHeight = textView.LayoutManager.DefaultLineHeightForFont (theme.CodeFont);
-            var bounds = scroll.ContentView.Bounds;
-#elif __IOS__
-            var lineHeight = (nfloat)NativeFont.SystemFontSize;
-            var tbounds = textView.Bounds;
-            var bounds = tbounds;
-#endif
             var layoutManager = textView.LayoutManager;
             var textContainer = textView.TextContainer;
+#if __MACOS__
+            var bounds = scroll.ContentView.Bounds;
+            var lfpad = textView.TextContainerInset.Height;
+#elif __IOS__
+            var bounds = textView.Bounds;
+            var lfpad = textView.TextContainerInset.Top;
+#endif
             var visibleGlyphs = layoutManager.GlyphRangeForBoundingRect (bounds, textContainer);
             var visibleChars = layoutManager.CharacterRangeForGlyphRange (visibleGlyphs);
             var lines = textView.GetLinesInRange (visibleChars);
@@ -358,6 +357,7 @@ namespace CLanguage.Editor
                 var cr = new NSRange (index, line.Length);
                 var gr = layoutManager.GlyphRangeForCharacterRange (cr);
                 var b = layoutManager.BoundingRectForGlyphRange (gr, textContainer);
+                b.Y += lfpad;
                 lineBounds.Add (b);
                 index += line.Length + 1;
             }

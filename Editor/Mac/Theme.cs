@@ -12,11 +12,13 @@ using UIKit;
 using NativeColor = UIKit.UIColor;
 using NativeFont = UIKit.UIFont;
 using NativeStringAttributes = UIKit.UIStringAttributes;
+using NativeLineBreakMode = UIKit.UILineBreakMode;
 #elif __MACOS__
 using AppKit;
 using NativeColor = AppKit.NSColor;
 using NativeFont = AppKit.NSFont;
 using NativeStringAttributes = AppKit.NSStringAttributes;
+using NativeLineBreakMode = AppKit.NSLineBreakMode;
 #endif
 
 namespace CLanguage.Editor
@@ -24,6 +26,7 @@ namespace CLanguage.Editor
     public class Theme
     {
         public readonly bool IsDark;
+        public readonly nfloat LineHeightMultiple;
 
         public NativeColor ErrorBubbleBackgroundColor { get; }
         public readonly NSDictionary ErrorBubbleTextAttributes;
@@ -34,6 +37,7 @@ namespace CLanguage.Editor
         static readonly NativeFont codeFont = Font (FindFontFamily (), (int)(NativeFont.SystemFontSize + 0.5));
 
         public NativeFont CodeFont => codeFont;
+        public NativeFont LineNumberFont { get; }
 
         public NSDictionary TypingAttributes => defaultAttrs;
         public NSDictionary CommentAttributes => defaultAttrs;
@@ -45,13 +49,21 @@ namespace CLanguage.Editor
 
         readonly NSDictionary defaultAttrs;
 
+        readonly NSParagraphStyle defaultParagraph;
+
         public Theme (bool isDark)
         {
             this.IsDark = isDark;
 
+            this.LineHeightMultiple = 1.2f;
+
+            defaultParagraph = new NSMutableParagraphStyle {
+                LineHeightMultiple = LineHeightMultiple,
+            };
             defaultAttrs = new NativeStringAttributes {
                 Font = codeFont,
                 ForegroundColor = !isDark ? Rgb (101, 121, 140) : Rgb (127, 140, 152),
+                ParagraphStyle = defaultParagraph,
             }.Dictionary;
             SelectedAttributes = new NativeStringAttributes {
 #if __MACOS__
@@ -67,7 +79,8 @@ namespace CLanguage.Editor
                 ForegroundColor = Gray (255).ColorWithAlphaComponent (0.9375f),
                 Font = NativeFont.BoldSystemFontOfSize (NativeFont.SystemFontSize),
             }.Dictionary;
-            LineNumberColor = isDark ? Gray (85) : Gray (255).ColorWithAlpha (0.75f);
+            LineNumberFont = Font (codeFont.GetFontName (), (int)(NativeFont.SystemFontSize * 0.8 + 0.5));
+            LineNumberColor = isDark ? Gray (85) : Gray (255).ColorWithAlphaComponent (0.75f);
             LineNumberAttributes = MakeLineNumberAttrs ();
             ColorAttributes = Enumerable.Repeat (defaultAttrs, 16).ToArray ();
 
@@ -131,13 +144,15 @@ namespace CLanguage.Editor
         NSDictionary MakeAttrs (NativeColor color, NativeColor darkColor) => new NativeStringAttributes {
             Font = codeFont,
             ForegroundColor = IsDark ? darkColor : color,
+            ParagraphStyle = defaultParagraph,
         }.Dictionary;
 
         NSDictionary MakeLineNumberAttrs () => new NativeStringAttributes {
-            Font = Font (codeFont.GetFontName (), (int)(NativeFont.SystemFontSize * 0.8 + 0.5)),
+            Font = LineNumberFont,
             ForegroundColor = LineNumberColor,
             ParagraphStyle = new NSMutableParagraphStyle {
                 Alignment = TextAlignmentRight,
+                LineBreakMode = NativeLineBreakModeClipping,
             }
         }.Dictionary;
 

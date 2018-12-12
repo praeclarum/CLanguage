@@ -8,6 +8,7 @@ using NativeGraphics = UIKit.UIGraphics;
 using NativeStringAttributes = UIKit.UIStringAttributes;
 using NativeTextAlignment = UIKit.UITextAlignment;
 using NativeTextView = UIKit.UITextView;
+using NativeLineBreakMode = UIKit.UILineBreakMode;
 #elif __MACOS__
 using AppKit;
 using NativeColor = AppKit.NSColor;
@@ -16,6 +17,7 @@ using NativeGraphics = AppKit.NSGraphics;
 using NativeStringAttributes = AppKit.NSStringAttributes;
 using NativeTextAlignment = AppKit.NSTextAlignment;
 using NativeTextView = AppKit.NSTextView;
+using NativeLineBreakMode = AppKit.NSLineBreakMode;
 #endif
 
 using Foundation;
@@ -53,6 +55,7 @@ namespace CLanguage.Editor
             new NSAttributedString (text, attributes).DrawString (rect);
         public static void DrawInRect (this NSAttributedString text, CGRect rect) =>
             text.DrawString (rect);
+        public static NativeLineBreakMode NativeLineBreakModeClipping => NativeLineBreakMode.Clip;
 #else
         public static NativeColor Rgb (int r, int g, int b) => NativeColor.FromRgb (r, g, b);
         public static NativeColor Gray (int g) => NativeColor.FromWhite (g / ((nfloat)255), 1);
@@ -63,6 +66,7 @@ namespace CLanguage.Editor
         public static NativeTextAlignment TextAlignmentRight = NativeTextAlignment.Right;
         public static NSRange CharacterRangeForGlyphRange (this NSLayoutManager layoutManager, NSRange glyphRange) => layoutManager.CharacterRangeForGlyphRange (glyphRange, out var _);
         public static NSRange GlyphRangeForCharacterRange (this NSLayoutManager layoutManager, NSRange charRange) => layoutManager.GlyphRangeForCharacterRange (charRange, out var _);
+        public static NativeLineBreakMode NativeLineBreakModeClipping => NativeLineBreakMode.Clipping;
 #endif
     }
 }

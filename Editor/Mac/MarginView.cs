@@ -38,16 +38,31 @@ namespace CLanguage.Editor
             var fontHeight = "123".StringSize (la).Height;
 
             var bottom = Bounds.Bottom;
-            var width = Bounds.Width;
+            nfloat x = -100;
+            var width = Bounds.Width + 100;
             var hpad = (nfloat)4;
+            var yoff = -textBounds.Y;
 
+            var codeLineHeight = "0".StringSize (Theme.CommentAttributes).Height;
+            var numLineHeight = "0".StringSize (la).Height;
+
+#if __MACOS__
+            var tyoff = Theme.LineHeightMultiple * Theme.CodeFont.PointSize - numLineHeight * 0.8f;
+#elif __IOS__
+            var tyoff = codeLineHeight - numLineHeight;
+#endif
+
+            var c = NativeGraphicsCGContext;
             var rline = 0;
+            //NativeColor.White.Set ();
             for (var line = 0; line < lineStarts.Count; line++) {
                 var lineStartIndex = lineStarts[line];
 
                 if (lineStartIndex >= startIndex) {
                     if (rline < lineBounds.Count) {
-                        var frame = new CGRect (0, lineBounds[rline].Y - textBounds.Y + 11, width, 16);
+                        var frame = new CGRect (x, lineBounds[rline].Y + yoff, width, lineBounds[rline].Height);
+                        //c.StrokeRect (frame);
+                        frame.Y = (nfloat)Math.Floor (frame.Y + tyoff);
                         (line + 1).ToString ().DrawInRect (frame, la);
                         rline++;
                     }
