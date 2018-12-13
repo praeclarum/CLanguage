@@ -43,6 +43,7 @@ namespace CLanguage.Editor
             };
             stackView = new UIStackView (Bounds) {
                 AutoresizingMask = UIViewAutoresizing.FlexibleDimensions,
+                Distribution = UIStackViewDistribution.FillEqually,
             };
             visualEffectView.ContentView.AddSubview (stackView);
             AddSubview (visualEffectView);
@@ -56,7 +57,7 @@ namespace CLanguage.Editor
                 new InsertTextKey ("}"),
                 new InsertTextKey ("("),
                 new InsertTextKey (")"),
-                new InsertTextKey ("."),
+                new InsertTextKey ("="),
                 new InsertTextKey (","),
                 new InsertTextKey (";")
                 );
