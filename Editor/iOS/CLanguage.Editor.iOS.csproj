@@ -76,6 +76,7 @@
       <Link>DrawingView.cs</Link>
     </Compile>
     <Compile Include="CEditorController.cs" />
+    <Compile Include="EditorKeyboardAccessory.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\CLanguage\CLanguage.csproj">

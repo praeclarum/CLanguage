@@ -101,6 +101,7 @@ namespace CLanguage.Editor
         static bool IsDark (NativeColor a) => true;
         bool NeedsLayout { get => false; set => SetNeedsLayout (); }
         static readonly bool ios11 = UIDevice.CurrentDevice.CheckSystemVersion (11, 0);
+        EditorKeyboardAccessory keyboardAccessory;
 #elif __MACOS__
         readonly NSScrollView scroll;
         IDisposable scrolledSubscription;
@@ -205,6 +206,8 @@ namespace CLanguage.Editor
             textView.AutocapitalizationType = UITextAutocapitalizationType.None;
             textView.AllowsEditingTextAttributes = false;
             textView.KeyboardType = UIKeyboardType.Default;
+            keyboardAccessory = new EditorKeyboardAccessory (this);
+            textView.InputAccessoryView = keyboardAccessory;
             if (ios11) {
                 textView.SmartInsertDeleteType = UITextSmartInsertDeleteType.No;
                 textView.SmartDashesType = UITextSmartDashesType.No;
@@ -524,6 +527,7 @@ namespace CLanguage.Editor
             ((EditorTextStorage)textView.TextStorage).Theme = theme;
             BackgroundColor = theme.BackgroundColor;
             textView.KeyboardAppearance = theme.IsDark ? UIKeyboardAppearance.Dark : UIKeyboardAppearance.Light;
+            keyboardAccessory.Theme = theme;
 #endif
             SetNeedsDisplayInRect (Bounds);
         }

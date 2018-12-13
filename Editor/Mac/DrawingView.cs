@@ -23,8 +23,10 @@ namespace CLanguage.Editor
         public Theme Theme {
             get => theme;
             set {
-                theme = value;
-                SetNeedsDisplayInRect (Bounds);
+                if (!ReferenceEquals (theme, value)) {
+                    theme = value;
+                    SetNeedsDisplayInRect (Bounds);
+                }
             }
         }
 
