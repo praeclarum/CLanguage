@@ -219,13 +219,6 @@ namespace CLanguage.Editor
                 else if (obj.State == UIGestureRecognizerState.Changed) {
                     Theme = theme.WithFontScale (initialFontScale * obj.Scale);
                 }
-                else {
-                    LayoutIfNeeded ();
-                    Animate (0.25, () => {
-                        marginWidthConstraint.Constant = (nfloat)(marginWidth * theme.FontScale);
-                        LayoutIfNeeded ();
-                    });
-                }
             });
             AddGestureRecognizer (pinch);
 #endif
@@ -341,20 +334,42 @@ namespace CLanguage.Editor
             return r;
         }
 
+        [Export ("increaseFontSize:")]
+        public void IncreaseFontSize (NSObject sender)
+        {
+            Theme = Theme.WithFontScale (Theme.FontScale * 1.25);
+        }
+
+        [Export ("decreaseFontSize:")]
+        public void DecreaseFontSize (NSObject sender)
+        {
+            Theme = Theme.WithFontScale (Theme.FontScale / 1.25);
+        }
+
+        [Export ("restoreFontSize:")]
+        public void RestoreFontSize (NSObject sender)
+        {
+            Theme = Theme.WithFontScale (1);
+        }
+
         [Export ("textStorage:didProcessEditing:range:changeInLength:")]
         async void DidProcessEditing (NSTextStorage textStorage, NSTextStorageEditActions editedMask, NSRange editedRange, nint delta)
         {
-            if (editedMask.HasFlag (NSTextStorageEditActions.Characters)) {
-                //
-                // Have to yield here because this is called *before* the layout managers are updated.
-                // And we need them to be in sync. So we yield and catch the next run loop.
-                //
-                await Task.Yield ();
+            //
+            // Have to yield here because this is called *before* the layout managers are updated.
+            // And we need them to be in sync. So we yield and catch the next run loop.
+            //
+            await Task.Yield ();
 
+            if (editedMask.HasFlag (NSTextStorageEditActions.Characters)) {
                 ColorizeCode (textStorage);
                 UpdateMargin ();
                 TextChanged?.Invoke (this, EventArgs.Empty);
             }
+            else if (editedMask.HasFlag (NSTextStorageEditActions.Attributes)) {
+                UpdateMargin ();
+            }
+            UpdateMarginWidth ();
         }
 
 #if __IOS__
@@ -406,6 +421,10 @@ namespace CLanguage.Editor
             margin.SetLinePositions ((int)lines.Range.Location, lineBounds, bounds, lineStarts);
         }
 
+        void UpdateMarginWidth ()
+        {
+            marginWidthConstraint.Constant = (nfloat)(marginWidth * theme.FontScale);
+        }
 
         void EnumerateLineFragments (CGRect rect, CGRect usedRectangle, NSTextContainer textContainer, NSRange glyphRange, ref bool stop)
         {
@@ -504,7 +523,6 @@ namespace CLanguage.Editor
             BackgroundColor = theme.BackgroundColor;
             textView.KeyboardAppearance = theme.IsDark ? UIKeyboardAppearance.Dark : UIKeyboardAppearance.Light;
 #endif
-            UpdateMargin ();
             SetNeedsDisplayInRect (Bounds);
         }
     }

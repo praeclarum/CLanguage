@@ -112,6 +112,8 @@ namespace CLanguage.Editor
             var newSize = (int)(baseSize * newFontScale + 0.5);
             if (newSize < 5)
                 newSize = 5;
+            else if (newSize > 50)
+                newSize = 50;
             if (newSize == oldSize)
                 return this;
             return new Theme (IsDark, newSize / baseSize);

@@ -22,6 +22,9 @@ namespace CLanguage.Editor
             AddKeyCommand (UIKeyCommand.Create (new NSString ("]"), UIKeyModifierFlags.Command, new ObjCRuntime.Selector ("indent:"), new NSString ("Indent".Localize ())));
             AddKeyCommand (UIKeyCommand.Create (new NSString ("["), UIKeyModifierFlags.Command, new ObjCRuntime.Selector ("outdent:"), new NSString ("Outdent".Localize ())));
             AddKeyCommand (UIKeyCommand.Create (new NSString ("/"), UIKeyModifierFlags.Command, new ObjCRuntime.Selector ("toggleComment:"), new NSString ("Toggle Comment".Localize ())));
+            AddKeyCommand (UIKeyCommand.Create (new NSString ("="), UIKeyModifierFlags.Command, new ObjCRuntime.Selector ("increaseFontSize:"), new NSString ("Increase Font Size".Localize ())));
+            AddKeyCommand (UIKeyCommand.Create (new NSString ("-"), UIKeyModifierFlags.Command, new ObjCRuntime.Selector ("decreaseFontSize:"), new NSString ("Decrease Font Size".Localize ())));
+            AddKeyCommand (UIKeyCommand.Create (new NSString ("0"), UIKeyModifierFlags.Command, new ObjCRuntime.Selector ("restoreFontSize:"), new NSString ("Restore Font Size".Localize ())));
         }
 
         public override void ViewDidLoad ()
@@ -89,5 +92,14 @@ namespace CLanguage.Editor
 
         [Export ("toggleComment:")]
         public void ToggleComment (NSObject sender) => textEditor.ToggleComment (sender);
+
+        [Export ("increaseFontSize:")]
+        public void IncreaseFontSize (NSObject sender) => textEditor.IncreaseFontSize (sender);
+
+        [Export ("decreaseFontSize:")]
+        public void DecreaseFontSize (NSObject sender) => textEditor.DecreaseFontSize (sender);
+
+        [Export ("restoreFontSize:")]
+        public void RestoreFontSize (NSObject sender) => textEditor.RestoreFontSize (sender);
     }
 }
