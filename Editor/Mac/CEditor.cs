@@ -192,7 +192,7 @@ namespace CLanguage.Editor
 
             appearanceObserver = this.AddObserver ("effectiveAppearance", NSKeyValueObservingOptions.Initial | NSKeyValueObservingOptions.New, change => {
                 if (change.NewValue is NSAppearance a) {
-                    Theme = new Theme (isDark: IsDark (a));
+                    Theme = new Theme (isDark: IsDark (a), fontScale: Theme.FontScale);
                 }
             });
 #elif __IOS__
@@ -423,7 +423,9 @@ namespace CLanguage.Editor
 
         void UpdateMarginWidth ()
         {
-            marginWidthConstraint.Constant = (nfloat)(marginWidth * theme.FontScale);
+            var lineCount = lineStarts.Count;
+            var size = lineCount.ToString ().StringSize (theme.LineNumberAttributes);
+            marginWidthConstraint.Constant = (nfloat)(size.Width + 10 * theme.FontScale);
         }
 
         void EnumerateLineFragments (CGRect rect, CGRect usedRectangle, NSTextContainer textContainer, NSRange glyphRange, ref bool stop)

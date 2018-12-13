@@ -38,9 +38,9 @@ namespace CLanguage.Editor
             var fontHeight = "123".StringSize (la).Height;
 
             var bottom = Bounds.Bottom;
-            nfloat x = -100;
-            var width = Bounds.Width + 100;
-            var hpad = (nfloat)4;
+            var hpad = 4 * Theme.FontScale;
+            var width = Bounds.Width - hpad;
+            var x = 0;
             var yoff = -textBounds.Y;
 
             var codeLineHeight = "0".StringSize (Theme.CommentAttributes).Height;
