@@ -51,6 +51,8 @@ namespace CLanguage.Editor
                     var kframe = Editor.ConvertRectFromView (e.FrameEnd, null);
                     var intersection = Editor.Bounds;
                     intersection.Intersect (kframe);
+                    if (kframe.Bottom < Editor.Bounds.Bottom - 1 || intersection.Width <= 0)
+                        intersection.Height = 0;
                     //Console.WriteLine ($"INTERSECTION {intersection}");
 
                     var safeBottom = intersection.Height + 32; // Add about 2 lines to the bottom
