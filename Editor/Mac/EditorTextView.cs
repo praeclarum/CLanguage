@@ -207,7 +207,12 @@ namespace CLanguage.Editor
                     ReplaceText (GetTextRange (rangeStart, rangeEnd), newLinesText);
 #endif
                     if (lines.Lines.Count > 0) {
-                        SelectedRange = new NSRange (lines.Range.Location, newLinesText.Length);
+                        if (lines.Lines.Count == 1) {
+                            SelectedRange = new NSRange (lines.Range.Location + newLinesText.Length, 0);
+                        }
+                        else {
+                            SelectedRange = new NSRange (lines.Range.Location, newLinesText.Length);
+                        }
                     }
                 }
             }
