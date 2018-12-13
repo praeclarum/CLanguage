@@ -82,7 +82,7 @@ namespace CLanguage.Editor
                 Font = NativeFont.BoldSystemFontOfSize (NativeFont.SystemFontSize),
             }.Dictionary;
             LineNumberFont = Font (codeFont.GetFontName (), (int)(NativeFont.SystemFontSize * 0.8 * fontScale + 0.5));
-            LineNumberColor = isDark ? Gray (255).ColorWithAlphaComponent (0.125f) : Gray (255).ColorWithAlphaComponent (0.75f);
+            LineNumberColor = !isDark ? Gray (0).ColorWithAlphaComponent (0.25f) : Gray (255).ColorWithAlphaComponent (0.125f);
             LineNumberAttributes = MakeLineNumberAttrs ();
             ColorAttributes = Enumerable.Repeat (defaultAttrs, 16).ToArray ();
 
