@@ -85,8 +85,10 @@ namespace CLanguage.Editor
         public Theme Theme {
             get => theme;
             set {
-                theme = value;
-                OnThemeChanged ();
+                if (!ReferenceEquals (theme, value)) {
+                    theme = value;
+                    OnThemeChanged ();
+                }
             }
         }
 
@@ -113,7 +115,7 @@ namespace CLanguage.Editor
             scroll = new NSScrollView (Bounds);
 #elif __IOS__
 #endif
-            theme = new Theme (IsDark (EffectiveAppearance));
+            theme = new Theme (IsDark (EffectiveAppearance), fontScale: 1);
             Initialize ();
         }
 
@@ -124,7 +126,7 @@ namespace CLanguage.Editor
             scroll = new NSScrollView (Bounds);
 #elif __IOS__
 #endif
-            theme = new Theme (IsDark (EffectiveAppearance));
+            theme = new Theme (IsDark (EffectiveAppearance), fontScale: 1);
             Initialize ();
         }
 
@@ -135,7 +137,7 @@ namespace CLanguage.Editor
             scroll = new NSScrollView (Bounds);
 #elif __IOS__
 #endif
-            theme = new Theme (IsDark (EffectiveAppearance));
+            theme = new Theme (IsDark (EffectiveAppearance), fontScale: 1);
             Initialize ();
         }
 
@@ -209,6 +211,23 @@ namespace CLanguage.Editor
                 textView.SmartQuotesType = UITextSmartQuotesType.No;
                 errorVMargin = 0; // Safe area insets are used instead
             }
+            var initialFontScale = theme.FontScale;
+            var pinch = new PinchGesture ((UIPinchGestureRecognizer obj) => {
+                if (obj.State == UIGestureRecognizerState.Began) {
+                    initialFontScale = theme.FontScale;
+                }
+                else if (obj.State == UIGestureRecognizerState.Changed) {
+                    Theme = theme.WithFontScale (initialFontScale * obj.Scale);
+                }
+                else {
+                    LayoutIfNeeded ();
+                    Animate (0.25, () => {
+                        marginWidthConstraint.Constant = (nfloat)(marginWidth * theme.FontScale);
+                        LayoutIfNeeded ();
+                    });
+                }
+            });
+            AddGestureRecognizer (pinch);
 #endif
 
             scroll.Frame = sframe;
@@ -344,6 +363,18 @@ namespace CLanguage.Editor
         {
             UpdateMargin ();
         }
+        class PinchGesture : UIPinchGestureRecognizer
+        {
+            public PinchGesture (Action<UIPinchGestureRecognizer> action) : base (action)
+            {
+            }
+
+            public override bool CanPreventGestureRecognizer (UIGestureRecognizer preventedGestureRecognizer)
+            {
+                //Console.WriteLine ("? " + preventedGestureRecognizer);
+                return false;
+            }
+        }
 #endif
 
         void UpdateMargin ()
@@ -465,6 +496,7 @@ namespace CLanguage.Editor
             ColorizeCode (textView.TextStorage);
 #if __MACOS__
             textView.SelectedTextAttributes = theme.SelectedAttributes;
+            textView.TypingAttributes = theme.TypingAttributes;
             scroll.DrawsBackground = true;
             scroll.BackgroundColor = textView.BackgroundColor;
 #elif __IOS__
@@ -472,6 +504,7 @@ namespace CLanguage.Editor
             BackgroundColor = theme.BackgroundColor;
             textView.KeyboardAppearance = theme.IsDark ? UIKeyboardAppearance.Dark : UIKeyboardAppearance.Light;
 #endif
+            UpdateMargin ();
             SetNeedsDisplayInRect (Bounds);
         }
     }

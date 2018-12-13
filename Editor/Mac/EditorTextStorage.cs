@@ -31,11 +31,14 @@ namespace CLanguage.Editor
 		public override IntPtr LowLevelValue => adata.LowLevelValue;
 		public override bool FixesAttributesLazily => true;
 
-        Theme theme = new Theme (isDark: false);
+        Theme theme = new Theme (isDark: false, fontScale: 1);
         public Theme Theme {
             get => theme;
             set {
-                theme = value;
+                if (!ReferenceEquals (theme, value)) {
+                    theme = value;
+                    BeginFormatting ();
+                }
             }
         }
 

@@ -19,7 +19,7 @@ namespace CLanguage.Editor
 {
     abstract class DrawingView : NativeView
     {
-        Theme theme = new Theme (isDark: false);
+        Theme theme = new Theme (isDark: false, fontScale: 1);
         public Theme Theme {
             get => theme;
             set {
