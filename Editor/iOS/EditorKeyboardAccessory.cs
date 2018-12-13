@@ -59,8 +59,8 @@ namespace CLanguage.Editor
                 new InsertTextKey ("}"),
                 new InsertTextKey ("("),
                 new InsertTextKey (")"),
-                new InsertTextKey ("="),
                 new InsertTextKey (","),
+                new InsertTextKey ("="),
                 new InsertTextKey (";")
                 );
         }
@@ -97,16 +97,7 @@ namespace CLanguage.Editor
                 Title = text;
                 this.text = text;
             }
-            public override void Execute (NSObject sender, CEditor editor)
-            {
-                var textView = editor.TextView;
-                var sr = textView.SelectedRange;
-                var ir = new NSRange (sr.Location + sr.Length, 0);
-                var p = textView.GetPosition (textView.BeginningOfDocument, sr.Location + sr.Length);
-                var range = textView.GetTextRange (p, p);
-                //textView.ReplaceText (range, text);
-                textView.InsertText (text);
-            }
+            public override void Execute (NSObject sender, CEditor editor) => editor.TextView.InsertText (text);
         }
 
         void OnThemeChanged ()
