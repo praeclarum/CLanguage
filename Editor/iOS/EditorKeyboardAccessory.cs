@@ -8,7 +8,7 @@ using CLanguage.Syntax;
 
 namespace CLanguage.Editor
 {
-    public class EditorKeyboardAccessory : UIView
+    public class EditorKeyboardAccessory : UIView, IUIInputViewAudioFeedback
     {
         readonly WeakReference<CEditor> editor;
         readonly UIVisualEffectView visualEffectView;
@@ -31,6 +31,8 @@ namespace CLanguage.Editor
                 }
             }
         }
+
+        public bool EnableInputClicksWhenVisible => true;
 
         public EditorKeyboardAccessory (CEditor editor)
             : base (new CGRect (0, 0, 320, 44))
@@ -71,13 +73,13 @@ namespace CLanguage.Editor
 
         class IndentKey : Key
         {
-            public IndentKey () => Title = "->";
+            public IndentKey () => Title = "\u21A6";
             public override void Execute (NSObject sender, CEditor editor) => editor.Indent (sender);
         }
 
         class OutdentKey : Key
         {
-            public OutdentKey () => Title = "<-";
+            public OutdentKey () => Title = "\u21A4";
             public override void Execute (NSObject sender, CEditor editor) => editor.Outdent (sender);
         }
 
@@ -113,10 +115,11 @@ namespace CLanguage.Editor
                 isBlurDark = theme.IsDark;
                 visualEffectView.Effect = UIBlurEffect.FromStyle (isBlurDark ? UIBlurEffectStyle.Dark : UIBlurEffectStyle.Light);
             }
-            var buttonTheme = Theme.WithFontScale (1);
+            var a = new UIStringAttributes (new NSMutableDictionary (theme.ColorAttributes[(int)SyntaxColor.Operator])) {
+                Font = UIFont.BoldSystemFontOfSize (UIFont.SystemFontSize),
+            };
             foreach (var k in activeKeys) {
                 var title = k.Title (UIControlState.Normal);
-                var a = buttonTheme.ColorAttributes[(int)SyntaxColor.Operator];
                 k.SetAttributedTitle (new NSAttributedString (title, a), UIControlState.Normal);
             }
         }
@@ -147,6 +150,7 @@ namespace CLanguage.Editor
         {
             try {
                 if (editor.TryGetTarget (out var e)) {
+                    UIDevice.CurrentDevice.PlayInputClick ();
                     key.Execute (sender, e);
                 }
             }
