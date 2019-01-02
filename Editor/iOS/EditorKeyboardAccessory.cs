@@ -8,7 +8,7 @@ using CLanguage.Syntax;
 
 namespace CLanguage.Editor
 {
-    public class EditorKeyboardAccessory : UIView, IUIInputViewAudioFeedback
+    class EditorKeyboardAccessory : UIView, IUIInputViewAudioFeedback
     {
         readonly WeakReference<CEditor> editor;
         readonly UIVisualEffectView visualEffectView;

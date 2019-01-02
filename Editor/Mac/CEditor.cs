@@ -377,7 +377,7 @@ namespace CLanguage.Editor
 
 #if __IOS__
         [Export ("scrollViewDidScroll:")]
-        public void Scrolled (UIScrollView scrollView)
+        void Scrolled (UIScrollView scrollView)
         {
             UpdateMargin ();
         }
