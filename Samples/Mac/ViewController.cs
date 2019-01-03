@@ -5,6 +5,7 @@ using CLanguage.Editor;
 using Foundation;
 using CLanguage.Tests;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace CEditor
 {
@@ -37,10 +38,8 @@ namespace CEditor
             if (document == null)
                 return;
             document.CodeChanged += Document_CodeChanged;
-            textEditor.Options = new CLanguage.Compiler.CompilerOptions (
-                new ArduinoTestMachineInfo (),
-                new CLanguage.Report (),
-                Enumerable.Empty<CLanguage.Syntax.Document> ());
+            textEditor.Options = new CLanguage.Compiler.CompilerOptions (new ArduinoTestMachineInfo ());
+            //await Task.Delay (1000);
             textEditor.Text = document.Code;
             textEditor.TextChanged += TextEditor_TextChanged;
         }

@@ -56,14 +56,11 @@ namespace CLanguage.Editor
                 if (oldText == value)
                     return;
                 textView.TextStorage.SetString (new NSAttributedString (value ?? "", theme.CommentAttributes));
-                BeginInvokeOnMainThread (() => {
-                    ColorizeCode (textView.TextStorage);
-                    UpdateMargin ();
-                    if (oldText.Length == 0 && value.Length > 0) {
-                        textView.SelectedRange = new NSRange (0, 0);
-                    }
-                    NeedsLayout = true;
-                });
+                ColorizeCode (textView.TextStorage);
+                if (oldText.Length == 0 && value.Length > 0) {
+                    textView.SelectedRange = new NSRange (0, 0);
+                }
+                NeedsLayout = true;
             }
         }
 
@@ -268,7 +265,7 @@ namespace CLanguage.Editor
                 AddConstraint (NSLayoutConstraint.Create (this, NSLayoutAttribute.Trailing, NSLayoutRelation.Equal, errorView, NSLayoutAttribute.Trailing, 1, errorHMargin));
             }
 #endif
-
+            UpdateMarginWidth ();
             OnThemeChanged ();
         }
 
@@ -366,13 +363,11 @@ namespace CLanguage.Editor
 
             if (editedMask.HasFlag (NSTextStorageEditActions.Characters)) {
                 ColorizeCode (textStorage);
-                UpdateMargin ();
                 TextChanged?.Invoke (this, EventArgs.Empty);
             }
             else if (editedMask.HasFlag (NSTextStorageEditActions.Attributes)) {
                 UpdateMargin ();
             }
-            UpdateMarginWidth ();
         }
 
 #if __IOS__
@@ -392,6 +387,16 @@ namespace CLanguage.Editor
                 //Console.WriteLine ("? " + preventedGestureRecognizer);
                 return false;
             }
+        }
+#elif __MACOS__
+        public override void MagnifyWithEvent (NSEvent theEvent)
+        {
+            base.MagnifyWithEvent (theEvent);
+
+            var fs = theme.FontScale;
+            var nfs = fs * (1 + theEvent.Magnification);
+            nfs = Math.Max (0.1, Math.Min (10, nfs));
+            Theme = theme.WithFontScale (nfs);
         }
 #endif
 
@@ -422,24 +427,25 @@ namespace CLanguage.Editor
             }
 
             margin.SetLinePositions ((int)lines.Range.Location, lineBounds, bounds, lineStarts);
+
+            UpdateMarginWidth ();
         }
 
         void UpdateMarginWidth ()
         {
-            var lineCount = lineStarts.Count;
-            var size = lineCount.ToString ().StringSize (theme.LineNumberAttributes);
-            marginWidthConstraint.Constant = (nfloat)(size.Width + 10 * theme.FontScale);
-        }
-
-        void EnumerateLineFragments (CGRect rect, CGRect usedRectangle, NSTextContainer textContainer, NSRange glyphRange, ref bool stop)
-        {
-            Console.WriteLine ($"LINE {rect} --> {usedRectangle}");
+            if (marginWidthConstraint != null) {
+                var lineCount = Math.Max (10, lineStarts.Count);
+                var size = lineCount.ToString ().StringSize (theme.LineNumberAttributes);
+                marginWidthConstraint.Constant = (nfloat)(size.Width + 10 * theme.FontScale);
+            }
         }
 
         static readonly char[] newlineChars = { '\n', (char)8232 };
 
         void ColorizeCode (NSTextStorage textStorage)
         {
+            //await Task.Delay (1000);
+
             var code = textStorage.Value;
             var managers = textStorage.LayoutManagers;
 
@@ -457,6 +463,9 @@ namespace CLanguage.Editor
             }
             Debug.Assert (lc == lineStarts.Count, $"Line count mismatch: {lc} != {lineStarts.Count}");
             this.lineStarts = lineStarts;
+            //await Task.Delay (1000);
+            UpdateMargin ();
+            //await Task.Delay (1000);
 
 #if __MACOS__
             //
@@ -517,6 +526,7 @@ namespace CLanguage.Editor
             margin.Theme = theme;
             errorView.Theme = theme;
             textView.BackgroundColor = theme.BackgroundColor;
+            textView.Font = theme.CodeFont;
             ColorizeCode (textView.TextStorage);
 #if __MACOS__
             textView.SelectedTextAttributes = theme.SelectedAttributes;

@@ -17,5 +17,10 @@ namespace CLanguage.Compiler
             Report = report;
             Documents = documents.ToArray ();
         }
+
+        public CompilerOptions (MachineInfo machineInfo)
+            : this (machineInfo, new Report (), Enumerable.Empty<Document> ())
+        {
+        }
     }
 }
