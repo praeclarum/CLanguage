@@ -94,7 +94,7 @@ namespace CLanguage.Syntax
                     var methods = structType.Members.OfType<CStructMethod> ().Where (x => x.Name == memr.MemberName).ToList ();
 
                     if (methods.Count == 0) {
-                        ec.Report.Error (1061, "Struct '{0}' does not contain a method named '{1}'", structType.Name, memr.MemberName);
+                        ec.Report.Error (1061, "'{1}' not found in '{0}'", structType.Name, memr.MemberName);
                         return Overload.Error;
                     }
                     else {
