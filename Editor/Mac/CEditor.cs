@@ -352,6 +352,24 @@ namespace CLanguage.Editor
             Theme = Theme.WithFontScale (1);
         }
 
+        [Export ("zoomImageToActualSize:")]
+        public void ZoomImageToActualSize (NSObject sender)
+        {
+            RestoreFontSize (sender);
+        }
+
+        [Export ("zoomIn:")]
+        public void ZoomIn (NSObject sender)
+        {
+            IncreaseFontSize (sender);
+        }
+
+        [Export ("zoomOut:")]
+        public void ZoomOut (NSObject sender)
+        {
+            DecreaseFontSize (sender);
+        }
+
         [Export ("textStorage:didProcessEditing:range:changeInLength:")]
         async void DidProcessEditing (NSTextStorage textStorage, NSTextStorageEditActions editedMask, NSRange editedRange, nint delta)
         {

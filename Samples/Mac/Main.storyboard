@@ -372,8 +372,21 @@
                                                         </connections>
                                                     </menuItem>
                                                     <menuItem isSeparatorItem="YES" id="5gT-KC-WSO"/>
-                                                    <menuItem title="Bigger" tag="3" keyEquivalent="+" id="Ptp-SP-VEL"/>
-                                                    <menuItem title="Smaller" tag="4" keyEquivalent="-" id="i1d-Er-qST"/>
+                                                    <menuItem title="Bigger" tag="3" keyEquivalent="+" id="Ptp-SP-VEL">
+                                                        <connections>
+                                                            <action selector="zoomIn:" target="Ady-hI-5gd" id="0G6-XO-2aF"/>
+                                                        </connections>
+                                                    </menuItem>
+                                                    <menuItem title="Smaller" tag="4" keyEquivalent="-" id="i1d-Er-qST">
+                                                        <connections>
+                                                            <action selector="zoomOut:" target="Ady-hI-5gd" id="Ccs-sm-SOG"/>
+                                                        </connections>
+                                                    </menuItem>
+                                                    <menuItem title="Normal Size" keyEquivalent="0" id="nAW-Xn-AJy">
+                                                        <connections>
+                                                            <action selector="zoomImageToActualSize:" target="Ady-hI-5gd" id="SGb-Nk-b47"/>
+                                                        </connections>
+                                                    </menuItem>
                                                     <menuItem isSeparatorItem="YES" id="kx3-Dk-x3B"/>
                                                     <menuItem title="Kern" id="jBQ-r6-VK2">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
