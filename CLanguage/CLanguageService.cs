@@ -4,6 +4,7 @@ using CLanguage.Parser;
 using System.Collections.Generic;
 using System.Linq;
 using CLanguage.Compiler;
+using CLanguage.Types;
 
 namespace CLanguage
 {
@@ -62,7 +63,17 @@ namespace CLanguage
             var compiler = new CCompiler (new CompilerOptions (mi, report, new[] { doc }));
             var exe = compiler.Compile ();
 
-            var funcs = new HashSet<string> (mi.InternalFunctions.Where (x => string.IsNullOrEmpty (x.NameContext)).Select (x => x.Name));
+            IEnumerable<string> GetFuncs ()
+            {
+                foreach (var f in mi.InternalFunctions) {
+                    yield return f.Name;
+                }
+                foreach (var g in exe.Globals) {
+                    if (g.VariableType is CStructType)
+                        yield return g.Name;
+                }
+            }
+            var funcs = new HashSet<string> (GetFuncs ());
 
             var tokens = lexed.Tokens.Where (x => x.Kind != TokenKind.EOL).Select (ColorizeToken).ToArray ();
 
