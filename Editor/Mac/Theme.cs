@@ -79,7 +79,14 @@ namespace CLanguage.Editor
             ErrorBubbleBackgroundColor = !isDark ? Rgb (0xC5, 0, 0xB) : Rgb (0xC5 * 5 / 8, 0, 0xB);
             ErrorBubbleTextAttributes = new NativeStringAttributes {
                 ForegroundColor = Gray (255).ColorWithAlphaComponent (0.9375f),
-                Font = NativeFont.BoldSystemFontOfSize (NativeFont.SystemFontSize),
+                Font = NativeFont.BoldSystemFontOfSize ((nfloat)(NativeFont.SystemFontSize * Math.Min (1, fontScale))),
+                ParagraphStyle = new NSMutableParagraphStyle {
+#if __MACOS__
+                    LineBreakMode = NativeLineBreakMode.ByWordWrapping,
+#elif __IOS__
+                    LineBreakMode = NativeLineBreakMode.WordWrap,
+#endif
+                },
             }.Dictionary;
             LineNumberFont = Font (codeFont.GetFontName (), (int)(NativeFont.SystemFontSize * 0.8 * fontScale + 0.5));
             LineNumberColor = !isDark ? Gray (0).ColorWithAlphaComponent (0.25f) : Gray (255).ColorWithAlphaComponent (0.125f);

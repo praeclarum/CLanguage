@@ -344,7 +344,7 @@ namespace CLanguage.Compiler
                         return structType;
                     }
                     else {
-                        Report.Error (246, "The struct '{0}' could not be found", name);
+                        Report.Error (246, "'{0}' not found", name);
                         return CBasicType.SignedInt;
                     }
                 }
@@ -371,7 +371,7 @@ namespace CLanguage.Compiler
                         return et;
                     }
                     else {
-                        Report.Error (246, "The enum '{0}' could not be found", name);
+                        Report.Error (246, "'{0}' not found", name);
                         return CBasicType.SignedInt;
                     }
                 }

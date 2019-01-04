@@ -74,8 +74,33 @@ namespace CLanguage.Editor
             Theme.ErrorBubbleBackgroundColor.ColorWithAlphaComponent (0.875f).SetFill ();
             c.FillPath ();
 
-            bounds.Inflate (-hpad, -6);
-            amt.DrawInRect (bounds);
+            var abounds = bounds;
+            abounds.Inflate (-hpad / 2, -1);
+            var ctx = new NSStringDrawingContext ();
+#if __MACOS__
+            var bmt = amt.BoundingRectWithSize (new CGSize (abounds.Width, 1_000), NSStringDrawingOptions.UsesLineFragmentOrigin, ctx);
+#elif __IOS__
+            var bmt = amt.GetBoundingRect (new CGSize (abounds.Width, 1_000), NSStringDrawingOptions.UsesLineFragmentOrigin, ctx);
+#endif
+            //Console.WriteLine (bmt);
+            nfloat scale = 1;
+            if (bmt.Height > abounds.Height) {
+                scale = abounds.Height / bmt.Height;
+                var ammt = new NSMutableAttributedString (amt);
+                ammt.SetAttributes (Theme.WithFontScale (Theme.FontScale * scale).ErrorBubbleTextAttributes, new NSRange (0, ammt.Length));
+                amt = ammt;
+#if __MACOS__
+                bmt = amt.BoundingRectWithSize (new CGSize (abounds.Width, 1_000), NSStringDrawingOptions.UsesLineFragmentOrigin, ctx);
+#elif __IOS__
+                bmt = amt.GetBoundingRect (new CGSize (abounds.Width, 1_000), NSStringDrawingOptions.UsesLineFragmentOrigin, ctx);
+#endif
+            }
+            scale = 1;
+            c.SaveState ();
+            c.TranslateCTM (bounds.X + bounds.Width / 2 - bmt.Width * scale / 2, bounds.Y + bounds.Height / 2 - bmt.Height * scale / 2);
+            c.ScaleCTM (scale, scale);
+            amt.DrawInRect (new CGRect (0, 0, abounds.Width, 1_000));
+            c.RestoreState ();
         }
     }
 }

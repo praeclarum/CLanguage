@@ -27,7 +27,7 @@ namespace CLanguage.Syntax
 
                 var member = structType.Members.FirstOrDefault (x => x.Name == MemberName);
                 if (member == null) {
-                    ec.Report.Error (1061, "Struct '{0}' does not contain a defintion for '{1}'", structType.Name, MemberName);
+                    ec.Report.Error (1061, "'{1}' not found in '{0}'", structType.Name, MemberName);
                     return CBasicType.SignedInt;
                 }
 
@@ -47,7 +47,7 @@ namespace CLanguage.Syntax
                 var member = structType.Members.FirstOrDefault (x => x.Name == MemberName);
 
                 if (member == null) {
-                    ec.Report.Error (1061, "Struct '{0}' does not contain a definition for '{1}'", structType.Name, MemberName);
+                    ec.Report.Error (1061, "'{1}' not found in '{0}'", structType.Name, MemberName);
                 }
                 else {
                     if (member is CStructMethod method && member.MemberType is CFunctionType functionType) {
