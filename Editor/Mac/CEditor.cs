@@ -94,6 +94,7 @@ namespace CLanguage.Editor
         public event EventHandler TextChanged;
 
 #if __IOS__
+        public event EventHandler EditingEnded;
         NativeColor EffectiveAppearance => TintColor;
         static bool IsDark (NativeColor a) => true;
         bool NeedsLayout { get => false; set => SetNeedsLayout (); }
@@ -393,6 +394,11 @@ namespace CLanguage.Editor
         void Scrolled (UIScrollView scrollView)
         {
             UpdateMargin ();
+        }
+        [Export ("textViewDidEndEditing:")]
+        void TextViewDidEndEditing (NativeTextView view)
+        {
+            EditingEnded?.Invoke (this, EventArgs.Empty);
         }
         class PinchGesture : UIPinchGestureRecognizer
         {
