@@ -115,8 +115,8 @@ namespace CLanguage.Editor
         public Theme WithFontScale (double newFontScale)
         {
             var baseSize = NativeFont.SystemFontSize;
-            var oldSize = (int)(baseSize * FontScale + 0.5);
-            var newSize = (int)(baseSize * newFontScale + 0.5);
+            var oldSize = Math.Round (baseSize * FontScale, 1);
+            var newSize = Math.Round (baseSize * newFontScale, 1);
             if (newSize < 5)
                 newSize = 5;
             else if (newSize > 50)
