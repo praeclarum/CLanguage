@@ -115,7 +115,7 @@ namespace CLanguage.Editor
                         r = "\n" + lines.Indent;
                         nsr = new NSRange (sr.Location + 1 + lines.Indent.Length, 0);
                         break;
-                    case ";" when sr.Length == 0:
+                    case ";\n" when sr.Length == 0:
                         r = ";\n" + lines.Indent;
                         nsr = new NSRange (sr.Location + 2 + lines.Indent.Length, 0);
                         break;

@@ -61,7 +61,7 @@ namespace CLanguage.Editor
                 new InsertTextKey (")"),
                 new InsertTextKey (","),
                 new InsertTextKey ("="),
-                new InsertTextKey (";")
+                new InsertTextKey (";\n")
                 );
         }
 
