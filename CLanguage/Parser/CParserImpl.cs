@@ -85,9 +85,11 @@ namespace CLanguage.Parser
 
         void AddDeclaration (object a)
         {
-            _tu.AddStatement ((Statement)a);
+            if (!(a is Statement statement))
+                return;
+            _tu.AddStatement (statement);
 
-            if (a is MultiDeclaratorStatement mds) {
+            if (statement is MultiDeclaratorStatement mds) {
                 switch (mds.Specifiers.StorageClassSpecifier) {
                     case StorageClassSpecifier.Typedef when mds.InitDeclarators != null:
                         foreach (var i in mds.InitDeclarators) {

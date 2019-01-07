@@ -20,6 +20,21 @@ namespace CLanguage.Tests
         }
 
         [TestMethod]
+        public void EmptyStatements ()
+        {
+            var tu = ParseTranslationUnit (@"
+;;
+;
+void f() {
+    ;
+    ;
+}
+            ", new TestPrinter ());
+            Assert.IsNotNull (tu);
+            Assert.AreEqual ("f", ((FunctionDefinition)tu.Statements.Last ()).Declarator.DeclaredIdentifier);
+        }
+
+        [TestMethod]
 		public void BadFunction ()
 		{
 			var failed = false;

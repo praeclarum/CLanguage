@@ -822,7 +822,7 @@ statement
 	| iteration_statement
 	| jump_statement
 	;
-
+    
 labeled_statement
 	: IDENTIFIER ':' statement
 	| CASE constant_expression ':' statement
@@ -930,7 +930,8 @@ translation_unit
 external_declaration
 	: function_definition
 	| declaration
-	;
+    | ';'
+    ;
 
 function_definition
 	: declaration_specifiers declarator declaration_list compound_statement
