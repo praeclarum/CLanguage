@@ -263,7 +263,8 @@ namespace CLanguage.Compiler
                     ? MakeCType (pdecl.DeclarationSpecifiers, pdecl.Declarator, null, block)
                     : CBasicType.SignedInt;
                 if (!pt.IsVoid) {
-                    ftype.AddParameter (pdecl.Name, pt);
+                    var defaultValue = pdecl.DefaultValue == null ? null : (Value?)pdecl.DefaultValue.EvalConstant (this);
+                    ftype.AddParameter (pdecl.Name, pt, defaultValue);
                 }
             }
 

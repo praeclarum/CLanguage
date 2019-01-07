@@ -49,5 +49,23 @@ void main () {
     assertAreEqual (2, test.f(0.0));
 }");
         }
+
+        [TestMethod]
+        public void DefaultValue ()
+        {
+            var i = Run (@"
+int f(int x, int y = 1000) { return x + y; }
+double f(double x, double y = 3.14) { return (x + y); }
+void main () {
+    assertAreEqual (1000, f(0));
+    assertAreEqual (999, f(-1));
+    assertAreEqual (2, f(0, 2));
+    assertAreEqual (1, f(-1, 2));
+    assertDoublesAreEqual (3.14, f(0.0));
+    assertDoublesAreEqual (2.14, f(-1.0));
+    assertDoublesAreEqual (2, f(0.0, 2));
+    assertDoublesAreEqual (1, f(-1.0, 2));
+}");
+        }
     }
 }

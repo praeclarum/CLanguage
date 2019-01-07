@@ -646,18 +646,19 @@ parameter_list
 parameter_declaration
 	: declaration_specifiers declarator
 	{
-		var p = new ParameterDeclaration((DeclarationSpecifiers)$1, (Declarator)$2);
-		$$ = p;
+		$$ = new ParameterDeclaration((DeclarationSpecifiers)$1, (Declarator)$2);
 	}
-	| declaration_specifiers abstract_declarator
+	| declaration_specifiers declarator '=' assignment_expression
 	{
-		var p = new ParameterDeclaration((DeclarationSpecifiers)$1, (Declarator)$2);
-		$$ = p;
+		$$ = new ParameterDeclaration((DeclarationSpecifiers)$1, (Declarator)$2, (Expression)$4);
 	}
-	| declaration_specifiers
+    | declaration_specifiers abstract_declarator
+    {
+        $$ = new ParameterDeclaration((DeclarationSpecifiers)$1, (Declarator)$2);
+    }
+    | declaration_specifiers
 	{
-		var p = new ParameterDeclaration((DeclarationSpecifiers)$1);
-		$$ = p;
+		$$ = new ParameterDeclaration((DeclarationSpecifiers)$1);
 	}
 	;
 

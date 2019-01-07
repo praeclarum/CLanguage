@@ -58,6 +58,8 @@ namespace CLanguage.Compiler
                 var f = Executable.Functions[i];
                 if (f.Name == name && string.IsNullOrEmpty (f.NameContext)) {
                     var score = f.FunctionType.ScoreParameterTypeMatches (argTypes);
+                    //if (!f.Name.StartsWith ("assert"))
+                        //Console.WriteLine ($"  {f.Name}  {f.FunctionType} == {score}");
                     if (score > fs) {
                         ff = f;
                         fi = i;
@@ -66,6 +68,7 @@ namespace CLanguage.Compiler
                 }
             }
             if (ff != null) {
+                //Console.WriteLine ($"= {name}  {ff.FunctionType} == {fs}");
                 return new ResolvedVariable (ff, fi);
             }
 

@@ -11,6 +11,7 @@ namespace CLanguage.Syntax
         public string Name { get; private set; }
         public DeclarationSpecifiers? DeclarationSpecifiers { get; private set; }
         public Declarator? Declarator { get; private set; }
+        public Expression? DefaultValue { get; }
 
         public ParameterDeclaration (string name)
         {
@@ -28,6 +29,14 @@ namespace CLanguage.Syntax
             DeclarationSpecifiers = specs;
             Name = dec.DeclaredIdentifier;
             Declarator = dec;
+        }
+
+        public ParameterDeclaration (DeclarationSpecifiers specs, Declarator dec, Expression defaultValue)
+        {
+            DeclarationSpecifiers = specs;
+            Name = dec.DeclaredIdentifier;
+            Declarator = dec;
+            DefaultValue = defaultValue;
         }
 
         public override string ToString ()

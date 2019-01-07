@@ -6,6 +6,7 @@ using CLanguage.Types;
 
 using CLanguage.Compiler;
 using CLanguage.Interpreter;
+using System.Diagnostics;
 
 namespace CLanguage.Syntax
 {
@@ -54,10 +55,16 @@ namespace CLanguage.Syntax
 
             var type = function.CType as CFunctionType;
 
+            var numRequiredParameters = 0;
             if (type != null)
             {
-				if (type.Parameters.Count != Arguments.Count) {
-                    ec.Report.Error (1501, "'{0}' takes {1} arguments, {2} provided", Function, type.Parameters.Count, Arguments.Count);
+                foreach (var p in type.Parameters) {
+                    if (p.DefaultValue.HasValue)
+                        break;
+                    numRequiredParameters++;
+                }
+                if (Arguments.Count < numRequiredParameters) {
+                    ec.Report.Error (1501, "'{0}' takes {1} arguments, {2} provided", Function, numRequiredParameters, Arguments.Count);
 					return;
 				}
             }
@@ -74,6 +81,10 @@ namespace CLanguage.Syntax
 				Arguments[i].Emit (ec);
                 ec.EmitCast (argTypes[i], type.Parameters[i].ParameterType);
 			}
+            for (var i = Arguments.Count; i < type.Parameters.Count; i++) {
+                var v = type.Parameters[i].DefaultValue ?? (Value)0;
+                ec.Emit (OpCode.LoadConstant, v);
+            }
 
             function.Emit (ec);
 
