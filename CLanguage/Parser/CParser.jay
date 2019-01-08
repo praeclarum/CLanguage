@@ -42,7 +42,7 @@ namespace CLanguage.Parser
 %%
 
 primary_expression
-	: IDENTIFIER			{ $$ = new VariableExpression(($1).ToString()); }
+	: IDENTIFIER			{ var t = lexer.CurrentToken; $$ = new VariableExpression(($1).ToString(), t.Location, t.EndLocation); }
 	| CONSTANT				{ $$ = new ConstantExpression($1); }
 	| STRING_LITERAL		{ $$ = new ConstantExpression($1); }
     | TRUE                  { $$ = ConstantExpression.True; }

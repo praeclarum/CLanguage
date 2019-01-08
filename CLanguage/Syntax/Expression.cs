@@ -10,10 +10,11 @@ namespace CLanguage.Syntax
     public abstract class Expression
     {
         public Location Location { get; protected set; }
+        public Location EndLocation { get; protected set; }
 
         public bool HasError { get; set; }
 
-        public void Emit(EmitContext ec)
+        public void Emit (EmitContext ec)
         {
             DoEmit(ec);
         }

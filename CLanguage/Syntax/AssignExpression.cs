@@ -59,19 +59,14 @@ namespace CLanguage.Syntax
             Right.Emit(ec);
 #pragma warning restore
 
-            if (Left is VariableExpression) {
+            if (Left is VariableExpression variable) {
 
                 ec.EmitCast (Right.GetEvaluatedCType (ec), Left.GetEvaluatedCType (ec));
                 ec.Emit (OpCode.Dup);
 
-                string variableName = ((VariableExpression)Left).VariableName;
-                var v = ec.ResolveVariable (variableName, null);
+                var v = ec.ResolveVariable (variable, null);
 
-                if (v == null) {
-                    ec.Emit (OpCode.Pop);
-                    ec.Report.ErrorCode (103, variableName);
-                }
-                else if (v.Scope == VariableScope.Global) {
+                if (v.Scope == VariableScope.Global) {
                     ec.Emit (OpCode.StoreGlobal, v.Address);
                 }
                 else if (v.Scope == VariableScope.Local) {
@@ -82,7 +77,7 @@ namespace CLanguage.Syntax
                 }
                 else if (v.Scope == VariableScope.Function) {
                     ec.Emit (OpCode.Pop);
-                    ec.Report.Error (1656, $"Cannot assign to `{variableName}` because it is a function");
+                    ec.Report.Error (1656, $"Cannot assign to `{variable.VariableName}` because it is a function");
                 }
                 else {
                     throw new NotSupportedException ("Assigning to scope '" + v.Scope + "'");

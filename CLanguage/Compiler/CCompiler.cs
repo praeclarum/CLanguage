@@ -102,7 +102,7 @@ namespace CLanguage.Compiler
                     var tuInitBody = new Block (VariableScope.Local);
                     tuInitBody.AddStatements (tu.InitStatements);
                     var tuInit = new CompiledFunction ($"__{tu.Name}__cinit", CFunctionType.VoidProcedure, tuInitBody);
-                    exeInitBody.AddStatement (new ExpressionStatement (new FuncallExpression (new VariableExpression (tuInit.Name))));
+                    exeInitBody.AddStatement (new ExpressionStatement (new FuncallExpression (new VariableExpression (tuInit.Name, Location.Null, Location.Null))));
                     tuInits.Add ((tuInit, tuc));
                     exe.Functions.Add (tuInit);
                 }
@@ -216,7 +216,7 @@ namespace CLanguage.Compiler
                             }
 
                             if (idecl.Initializer != null) {
-                                var varExpr = new VariableExpression (name);
+                                var varExpr = new VariableExpression (name, Location.Null, Location.Null);
                                 var initExpr = GetInitializerExpression (idecl.Initializer);
                                 block.InitStatements.Add (new ExpressionStatement (new AssignExpression (varExpr, initExpr)));
                             }

@@ -528,7 +528,7 @@ namespace CLanguage.Parser
         switch (yyN) {
 case 1:
 #line 45 "CParser.jay"
-  { yyVal = new VariableExpression((yyVals[0+yyTop]).ToString()); }
+  { var t = lexer.CurrentToken; yyVal = new VariableExpression((yyVals[0+yyTop]).ToString(), t.Location, t.EndLocation); }
   break;
 case 2:
 #line 46 "CParser.jay"

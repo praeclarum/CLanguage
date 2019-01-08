@@ -13,19 +13,21 @@ namespace CLanguage.Syntax
     {
         public string VariableName { get; private set; }
 
-        public VariableExpression(string val)
+        public VariableExpression (string val, Location loc, Location endLoc)
         {
             VariableName = val;
+            Location = loc;
+            EndLocation = endLoc;
         }
 
 		public override CType GetEvaluatedCType (EmitContext ec)
 		{
-			return ec.ResolveVariable (VariableName, null).VariableType;
+			return ec.ResolveVariable (this, null).VariableType;
         }
 
         protected override void DoEmit(EmitContext ec)
         {
-			var variable = ec.ResolveVariable (VariableName, null);
+			var variable = ec.ResolveVariable (this, null);
 
 			if (variable != null) {
 
@@ -84,7 +86,7 @@ namespace CLanguage.Syntax
 
         protected override void DoEmitPointer (EmitContext ec)
         {
-            var res = ec.ResolveVariable (VariableName, null);
+            var res = ec.ResolveVariable (this, null);
 
             if (res != null) {
                 res.EmitPointer (ec);
@@ -101,7 +103,7 @@ namespace CLanguage.Syntax
 
         public override Value EvalConstant (EmitContext ec)
         {
-            var res = ec.ResolveVariable (VariableName, null);
+            var res = ec.ResolveVariable (this, null);
 
             if (res != null) {
                 if (res.Scope == VariableScope.Constant) {

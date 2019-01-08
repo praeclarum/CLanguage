@@ -144,7 +144,7 @@ namespace CLanguage.Syntax
                 }
             }
             else if (function is VariableExpression v) {
-                var res = ec.ResolveVariable (v.VariableName, argTypes);
+                var res = ec.ResolveVariable (v, argTypes);
                 if (res != null) {
                     return new Overload (
                         res.VariableType,

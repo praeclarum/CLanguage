@@ -64,7 +64,7 @@ namespace CLanguage
             Error (code, Syntax.Location.Null, Syntax.Location.Null, String.Format (format, args));
         }
 
-        public void ErrorCode (int code, params object[] args)
+        public void ErrorCode (int code, Syntax.Location loc, Syntax.Location endLoc, params object[] args)
         {
             string m = "";
             switch (code) {
@@ -72,10 +72,15 @@ namespace CLanguage
                     m = "'{0}' not found";
                     break;
                 default:
-                    Error (code, string.Join (", ", args));
+                    Error (code, loc, endLoc, string.Join (", ", args));
                     return;
             }
-            Error (code, m, args);
+            Error (code, loc, endLoc, m, args);
+        }
+
+        public void ErrorCode (int code, params object[] args)
+        {
+            ErrorCode (code, Syntax.Location.Null, Syntax.Location.Null, args);
         }
 
         public class AbstractMessage

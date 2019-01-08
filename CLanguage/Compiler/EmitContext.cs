@@ -43,22 +43,25 @@ namespace CLanguage.Compiler
             return CBasicType.SignedInt;
         }
 
-        public ResolvedVariable ResolveVariable (string name, CType[]? argTypes)
+        public ResolvedVariable ResolveVariable (VariableExpression variable, CType[]? argTypes)
         {
-            var v = TryResolveVariable (name, argTypes);
-            if (v != null)
-                return v;
-            Report.ErrorCode (103, name);
+            var name = variable.VariableName;
+
+            var r = TryResolveVariable (name, argTypes);
+            if (r != null)
+                return r;
+
+            r = MachineInfo.GetUnresolvedVariable (name, argTypes, this);
+            if (r != null)
+                return r;
+
+            Report.ErrorCode (103, variable.Location, variable.EndLocation, name);
             return new ResolvedVariable (VariableScope.Global, 0, CBasicType.SignedInt);
         }
 
         public virtual ResolvedVariable? TryResolveVariable (string name, CType[]? argTypes)
         {
-            var r = ParentContext?.ResolveVariable (name, argTypes);
-            if (r != null)
-                return r;
-
-            r = MachineInfo.GetUnresolvedVariable (name, argTypes, this);
+            var r = ParentContext?.TryResolveVariable (name, argTypes);
             if (r != null)
                 return r;
 
