@@ -44,10 +44,12 @@ namespace CLanguage.Interpreter
 
 		public override void Step (CInterpreter state, ExecutionFrame frame)
 		{
-			if (Action != null) {
-				Action (state);
-			}
-			state.Return ();
+            var a = Action;
+            if (a != null) {
+                a (state);
+            }
+            if (state.YieldedValue == 0)
+    			state.Return ();
 		}
 	}
 }

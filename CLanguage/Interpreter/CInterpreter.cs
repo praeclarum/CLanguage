@@ -16,6 +16,7 @@ namespace CLanguage.Interpreter
         public int SP;
         readonly ExecutionFrame[] Frames;
         int FI;
+        public int YieldedValue { get; private set; }
         public int SleepTime { get; set; }
         public int RemainingTime { get; set; }
 		
@@ -102,6 +103,11 @@ namespace CLanguage.Interpreter
         public void Push (Value value)
         {
             Stack[SP++] = value;
+        }
+
+        public void Yield (int yieldedValue)
+        {
+            YieldedValue = yieldedValue;
         }
 
         public void Return ()

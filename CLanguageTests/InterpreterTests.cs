@@ -6,18 +6,38 @@ using CLanguage.Interpreter;
 namespace CLanguage.Tests
 {
 	[TestClass]
-	public class InterpreterTests
+	public class InterpreterTests : TestsBase
 	{
-		CInterpreter Run (string code)
-		{
-            var fullCode = "void start() { __cinit(); main(); } " + code;
-            var i = CLanguageService.CreateInterpreter (fullCode, new ArduinoTestMachineInfo (), printer: new TestPrinter ());
-            i.Reset ("start");
-            i.Step ();
-            return i;
-		}
+        [TestMethod]
+        public void YieldingDelay ()
+        {
+            var mi = new TestMachineInfo ();
+            bool[] hit = new bool[3];
+            mi.AddInternalFunction ("int yieldingDelay(int ms)", i => {
+                var ms = i.ReadArg (0).Int16Value;
+                hit[i.YieldedValue] = true;
+                if (i.YieldedValue == 0) {
+                    i.Yield (1);
+                }
+                else if (i.YieldedValue == 1) {
+                    i.Yield (2);
+                }
+                else {
+                    i.Yield (0);
+                    i.Push (ms * 1000);
+                }
+            });
+            Run (@"
+void main () {
+    auto x = yieldingDelay(3);
+    assertAreEqual (3000, x);
+}", mi);
+            Assert.IsTrue (hit[0]);
+            Assert.IsTrue (hit[1]);
+            Assert.IsTrue (hit[2]);
+        }
 
-		[TestMethod]
+        [TestMethod]
 		public void InfiniteRecursionThrows ()
 		{
 			try {
