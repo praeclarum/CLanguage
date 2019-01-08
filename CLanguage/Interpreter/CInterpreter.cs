@@ -188,9 +188,12 @@ namespace CLanguage.Interpreter
 
 				try {
                     var a = ActiveFrame;
-					while (RemainingTime > 0 && a != null) {
+					while (a != null && RemainingTime > 0) {
+                        RemainingTime -= CpuSpeed;
 						a.Function.Step (this, a);
                         a = ActiveFrame;
+                        if (YieldedValue != 0)
+                            break;
 					}
 				}
 				catch (Exception) {

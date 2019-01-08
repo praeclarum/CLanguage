@@ -15,6 +15,7 @@ namespace CLanguage.Tests
             bool[] hit = new bool[3];
             mi.AddInternalFunction ("int yieldingDelay(int ms)", i => {
                 var ms = i.ReadArg (0).Int16Value;
+                Console.WriteLine ($"RUN Y={i.YieldedValue}");
                 hit[i.YieldedValue] = true;
                 if (i.YieldedValue == 0) {
                     i.Yield (1);
@@ -27,11 +28,19 @@ namespace CLanguage.Tests
                     i.Push (ms * 1000);
                 }
             });
-            Run (@"
+            var it = Run (@"
 void main () {
     auto x = yieldingDelay(3);
     assertAreEqual (3000, x);
 }", mi);
+            Assert.IsTrue (hit[0]);
+            Assert.IsFalse (hit[1]);
+            Assert.IsFalse (hit[2]);
+            it.Step ();
+            Assert.IsTrue (hit[0]);
+            Assert.IsTrue (hit[1]);
+            Assert.IsFalse (hit[2]);
+            it.Step ();
             Assert.IsTrue (hit[0]);
             Assert.IsTrue (hit[1]);
             Assert.IsTrue (hit[2]);
