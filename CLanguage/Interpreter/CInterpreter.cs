@@ -10,6 +10,8 @@ namespace CLanguage.Interpreter
 		Executable exe;
         BaseFunction? entrypoint;
 
+        public Executable Executable => exe;
+
         public readonly Value[] Stack;
         public int SP;
         readonly ExecutionFrame[] Frames;

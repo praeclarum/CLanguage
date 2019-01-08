@@ -43,8 +43,6 @@ namespace CLanguage.Syntax
                     item.Expression.Emit (ec);
                     ec.Emit (OpCode.StorePointer);
                 }
-
-                ec.Emit (OpCode.Pop);
             }
             else {
                 throw new NotSupportedException ($"Structured assignment of '{GetEvaluatedCType (ec)}' not supported");

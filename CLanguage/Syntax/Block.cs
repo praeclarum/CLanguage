@@ -35,9 +35,10 @@ namespace CLanguage.Syntax
             VariableScope = variableScope;
         }
 
-        public void AddStatement (Statement stmt)
+        public void AddStatement (Statement? stmt)
         {
-            Statements.Add (stmt);
+            if (stmt != null)
+                Statements.Add (stmt);
 
             if (stmt is Block block) {
                 block.Parent = this;

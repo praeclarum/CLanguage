@@ -35,8 +35,11 @@ namespace CLanguage.Tests
 
         static void AssertAreEqual (CInterpreter state)
         {
-            var expected = state.ReadArg (0);
-            var actual = state.ReadArg (1);
+            var expected = state.ReadArg (0).Int16Value;
+            var actual = state.ReadArg (1).Int16Value;
+            if (expected != actual) {
+                Console.WriteLine ($"{expected} != {actual}");
+            }
             //Assert.AreEqual ((short)expected, (short)actual);
         }
 

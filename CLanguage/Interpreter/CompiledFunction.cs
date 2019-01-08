@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using CLanguage.Syntax;
 using CLanguage.Types;
+using System.Diagnostics;
 
 namespace CLanguage.Interpreter
 {
@@ -65,6 +66,9 @@ namespace CLanguage.Interpreter
                 var i = Instructions[ip];
 
                 //Debug.WriteLine (i);
+
+                if (state.SP < frame.FP)
+                    throw new Exception ($"{(ip-1>=0?Instructions[ip-1]:null)} {this.Name}@{ip-1} stack underflow");
 
                 switch (i.Op) {
                     case OpCode.Dup:

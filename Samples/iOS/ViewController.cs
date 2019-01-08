@@ -52,6 +52,10 @@ namespace CEditor
             if (d != null) {
                 d.Code = Editor.Text;
                 d.UpdateChangeCount (UIDocumentChangeKind.Done);
+
+                //var interpreter = CLanguage.CLanguageService.CreateInterpreter (d.Code, Editor.Options.MachineInfo);
+                //interpreter.Reset ("main");
+                //interpreter.Step (1_000_000);
             }
         }
     }

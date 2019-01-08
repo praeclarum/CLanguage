@@ -60,6 +60,14 @@ namespace CEditor
         void TextEditor_TextChanged (object sender, EventArgs e)
         {
             document.Code = textEditor.Text;
+
+            var code = "void start() { __cinit(); main(); } " + document.Code;
+            var mi = textEditor.Options.MachineInfo;
+            Task.Run (() => {
+                var interpreter = CLanguage.CLanguageService.CreateInterpreter (code, mi);
+                interpreter.Reset ("start");
+                interpreter.Step (1_000_000);
+            });
         }
     }
 }

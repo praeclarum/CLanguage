@@ -12,5 +12,7 @@ namespace CLanguage.Interpreter
         {
             Function = function ?? throw new System.ArgumentNullException (nameof (function));
         }
+
+        public override string ToString () => $"{FP}: {Function.Name}";
     }
 }

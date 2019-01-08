@@ -24,6 +24,7 @@ int output = OUTPUT;
 int high = HIGH;
 int low = LOW;
 
+void main() {}
 ");
             Assert.AreEqual (5, exe.Globals.Count);
         }
@@ -42,7 +43,7 @@ void main() {
         [TestMethod]
         public void DefineParamIncompleteArgs ()
         {
-            Run (@"
+            Compile (@"
 #define ID(x x
 void main() {
     assertAreEqual(42, ID(42));
