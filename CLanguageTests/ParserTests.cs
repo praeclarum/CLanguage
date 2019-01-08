@@ -93,6 +93,15 @@ void f () {
         }
 
         [TestMethod]
+        public void HexLetters ()
+        {
+            var lex = new Lexer ("hex.c", "0xC0");
+            lex.Advance ();
+            Assert.AreEqual (TokenKind.CONSTANT, lex.CurrentToken.Kind);
+            Assert.AreEqual (192, lex.CurrentToken.Value);
+        }
+
+        [TestMethod]
         public void EmojiIds ()
         {
             AssertId ("🎃");

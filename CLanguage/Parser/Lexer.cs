@@ -212,14 +212,14 @@ namespace CLanguage.Parser
                 var ishex = false;
                 _chbuf[0] = ch;
                 _chbuflen = 0;
-                while (ch == '.' || char.IsDigit (ch) || ch == 'E' || ch == 'e' || ch == 'f' || ch == 'F' || ch == 'u' || ch == 'U' || ch == 'l' || ch == 'L' || (!ishex && ch == 'x')) {
+                while (ch == '.' || char.IsDigit (ch) || ch == 'E' || ch == 'e' || ch == 'f' || ch == 'F' || ch == 'u' || ch == 'U' || ch == 'l' || ch == 'L' || (!ishex && ch == 'x') || (ishex && IsHex (ch))) {
                     if (ch == 'l' || ch == 'L') {
                         islong = true;
                     }
                     else if (ch == 'u' || ch == 'U') {
                         isunsigned = true;
                     }
-                    else if (ch == 'f' || ch == 'F') {
+                    else if (!ishex && (ch == 'f' || ch == 'F')) {
                         isfloat = true;
                     }
                     else if (ch == 'x' && _chbuflen == 1 && _chbuf[0] == '0') {
@@ -237,7 +237,7 @@ namespace CLanguage.Parser
                 var vals = new string (_chbuf, 0, _chbuflen);
                 var icult = System.Globalization.CultureInfo.InvariantCulture;
                 endLocation = new Location (location.Document, _lastR >= 0 ? nextPosition - 1 : location.Document.Content.Length, line, column);
-                if (onlydigits) {
+                if (onlydigits || ishex) {
                     var style = ishex ? System.Globalization.NumberStyles.HexNumber : System.Globalization.NumberStyles.None;
                     if (islong) {
                         if (isunsigned) {
@@ -312,7 +312,7 @@ namespace CLanguage.Parser
                     _lastR = r;
                 }
             }
-            else if (r == ',' || r == ';' || r == '?' || r == '(' || r == ')' || r == '{' || r == '}' || r == '[' || r == ']' || r == '~' || r == '%' || r == '^' || r == '#' || r == '\\') {
+            else if (r == ',' || r == ';' || r == '?' || r == '(' || r == ')' || r == '{' || r == '}' || r == '[' || r == ']' || r == '~' || r == '%' || r == '#' || r == '\\') {
                 _token = r;
                 _value = null;
                 _lastR = Read ();
@@ -344,7 +344,23 @@ namespace CLanguage.Parser
                 var nr = Read ();
 
                 if (nr == '=') {
+                    nr = Read ();
                     _token = (r == '*') ? TokenKind.MUL_ASSIGN : TokenKind.DIV_ASSIGN;
+                    _value = null;
+                    _lastR = nr;
+                }
+                else {
+                    _token = r;
+                    _value = null;
+                    _lastR = nr;
+                }
+            }
+            else if (r == '^') {
+                var nr = Read ();
+
+                if (nr == '=') {
+                    nr = Read ();
+                    _token = TokenKind.BINARY_XOR_ASSIGN;
                     _value = null;
                     _lastR = nr;
                 }
@@ -361,7 +377,10 @@ namespace CLanguage.Parser
                     nr = Read ();
 
                     if (nr == '=') {
-                        throw new NotImplementedException (GetType ().Name + ": &&=");
+                        nr = Read ();
+                        _token = TokenKind.AND_ASSIGN;
+                        _value = null;
+                        _lastR = nr;
                     }
                     else {
                         _token = TokenKind.AND_OP;
@@ -370,7 +389,10 @@ namespace CLanguage.Parser
                     }
                 }
                 else if (nr == '=') {
-                    throw new NotImplementedException (GetType ().Name + ": &=");
+                    nr = Read ();
+                    _token = TokenKind.BINARY_AND_ASSIGN;
+                    _value = null;
+                    _lastR = nr;
                 }
                 else {
                     _token = r;
@@ -385,7 +407,10 @@ namespace CLanguage.Parser
                     nr = Read ();
 
                     if (nr == '=') {
-                        throw new NotImplementedException (GetType ().Name + ": ||=");
+                        nr = Read ();
+                        _token = TokenKind.OR_ASSIGN;
+                        _value = null;
+                        _lastR = nr;
                     }
                     else {
                         _token = TokenKind.OR_OP;
@@ -394,7 +419,10 @@ namespace CLanguage.Parser
                     }
                 }
                 else if (nr == '=') {
-                    throw new NotImplementedException (GetType ().Name + ": |=");
+                    nr = Read ();
+                    _token = TokenKind.BINARY_OR_ASSIGN;
+                    _value = null;
+                    _lastR = nr;
                 }
                 else {
                     _token = r;
@@ -641,6 +669,26 @@ namespace CLanguage.Parser
 
             endLocation = new Location (location.Document, _lastR >= 0 ? nextPosition - 1 : location.Document.Content.Length, line, column);
             return true;
+        }
+
+        static bool IsHex (char c)
+        {
+            switch (c) {
+                case 'a':
+                case 'b':
+                case 'c':
+                case 'd':
+                case 'e':
+                case 'f':
+                case 'A':
+                case 'B':
+                case 'C':
+                case 'D':
+                case 'E':
+                case 'F':
+                    return true;
+            }
+            return false;
         }
     }
 }

@@ -24,8 +24,10 @@ namespace CLanguage.Parser
 %token IDENTIFIER CONSTANT STRING_LITERAL SIZEOF
 %token PTR_OP INC_OP DEC_OP LEFT_OP RIGHT_OP LE_OP GE_OP EQ_OP NE_OP COLONCOLON
 %token AND_OP OR_OP MUL_ASSIGN DIV_ASSIGN MOD_ASSIGN ADD_ASSIGN
-%token SUB_ASSIGN LEFT_ASSIGN RIGHT_ASSIGN AND_ASSIGN
-%token XOR_ASSIGN OR_ASSIGN TYPE_NAME
+%token SUB_ASSIGN LEFT_ASSIGN RIGHT_ASSIGN 
+%token BINARY_AND_ASSIGN BINARY_XOR_ASSIGN BINARY_OR_ASSIGN
+%token AND_ASSIGN OR_ASSIGN
+%token TYPE_NAME
 
 %token TYPEDEF EXTERN STATIC AUTO REGISTER INLINE RESTRICT
 %token CHAR SHORT INT LONG SIGNED UNSIGNED FLOAT DOUBLE CONST VOLATILE VOID
@@ -289,13 +291,20 @@ assignment_expression
 	: conditional_expression
 	| unary_expression assignment_operator assignment_expression
 	{
-		if ($2 is RelationalOp && ((RelationalOp)$2) == RelationalOp.Equals) {
+		if ($2 is RelationalOp r && r == RelationalOp.Equals) {
 			$$ = new AssignExpression((Expression)$1, (Expression)$3);
 		}
-		else {
-			var left = (Expression)$1; 
-			$$ = new AssignExpression(left, new BinaryExpression (left, (Binop)$2, (Expression)$3));
+		else if ($2 is Binop b) {
+			var left = (Expression)$1;
+			$$ = new AssignExpression(left, new BinaryExpression (left, b, (Expression)$3));
 		}
+        else if ($2 is LogicOp l) {
+            var left = (Expression)$1;
+            $$ = new AssignExpression(left, new LogicExpression (left, l, (Expression)$3));
+        }
+        else {
+            throw new NotSupportedException (String.Format ("'{0}' not supported", $2));
+        }
 	}
 	;
 
@@ -308,9 +317,11 @@ assignment_operator
 	| SUB_ASSIGN		{ $$ = Binop.Subtract; }
 	| LEFT_ASSIGN		{ $$ = Binop.ShiftLeft; }
 	| RIGHT_ASSIGN		{ $$ = Binop.ShiftRight; }
-	| AND_ASSIGN		{ $$ = Binop.BinaryAnd; }
-	| XOR_ASSIGN		{ $$ = Binop.BinaryXor; }
-	| OR_ASSIGN			{ $$ = Binop.BinaryOr; }
+	| BINARY_AND_ASSIGN	{ $$ = Binop.BinaryAnd; }
+	| BINARY_XOR_ASSIGN	{ $$ = Binop.BinaryXor; }
+	| BINARY_OR_ASSIGN	{ $$ = Binop.BinaryOr; }
+    | AND_ASSIGN        { $$ = LogicOp.And; }
+    | OR_ASSIGN         { $$ = LogicOp.Or; }
 	;
 
 expression

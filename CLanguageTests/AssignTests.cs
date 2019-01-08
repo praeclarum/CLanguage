@@ -11,6 +11,48 @@ namespace CLanguage.Tests
     public class AssignTests : TestsBase
     {
         [TestMethod]
+        public void GlobalAssignBits ()
+        {
+            Run (@"
+int x = 0;
+void main() {
+    x |= 0xCC;
+    x &= 0xF0;
+    x ^= 0xFF;
+    assertAreEqual(63, x);
+}
+");
+        }
+
+        [TestMethod]
+        public void GlobalAssignDoubles ()
+        {
+            Run (@"
+double x = 0.0;
+void main() {
+    x += 100;
+    x -= 50;
+    x /= 10;
+    x *= 1000000.0;
+    assertDoublesAreEqual(5000000.0, x);
+}
+");
+        }
+
+        [TestMethod]
+        public void GlobalAssignLogic ()
+        {
+            Run (@"
+bool x = false;
+void main() {
+    x ||= true;
+    x &&= true;
+    assertBoolsAreEqual(true, x);
+}
+");
+        }
+
+        [TestMethod]
         public void GlobalAssign ()
         {
             Run (@"
