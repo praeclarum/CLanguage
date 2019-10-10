@@ -8,4 +8,4 @@ and an interpreter (for its VM). It's a very small library that enables you to e
 It is used to simulate Arduinos in the app [iCircuit](http://icircuitapp.com).
 It features cycle counting so that infinite loops and long computations can be paused.
 
-I describe other details of it in my blog entry [Oops, I Wrote a C++ Compiler](https://praeclarum.org/2018/08/27/oops-i-wrote-a-c-compiler.html).
+I have describe other details of it in my blog entry [Oops, I Wrote a C++ Compiler](https://praeclarum.org/2018/08/27/oops-i-wrote-a-c-compiler.html).
