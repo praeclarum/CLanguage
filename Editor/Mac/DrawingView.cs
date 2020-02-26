@@ -19,10 +19,12 @@ namespace CLanguage.Editor
 {
     abstract class DrawingView : NativeView
     {
-        public DrawingView ()
+        protected DrawingView ()
         {
 #if __IOS__
             Opaque = false;
+            ContentMode = UIViewContentMode.Redraw;
+            UserInteractionEnabled = false;
 #elif __MACOS__
             WantsLayer = true;
 #endif
@@ -55,12 +57,6 @@ namespace CLanguage.Editor
         }
 #elif __IOS__
         public nfloat AlphaValue { get => Alpha; set => Alpha = value; }
-        protected DrawingView ()
-        {
-            Opaque = false;
-            ContentMode = UIViewContentMode.Redraw;
-            UserInteractionEnabled = false;
-        }
         public override void Draw (CGRect rect)
         {
             DrawDirtyRect (rect);

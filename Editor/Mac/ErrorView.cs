@@ -7,12 +7,14 @@ using NativeColor = UIKit.UIColor;
 using NativeFont = UIKit.UIFont;
 using NativeGraphics = UIKit.UIGraphics;
 using NativeStringAttributes = UIKit.UIStringAttributes;
+using NativeBezierPath = UIKit.UIBezierPath;
 #elif __MACOS__
 using AppKit;
 using NativeColor = AppKit.NSColor;
 using NativeFont = AppKit.NSFont;
 using NativeGraphics = AppKit.NSGraphics;
 using NativeStringAttributes = AppKit.NSStringAttributes;
+using NativeBezierPath = AppKit.NSBezierPath;
 #endif
 
 using static CLanguage.Editor.Extensions;
@@ -86,7 +88,11 @@ namespace CLanguage.Editor
             if (bounds.Width < bounds.Height)
                 return;
 
-            var p = NSBezierPath.FromRoundedRect (bounds, bounds.Height / 2, bounds.Height / 2);
+#if __IOS__
+            var p = NativeBezierPath.FromRoundedRect (bounds, bounds.Height / 2);
+#elif __MACOS__
+            var p = NativeBezierPath.FromRoundedRect (bounds, bounds.Height / 2, bounds.Height / 2);
+#endif
             Theme.ErrorBubbleBackgroundColor.ColorWithAlphaComponent (0.875f).SetFill ();
             p.Fill ();
 
