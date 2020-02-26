@@ -30,7 +30,7 @@ namespace CEditor
         public override void MakeWindowControllers()
         {
             var controller = new NSWindowController ("EditorWindow");
-            Console.WriteLine ("Made window controller: " + controller);
+            //Console.WriteLine ("Made window controller: " + controller);
             //var c = new ViewController ();
             //c.MakeEditor ();
             //c.Document = this;
