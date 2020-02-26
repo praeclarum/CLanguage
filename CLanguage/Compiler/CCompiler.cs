@@ -172,11 +172,9 @@ namespace CLanguage.Compiler
                 if (multi.InitDeclarators != null) {
                     foreach (var idecl in multi.InitDeclarators) {
                         if ((multi.Specifiers.StorageClassSpecifier & StorageClassSpecifier.Typedef) != 0) {
-                            if (idecl.Declarator != null) {
-                                var name = idecl.Declarator.DeclaredIdentifier;
-                                var ttype = context.MakeCType (multi.Specifiers, idecl.Declarator, idecl.Initializer, block);
-                                block.Typedefs[name] = ttype;
-                            }
+                            var name = idecl.Declarator.DeclaredIdentifier;
+                            var ttype = context.MakeCType (multi.Specifiers, idecl.Declarator, idecl.Initializer, block);
+                            block.Typedefs[name] = ttype;
                         }
                         else {
                             CType ctype = context.MakeCType (multi.Specifiers, idecl.Declarator, idecl.Initializer, block);

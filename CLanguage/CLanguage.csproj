@@ -12,7 +12,8 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <LangVersion>8.0</LangVersion>
-    <NullableReferenceTypes>true</NullableReferenceTypes>
+    <Nullable>enable</Nullable>
+    
   </PropertyGroup>
 
   <ItemGroup>
