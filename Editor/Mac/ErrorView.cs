@@ -40,8 +40,6 @@ namespace CLanguage.Editor
 
         protected override void DrawDirtyRect (CGRect dirtyRect)
         {
-            var c = NativeGraphicsCGContext;
-
             NativeColor.Clear.Set ();
             NativeGraphics.RectFill (dirtyRect);
 
@@ -69,10 +67,9 @@ namespace CLanguage.Editor
             if (bounds.Width < bounds.Height)
                 return;
 
-            var p = CGPath.FromRoundedRect (bounds, bounds.Height / 2, bounds.Height / 2);
-            c.AddPath (p);
+            var p = NSBezierPath.FromRoundedRect (bounds, bounds.Height / 2, bounds.Height / 2);
             Theme.ErrorBubbleBackgroundColor.ColorWithAlphaComponent (0.875f).SetFill ();
-            c.FillPath ();
+            p.Fill ();
 
             var abounds = bounds;
             abounds.Inflate (-hpad / 2, -1);
@@ -95,12 +92,10 @@ namespace CLanguage.Editor
                 bmt = amt.GetBoundingRect (new CGSize (abounds.Width, 1_000), NSStringDrawingOptions.UsesLineFragmentOrigin, ctx);
 #endif
             }
-            scale = 1;
-            c.SaveState ();
-            c.TranslateCTM (bounds.X + bounds.Width / 2 - bmt.Width * scale / 2, bounds.Y + bounds.Height / 2 - bmt.Height * scale / 2);
-            c.ScaleCTM (scale, scale);
-            amt.DrawInRect (new CGRect (0, 0, abounds.Width, 1_000));
-            c.RestoreState ();
+            amt.DrawInRect (new CGRect (
+                bounds.X + bounds.Width / 2 - bmt.Width * scale / 2,
+                bounds.Y + bounds.Height / 2 - bmt.Height * scale / 2,
+                abounds.Width, 1_000));
         }
     }
 }

@@ -19,6 +19,15 @@ namespace CLanguage.Editor
 {
     abstract class DrawingView : NativeView
     {
+        public DrawingView ()
+        {
+#if __IOS__
+            Opaque = false;
+#elif __MACOS__
+            WantsLayer = true;
+#endif
+        }
+
         Theme theme = new Theme (isDark: false, fontScale: 1);
         public Theme Theme {
             get => theme;

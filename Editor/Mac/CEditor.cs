@@ -1,4 +1,6 @@
-﻿using System;
+﻿#nullable enable
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -42,22 +44,22 @@ namespace CLanguage.Editor
         nfloat errorHeight = (nfloat)32;
         nfloat errorHMargin = (nfloat)18;
         nfloat errorVMargin = (nfloat)16;
-        NSLayoutConstraint errorBottomConstraint;
+        NSLayoutConstraint? errorBottomConstraint;
 
         readonly MarginView margin = new MarginView ();
         nfloat marginWidth = (nfloat)36;
-        NSLayoutConstraint marginWidthConstraint;
+        NSLayoutConstraint? marginWidthConstraint;
 
         public string Text {
             get => textView.TextStorage.Value;
             set {
-                value = value ?? "";
+                var val = value ?? "";
                 var oldText = textView.TextStorage.Value;
-                if (oldText == value)
+                if (oldText == val)
                     return;
                 textView.TextStorage.SetString (new NSAttributedString (value ?? "", theme.CommentAttributes));
                 ColorizeCode (textView.TextStorage);
-                if (oldText.Length == 0 && value.Length > 0) {
+                if (oldText.Length == 0 && val.Length > 0) {
                     textView.SelectedRange = new NSRange (0, 0);
                 }
                 NeedsLayout = true;
@@ -91,7 +93,7 @@ namespace CLanguage.Editor
 
         List<int> lineStarts = new List<int> (1) { 0 };
 
-        public event EventHandler TextChanged;
+        public event EventHandler? TextChanged;
 
 #if __IOS__
         public event EventHandler EditingEnded;
@@ -101,10 +103,15 @@ namespace CLanguage.Editor
         static readonly bool ios11 = UIDevice.CurrentDevice.CheckSystemVersion (11, 0);
         EditorKeyboardAccessory keyboardAccessory;
 #elif __MACOS__
+        readonly bool Is1010 = false;
+        readonly bool Is1011 = false;
         readonly NSScrollView scroll;
-        IDisposable scrolledSubscription;
-        IDisposable appearanceObserver;
-        static bool IsDark (NSAppearance a) => a.Name.Contains ("dark", StringComparison.InvariantCultureIgnoreCase);
+        IDisposable? scrolledSubscription;
+        IDisposable? appearanceObserver;
+        static bool IsDark (NSAppearance? a) =>
+            a != null ?
+                a.Name.Contains ("dark", StringComparison.InvariantCultureIgnoreCase) :
+                false;
 #endif
 
         public CEditor (NSCoder coder) : base (coder)
@@ -169,7 +176,9 @@ namespace CLanguage.Editor
             textView.SmartInsertDeleteEnabled = false;
             textView.TextContainer.ContainerSize = new CGSize (nfloat.MaxValue, nfloat.MaxValue);
             textView.TextContainer.WidthTracksTextView = false;
-            textView.TextContainer.LineBreakMode = NSLineBreakMode.Clipping;
+            if (Is1011) {
+                textView.TextContainer.LineBreakMode = NSLineBreakMode.Clipping;
+            }
             textView.AllowsUndo = true;
             textView.SelectedTextAttributes = theme.SelectedAttributes;
             NSUserDefaults.StandardUserDefaults.SetInt (50, "NSInitialToolTipDelay");
@@ -182,7 +191,9 @@ namespace CLanguage.Editor
             scroll.DocumentView = textView;
             scroll.BackgroundColor = textView.BackgroundColor;
             scroll.DrawsBackground = true;
-            scroll.AutomaticallyAdjustsContentInsets = true;
+            if (Is1010) {
+                scroll.AutomaticallyAdjustsContentInsets = true;
+            }
 
             scroll.ContentView.PostsBoundsChangedNotifications = true;
             scrolledSubscription = NativeView.Notifications.ObserveBoundsChanged (scroll.ContentView, (sender, e) => {
@@ -371,8 +382,29 @@ namespace CLanguage.Editor
             DecreaseFontSize (sender);
         }
 
-        [Export ("textStorage:didProcessEditing:range:changeInLength:")]
-        async void DidProcessEditing (NSTextStorage textStorage, NSTextStorageEditActions editedMask, NSRange editedRange, nint delta)
+        //[Export ("textStorage:didProcessEditing:range:changeInLength:")]
+        //async void DidProcessEditing (NSTextStorage textStorage, NSTextStorageEditActions editedMask, NSRange editedRange, nint delta)
+        //{
+        //    if (Is1011) {
+        //        //
+        //        // Have to yield here because this is called *before* the layout managers are updated.
+        //        // And we need them to be in sync. So we yield and catch the next run loop.
+        //        //
+        //        await Task.Yield ();
+
+        //        if (editedMask.HasFlag (NSTextStorageEditActions.Characters)) {
+        //            ColorizeCode (textStorage);
+        //            Console.WriteLine ("Text changed");
+        //            TextChanged?.Invoke (this, EventArgs.Empty);
+        //        }
+        //        else if (editedMask.HasFlag (NSTextStorageEditActions.Attributes)) {
+        //            UpdateMargin ();
+        //        }
+        //    }
+        //}
+
+        [Export ("textStorageDidProcessEditing:")]
+        public async void DidProcessEditingDep (NSNotification aNotification)
         {
             //
             // Have to yield here because this is called *before* the layout managers are updated.
@@ -380,13 +412,10 @@ namespace CLanguage.Editor
             //
             await Task.Yield ();
 
-            if (editedMask.HasFlag (NSTextStorageEditActions.Characters)) {
-                ColorizeCode (textStorage);
-                TextChanged?.Invoke (this, EventArgs.Empty);
-            }
-            else if (editedMask.HasFlag (NSTextStorageEditActions.Attributes)) {
-                UpdateMargin ();
-            }
+            UpdateMargin ();
+            ColorizeCode (TextView.TextStorage);
+            //Console.WriteLine ("Text changed old");
+            TextChanged?.Invoke (this, EventArgs.Empty);
         }
 
 #if __IOS__

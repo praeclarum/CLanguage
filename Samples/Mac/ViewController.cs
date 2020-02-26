@@ -6,6 +6,7 @@ using Foundation;
 using CLanguage.Tests;
 using System.Linq;
 using System.Threading.Tasks;
+using CoreGraphics;
 
 namespace CEditor
 {
@@ -31,6 +32,18 @@ namespace CEditor
 
         public ViewController (IntPtr handle) : base (handle)
         {
+        }
+
+        public ViewController ()
+        {
+            View = new NSView (new CGRect (0, 0, 320, 480));
+        }
+
+        public void MakeEditor ()
+        {
+            textEditor = new CLanguage.Editor.CEditor (View.Bounds);
+            View.AddSubview (textEditor);
+            textEditor.AutoresizingMask = NSViewResizingMask.HeightSizable | NSViewResizingMask.WidthSizable;
         }
 
         void BindDocument ()

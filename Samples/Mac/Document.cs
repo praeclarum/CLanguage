@@ -1,4 +1,6 @@
-﻿using System;
+﻿#nullable enable
+
+using System;
 
 using AppKit;
 using Foundation;
@@ -11,9 +13,9 @@ namespace CEditor
     public class Document : NSDocument
     {
         Encoding encoding = Encoding.UTF8;
-        public string Code { get; set; }
+        public string Code { get; set; } = "";
 
-        public event EventHandler CodeChanged;
+        public event EventHandler? CodeChanged;
 
         public Document (IntPtr handle) : base (handle)
         {
@@ -27,14 +29,18 @@ namespace CEditor
 
         public override void MakeWindowControllers()
         {
-            var controller = (NSWindowController)NSStoryboard.FromName ("Main", null).InstantiateControllerWithIdentifier ("Document Window Controller");
-            if (controller.ContentViewController is ViewController c) {
-                c.Document = this;
-            }
+            var controller = new NSWindowController ("EditorWindow");
+            Console.WriteLine ("Made window controller: " + controller);
+            //var c = new ViewController ();
+            //c.MakeEditor ();
+            //c.Document = this;
+            //controller.LoadWindow ();
+            //controller.Window.ContentViewController = c;
+            //controller.ContentViewController = c;
             AddWindowController (controller);
         }
 
-        public override NSData GetAsData(string typeName, out NSError outError)
+        public override NSData? GetAsData(string typeName, out NSError? outError)
         {
             try {
                 var bytes = encoding.GetBytes (Code);
@@ -49,7 +55,7 @@ namespace CEditor
             }
         }
 
-        public override bool ReadFromData(NSData data, string typeName, out NSError outError)
+        public override bool ReadFromData(NSData data, string typeName, out NSError? outError)
         {
             try {
                 using (var s = data.AsStream ())

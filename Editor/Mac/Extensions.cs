@@ -37,6 +37,7 @@ namespace CLanguage.Editor
             return line.Substring (0, e);
         }
 
+        [Obsolete]
         public static string Localize (this string english)
         {
             return NSBundle.MainBundle.LocalizedString (key: english, comment: "");
@@ -69,8 +70,8 @@ namespace CLanguage.Editor
         public static string GetFontName (this NativeFont f) => f.FontName;
         public static int ToKit (this NSUnderlineStyle s) => (int)s;
         public static NativeTextAlignment TextAlignmentRight = NativeTextAlignment.Right;
-        public static NSRange CharacterRangeForGlyphRange (this NSLayoutManager layoutManager, NSRange glyphRange) => layoutManager.CharacterRangeForGlyphRange (glyphRange, out var _);
-        public static NSRange GlyphRangeForCharacterRange (this NSLayoutManager layoutManager, NSRange charRange) => layoutManager.GlyphRangeForCharacterRange (charRange, out var _);
+        public static NSRange CharacterRangeForGlyphRange (this NSLayoutManager layoutManager, NSRange glyphRange) => layoutManager.GetCharacterRange (glyphRange);
+        public static NSRange GlyphRangeForCharacterRange (this NSLayoutManager layoutManager, NSRange charRange) => layoutManager.GetGlyphRange (charRange);
         public static NativeLineBreakMode NativeLineBreakModeClipping => NativeLineBreakMode.Clipping;
 #endif
     }

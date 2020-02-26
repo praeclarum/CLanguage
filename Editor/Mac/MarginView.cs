@@ -52,7 +52,6 @@ namespace CLanguage.Editor
             var tyoff = codeLineHeight - numLineHeight;
 #endif
 
-            var c = NativeGraphicsCGContext;
             var rline = 0;
             //NativeColor.White.Set ();
             for (var line = 0; line < lineStarts.Count; line++) {
