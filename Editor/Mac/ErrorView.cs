@@ -29,6 +29,7 @@ namespace CLanguage.Editor
             set {
                 message = value;
                 SetNeedsDisplayInRect (Bounds);
+                InvalidateIntrinsicContentSize ();
                 AlphaValue = string.IsNullOrEmpty (message.Text) ? 0 : 1;
             }
         }
@@ -36,6 +37,31 @@ namespace CLanguage.Editor
         public ErrorView ()
         {
             BackgroundColor = NativeColor.Clear;
+        }
+
+        const float hpad = 18;
+
+        public override CGSize IntrinsicContentSize {
+            get {
+                var mt = MessageText;
+
+                var amt = new NSAttributedString (mt, Theme.ErrorBubbleTextAttributes);
+
+                var smt = amt.GetSize ();
+
+                return new CGSize (smt.Width + 2 * hpad, smt.Height + 2 * hpad);
+            }
+        }
+
+        public string MessageText {
+            get {
+                var mt = message.Text;
+                if (string.IsNullOrWhiteSpace (mt))
+                    return string.Empty;
+                if (!message.Location.IsNull)
+                    mt = $"Line {message.Location.Line:#,0}: {mt}";
+                return mt;
+            }
         }
 
         protected override void DrawDirtyRect (CGRect dirtyRect)
@@ -46,15 +72,8 @@ namespace CLanguage.Editor
             var bounds = Bounds;
             if (bounds.Width < bounds.Height)
                 return;
-
-            var mt = message.Text;
-            if (string.IsNullOrWhiteSpace (mt))
-                return;
-
-            var hpad = (nfloat)18;
-
-            if (!message.Location.IsNull)
-                mt = $"Line {message.Location.Line:#,0}: {mt}";
+            
+            var mt = MessageText;
 
             var amt = new NSAttributedString (mt, Theme.ErrorBubbleTextAttributes);
 

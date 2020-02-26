@@ -255,26 +255,25 @@ namespace CLanguage.Editor
             AddConstraint (NSLayoutConstraint.Create (margin, NSLayoutAttribute.Top, NSLayoutRelation.Equal, scroll, NSLayoutAttribute.Top, 1, 0));
             AddConstraint (NSLayoutConstraint.Create (margin, NSLayoutAttribute.Bottom, NSLayoutRelation.Equal, scroll, NSLayoutAttribute.Bottom, 1, 0));
 
-            AddConstraint (NSLayoutConstraint.Create (this, NSLayoutAttribute.Leading, NSLayoutRelation.Equal, errorView, NSLayoutAttribute.Leading, 1, -errorHMargin));
             AddConstraint (NSLayoutConstraint.Create (errorView, NSLayoutAttribute.Height, NSLayoutRelation.Equal, 1, errorHeight));
 
 #if __MACOS__
             AddConstraint (NSLayoutConstraint.Create (this, NSLayoutAttribute.Trailing, NSLayoutRelation.Equal, scroll, NSLayoutAttribute.Trailing, 1, 0));
             AddConstraint (errorBottomConstraint = NSLayoutConstraint.Create (this, NSLayoutAttribute.Bottom, NSLayoutRelation.Equal, errorView, NSLayoutAttribute.Bottom, 1, errorVMargin));
             AddConstraint (NSLayoutConstraint.Create (this, NSLayoutAttribute.Leading, NSLayoutRelation.Equal, margin, NSLayoutAttribute.Leading, 1, 0));
-            AddConstraint (NSLayoutConstraint.Create (this, NSLayoutAttribute.Trailing, NSLayoutRelation.Equal, errorView, NSLayoutAttribute.Trailing, 1, errorHMargin));
+            AddConstraint (NSLayoutConstraint.Create (this, NSLayoutAttribute.CenterX, NSLayoutRelation.Equal, errorView, NSLayoutAttribute.CenterX, 1, 0));
 #elif __IOS__
             if (ios11) {
                 AddConstraint (NSLayoutConstraint.Create (SafeAreaLayoutGuide, NSLayoutAttribute.Trailing, NSLayoutRelation.Equal, scroll, NSLayoutAttribute.Trailing, 1, 0));
                 AddConstraint (NSLayoutConstraint.Create (SafeAreaLayoutGuide, NSLayoutAttribute.Leading, NSLayoutRelation.Equal, margin, NSLayoutAttribute.Leading, 1, 0));
                 AddConstraint (errorBottomConstraint = NSLayoutConstraint.Create (SafeAreaLayoutGuide, NSLayoutAttribute.Bottom, NSLayoutRelation.Equal, errorView, NSLayoutAttribute.Bottom, 1, errorVMargin));
-                AddConstraint (NSLayoutConstraint.Create (SafeAreaLayoutGuide, NSLayoutAttribute.Trailing, NSLayoutRelation.Equal, errorView, NSLayoutAttribute.Trailing, 1, errorHMargin));
+                AddConstraint (NSLayoutConstraint.Create (SafeAreaLayoutGuide, NSLayoutAttribute.CenterX, NSLayoutRelation.Equal, errorView, NSLayoutAttribute.CenterX, 1, 0));
             }
             else {
                 AddConstraint (NSLayoutConstraint.Create (this, NSLayoutAttribute.Trailing, NSLayoutRelation.Equal, scroll, NSLayoutAttribute.Trailing, 1, 0));
                 AddConstraint (NSLayoutConstraint.Create (this, NSLayoutAttribute.Leading, NSLayoutRelation.Equal, margin, NSLayoutAttribute.Leading, 1, 0));
                 AddConstraint (errorBottomConstraint = NSLayoutConstraint.Create (this, NSLayoutAttribute.Bottom, NSLayoutRelation.Equal, errorView, NSLayoutAttribute.Bottom, 1, errorVMargin));
-                AddConstraint (NSLayoutConstraint.Create (this, NSLayoutAttribute.Trailing, NSLayoutRelation.Equal, errorView, NSLayoutAttribute.Trailing, 1, errorHMargin));
+                AddConstraint (NSLayoutConstraint.Create (this, NSLayoutAttribute.CenterX, NSLayoutRelation.Equal, errorView, NSLayoutAttribute.CenterX, 1, 0));
             }
 #endif
             UpdateMarginWidth ();
