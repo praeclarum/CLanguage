@@ -170,7 +170,20 @@ namespace CLanguage.Interpreter
 			}
 		}
 
-		public void Step ()
+        public void Run ()
+        {
+            Step (1000000);
+        }
+
+        public static void Run (string code)
+        {
+            var exe = Compiler.CCompiler.Compile (code);
+            var interpreter = new CInterpreter (exe);
+            interpreter.Run ();
+        }
+
+        [Obsolete]
+        public void Step ()
 		{
 			Step (1000000);
 		}

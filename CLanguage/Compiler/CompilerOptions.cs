@@ -22,5 +22,10 @@ namespace CLanguage.Compiler
             : this (machineInfo, new Report (), Enumerable.Empty<Document> ())
         {
         }
+
+        public CompilerOptions ()
+            : this (new MachineInfo ())
+        {
+        }
     }
 }

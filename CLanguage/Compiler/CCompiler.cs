@@ -19,7 +19,12 @@ namespace CLanguage.Compiler
 
 		List<TranslationUnit> tus;
 
-		public CCompiler (CompilerOptions options)
+        public CCompiler ()
+            : this (new CompilerOptions ())
+        {
+        }
+
+        public CCompiler (CompilerOptions options)
 		{
             this.options = options;
 			tus = new List<TranslationUnit> ();
@@ -79,6 +84,14 @@ namespace CLanguage.Compiler
                 options.Report.Error (9000, "Compiler error: " + ex.Message);
                 return new Executable (options.MachineInfo);
             }
+        }
+
+        public static Executable Compile (string code)
+        {
+            var compiler = new Compiler.CCompiler ();
+            compiler.AddCode ("main.c", code);
+            var exe = compiler.Compile ();
+            return exe;
         }
 
         Executable CompileExecutable ()

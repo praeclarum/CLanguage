@@ -148,5 +148,10 @@ namespace CLanguage
                 return SyntaxColor.Comment;
             }
         }
+
+        public static void Run (string code)
+        {
+            Interpreter.CInterpreter.Run (code);
+        }
     }
 }
