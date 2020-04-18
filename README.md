@@ -9,3 +9,26 @@ It is used to simulate Arduinos in the app [iCircuit](http://icircuitapp.com).
 It features cycle counting so that infinite loops and long computations can be paused.
 
 I describe other details of it in my blog entry [Oops, I Wrote a C++ Compiler](https://praeclarum.org/2018/08/27/oops-i-wrote-a-c-compiler.html).
+
+## Usage
+
+There are two stages:
+
+1. Compiling using `CLanguage.Compiler.CCompiler`
+2. Interpreting using `CLanguage.Interpreter.CInterpreter`
+
+Machine information, such as pointer sizes, is stored in `MachineInfo` objects.
+
+After compilation, you must create an interpreter, `Reset` it, then `Run` it.
+
+### Simple Evaluation
+
+There is a static `Eval` method on `CLanguageService` to make compiling and executing expressions easier than setting everything up manually.
+
+For example:
+
+```csharp
+var result = CLanguageService.Eval("2 + 3");
+Assert.AreEqual(5, result);
+```
+
