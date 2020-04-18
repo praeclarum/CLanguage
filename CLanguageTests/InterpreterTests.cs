@@ -194,6 +194,59 @@ void main () {
 		}
 
 		[TestMethod]
+		public void SizeofInt ()
+		{
+			var i = Run (@"
+void main () {
+	int s = sizeof(int);
+	assertAreEqual (2, s);
+}");
+		}
+
+		[TestMethod]
+		public void SizeofSizeofInt ()
+		{
+			var i = Run (@"
+void main () {
+	int s = sizeof(sizeof(int));
+	assertAreEqual (4, s);
+}");
+		}
+
+		[TestMethod]
+		public void SizeofIntPtr ()
+		{
+			var i = Run (@"
+void main () {
+	int s = sizeof(int*);
+	assertAreEqual (2, s);
+}");
+		}
+
+		[TestMethod]
+		public void SizeofLongInt ()
+		{
+			var i = Run (@"
+void main () {
+	int s = sizeof(long int);
+	assertAreEqual (4, s);
+}");
+		}
+
+		[TestMethod]
+		public void SizeofArray ()
+		{
+			var i = Run (@"
+int array[] = { 0, 1, 2, 3, 4 };
+void main () {
+	int num = sizeof(array) / sizeof(array[0]);
+    int num2 = sizeof(array) / sizeof(int);
+	assertAreEqual (5, num);
+    assertAreEqual (5, num2);
+}");
+		}
+
+		[TestMethod]
 		public void LocalVariableInitialization ()
 		{
 			var i = Run (@"

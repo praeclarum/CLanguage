@@ -1,3 +1,9 @@
+# Test files
+
+CLanguageTests/a.out
+CLanguageTests/test.c
+
+
 /*.nupkg
 
 # Autosave files

@@ -82,6 +82,7 @@ namespace CLanguage.Parser
             { "while", TokenKind.WHILE },
             { "true", TokenKind.TRUE },
             { "false", TokenKind.FALSE },
+            { "sizeof", TokenKind.SIZEOF },
         };
 
         public static readonly HashSet<int> KeywordTokens = new HashSet<int> (_kwTokens.Values);

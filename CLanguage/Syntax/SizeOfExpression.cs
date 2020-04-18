@@ -19,7 +19,7 @@ namespace CLanguage.Syntax
 
 		public override CType GetEvaluatedCType (EmitContext ec)
 		{
-			return CBasicType.SignedInt;
+			return CBasicType.UnsignedLongInt;
         }
 
         protected override void DoEmit(EmitContext ec)
