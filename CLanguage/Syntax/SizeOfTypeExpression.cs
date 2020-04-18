@@ -24,7 +24,6 @@ namespace CLanguage.Syntax
             var type = ec.ResolveTypeName (TypeName);
             Value cval = type.GetByteSize (ec);
             ec.Emit (OpCode.LoadConstant, cval);
-
         }
     }
 }

@@ -24,7 +24,9 @@ namespace CLanguage.Syntax
 
         protected override void DoEmit(EmitContext ec)
         {
-            throw new NotImplementedException(GetType ().Name + ": Emit");
+            var type = Query.GetEvaluatedCType (ec);
+            Value cval = type.GetByteSize (ec);
+            ec.Emit (OpCode.LoadConstant, cval);
         }
     }
 }

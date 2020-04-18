@@ -701,8 +701,14 @@ type_name
 
 abstract_declarator
 	: pointer
+	{
+		$$ = new PointerDeclarator((Pointer)$1, null);
+	}
 	| direct_abstract_declarator
 	| pointer direct_abstract_declarator
+	{
+		$$ = new PointerDeclarator((Pointer)$1, (Declarator)$2);
+	}
 	;
 
 direct_abstract_declarator

@@ -1,3 +1,3 @@
 #!/bin/sh
-cd Parser && ../../Lib/jay -c CParser.jay < ../../Lib/skeleton.cs > CParser.cs
+cd Parser && ../../Lib/jay -vc CParser.jay < ../../Lib/skeleton.cs > CParser.cs
 
