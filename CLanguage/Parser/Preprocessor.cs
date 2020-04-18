@@ -291,7 +291,8 @@ namespace CLanguage.Parser
             readonly Dictionary<string, Define> defines;
             readonly Dictionary<string, Expression> expressions;
 
-            public PreprocessorContext (Report report, Dictionary<string, Define> defines, Dictionary<string, Expression> expressions) : base (new MachineInfo (), report, null, null)
+            public PreprocessorContext (Report report, Dictionary<string, Define> defines, Dictionary<string, Expression> expressions)
+                : base (new MachineInfo (), report, fdecl: null, parentContext: null)
             {
                 this.defines = defines;
                 this.expressions = expressions;

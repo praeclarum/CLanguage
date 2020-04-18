@@ -15,9 +15,11 @@ namespace CLanguage.Compiler
 
         public MachineInfo MachineInfo { get; private set; }
 
+        public virtual LoopContext? Loop => null;
+
         protected EmitContext (EmitContext parentContext)
             : this (parentContext.MachineInfo, parentContext.Report, parentContext.FunctionDecl, parentContext)
-        { 
+        {
         }
 
         protected EmitContext (MachineInfo machineInfo, Report report, CompiledFunction? fdecl, EmitContext? parentContext)
@@ -59,6 +61,11 @@ namespace CLanguage.Compiler
             return new ResolvedVariable (VariableScope.Global, 0, CBasicType.SignedInt);
         }
 
+        public EmitContext PushLoop (Label breakLabel, Label continueLabel)
+        {
+            return new LoopContext (breakLabel, continueLabel, parentContext: this);
+        }
+
         public virtual ResolvedVariable? TryResolveVariable (string name, CType[]? argTypes)
         {
             var r = ParentContext?.TryResolveVariable (name, argTypes);
@@ -77,16 +84,26 @@ namespace CLanguage.Compiler
             throw new Exception ("Cannot resolve method function");
         }
 
-        public virtual void BeginBlock (Block b) { }
-        public virtual void EndBlock () { }
+        public virtual void BeginBlock (Block b)
+        {
+            ParentContext?.BeginBlock (b);
+        }
+
+        public virtual void EndBlock ()
+        {
+            ParentContext?.EndBlock ();
+        }
 
         public virtual Label DefineLabel ()
         {
+            if (ParentContext != null)
+                return ParentContext.DefineLabel ();
             return new Label ();
         }
 
         public virtual void EmitLabel (Label l)
         {
+            ParentContext?.EmitLabel (l);
         }
 
         public void EmitCast (CType fromType, CType toType)
@@ -125,6 +142,8 @@ namespace CLanguage.Compiler
 
         public virtual void Emit (Instruction instruction)
         {
+            if (ParentContext != null)
+                ParentContext.Emit (instruction);
         }
 
         public void Emit (OpCode op, Value x)
@@ -144,6 +163,8 @@ namespace CLanguage.Compiler
 
         public virtual Value GetConstantMemory (string stringConstant)
         {
+            if (ParentContext != null)
+                return ParentContext.GetConstantMemory (stringConstant);
             throw new NotSupportedException ("Cannot get constant memory from this context");
         }
 

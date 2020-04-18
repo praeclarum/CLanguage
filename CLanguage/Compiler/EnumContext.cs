@@ -10,12 +10,12 @@ namespace CLanguage.Compiler
         private CEnumType et;
         private EmitContext emitContext;
 
-        public EnumContext (TypeSpecifier enumTs, CEnumType et, EmitContext emitContext)
-            : base (emitContext)
+        public EnumContext (TypeSpecifier enumTs, CEnumType et, EmitContext parentContext)
+            : base (parentContext)
         {
             this.enumTs = enumTs;
             this.et = et;
-            this.emitContext = emitContext;
+            this.emitContext = parentContext;
         }
 
         public override ResolvedVariable? TryResolveVariable (string name, CType[]? argTypes)

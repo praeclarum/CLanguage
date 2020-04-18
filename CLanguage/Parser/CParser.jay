@@ -920,7 +920,13 @@ iteration_statement
 jump_statement
 	: GOTO IDENTIFIER ';'
 	| CONTINUE ';'
+    {
+        $$ = new ContinueStatement ();
+    }
 	| BREAK ';'
+    {
+        $$ = new BreakStatement ();
+    }
 	| RETURN ';'
 	{
 		$$ = new ReturnStatement ();

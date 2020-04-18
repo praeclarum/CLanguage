@@ -1459,14 +1459,26 @@ case 224:
         yyVal = new ForStatement((Statement)yyVals[-4+yyTop], ((ExpressionStatement)yyVals[-3+yyTop]).Expression, (Expression)yyVals[-2+yyTop], ((Statement)yyVals[0+yyTop]).ToBlock ());
 	}
   break;
+case 226:
+#line 925 "CParser.jay"
+  {
+        yyVal = new ContinueStatement ();
+    }
+  break;
+case 227:
+#line 929 "CParser.jay"
+  {
+        yyVal = new BreakStatement ();
+    }
+  break;
 case 228:
-#line 927 "CParser.jay"
+#line 933 "CParser.jay"
   {
 		yyVal = new ReturnStatement ();
 	}
   break;
 case 229:
-#line 931 "CParser.jay"
+#line 937 "CParser.jay"
   {
 		yyVal = new ReturnStatement ((Expression)yyVals[-1+yyTop]);
 	}
@@ -1805,21 +1817,21 @@ void case_193()
 	}
 
 void case_230()
-#line 936 "CParser.jay"
+#line 942 "CParser.jay"
 {
 		AddDeclaration(yyVals[0+yyTop]);
 		yyVal = _tu;
 	}
 
 void case_231()
-#line 941 "CParser.jay"
+#line 947 "CParser.jay"
 {
 		AddDeclaration(yyVals[0+yyTop]);
 		yyVal = _tu;
 	}
 
 void case_235()
-#line 955 "CParser.jay"
+#line 961 "CParser.jay"
 {
 		var f = new FunctionDefinition(
 			(DeclarationSpecifiers)yyVals[-3+yyTop],
@@ -1830,7 +1842,7 @@ void case_235()
 	}
 
 void case_236()
-#line 964 "CParser.jay"
+#line 970 "CParser.jay"
 {
 		var f = new FunctionDefinition(
 			(DeclarationSpecifiers)yyVals[-2+yyTop],
@@ -1841,7 +1853,7 @@ void case_236()
 	}
 
 void case_237()
-#line 976 "CParser.jay"
+#line 982 "CParser.jay"
 {
 		var l = new List<Declaration>();
 		l.Add((Declaration)yyVals[0+yyTop]);
@@ -1849,7 +1861,7 @@ void case_237()
 	}
 
 void case_238()
-#line 982 "CParser.jay"
+#line 988 "CParser.jay"
 {
         var l = new List<Declaration>();
         l.Add((Declaration)yyVals[0+yyTop]);
@@ -1857,7 +1869,7 @@ void case_238()
     }
 
 void case_239()
-#line 988 "CParser.jay"
+#line 994 "CParser.jay"
 {
 		var l = (List<Declaration>)yyVals[-1+yyTop];
 		l.Add((Declaration)yyVals[0+yyTop]);
@@ -2678,7 +2690,7 @@ void case_239()
    -1,   -1,   -1,   -1,  271,  272,
   };
 
-#line 1004 "CParser.jay"
+#line 1010 "CParser.jay"
 
 }
 

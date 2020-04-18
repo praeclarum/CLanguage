@@ -194,6 +194,37 @@ void main () {
 		}
 
 		[TestMethod]
+		public void ForLoopWithBreak ()
+		{
+			var i = Run (@"
+void main () {
+	int i;
+	for (i = 0; i <= 10; i++) {
+		if (i >= 5)
+            break;
+	}
+	assertAreEqual (5, i);
+}");
+		}
+
+		[TestMethod]
+		public void ForLoopWithContinue ()
+		{
+			var i = Run (@"
+void main () {
+    int otherI = 0;
+	int i;
+	for (i = 0; i <= 10; i++) {
+		if (i >= 5) {
+            continue;
+        }
+        otherI++;
+	}
+	assertAreEqual (5, otherI);
+}");
+		}
+
+		[TestMethod]
 		public void SizeofInt ()
 		{
 			var i = Run (@"

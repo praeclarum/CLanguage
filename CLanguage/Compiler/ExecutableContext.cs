@@ -10,7 +10,9 @@ namespace CLanguage.Compiler
         public Executable Executable { get; }
 
         public ExecutableContext (Executable executable, Report report)
-            : base (executable.MachineInfo, report, null, null)
+            : base (executable.MachineInfo,
+                    report: report,
+                    fdecl: null, parentContext: null)
         {
             Executable = executable;
         }

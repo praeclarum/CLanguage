@@ -24,7 +24,9 @@ namespace CLanguage.Compiler
         public IEnumerable<CompiledVariable> LocalVariables { get { return allLocals; } }
 
         public FunctionContext (Executable exe, CompiledFunction fexe, EmitContext parentContext)
-            : base (fexe.Body ?? new Block (VariableScope.Local), parentContext.MachineInfo, parentContext.Report, fexe, parentContext)
+            : base (fexe.Body ?? new Block (VariableScope.Local),
+                    parentContext.MachineInfo, parentContext.Report, fexe,
+                    parentContext)
         {
             this.exe = exe;
             this.fexe = fexe;
