@@ -15,7 +15,7 @@ namespace CLanguage.Compiler
 
         public MachineInfo MachineInfo { get; private set; }
 
-        public virtual LoopContext? Loop => null;
+        public virtual LoopContext? Loop => ParentContext?.Loop;
 
         protected EmitContext (EmitContext parentContext)
             : this (parentContext.MachineInfo, parentContext.Report, parentContext.FunctionDecl, parentContext)

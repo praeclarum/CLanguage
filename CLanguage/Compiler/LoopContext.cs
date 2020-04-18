@@ -9,6 +9,8 @@ namespace CLanguage.Compiler
         public Label BreakLabel { get; }
         public Label ContinueLabel { get; }
 
+        public override LoopContext? Loop => this;
+
         public LoopContext (Label breakLabel, Label continueLabel, EmitContext parentContext)
             : base (parentContext)
         {

@@ -13,7 +13,12 @@ namespace CLanguage.Syntax
 
         protected override void DoEmit (EmitContext ec)
         {
-            throw new NotImplementedException (" NO CONTINUE");
+            if (ec.Loop is object) {
+                ec.Emit (Interpreter.OpCode.Jump, ec.Loop.ContinueLabel);
+            }
+            else {
+                ec.Report.Error (139, "No enclosing loop out of which to continue");
+            }
         }
     }
 }

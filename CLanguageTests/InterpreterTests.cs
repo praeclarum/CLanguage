@@ -208,6 +208,28 @@ void main () {
 		}
 
 		[TestMethod]
+		public void AintNoLoopForBreak ()
+		{
+			Assert.ThrowsException<AssertFailedException> (() => {
+				Run (@"
+void main () {
+    break;
+}");
+			});
+		}
+
+		[TestMethod]
+		public void AintNoLoopForContinue ()
+		{
+			Assert.ThrowsException<AssertFailedException> (() => {
+				Run (@"
+void main () {
+    continue;
+}");
+			});
+		}
+
+		[TestMethod]
 		public void ForLoopWithContinue ()
 		{
 			var i = Run (@"
