@@ -21,6 +21,8 @@ namespace CLanguage
 
         Dictionary<AbstractMessage, bool> _previousErrors = new Dictionary<AbstractMessage, bool> ();
 
+        public IEnumerable<AbstractMessage> Errors => _previousErrors.Keys;
+
         public void Error (int code, Syntax.Location loc, Syntax.Location endLoc, string error)
         {
             if (_reportingDisabled > 0)
@@ -89,6 +91,7 @@ namespace CLanguage
             public Syntax.Location Location { get; protected set; }
             public Syntax.Location EndLocation { get; protected set; }
             public bool IsWarning { get; protected set; }
+            public bool IsError => !IsWarning;
             public int Code { get; protected set; }
             public string Text { get; protected set; } = "";
 

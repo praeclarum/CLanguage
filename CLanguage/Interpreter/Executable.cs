@@ -27,7 +27,7 @@ namespace CLanguage.Interpreter
         public CompiledVariable AddGlobal (string name, CType type)
         {
             var last = Globals.LastOrDefault ();
-            var offset = last == null ? 0 : last.Offset + last.VariableType.NumValues;
+            var offset = last == null ? 0 : last.StackOffset + last.VariableType.NumValues;
             var v = new CompiledVariable (name, offset, type);
             globals.Add (v);
             return v;
@@ -41,7 +41,7 @@ namespace CLanguage.Interpreter
             var type = new CArrayType (CBasicType.SignedChar, len);
             var v = AddGlobal ("__c" + Globals.Count, type);
             v.InitialValue = bytes.Concat (new byte[] { 0 }).Select (x => (Value)x).ToArray ();
-            return Value.Pointer (v.Offset);
+            return Value.Pointer (v.StackOffset);
         }
     }
 }

@@ -14,28 +14,33 @@ namespace CLanguage.Types
 
         public override int NumValues => 1;
 
-        public override int GetByteSize (EmitContext c)
+        public int GetByteSize (MachineInfo c)
         {
             if (Name == "char") {
-                return c.MachineInfo.CharSize;
+                return c.CharSize;
             }
             else if (Name == "int") {
                 if (Size == "short") {
-                    return c.MachineInfo.ShortIntSize;
+                    return c.ShortIntSize;
                 }
                 else if (Size == "long") {
-                    return c.MachineInfo.LongIntSize;
+                    return c.LongIntSize;
                 }
                 else if (Size == "long long") {
-                    return c.MachineInfo.LongLongIntSize;
+                    return c.LongLongIntSize;
                 }
                 else {
-                    return c.MachineInfo.IntSize;
+                    return c.IntSize;
                 }
             }
             else {
                 throw new NotSupportedException (this.ToString ());
             }
+        }
+
+        public override int GetByteSize (EmitContext c)
+        {
+            return GetByteSize (c.MachineInfo);
         }
 
         public override int ScoreCastTo (CType otherType)
@@ -54,6 +59,35 @@ namespace CLanguage.Types
             }
             else {
                 return 0;
+            }
+        }
+
+        public override object GetClrValue (Value[] values, MachineInfo machineInfo)
+        {
+            var byteSize = GetByteSize (machineInfo);
+            if (this.Signedness == Signedness.Signed) {
+                switch (byteSize) {
+                    case 1:
+                        return values[0].Int8Value;
+                    case 2:
+                        return values[0].Int16Value;
+                    case 4:
+                        return values[0].Int32Value;
+                    default:
+                        return values[0].Int64Value;
+                }
+            }
+            else {
+                switch (byteSize) {
+                    case 1:
+                        return values[0].UInt8Value;
+                    case 2:
+                        return values[0].UInt16Value;
+                    case 4:
+                        return values[0].UInt32Value;
+                    default:
+                        return values[0].UInt64Value;
+                }
             }
         }
     }

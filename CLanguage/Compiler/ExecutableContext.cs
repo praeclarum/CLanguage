@@ -46,7 +46,7 @@ namespace CLanguage.Compiler
             //
             foreach (var g in Executable.Globals) {
                 if (g.Name == name) {
-                    return new ResolvedVariable (VariableScope.Global, g.Offset, g.VariableType);
+                    return new ResolvedVariable (VariableScope.Global, g.StackOffset, g.VariableType);
                 }
             }
 

@@ -77,7 +77,7 @@ namespace CLanguage.Compiler
                 for (var i = 0; i < blocals.Length; i++) {
                     var j = blocals.StartIndex + i;
                     if (allLocals[j].Name == name) {
-                        return new ResolvedVariable (VariableScope.Local, allLocals[j].Offset, allLocals[j].VariableType);
+                        return new ResolvedVariable (VariableScope.Local, allLocals[j].StackOffset, allLocals[j].VariableType);
                     }
                 }
             }
@@ -97,7 +97,7 @@ namespace CLanguage.Compiler
 
             var offset = 0;
             foreach (var v in allLocals) {
-                v.Offset = offset;
+                v.StackOffset = offset;
                 offset += v.VariableType.NumValues;
             }
         }

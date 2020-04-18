@@ -48,7 +48,7 @@ namespace CLanguage.Interpreter
         {
             var last = LocalVariables.Count == 0 ? null : LocalVariables[LocalVariables.Count - 1];
             if (last != null) {
-                state.SP += last.Offset + last.VariableType.NumValues;
+                state.SP += last.StackOffset + last.VariableType.NumValues;
             }
         }
 
@@ -68,7 +68,7 @@ namespace CLanguage.Interpreter
                 //Debug.WriteLine (i);
 
                 if (state.SP < frame.FP)
-                    throw new Exception ($"{(ip-1>=0?Instructions[ip-1]:null)} {this.Name}@{ip-1} stack underflow");
+                    throw new Exception ($"{(ip - 1 >= 0 ? Instructions[ip - 1] : null)} {this.Name}@{ip - 1} stack underflow");
 
                 switch (i.Op) {
                     case OpCode.Dup:
@@ -1105,7 +1105,7 @@ namespace CLanguage.Interpreter
                 case OpCode.ConvertInt8UInt64: return (ulong)(sbyte)x;
                 case OpCode.ConvertInt8Float32: return (float)(sbyte)x;
                 case OpCode.ConvertInt8Float64: return (double)(sbyte)x;
-                    
+
                 case OpCode.ConvertUInt8Int8: return (sbyte)(byte)x;
                 case OpCode.ConvertUInt8UInt8: return (byte)(byte)x;
                 case OpCode.ConvertUInt8Int16: return (short)(byte)x;
@@ -1116,7 +1116,7 @@ namespace CLanguage.Interpreter
                 case OpCode.ConvertUInt8UInt64: return (ulong)(byte)x;
                 case OpCode.ConvertUInt8Float32: return (float)(byte)x;
                 case OpCode.ConvertUInt8Float64: return (double)(byte)x;
-                    
+
                 case OpCode.ConvertInt16Int8: return (sbyte)(short)x;
                 case OpCode.ConvertInt16UInt8: return (byte)(short)x;
                 case OpCode.ConvertInt16Int16: return (short)(short)x;
@@ -1127,7 +1127,7 @@ namespace CLanguage.Interpreter
                 case OpCode.ConvertInt16UInt64: return (ulong)(short)x;
                 case OpCode.ConvertInt16Float32: return (float)(short)x;
                 case OpCode.ConvertInt16Float64: return (double)(short)x;
-                    
+
                 case OpCode.ConvertUInt16Int8: return (sbyte)(ushort)x;
                 case OpCode.ConvertUInt16UInt8: return (byte)(ushort)x;
                 case OpCode.ConvertUInt16Int16: return (short)(ushort)x;
@@ -1138,7 +1138,7 @@ namespace CLanguage.Interpreter
                 case OpCode.ConvertUInt16UInt64: return (ulong)(ushort)x;
                 case OpCode.ConvertUInt16Float32: return (float)(ushort)x;
                 case OpCode.ConvertUInt16Float64: return (double)(ushort)x;
-                    
+
                 case OpCode.ConvertInt32Int8: return (sbyte)(int)x;
                 case OpCode.ConvertInt32UInt8: return (byte)(int)x;
                 case OpCode.ConvertInt32Int16: return (short)(int)x;
@@ -1149,7 +1149,7 @@ namespace CLanguage.Interpreter
                 case OpCode.ConvertInt32UInt64: return (ulong)(int)x;
                 case OpCode.ConvertInt32Float32: return (float)(int)x;
                 case OpCode.ConvertInt32Float64: return (double)(int)x;
-                    
+
                 case OpCode.ConvertUInt32Int8: return (sbyte)(uint)x;
                 case OpCode.ConvertUInt32UInt8: return (byte)(uint)x;
                 case OpCode.ConvertUInt32Int16: return (short)(uint)x;
@@ -1160,7 +1160,7 @@ namespace CLanguage.Interpreter
                 case OpCode.ConvertUInt32UInt64: return (ulong)(uint)x;
                 case OpCode.ConvertUInt32Float32: return (float)(uint)x;
                 case OpCode.ConvertUInt32Float64: return (double)(uint)x;
-                    
+
                 case OpCode.ConvertInt64Int8: return (sbyte)(long)x;
                 case OpCode.ConvertInt64UInt8: return (byte)(long)x;
                 case OpCode.ConvertInt64Int16: return (short)(long)x;
@@ -1171,7 +1171,7 @@ namespace CLanguage.Interpreter
                 case OpCode.ConvertInt64UInt64: return (ulong)(long)x;
                 case OpCode.ConvertInt64Float32: return (float)(long)x;
                 case OpCode.ConvertInt64Float64: return (double)(long)x;
-                    
+
                 case OpCode.ConvertUInt64Int8: return (sbyte)(ulong)x;
                 case OpCode.ConvertUInt64UInt8: return (byte)(ulong)x;
                 case OpCode.ConvertUInt64Int16: return (short)(ulong)x;
@@ -1182,7 +1182,7 @@ namespace CLanguage.Interpreter
                 case OpCode.ConvertUInt64UInt64: return (ulong)(ulong)x;
                 case OpCode.ConvertUInt64Float32: return (float)(ulong)x;
                 case OpCode.ConvertUInt64Float64: return (double)(ulong)x;
-                    
+
                 case OpCode.ConvertFloat32Int8: return (sbyte)(float)x;
                 case OpCode.ConvertFloat32UInt8: return (byte)(float)x;
                 case OpCode.ConvertFloat32Int16: return (short)(float)x;
@@ -1193,7 +1193,7 @@ namespace CLanguage.Interpreter
                 case OpCode.ConvertFloat32UInt64: return (ulong)(float)x;
                 case OpCode.ConvertFloat32Float32: return (float)(float)x;
                 case OpCode.ConvertFloat32Float64: return (double)(float)x;
-                    
+
                 case OpCode.ConvertFloat64Int8: return (sbyte)(double)x;
                 case OpCode.ConvertFloat64UInt8: return (byte)(double)x;
                 case OpCode.ConvertFloat64Int16: return (short)(double)x;
@@ -1204,7 +1204,7 @@ namespace CLanguage.Interpreter
                 case OpCode.ConvertFloat64UInt64: return (ulong)(double)x;
                 case OpCode.ConvertFloat64Float32: return (float)(double)x;
                 case OpCode.ConvertFloat64Float64: return (double)(double)x;
-                    
+
                 default:
                     throw new NotSupportedException ($"Op code '{op}' is not supported");
             }

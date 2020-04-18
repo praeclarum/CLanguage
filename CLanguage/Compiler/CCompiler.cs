@@ -19,6 +19,8 @@ namespace CLanguage.Compiler
 
 		List<TranslationUnit> tus;
 
+        public CompilerOptions Options => options;
+
         public CCompiler ()
             : this (new CompilerOptions ())
         {
@@ -91,6 +93,10 @@ namespace CLanguage.Compiler
             var compiler = new Compiler.CCompiler ();
             compiler.AddCode ("main.c", code);
             var exe = compiler.Compile ();
+            if (compiler.Options.Report.Errors.Any (x => x.IsError)) {
+                var m = string.Join ("\n", compiler.Options.Report.Errors.Where (x => x.IsError));
+                throw new ArgumentException (m, nameof (code));
+            }
             return exe;
         }
 

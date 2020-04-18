@@ -33,5 +33,10 @@ namespace CLanguage.Types
         {
             return Equals (otherType) ? 1000 : 0;
         }
+
+        public virtual object GetClrValue (Value[] values, MachineInfo machineInfo)
+        {
+            throw new NotSupportedException ($"Cannot get CLR type from {this}");
+        }
     }
 }

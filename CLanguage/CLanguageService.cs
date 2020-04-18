@@ -153,5 +153,26 @@ namespace CLanguage
         {
             Interpreter.CInterpreter.Run (code);
         }
+
+        public static object Eval (string expression, string? includeCode = "")
+        {
+            var codeToCompile = (includeCode ?? "") + @"
+auto __evalResult = " + expression + @";
+void start() {
+    __cinit();
+}
+";
+            var exe = Compiler.CCompiler.Compile (codeToCompile);
+            var global = exe.Globals.First (x => x.Name == "__evalResult");
+            var interpreter = new Interpreter.CInterpreter (exe);
+            interpreter.Reset ("start");
+            interpreter.Run ();
+
+            var globalType = global.VariableType;
+            var resultValues = new Value[globalType.NumValues];
+            Array.Copy (interpreter.Stack, global.StackOffset, resultValues, 0, resultValues.Length);
+
+            return globalType.GetClrValue (resultValues, exe.MachineInfo);
+        }
     }
 }

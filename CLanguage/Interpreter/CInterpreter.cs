@@ -159,7 +159,7 @@ namespace CLanguage.Interpreter
             foreach (var g in exe.Globals) {
                 if (g.InitialValue != null) {
                     for (var i = 0; i < g.InitialValue.Length; i++) {
-                        Stack[g.Offset + i] = g.InitialValue[i];
+                        Stack[g.StackOffset + i] = g.InitialValue[i];
                     }
                 }
                 SP += g.VariableType.NumValues;
@@ -179,6 +179,7 @@ namespace CLanguage.Interpreter
         {
             var exe = Compiler.CCompiler.Compile (code);
             var interpreter = new CInterpreter (exe);
+            interpreter.Reset ("main");
             interpreter.Run ();
         }
 

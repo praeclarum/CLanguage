@@ -8,13 +8,13 @@ namespace CLanguage.Interpreter
         public string Name { get; }
         public CType VariableType { get; }
 
-        public int Offset { get; set; }
+        public int StackOffset { get; set; }
         public Value[]? InitialValue { get; set; }
 
         public CompiledVariable (string name, int offset, CType type)
         {
             Name = name ?? throw new ArgumentNullException (nameof (name));
-            Offset = offset;
+            StackOffset = offset;
             VariableType = type ?? throw new ArgumentNullException (nameof (type));
         }
 
