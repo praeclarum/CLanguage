@@ -2,7 +2,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.28315.86
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CLanguage", "CLanguage\CLanguage.csproj", "{A53988E1-9F38-44E6-8B29-8C3F1C4CD487}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CLanguage", "CLanguage\CLanguage.csproj", "{A53988E1-9F38-44E6-8B29-8C3F1C4CD487}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CLanguageTests", "CLanguageTests\CLanguageTests.csproj", "{EACAC407-784A-4EC8-B876-1AFC26DE6050}"
 EndProject
@@ -12,7 +12,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Editor", "Editor", "{708F9D
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{45420E5C-B4D7-4E1B-A850-80B74885D96C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CEditor", "Samples\Mac\CEditor.csproj", "{E2A5AB72-C825-47F7-96BD-D102192C4B99}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CEditorMac", "Samples\Mac\CEditorMac.csproj", "{E2A5AB72-C825-47F7-96BD-D102192C4B99}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CLanguage.Editor.iOS", "Editor\iOS\CLanguage.Editor.iOS.csproj", "{82DEEC57-00B6-4878-A3A2-BB8616BFA1A0}"
 EndProject
