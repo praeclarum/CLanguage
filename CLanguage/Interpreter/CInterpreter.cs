@@ -48,7 +48,8 @@ namespace CLanguage.Interpreter
                 address++;
                 b = (byte)Stack[address];
             }
-            return encoding.GetString (bytes.ToArray ());
+            var ar = bytes.ToArray ();
+            return encoding.GetString (ar, 0, ar.Length);
         }
 
         public string ReadString (int address)

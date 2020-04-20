@@ -110,7 +110,7 @@ namespace CLanguage.Editor
         IDisposable? appearanceObserver;
         static bool IsDark (NSAppearance? a) =>
             a != null ?
-                a.Name.Contains ("dark", StringComparison.InvariantCultureIgnoreCase) :
+                a.Name.Contains ("dark", StringComparison.OrdinalIgnoreCase) :
                 false;
 #endif
 

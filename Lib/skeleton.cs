@@ -14,7 +14,7 @@
 .  /** error output stream.
 .      It should be changeable.
 .    */
-.  public System.IO.TextWriter ErrorOutput = System.Console.Out;
+.  public System.IO.TextWriter ErrorOutput = new System.IO.StringWriter ();
 .
 .  /** simplified error message.
 .      @see <a href="#yyerror(java.lang.String, java.lang.String[])">yyerror</a>
@@ -288,7 +288,7 @@ t        if (debug != null) debug.shift(yyStates[yyTop], yyState);
 .	 
 .	 class yyDebugSimple : yyDebug {
 .		 void println (string s){
-.			 Console.Error.WriteLine (s);
+.			 //Console.Error.WriteLine (s);
 .		 }
 .		 
 .		 public void push (int state, Object value) {

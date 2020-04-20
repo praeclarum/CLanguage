@@ -18,12 +18,15 @@ namespace CLanguage.Parser
         TranslationUnit _tu;
         ParserInput lexer;
 
+        static readonly Token[] noTokens = new Token[0];
+        static readonly object[] noObjects = new object[0];
+
         public CParser ()
         {
-            yyVals = Array.Empty<object> ();
+            yyVals = noObjects;
             yyVal = String.Empty;
             _tu = new TranslationUnit ("uninitialized.c");
-            lexer = new ParserInput (Array.Empty<Token> ());
+            lexer = new ParserInput (noTokens);
             //debug = new yydebug.yyDebugSimple();
         }
 

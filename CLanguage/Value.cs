@@ -187,14 +187,14 @@ namespace CLanguage
     static class ValueReflection
     {
         public static readonly Dictionary<Type, FieldInfo> TypedFields =
-            (from f in typeof (Value).GetFields (BindingFlags.Instance | BindingFlags.Public)
-             where f.Name.EndsWith ("Value", StringComparison.InvariantCultureIgnoreCase) &&
-                 !f.Name.StartsWith ("Pointer", StringComparison.InvariantCultureIgnoreCase)
+            (from f in typeof (Value).GetTypeInfo ().DeclaredFields
+             where f.Name.EndsWith ("Value", StringComparison.OrdinalIgnoreCase) &&
+                 !f.Name.StartsWith ("Pointer", StringComparison.OrdinalIgnoreCase)
              select (f.FieldType, f)).ToDictionary (x => x.Item1, x => x.Item2);
 
         public static readonly Dictionary<Type, MethodInfo> CreateValueFromTypeMethods =
-            (from m in typeof (Value).GetMethods (BindingFlags.Static | BindingFlags.Public)
-             where m.Name.StartsWith ("op", StringComparison.InvariantCultureIgnoreCase)
+            (from m in typeof (Value).GetTypeInfo ().DeclaredMethods
+             where m.Name.StartsWith ("op", StringComparison.OrdinalIgnoreCase)
              let rt = m.ReturnType
              where rt == typeof (Value)
              let ps = m.GetParameters ()
@@ -203,7 +203,7 @@ namespace CLanguage
 
         static ValueReflection ()
         {
-            TypedFields[typeof (string)] = typeof (Value).GetField (nameof (Value.PointerValue));
+            TypedFields[typeof (string)] = typeof (Value).GetTypeInfo ().GetDeclaredField (nameof (Value.PointerValue));
         }
     }
 }

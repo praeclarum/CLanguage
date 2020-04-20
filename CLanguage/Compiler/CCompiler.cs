@@ -38,9 +38,11 @@ namespace CLanguage.Compiler
         }
 
 		public CCompiler (MachineInfo mi, Report report)
-			: this (new CompilerOptions (mi, report, Array.Empty<Document> ()))
+			: this (new CompilerOptions (mi, report, noDocs))
         {
         }
+
+        static readonly Document[] noDocs = new Document[0];
 
         public void Add (TranslationUnit translationUnit)
         {

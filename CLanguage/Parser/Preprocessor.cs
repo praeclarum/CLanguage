@@ -30,7 +30,7 @@ namespace CLanguage.Parser
             {
                 Name = "";
                 HasParameters = false;
-                Parameters = Array.Empty<string> ();
+                Parameters = noStrings;
                 Body = body;
             }
 
@@ -64,10 +64,13 @@ namespace CLanguage.Parser
             return tokens.ToArray ();
         }
 
+        static readonly Token[] noTokens = new Token[0];
+        static readonly string[] noStrings = new string[0];
+
         Token[]? IncludeBuiltins (string filePath, bool relative)
         {
             if (filePath == "stdint.h") {
-                return Array.Empty<Token> ();
+                return noTokens;
             }
             return include (filePath, relative);
         }
@@ -126,7 +129,7 @@ namespace CLanguage.Parser
                             if (eol - i > 2) {
                                 var nameToken = tokens[i + 2];
                                 var body = tokens.Skip (i + 3).Take (eol - i - 3).ToList ();
-                                var ps = Array.Empty<string> ();
+                                var ps = noStrings;
                                 var hasPs = false;
                                 if (body.Count >= 2 && body[0].Kind == '(' && body[0].Location.Index == nameToken.EndLocation.Index) {
                                     var endParam = body.FindIndex (1, x => x.Kind == ')');

@@ -20,7 +20,7 @@ namespace CLanguage.Interpreter
 
         public InternalFunction (MachineInfo machineInfo, string prototype, InternalFunctionAction? action = null)
 		{
-			var report = new Report (new Report.TextWriterPrinter (Console.Out));
+			var report = new Report ();
 			var parser = new CParser ();
 			var tu = parser.ParseTranslationUnit ("_internal.h", prototype + ";", ((_, __) => null), report);
             var compiler = new Compiler.CCompiler (machineInfo, report);

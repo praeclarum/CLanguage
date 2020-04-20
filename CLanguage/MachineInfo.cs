@@ -82,7 +82,8 @@ namespace CLanguage
             // Find the methods to marshal
             //
             var type = target.GetType ();
-            var allmethods = type.GetMethods (BindingFlags.Public | BindingFlags.FlattenHierarchy | BindingFlags.Instance);
+            var typei = type.GetTypeInfo ();
+            var allmethods = typei.DeclaredMethods.Where (x => !x.Attributes.HasFlag (MethodAttributes.Static)).ToArray ();
             var methods = allmethods.Where (x => !x.ContainsGenericParameters && !x.IsConstructor)
                 .Where (x => x.ReturnType != typeof(string) && x.Name != "GetType" && x.Name != "Equals" && x.Name != "GetHashCode" && x.Name != "ToString");
 
@@ -140,9 +141,11 @@ namespace CLanguage
             }
         }
 
-        static readonly MethodInfo miReadArg = typeof (CInterpreter).GetMethod (nameof(CInterpreter.ReadArg));
-        static readonly MethodInfo miPush = typeof (CInterpreter).GetMethod (nameof (CInterpreter.Push));
-        static readonly MethodInfo miReadString = typeof (CInterpreter).GetMethod (nameof (CInterpreter.ReadString));
+        static readonly MethodInfo miReadArg = typeof (CInterpreter).GetTypeInfo().GetDeclaredMethod (nameof(CInterpreter.ReadArg));
+        static readonly MethodInfo miPush = typeof (CInterpreter).GetTypeInfo().GetDeclaredMethod (nameof (CInterpreter.Push));
+        static readonly MethodInfo miReadString = typeof (CInterpreter).GetTypeInfo().GetDeclaredMethod (nameof (CInterpreter.ReadString));
+
+        static readonly Expression[] noExprs = new Expression[0];
 
         InternalFunctionAction MarshalMethod (object target, MethodInfo method)
         {
@@ -152,7 +155,7 @@ namespace CLanguage
             var targetE = Expression.Constant (target);
             var interpreterE = Expression.Parameter (typeof (CInterpreter), "interpreter");
 
-            var argsE = ps.Length > 0 ? new Expression[nargs] : Array.Empty<Expression> ();
+            var argsE = ps.Length > 0 ? new Expression[nargs] : noExprs;
             for (var i = 0; i < nargs; i++) {
                 var pt = ps[i].ParameterType;
                 var vargE = Expression.Call (interpreterE, miReadArg, Expression.Constant (i));
