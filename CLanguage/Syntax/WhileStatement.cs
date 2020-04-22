@@ -23,27 +23,31 @@ namespace CLanguage.Syntax
 
         protected override void DoEmit(EmitContext parentContext)
         {
-            if (IsDo)
-            {
-                throw new NotImplementedException(GetType ().Name + ": Do Emit");
-            }
-            else
-            {
-                var condLabel = parentContext.DefineLabel();
-                var loopLabel = parentContext.DefineLabel();
-                var endLabel = parentContext.DefineLabel();
+            var condLabel = parentContext.DefineLabel();
+            var loopLabel = parentContext.DefineLabel();
+            var endLabel = parentContext.DefineLabel();
 
-                var ec = parentContext.PushLoop (breakLabel: endLabel, continueLabel: condLabel);
+            var ec = parentContext.PushLoop (breakLabel: endLabel, continueLabel: condLabel);
 
-                ec.EmitLabel(condLabel);
-                Condition.Emit(ec);
-				ec.EmitCastToBoolean (Condition.GetEvaluatedCType (ec));
-				ec.Emit (OpCode.BranchIfFalse, endLabel);
-                ec.EmitLabel(loopLabel);
-                Loop.Emit(ec);
+            if (IsDo) {
+                ec.EmitLabel (loopLabel);
+                Loop.Emit (ec);
+                ec.EmitLabel (condLabel);
+                Condition.Emit (ec);
+                ec.EmitCastToBoolean (Condition.GetEvaluatedCType (ec));
+                ec.Emit (OpCode.BranchIfFalse, endLabel);
                 ec.Emit (OpCode.Jump, condLabel);
-                ec.EmitLabel(endLabel);
             }
+            else {
+                ec.EmitLabel (condLabel);
+                Condition.Emit (ec);
+                ec.EmitCastToBoolean (Condition.GetEvaluatedCType (ec));
+                ec.Emit (OpCode.BranchIfFalse, endLabel);
+                ec.EmitLabel (loopLabel);
+                Loop.Emit (ec);
+                ec.Emit (OpCode.Jump, condLabel);
+            }
+            ec.EmitLabel (endLabel);
         }
 
 		public override bool AlwaysReturns {

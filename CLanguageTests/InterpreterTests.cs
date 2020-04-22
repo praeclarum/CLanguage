@@ -279,6 +279,52 @@ void main () {
 		}
 
 		[TestMethod]
+		public void DoWhileOnce ()
+		{
+			var i = Run (@"
+void main () {
+	int i = 0;
+    do {
+        i++;
+    } while (i > 1000);
+	assertAreEqual (1, i);
+}");
+		}
+
+		[TestMethod]
+		public void DoWhileLoopWithBreak ()
+		{
+			var i = Run (@"
+void main () {
+	int i = 0;
+    do {
+        i++;
+        if (i == 5)
+            break;
+    } while (i < 10);
+	assertAreEqual (5, i);
+}");
+		}
+
+		[TestMethod]
+		public void DoWhileLoopWithContinue ()
+		{
+			var i = Run (@"
+void main () {
+	int i = 0;
+    int c = 0;
+    do {
+        i++;
+        if (i > 5)
+            continue;
+        c++;
+    } while (i < 10);
+	assertAreEqual (5, c);
+    assertAreEqual (10, i);
+}");
+		}
+
+		[TestMethod]
 		public void SizeofInt ()
 		{
 			var i = Run (@"
