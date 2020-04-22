@@ -21,7 +21,7 @@ namespace CLanguage.Syntax
             Loop = loop;
         }
 
-        protected override void DoEmit(EmitContext ec)
+        protected override void DoEmit(EmitContext parentContext)
         {
             if (IsDo)
             {
@@ -29,9 +29,11 @@ namespace CLanguage.Syntax
             }
             else
             {
-                var condLabel = ec.DefineLabel();
-                var loopLabel = ec.DefineLabel();
-                var endLabel = ec.DefineLabel();
+                var condLabel = parentContext.DefineLabel();
+                var loopLabel = parentContext.DefineLabel();
+                var endLabel = parentContext.DefineLabel();
+
+                var ec = parentContext.PushLoop (breakLabel: endLabel, continueLabel: condLabel);
 
                 ec.EmitLabel(condLabel);
                 Condition.Emit(ec);

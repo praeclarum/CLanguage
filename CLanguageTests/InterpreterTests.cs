@@ -247,6 +247,38 @@ void main () {
 		}
 
 		[TestMethod]
+		public void WhileLoopWithBreak ()
+		{
+			var i = Run (@"
+void main () {
+	int i = 0;
+    while (i < 10) {
+        i++;
+        if (i == 5)
+            break;
+    }
+	assertAreEqual (5, i);
+}");
+		}
+
+		[TestMethod]
+		public void WhileLoopWithContinue ()
+		{
+			var i = Run (@"
+void main () {
+	int i = 0;
+    int c = 0;
+    while (i < 10) {
+        i++;
+        if (i > 5)
+            continue;
+        c++;
+    }
+	assertAreEqual (5, c);
+}");
+		}
+
+		[TestMethod]
 		public void SizeofInt ()
 		{
 			var i = Run (@"
