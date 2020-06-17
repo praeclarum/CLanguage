@@ -25,6 +25,8 @@ namespace CLanguage.Editor
 
         Dictionary<int, char> autoChars = new Dictionary<int, char> ();
 
+        public const int BottomPadding = 44;
+
         public EditorTextView (CGRect frameRect)
 #if __MACOS__
             : base (frameRect)
@@ -32,9 +34,22 @@ namespace CLanguage.Editor
             : base (frameRect, CreateContainer (frameRect.Size))
 #endif
         {
+#if __MACOS__
+            TextContainerInset = new CGSize (0, BottomPadding);
+#elif __IOS__
+            //TextContainerInset = new UIEdgeInsets (0, 0, BottomPadding, 0);
+#endif
         }
 
 #if __MACOS__
+        public override CGPoint TextContainerOrigin {
+            get {
+                var r = base.TextContainerOrigin;
+                r.Y = 0;
+                return r;
+            }
+        }
+
         public override string[] ReadablePasteboardTypes ()
         {
             var types = NSString.ReadableTypeIdentifiers;
