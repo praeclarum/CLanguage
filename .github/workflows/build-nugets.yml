@@ -16,7 +16,7 @@ jobs:
     - name: Update Versions
       env:
         VERSION_PREFIX: 1.13
-        VERSION: $(VERSION_PREFIX).$(GITHUB_RUN_NUMBER)
+        VERSION: ${VERSION_PREFIX}.${GITHUB_RUN_NUMBER}
       run: |
         echo "Version ==$VERSION"
     - name: Setup .NET Core
