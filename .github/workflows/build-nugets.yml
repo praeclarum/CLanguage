@@ -19,9 +19,9 @@ jobs:
         VERSION_SUFFIX: ${{github.run_number}}
       run: |
         VERSION=$VERSION_PREFIX.$VERSION_SUFFIX
-        sed -i 's:<Version>1.0.0</Version>:<Version>$VERSION</Version>:g' CLanguage/CLanguage.csproj
-        sed -i 's:<version>1.0.0</version>:<version>$VERSION</version>:g' CLanguage.Editor.nuspec
-        sed -i 's:version="1.0.0":version="$VERSION":g' CLanguage.Editor.nuspec
+        sed -i bak 's:<Version>1.0.0</Version>:<Version>$VERSION</Version>:g' CLanguage/CLanguage.csproj
+        sed -i bak 's:<version>1.0.0</version>:<version>$VERSION</version>:g' CLanguage.Editor.nuspec
+        sed -i bak2 's:version="1.0.0":version="$VERSION":g' CLanguage.Editor.nuspec
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
