@@ -88,7 +88,6 @@ namespace CLanguage.Interpreter
         AddUInt64,
         AddFloat32,
         AddFloat64,
-        AddPointer,
 
         SubtractInt8,
         SubtractUInt8,
@@ -100,7 +99,6 @@ namespace CLanguage.Interpreter
         SubtractUInt64,
         SubtractFloat32,
         SubtractFloat64,
-        SubtractPointer,
 
         MultiplyInt8,
         MultiplyUInt8,
@@ -112,7 +110,6 @@ namespace CLanguage.Interpreter
         MultiplyUInt64,
         MultiplyFloat32,
         MultiplyFloat64,
-        MultiplyPointer,
 
         DivideInt8,
         DivideUInt8,
@@ -124,7 +121,6 @@ namespace CLanguage.Interpreter
         DivideUInt64,
         DivideFloat32,
         DivideFloat64,
-        DividePointer,
 
         ShiftLeftInt8,
         ShiftLeftUInt8,
@@ -136,7 +132,6 @@ namespace CLanguage.Interpreter
         ShiftLeftUInt64,
         ShiftLeftFloat32,
         ShiftLeftFloat64,
-        ShiftLeftPointer,
 
         ShiftRightInt8,
         ShiftRightUInt8,
@@ -148,7 +143,6 @@ namespace CLanguage.Interpreter
         ShiftRightUInt64,
         ShiftRightFloat32,
         ShiftRightFloat64,
-        ShiftRightPointer,
 
         ModuloInt8,
         ModuloUInt8,
@@ -160,7 +154,6 @@ namespace CLanguage.Interpreter
         ModuloUInt64,
         ModuloFloat32,
         ModuloFloat64,
-        ModuloPointer,
 
         #endregion
 
@@ -176,7 +169,6 @@ namespace CLanguage.Interpreter
         EqualToUInt64,
         EqualToFloat32,
         EqualToFloat64,
-        EqualToPointer,
 
         LessThanInt8,
         LessThanUInt8,
@@ -188,7 +180,6 @@ namespace CLanguage.Interpreter
         LessThanUInt64,
         LessThanFloat32,
         LessThanFloat64,
-        LessThanPointer,
 
         GreaterThanInt8,
         GreaterThanUInt8,
@@ -200,7 +191,6 @@ namespace CLanguage.Interpreter
         GreaterThanUInt64,
         GreaterThanFloat32,
         GreaterThanFloat64,
-        GreaterThanPointer,
 
         #endregion
 
@@ -216,7 +206,6 @@ namespace CLanguage.Interpreter
         BinaryAndUInt64,
         BinaryAndFloat32,
         BinaryAndFloat64,
-        BinaryAndPointer,
 
         BinaryOrInt8,
         BinaryOrUInt8,
@@ -228,7 +217,6 @@ namespace CLanguage.Interpreter
         BinaryOrUInt64,
         BinaryOrFloat32,
         BinaryOrFloat64,
-        BinaryOrPointer,
 
         BinaryXorInt8,
         BinaryXorUInt8,
@@ -240,7 +228,6 @@ namespace CLanguage.Interpreter
         BinaryXorUInt64,
         BinaryXorFloat32,
         BinaryXorFloat64,
-        BinaryXorPointer,
 
         #endregion
 
@@ -256,7 +243,6 @@ namespace CLanguage.Interpreter
         NotUInt64,
         NotFloat32,
         NotFloat64,
-        NotPointer,
 
         BinaryNotInt8,
         BinaryNotUInt8,
@@ -268,7 +254,6 @@ namespace CLanguage.Interpreter
         BinaryNotUInt64,
         BinaryNotFloat32,
         BinaryNotFloat64,
-        BinaryNotPointer,
 
         NegateInt8,
         NegateUInt8,
@@ -280,7 +265,6 @@ namespace CLanguage.Interpreter
         NegateUInt64,
         NegateFloat32,
         NegateFloat64,
-        NegatePointer,
 
         #endregion
 
@@ -303,7 +287,6 @@ namespace CLanguage.Interpreter
         ConvertInt8UInt64,
         ConvertInt8Float32,
         ConvertInt8Float64,
-        ConvertInt8Pointer,
 
         ConvertUInt8Int8,
         ConvertUInt8UInt8,
@@ -315,7 +298,6 @@ namespace CLanguage.Interpreter
         ConvertUInt8UInt64,
         ConvertUInt8Float32,
         ConvertUInt8Float64,
-        ConvertUInt8Pointer,
 
         ConvertInt16Int8,
         ConvertInt16UInt8,
@@ -327,7 +309,6 @@ namespace CLanguage.Interpreter
         ConvertInt16UInt64,
         ConvertInt16Float32,
         ConvertInt16Float64,
-        ConvertInt16Pointer,
 
         ConvertUInt16Int8,
         ConvertUInt16UInt8,
@@ -339,7 +320,6 @@ namespace CLanguage.Interpreter
         ConvertUInt16UInt64,
         ConvertUInt16Float32,
         ConvertUInt16Float64,
-        ConvertUInt16Pointer,
 
         ConvertInt32Int8,
         ConvertInt32UInt8,
@@ -351,7 +331,6 @@ namespace CLanguage.Interpreter
         ConvertInt32UInt64,
         ConvertInt32Float32,
         ConvertInt32Float64,
-        ConvertInt32Pointer,
 
         ConvertUInt32Int8,
         ConvertUInt32UInt8,
@@ -363,7 +342,6 @@ namespace CLanguage.Interpreter
         ConvertUInt32UInt64,
         ConvertUInt32Float32,
         ConvertUInt32Float64,
-        ConvertUInt32Pointer,
 
         ConvertInt64Int8,
         ConvertInt64UInt8,
@@ -375,7 +353,6 @@ namespace CLanguage.Interpreter
         ConvertInt64UInt64,
         ConvertInt64Float32,
         ConvertInt64Float64,
-        ConvertInt64Pointer,
 
         ConvertUInt64Int8,
         ConvertUInt64UInt8,
@@ -387,7 +364,6 @@ namespace CLanguage.Interpreter
         ConvertUInt64UInt64,
         ConvertUInt64Float32,
         ConvertUInt64Float64,
-        ConvertUInt64Pointer,
 
         ConvertFloat32Int8,
         ConvertFloat32UInt8,
@@ -399,7 +375,6 @@ namespace CLanguage.Interpreter
         ConvertFloat32UInt64,
         ConvertFloat32Float32,
         ConvertFloat32Float64,
-        ConvertFloat32Pointer,
 
         ConvertFloat64Int8,
         ConvertFloat64UInt8,
@@ -411,7 +386,6 @@ namespace CLanguage.Interpreter
         ConvertFloat64UInt64,
         ConvertFloat64Float32,
         ConvertFloat64Float64,
-        ConvertFloat64Pointer,
 
         ConvertPointerInt8,
         ConvertPointerUInt8,
@@ -423,7 +397,6 @@ namespace CLanguage.Interpreter
         ConvertPointerUInt64,
         ConvertPointerFloat32,
         ConvertPointerFloat64,
-        ConvertPointerPointer,
 
         #endregion
     }

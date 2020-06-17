@@ -172,28 +172,28 @@ namespace CLanguage.Interpreter
                     case OpCode.AddInt8:
                         a = state.Stack[state.SP - 2];
                         b = state.Stack[state.SP - 1];
-                        state.Stack[state.SP - 2] = (sbyte)a + (sbyte)b;
+                        state.Stack[state.SP - 2] = (sbyte)((sbyte)a + (sbyte)b);
                         state.SP--;
                         ip++;
                         break;
                     case OpCode.AddUInt8:
                         a = state.Stack[state.SP - 2];
                         b = state.Stack[state.SP - 1];
-                        state.Stack[state.SP - 2] = (byte)a + (byte)b;
+                        state.Stack[state.SP - 2] = (byte)((byte)a + (byte)b);
                         state.SP--;
                         ip++;
                         break;
                     case OpCode.AddInt16:
                         a = state.Stack[state.SP - 2];
                         b = state.Stack[state.SP - 1];
-                        state.Stack[state.SP - 2] = (short)a + (short)b;
+                        state.Stack[state.SP - 2] = (short)((short)a + (short)b);
                         state.SP--;
                         ip++;
                         break;
                     case OpCode.AddUInt16:
                         a = state.Stack[state.SP - 2];
                         b = state.Stack[state.SP - 1];
-                        state.Stack[state.SP - 2] = (ushort)a + (ushort)b;
+                        state.Stack[state.SP - 2] = (ushort)((ushort)a + (ushort)b);
                         state.SP--;
                         ip++;
                         break;
@@ -239,38 +239,31 @@ namespace CLanguage.Interpreter
                         state.SP--;
                         ip++;
                         break;
-                    case OpCode.AddPointer:
-                        a = state.Stack[state.SP - 2];
-                        b = state.Stack[state.SP - 1];
-                        state.Stack[state.SP - 2] = Value.Pointer ((int)a + (int)b);
-                        state.SP--;
-                        ip++;
-                        break;
                     case OpCode.SubtractInt8:
                         a = state.Stack[state.SP - 2];
                         b = state.Stack[state.SP - 1];
-                        state.Stack[state.SP - 2] = (sbyte)a - (sbyte)b;
+                        state.Stack[state.SP - 2] = (sbyte)((sbyte)a - (sbyte)b);
                         state.SP--;
                         ip++;
                         break;
                     case OpCode.SubtractUInt8:
                         a = state.Stack[state.SP - 2];
                         b = state.Stack[state.SP - 1];
-                        state.Stack[state.SP - 2] = (byte)a - (byte)b;
+                        state.Stack[state.SP - 2] = (byte)((byte)a - (byte)b);
                         state.SP--;
                         ip++;
                         break;
                     case OpCode.SubtractInt16:
                         a = state.Stack[state.SP - 2];
                         b = state.Stack[state.SP - 1];
-                        state.Stack[state.SP - 2] = ((short)a - (short)b);
+                        state.Stack[state.SP - 2] = (short)((short)a - (short)b);
                         state.SP--;
                         ip++;
                         break;
                     case OpCode.SubtractUInt16:
                         a = state.Stack[state.SP - 2];
                         b = state.Stack[state.SP - 1];
-                        state.Stack[state.SP - 2] = ((ushort)a - (ushort)b);
+                        state.Stack[state.SP - 2] = (ushort)((ushort)a - (ushort)b);
                         state.SP--;
                         ip++;
                         break;
@@ -284,7 +277,7 @@ namespace CLanguage.Interpreter
                     case OpCode.SubtractUInt32:
                         a = state.Stack[state.SP - 2];
                         b = state.Stack[state.SP - 1];
-                        state.Stack[state.SP - 2] = (Value)((uint)a - (uint)b);
+                        state.Stack[state.SP - 2] = (uint)((uint)a - (uint)b);
                         state.SP--;
                         ip++;
                         break;
@@ -305,42 +298,42 @@ namespace CLanguage.Interpreter
                     case OpCode.SubtractFloat32:
                         a = state.Stack[state.SP - 2];
                         b = state.Stack[state.SP - 1];
-                        state.Stack[state.SP - 2] = (Value)((float)a - (float)b);
+                        state.Stack[state.SP - 2] = (float)a - (float)b;
                         state.SP--;
                         ip++;
                         break;
                     case OpCode.SubtractFloat64:
                         a = state.Stack[state.SP - 2];
                         b = state.Stack[state.SP - 1];
-                        state.Stack[state.SP - 2] = (Value)((double)a - (double)b);
+                        state.Stack[state.SP - 2] = (double)a - (double)b;
                         state.SP--;
                         ip++;
                         break;
                     case OpCode.MultiplyInt8:
                         a = state.Stack[state.SP - 2];
                         b = state.Stack[state.SP - 1];
-                        state.Stack[state.SP - 2] = (sbyte)a * (sbyte)b;
+                        state.Stack[state.SP - 2] = (sbyte)((sbyte)a * (sbyte)b);
                         state.SP--;
                         ip++;
                         break;
                     case OpCode.MultiplyUInt8:
                         a = state.Stack[state.SP - 2];
                         b = state.Stack[state.SP - 1];
-                        state.Stack[state.SP - 2] = (byte)a * (byte)b;
+                        state.Stack[state.SP - 2] = (byte)((byte)a * (byte)b);
                         state.SP--;
                         ip++;
                         break;
                     case OpCode.MultiplyInt16:
                         a = state.Stack[state.SP - 2];
                         b = state.Stack[state.SP - 1];
-                        state.Stack[state.SP - 2] = ((short)a * (short)b);
+                        state.Stack[state.SP - 2] = (short)((short)a * (short)b);
                         state.SP--;
                         ip++;
                         break;
                     case OpCode.MultiplyUInt16:
                         a = state.Stack[state.SP - 2];
                         b = state.Stack[state.SP - 1];
-                        state.Stack[state.SP - 2] = ((ushort)a * (ushort)b);
+                        state.Stack[state.SP - 2] = (ushort)((ushort)a * (ushort)b);
                         state.SP--;
                         ip++;
                         break;
@@ -354,119 +347,119 @@ namespace CLanguage.Interpreter
                     case OpCode.MultiplyUInt32:
                         a = state.Stack[state.SP - 2];
                         b = state.Stack[state.SP - 1];
-                        state.Stack[state.SP - 2] = (Value)((uint)a * (uint)b);
+                        state.Stack[state.SP - 2] = (uint)((uint)a * (uint)b);
                         state.SP--;
                         ip++;
                         break;
                     case OpCode.MultiplyFloat32:
                         a = state.Stack[state.SP - 2];
                         b = state.Stack[state.SP - 1];
-                        state.Stack[state.SP - 2] = ((float)a * (float)b);
+                        state.Stack[state.SP - 2] = (float)a * (float)b;
                         state.SP--;
                         ip++;
                         break;
                     case OpCode.MultiplyFloat64:
                         a = state.Stack[state.SP - 2];
                         b = state.Stack[state.SP - 1];
-                        state.Stack[state.SP - 2] = ((double)a * (double)b);
+                        state.Stack[state.SP - 2] = (double)a * (double)b;
                         state.SP--;
                         ip++;
                         break;
                     case OpCode.DivideInt8:
                         a = state.Stack[state.SP - 2];
                         b = state.Stack[state.SP - 1];
-                        state.Stack[state.SP - 2] = (sbyte)a / (sbyte)b;
+                        state.Stack[state.SP - 2] = (sbyte)((sbyte)a / (sbyte)b);
                         state.SP--;
                         ip++;
                         break;
                     case OpCode.DivideUInt8:
                         a = state.Stack[state.SP - 2];
                         b = state.Stack[state.SP - 1];
-                        state.Stack[state.SP - 2] = (byte)a / (byte)b;
+                        state.Stack[state.SP - 2] = (byte)((byte)a / (byte)b);
                         state.SP--;
                         ip++;
                         break;
                     case OpCode.DivideInt16:
                         a = state.Stack[state.SP - 2];
                         b = state.Stack[state.SP - 1];
-                        state.Stack[state.SP - 2] = ((short)a / (short)b);
+                        state.Stack[state.SP - 2] = (short)((short)a / (short)b);
                         state.SP--;
                         ip++;
                         break;
                     case OpCode.DivideUInt16:
                         a = state.Stack[state.SP - 2];
                         b = state.Stack[state.SP - 1];
-                        state.Stack[state.SP - 2] = ((ushort)a / (ushort)b);
+                        state.Stack[state.SP - 2] = (ushort)((ushort)a / (ushort)b);
                         state.SP--;
                         ip++;
                         break;
                     case OpCode.DivideInt32:
                         a = state.Stack[state.SP - 2];
                         b = state.Stack[state.SP - 1];
-                        state.Stack[state.SP - 2] = ((int)a / (int)b);
+                        state.Stack[state.SP - 2] = (int)a / (int)b;
                         state.SP--;
                         ip++;
                         break;
                     case OpCode.DivideUInt32:
                         a = state.Stack[state.SP - 2];
                         b = state.Stack[state.SP - 1];
-                        state.Stack[state.SP - 2] = (Value)((uint)a / (uint)b);
+                        state.Stack[state.SP - 2] = (uint)((uint)a / (uint)b);
                         state.SP--;
                         ip++;
                         break;
                     case OpCode.DivideFloat32:
                         a = state.Stack[state.SP - 2];
                         b = state.Stack[state.SP - 1];
-                        state.Stack[state.SP - 2] = ((float)a / (float)b);
+                        state.Stack[state.SP - 2] = (float)a / (float)b;
                         state.SP--;
                         ip++;
                         break;
                     case OpCode.DivideFloat64:
                         a = state.Stack[state.SP - 2];
                         b = state.Stack[state.SP - 1];
-                        state.Stack[state.SP - 2] = ((double)a / (double)b);
+                        state.Stack[state.SP - 2] = (double)a / (double)b;
                         state.SP--;
                         ip++;
                         break;
                     case OpCode.ShiftLeftInt8:
                         a = state.Stack[state.SP - 2];
                         b = state.Stack[state.SP - 1];
-                        state.Stack[state.SP - 2] = (sbyte)a << (sbyte)b;
+                        state.Stack[state.SP - 2] = (sbyte)((sbyte)a << (sbyte)b);
                         state.SP--;
                         ip++;
                         break;
                     case OpCode.ShiftLeftUInt8:
                         a = state.Stack[state.SP - 2];
                         b = state.Stack[state.SP - 1];
-                        state.Stack[state.SP - 2] = (byte)a << (byte)b;
+                        state.Stack[state.SP - 2] = (byte)((byte)a << (byte)b);
                         state.SP--;
                         ip++;
                         break;
                     case OpCode.ShiftLeftInt16:
                         a = state.Stack[state.SP - 2];
                         b = state.Stack[state.SP - 1];
-                        state.Stack[state.SP - 2] = ((short)a << (short)b);
+                        state.Stack[state.SP - 2] = (short)((short)a << (short)b);
                         state.SP--;
                         ip++;
                         break;
                     case OpCode.ShiftLeftUInt16:
                         a = state.Stack[state.SP - 2];
                         b = state.Stack[state.SP - 1];
-                        state.Stack[state.SP - 2] = ((ushort)a << (ushort)b);
+                        state.Stack[state.SP - 2] = (ushort)((ushort)a << (ushort)b);
                         state.SP--;
                         ip++;
                         break;
                     case OpCode.ShiftLeftInt32:
                         a = state.Stack[state.SP - 2];
                         b = state.Stack[state.SP - 1];
-                        state.Stack[state.SP - 2] = ((int)a << (int)b);
+                        state.Stack[state.SP - 2] = (int)a << (int)b;
                         state.SP--;
                         ip++;
                         break;
                     case OpCode.ShiftLeftUInt32:
                         a = state.Stack[state.SP - 2];
                         b = state.Stack[state.SP - 1];
-                        state.Stack[state.SP - 2] = (Value)((uint)a << (int)b);
+                        state.Stack[state.SP - 2] = (uint)((uint)a << (int)b);
                         state.SP--;
                         ip++;
                         break;

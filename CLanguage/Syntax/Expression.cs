@@ -24,8 +24,6 @@ namespace CLanguage.Syntax
         {
             DoEmitPointer (ec);
         }
-		public virtual CPointerType GetEvaluatedCPointerType (EmitContext ec) =>
-			GetEvaluatedCType (ec).Pointer;
 
 		public abstract CType GetEvaluatedCType (EmitContext ec);
 
@@ -33,17 +31,24 @@ namespace CLanguage.Syntax
         protected virtual void DoEmitPointer (EmitContext ec) =>
             throw new NotSupportedException ($"Cannot get address of {this.GetType().Name} `{this}`");
 
-		protected static CBasicType GetPromotedType (Expression expr, string op, EmitContext ec)
+		protected static CType GetPromotedType (Expression expr, string op, EmitContext ec)
 		{
 			var leftType = expr.GetEvaluatedCType (ec);
 
 			var leftBasicType = leftType as CBasicType;
 
-			if (leftBasicType == null) {
+			if (leftBasicType != null) {
+				return leftBasicType.IntegerPromote (ec);
+			}
+			else if (leftType is CArrayType laType) {
+				return laType.ElementType.Pointer;
+			}
+			else if (leftType is CPointerType) {
+				return leftType;
+			}
+			else {
 				ec.Report.Error (19, "'" + op + "' cannot be applied to operand of type '" + leftType + "'");
 				return CBasicType.SignedInt;
-			} else {
-				return leftBasicType.IntegerPromote (ec);
 			}
 		}
 
@@ -58,11 +63,17 @@ namespace CLanguage.Syntax
 			if (leftBasicType != null && rightBasicType != null) {
 				return leftBasicType.ArithmeticConvert (rightBasicType, ec);
 			}
-			else if (leftExpr.CanEmitPointer && rightBasicType != null) {
-				return leftExpr.GetEvaluatedCPointerType (ec);
+			else if (leftType is CPointerType lpType && rightBasicType != null) {
+				return lpType;
 			}
-			else if (rightExpr.CanEmitPointer && leftBasicType != null) {
-				return rightExpr.GetEvaluatedCPointerType (ec);
+			else if (leftType is CArrayType laType && rightBasicType != null) {
+				return laType.ElementType.Pointer;
+			}
+			else if (rightType is CPointerType rpType && leftBasicType != null) {
+				return rpType;
+			}
+			else if (rightType is CArrayType raType && leftBasicType != null) {
+				return raType.ElementType.Pointer;
 			}
 			else {
 				ec.Report.Error (19, "'" + op + "' cannot be applied to operands of type '" + leftType + "' and '" + rightType + "'");

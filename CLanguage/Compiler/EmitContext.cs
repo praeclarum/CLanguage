@@ -117,7 +117,7 @@ namespace CLanguage.Compiler
             if (fromBasicType != null && toBasicType != null) {
                 var fromOffset = GetInstructionOffset (fromBasicType);
                 var toOffset = GetInstructionOffset (toBasicType);
-                var op = OpCode.ConvertInt8Int8 + (fromOffset * 11 + toOffset);
+                var op = OpCode.ConvertInt8Int8 + (fromOffset * 10 + toOffset);
                 Emit (op);
                 // This conversion is implicit with how the evaluator stores its stuff
             }
@@ -195,7 +195,16 @@ namespace CLanguage.Compiler
                 }
             }
             else if (cType is CPointerType pType) {
-                return 10;
+                switch (this.MachineInfo.PointerSize) {
+                    case 1:
+                        return 1;
+                    case 2:
+                        return 3;
+                    case 4:
+                        return 5;
+                    case 8:
+                        return 7;
+                }
             }
 
             throw new NotSupportedException ("Arithmetic on type '" + cType + "'");

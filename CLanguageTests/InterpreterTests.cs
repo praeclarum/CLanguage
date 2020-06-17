@@ -469,7 +469,33 @@ void main () {
 }");
         }
 
-        [TestMethod]
+		[TestMethod]
+		public void PostIncrementPointer ()
+		{
+			var i = Run (@"
+int a[] = { 10, 11, 12 };
+void main () {
+    int* p = a;
+    assertAreEqual (10, *p++);
+    assertAreEqual (11, *p++);
+    assertAreEqual (12, *p++);
+}");
+		}
+
+		[TestMethod]
+		public void PostDecrementPointer ()
+		{
+			var i = Run (@"
+int a[] = { 10, 11, 12 };
+void main () {
+    int* p = a + 2;
+    assertAreEqual (12, *p--);
+    assertAreEqual (11, *p--);
+    assertAreEqual (10, *p--);
+}");
+		}
+
+		[TestMethod]
         public void BoolAssignment ()
         {
             var i = Run (@"
@@ -529,6 +555,10 @@ void main () {
 	assertAreEqual (12, a[2]);
 	assign(a + 2);
 	assertAreEqual (42, a[2]);
+
+	assertAreEqual (13, a[3]);
+	assign(3 + a);
+	assertAreEqual (42, a[3]);
 
 	int c = 33;
 	assertAreEqual (33, c);
