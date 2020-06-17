@@ -16,9 +16,9 @@ jobs:
     - name: Update Versions
       env:
         VERSION_PREFIX: 1.13
-        VERSION: ${{env.VERSION_PREFIX}}.${{github.run_number}}
+        VERSION_SUFFIX: ${{github.run_number}}
       run: |
-        echo "VERSION==$VERSION"
+        echo "VERSION==$VERSION_PREFIX.$VERSION_SUFFIX"
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
