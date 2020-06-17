@@ -12,6 +12,7 @@ namespace CLanguage.Types
         }
 
         public static readonly CPointerType PointerToConstChar = new CPointerType(CBasicType.ConstChar);
+        public static readonly CPointerType PointerToVoid = new CPointerType (CType.Void);
 
         public override int NumValues => 1;
 

@@ -31,5 +31,12 @@ namespace CLanguage.Syntax
             InnerExpression.Emit (ec);
             ec.Emit (OpCode.LoadPointer);
         }
+
+        public override bool CanEmitPointer => true;
+
+        protected override void DoEmitPointer (EmitContext ec)
+        {
+            InnerExpression.Emit (ec);
+        }
     }
 }

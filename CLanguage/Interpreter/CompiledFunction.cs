@@ -239,6 +239,13 @@ namespace CLanguage.Interpreter
                         state.SP--;
                         ip++;
                         break;
+                    case OpCode.AddPointer:
+                        a = state.Stack[state.SP - 2];
+                        b = state.Stack[state.SP - 1];
+                        state.Stack[state.SP - 2] = Value.Pointer ((int)a + (int)b);
+                        state.SP--;
+                        ip++;
+                        break;
                     case OpCode.SubtractInt8:
                         a = state.Stack[state.SP - 2];
                         b = state.Stack[state.SP - 1];

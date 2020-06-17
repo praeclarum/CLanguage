@@ -26,7 +26,12 @@ namespace CLanguage.Types
 
         public CType ()
         {
-            pointer = new Lazy<CPointerType> (() => new CPointerType (this));
+            pointer = new Lazy<CPointerType> (CreatePointerType);
+        }
+
+        protected virtual CPointerType CreatePointerType ()
+        {
+            return new CPointerType (this);
         }
 
         public virtual int ScoreCastTo (CType otherType)

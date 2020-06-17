@@ -117,7 +117,7 @@ namespace CLanguage.Compiler
             if (fromBasicType != null && toBasicType != null) {
                 var fromOffset = GetInstructionOffset (fromBasicType);
                 var toOffset = GetInstructionOffset (toBasicType);
-                var op = OpCode.ConvertInt8Int8 + (fromOffset * 10 + toOffset);
+                var op = OpCode.ConvertInt8Int8 + (fromOffset * 11 + toOffset);
                 Emit (op);
                 // This conversion is implicit with how the evaluator stores its stuff
             }
@@ -168,32 +168,37 @@ namespace CLanguage.Compiler
             throw new NotSupportedException ("Cannot get constant memory from this context");
         }
 
-        public int GetInstructionOffset (CBasicType aType)
+        public int GetInstructionOffset (CType cType)
         {
-            var size = aType.GetByteSize (this);
+            var size = cType.GetByteSize (this);
 
-            if (aType.IsIntegral) {
-                switch (size) {
-                    case 1:
-                        return aType.Signedness == Signedness.Signed ? 0 : 1;
-                    case 2:
-                        return aType.Signedness == Signedness.Signed ? 2 : 3;
-                    case 4:
-                        return aType.Signedness == Signedness.Signed ? 4 : 5;
-                    case 8:
-                        return aType.Signedness == Signedness.Signed ? 6 : 7;
+            if (cType is CBasicType aType) {
+                if (aType.IsIntegral) {
+                    switch (size) {
+                        case 1:
+                            return aType.Signedness == Signedness.Signed ? 0 : 1;
+                        case 2:
+                            return aType.Signedness == Signedness.Signed ? 2 : 3;
+                        case 4:
+                            return aType.Signedness == Signedness.Signed ? 4 : 5;
+                        case 8:
+                            return aType.Signedness == Signedness.Signed ? 6 : 7;
+                    }
+                }
+                else {
+                    switch (size) {
+                        case 4:
+                            return 8;
+                        case 8:
+                            return 9;
+                    }
                 }
             }
-            else {
-                switch (size) {
-                    case 4:
-                        return 8;
-                    case 8:
-                        return 9;
-                }
+            else if (cType is CPointerType pType) {
+                return 10;
             }
 
-            throw new NotSupportedException ("Arithmetic on type '" + aType + "'");
+            throw new NotSupportedException ("Arithmetic on type '" + cType + "'");
         }
 
         public CType MakeCType (DeclarationSpecifiers specs, Declarator? decl, Initializer? init, Block block)

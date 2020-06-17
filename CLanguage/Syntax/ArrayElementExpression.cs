@@ -34,6 +34,20 @@ namespace CLanguage.Syntax
                 return CType.Void;
             }
         }
+        public override CPointerType GetEvaluatedCPointerType (EmitContext ec)
+        {
+            var t = Array.GetEvaluatedCType (ec);
+            if (t is CArrayType a) {
+                return a.ElementType.Pointer;
+            }
+            else if (t is CPointerType p) {
+                return p.InnerType.Pointer;
+            }
+            else {
+                ec.Report.Error (601, "Left hand side of [ must be an array or pointer");
+                return CPointerType.PointerToVoid;
+            }
+        }
 
         protected override void DoEmit (EmitContext ec)
         {

@@ -22,6 +22,11 @@ namespace CLanguage.Types
             }
         }
 
+        protected override CPointerType CreatePointerType ()
+        {
+            return ElementType.Pointer;
+        }
+
         public override int GetByteSize (EmitContext c)
         {
             if (Length == null) return c.MachineInfo.PointerSize;

@@ -514,6 +514,29 @@ void main () {
 }
 ");
 		}
+
+		[TestMethod]
+		public void PointerAssignment ()
+		{
+			Run (@"
+int a[] = { 10, 11, 12, 13 };
+void assign(int *p) { *p = 42; }
+void main () {
+	assertAreEqual (10, a[0]);
+	assign(&a[0]);
+	assertAreEqual (42, a[0]);
+
+	assertAreEqual (12, a[2]);
+	assign(a + 2);
+	assertAreEqual (42, a[2]);
+
+	int c = 33;
+	assertAreEqual (33, c);
+	assign(&c);
+	assertAreEqual (42, c);
+}
+");
+		}
 	}
 }
 

@@ -24,6 +24,8 @@ namespace CLanguage.Syntax
         {
             DoEmitPointer (ec);
         }
+		public virtual CPointerType GetEvaluatedCPointerType (EmitContext ec) =>
+			GetEvaluatedCType (ec).Pointer;
 
 		public abstract CType GetEvaluatedCType (EmitContext ec);
 
@@ -45,7 +47,7 @@ namespace CLanguage.Syntax
 			}
 		}
 
-		protected static CBasicType GetArithmeticType (Expression leftExpr, Expression rightExpr, string op, EmitContext ec)
+		protected static CType GetArithmeticType (Expression leftExpr, Expression rightExpr, string op, EmitContext ec)
 		{
 			var leftType = leftExpr.GetEvaluatedCType (ec);
 			var rightType = rightExpr.GetEvaluatedCType (ec);
@@ -53,11 +55,18 @@ namespace CLanguage.Syntax
 			var leftBasicType = leftType as CBasicType;
 			var rightBasicType = rightType as CBasicType;
 
-			if (leftBasicType == null || rightBasicType == null) {
+			if (leftBasicType != null && rightBasicType != null) {
+				return leftBasicType.ArithmeticConvert (rightBasicType, ec);
+			}
+			else if (leftExpr.CanEmitPointer && rightBasicType != null) {
+				return leftExpr.GetEvaluatedCPointerType (ec);
+			}
+			else if (rightExpr.CanEmitPointer && leftBasicType != null) {
+				return rightExpr.GetEvaluatedCPointerType (ec);
+			}
+			else {
 				ec.Report.Error (19, "'" + op + "' cannot be applied to operands of type '" + leftType + "' and '" + rightType + "'");
 				return CBasicType.SignedInt;
-			} else {
-				return leftBasicType.ArithmeticConvert (rightBasicType, ec);
 			}
 		}
 
