@@ -33,16 +33,16 @@ namespace CLanguage.Syntax
 
                 var numItemValues = arrayType.ElementType.NumValues;
 
-                Left.EmitPointer (ec);
-
-                for (int i = 0; i < sexpr.Items.Count; i++) {
+                var count = sexpr.Items.Count;
+                for (int i = 0; i < count; i++) {
                     var item = sexpr.Items[i];
-                    ec.Emit (OpCode.Dup);
+                    item.Expression.Emit (ec);
+                    Left.EmitPointer (ec);
                     ec.Emit (OpCode.LoadConstant, i * numItemValues);
                     ec.Emit (OpCode.OffsetPointer);
-                    item.Expression.Emit (ec);
                     ec.Emit (OpCode.StorePointer);
                 }
+                Left.EmitPointer (ec);
             }
             else {
                 throw new NotSupportedException ($"Structured assignment of '{GetEvaluatedCType (ec)}' not supported");
@@ -55,9 +55,8 @@ namespace CLanguage.Syntax
                 DoEmitStructureAssignment (sexpr, ec);
                 return;
             }
-#pragma warning disable 8602
-            Right.Emit(ec);
-#pragma warning restore
+
+            Right.Emit (ec);
 
             if (Left is VariableExpression variable) {
 
@@ -83,9 +82,14 @@ namespace CLanguage.Syntax
                     throw new NotSupportedException ("Assigning to scope '" + v.Scope + "'");
                 }
             }
+            else if (Left.CanEmitPointer) {
+                ec.EmitCast (Right.GetEvaluatedCType (ec), Left.GetEvaluatedCType (ec));
+                ec.Emit (OpCode.Dup);
+                Left.EmitPointer (ec);
+                ec.Emit (OpCode.StorePointer);
+            }
             else {
-                ec.Emit (OpCode.Pop);
-                ec.Report.Error (131, "The left-hand side of an assignment must be a variable");
+                ec.Report.Error (131, "The left-hand side of an assignment must be a variable or an addressable memory location");
             }
         }
 

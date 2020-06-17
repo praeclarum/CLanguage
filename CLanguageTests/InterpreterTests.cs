@@ -498,6 +498,22 @@ void main () {
     assertAreEqual (10, i);
 }");
         }
+
+		[TestMethod]
+		public void ArrayElementAssignment ()
+		{
+			Run (@"
+int a[] = { 10, 11, 12, 13 };
+void main () {
+	assertAreEqual (10, a[0]);
+	a[0] = 42;
+	assertAreEqual (42, a[0]);
+	assertAreEqual (12, a[2]);
+	a[2] *= 1000;
+	assertAreEqual (12000, a[2]);
+}
+");
+		}
 	}
 }
 

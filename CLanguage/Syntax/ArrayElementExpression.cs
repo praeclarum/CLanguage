@@ -37,17 +37,24 @@ namespace CLanguage.Syntax
 
         protected override void DoEmit (EmitContext ec)
         {
-            Array.Emit (ec);
-            ElementIndex.Emit (ec);
-            ec.Emit (OpCode.LoadConstant, GetEvaluatedCType (ec).NumValues);
-            ec.Emit (OpCode.MultiplyInt32);
-            ec.Emit (OpCode.OffsetPointer);
+            DoEmitPointer (ec);
             ec.Emit (OpCode.LoadPointer);
         }
 
         public override string ToString ()
         {
             return string.Format ("{0}[{1}]", Array, ElementIndex);
+        }
+
+        public override bool CanEmitPointer => Array.CanEmitPointer;
+
+        protected override void DoEmitPointer (EmitContext ec)
+        {
+            Array.Emit (ec);
+            ElementIndex.Emit (ec);
+            ec.Emit (OpCode.LoadConstant, GetEvaluatedCType (ec).NumValues);
+            ec.Emit (OpCode.MultiplyInt32);
+            ec.Emit (OpCode.OffsetPointer);
         }
     }
 }

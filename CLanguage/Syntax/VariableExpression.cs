@@ -84,6 +84,8 @@ namespace CLanguage.Syntax
 			}
         }
 
+        public override bool CanEmitPointer => true;
+
         protected override void DoEmitPointer (EmitContext ec)
         {
             var res = ec.ResolveVariable (this, null);

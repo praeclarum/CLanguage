@@ -19,6 +19,7 @@ namespace CLanguage.Syntax
             DoEmit(ec);
         }
 
+		public virtual bool CanEmitPointer => false;
         public void EmitPointer (EmitContext ec)
         {
             DoEmitPointer (ec);

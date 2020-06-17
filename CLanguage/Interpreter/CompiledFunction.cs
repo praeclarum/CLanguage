@@ -128,7 +128,7 @@ namespace CLanguage.Interpreter
                     case OpCode.StorePointer:
                         a = state.Stack[state.SP - 2];
                         b = state.Stack[state.SP - 1];
-                        state.Stack[a.PointerValue] = b;
+                        state.Stack[b.PointerValue] = a;
                         state.SP -= 2;
                         ip++;
                         break;
