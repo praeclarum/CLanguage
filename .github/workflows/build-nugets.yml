@@ -18,8 +18,12 @@ jobs:
       with:
         dotnet-version: 3.1.101
     - name: Install dependencies
-      run: msbuild /t:Restore CLanguage.sln
+      run: msbuild /t:Restore /p:Configuration=Release CLanguage.sln
     - name: Build
-      run: msbuild /p:Configuration=Release CLanguage.sln
-    - name: Test
-      run: dotnet test --no-restore --verbosity normal
+      run: msbuild /p:Configuration=Release CLanguage/CLanguage.csproj
+    - name: Build Test
+      run: msbuild /p:Configuration=Release CLanguageTests/CLanguageTests.csproj
+    - name: Build Mac Editor
+      run: msbuild /p:Configuration=Release Editor/Mac/CLanguage.Editor.Mac.csproj
+    - name: Build iOS Editor
+      run: msbuild /p:Configuration=Release Editor/iOS/CLanguage.Editor.iOS.csproj
