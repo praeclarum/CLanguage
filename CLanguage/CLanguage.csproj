@@ -7,7 +7,7 @@
     <PackageTags>C;Compiler;Interpreter;Language</PackageTags>
     <PackageIconUrl>https://github.com/praeclarum/CLanguage/raw/master/Documentation/Icon.png</PackageIconUrl>
     <PackageProjectUrl>https://github.com/praeclarum/CLanguage</PackageProjectUrl>
-    <PackageLicenseUrl>https://github.com/praeclarum/CLanguage/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/praeclarum/CLanguage.git</RepositoryUrl>
     <TargetFrameworks>netstandard1.2;netstandard2.0</TargetFrameworks>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
