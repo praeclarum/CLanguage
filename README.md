@@ -1,4 +1,4 @@
-# CLanguage [![Build Status](https://app.bitrise.io/app/cfa2ebe75549e772/status.svg?token=iZkWdHffpXypGmojf2MgGQ&branch=master)](https://app.bitrise.io/app/cfa2ebe75549e772)
+# CLanguage
 
 <img src="https://github.com/praeclarum/CLanguage/raw/master/Documentation/Icon.png" height="20"> [![NuGet Package](https://img.shields.io/nuget/v/CLanguage.svg)](https://www.nuget.org/packages/CLanguage)
 
