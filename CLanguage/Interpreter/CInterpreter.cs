@@ -173,7 +173,7 @@ namespace CLanguage.Interpreter
 
         public void Run ()
         {
-            Step (1000000);
+            Step (1_000_000);
         }
 
         public static void Run (string code)
@@ -184,7 +184,7 @@ namespace CLanguage.Interpreter
             interpreter.Run ();
         }
 
-        [Obsolete]
+        [Obsolete ("Please use Run() which Steps for 1 machine second.")]
         public void Step ()
 		{
 			Step (1000000);
