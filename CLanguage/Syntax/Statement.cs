@@ -27,5 +27,7 @@ namespace CLanguage.Syntax
             b.AddStatement (this);
             return b;
         }
+
+        public abstract void AddDeclarationToBlock (BlockContext context);
     }
 }

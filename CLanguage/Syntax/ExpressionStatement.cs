@@ -30,7 +30,11 @@ namespace CLanguage.Syntax
 			return string.Format ("{0};", Expression);
 		}
 
-		public override bool AlwaysReturns {
+        public override void AddDeclarationToBlock (BlockContext context)
+        {
+        }
+
+        public override bool AlwaysReturns {
 			get {
 				return false;
 			}

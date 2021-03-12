@@ -182,130 +182,7 @@ namespace CLanguage.Compiler
         {
             var block = context.Block;
             foreach (var s in block.Statements) {
-                AddStatementDeclarations (s, context);
-            }
-        }
-
-        void AddStatementDeclarations (Statement statement, BlockContext context)
-        {
-            var block = context.Block;
-            if (statement is MultiDeclaratorStatement multi) {
-                if (multi.InitDeclarators != null) {
-                    foreach (var idecl in multi.InitDeclarators) {
-                        if ((multi.Specifiers.StorageClassSpecifier & StorageClassSpecifier.Typedef) != 0) {
-                            var name = idecl.Declarator.DeclaredIdentifier;
-                            var ttype = context.MakeCType (multi.Specifiers, idecl.Declarator, idecl.Initializer, block);
-                            block.Typedefs[name] = ttype;
-                        }
-                        else {
-                            CType ctype = context.MakeCType (multi.Specifiers, idecl.Declarator, idecl.Initializer, block);
-                            var name = idecl.Declarator.DeclaredIdentifier;
-
-                            if (ctype is CFunctionType ftype && !HasStronglyBoundPointer (idecl.Declarator)) {
-                                var nameContext = (idecl.Declarator.InnerDeclarator is IdentifierDeclarator ndecl && ndecl.Context.Count > 0) ?
-                                    string.Join ("::", ndecl.Context) : "";
-                                var f = new CompiledFunction (name, nameContext, ftype);
-                                block.Functions.Add (f);
-                            }
-                            else {
-                                if ((ctype is CArrayType atype) &&
-                                    (atype.Length == null) &&
-                                    (idecl.Initializer != null)) {
-                                    if (idecl.Initializer is StructuredInitializer structInit) {
-                                        var len = 0;
-                                        foreach (var i in structInit.Initializers) {
-                                            if (i.Designation == null) {
-                                                len++;
-                                            }
-                                            else {
-                                                foreach (var de in i.Designation.Designators) {
-                                                    // TODO: Pay attention to designators
-                                                    len++;
-                                                }
-                                            }
-                                        }
-                                        atype = new CArrayType (atype.ElementType, len);
-                                    }
-                                    else {
-                                        //Report.Error();
-                                    }
-                                }
-                                //var init = GetInitExpression(idecl.Initializer);
-                                block.AddVariable (name, ctype ?? CBasicType.SignedInt);
-                            }
-
-                            if (idecl.Initializer != null) {
-                                var varExpr = new VariableExpression (name, Location.Null, Location.Null);
-                                var initExpr = GetInitializerExpression (idecl.Initializer);
-                                block.InitStatements.Add (new ExpressionStatement (new AssignExpression (varExpr, initExpr)));
-                            }
-                        }
-                    }
-                }
-                else {
-                    var ctype = context.MakeCType (multi.Specifiers, null, block);
-                    if (ctype is CStructType structType) {
-                        var n = structType.Name;
-                        if (!string.IsNullOrEmpty (n)) {
-                            block.Structures[n] = structType;
-                        }
-                    }
-                    else if (ctype is CEnumType enumType) {
-                        var n = enumType.Name;
-                        if (string.IsNullOrEmpty (n)) {
-                            n = "e" + enumType.GetHashCode ();
-                        }
-                        block.Enums[n] = enumType;
-                    }
-                }
-            }
-            else if (statement is FunctionDefinition fdef) {
-                if (context.MakeCType (fdef.Specifiers, fdef.Declarator, null, block) is CFunctionType ftype) {
-                    var name = fdef.Declarator.DeclaredIdentifier;
-                    var f = new CompiledFunction (name, ftype, fdef.Body);
-                    block.Functions.Add (f);
-                }
-            }
-            else if (statement is ForStatement fors) {
-                AddStatementDeclarations (fors.InitBlock, context);
-                AddStatementDeclarations (fors.LoopBody, context);
-            }
-            else if (statement is Block subBlock) {
-                var subContext = new BlockContext (subBlock, context);
-                AddStatementDeclarations (subContext);
-            }
-        }
-
-        Expression GetInitializerExpression (Initializer init)
-        {
-            if (init is ExpressionInitializer) {
-                return ((ExpressionInitializer)init).Expression;
-            }
-            else if (init is StructuredInitializer) {
-                var sinit = (StructuredInitializer)init;
-
-                var sexpr = new StructureExpression ();
-
-                foreach (var i in sinit.Initializers) {
-                    var e = GetInitializerExpression (i);
-
-                    if (i.Designation == null || i.Designation.Designators.Count == 0) {
-                        var ie = new StructureExpression.Item (null, GetInitializerExpression (i));
-                        sexpr.Items.Add (ie);
-                    }
-                    else {
-
-                        foreach (var d in i.Designation.Designators) {
-                            var ie = new StructureExpression.Item (d.ToString (), e);
-                            sexpr.Items.Add (ie);
-                        }
-                    }
-                }
-
-                return sexpr;
-            }
-            else {
-                throw new NotSupportedException (init.ToString ());
+                s.AddDeclarationToBlock (context);
             }
         }
 
@@ -316,11 +193,6 @@ namespace CLanguage.Compiler
             else return GetFunctionDeclarator (d.InnerDeclarator);
         }
 
-        bool HasStronglyBoundPointer (Declarator? d)
-        {
-            if (d == null) return false;
-            else if (d is PointerDeclarator && ((PointerDeclarator)d).StrongBinding) return true;
-            else return HasStronglyBoundPointer (d.InnerDeclarator);
-        }
+        
     }
 }

@@ -11,6 +11,10 @@ namespace CLanguage.Syntax
 
         public override bool AlwaysReturns => false;
 
+        public override void AddDeclarationToBlock (BlockContext context)
+        {
+        }
+
         protected override void DoEmit (EmitContext ec)
         {
             if (ec.Loop is object) {

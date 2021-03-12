@@ -6,21 +6,24 @@ namespace CLanguage.Tests
     [TestClass]
     public class WhileTests : TestsBase
     {
-        [TestMethod, Ignore ("Issue #19")]
+        [TestMethod]
         public void InnerForLoop ()
         {
-            var i = Run (@"
+            Run (@"
 void main()
 {
 	int s = 0;
+    int a = 0;
 	
 	while (s < 3)
 	{
 		for (int pos = 5; pos < 7; pos++)
 		{
+            a++;
 		}
-		stack++;
+		s++;
 	}
+    assertAreEqual(6, a);
 }
 ");
         }

@@ -44,6 +44,7 @@ namespace CLanguage.Syntax
                 ec.EmitCastToBoolean (Condition.GetEvaluatedCType (ec));
                 ec.Emit (OpCode.BranchIfFalse, endLabel);
                 ec.EmitLabel (loopLabel);
+                parentContext.BeginBlock (Loop);
                 Loop.Emit (ec);
                 ec.Emit (OpCode.Jump, condLabel);
             }
@@ -66,6 +67,11 @@ namespace CLanguage.Syntax
             {
                 return string.Format("while ({0}) {1};", Condition, Loop);
             }
+        }
+
+        public override void AddDeclarationToBlock (BlockContext context)
+        {
+            Loop.AddDeclarationToBlock (context);
         }
     }
 }

@@ -46,7 +46,11 @@ namespace CLanguage.Syntax
 			}
 		}
 
-		public override bool AlwaysReturns {
+        public override void AddDeclarationToBlock (BlockContext context)
+        {
+        }
+
+        public override bool AlwaysReturns {
 			get {
 				return true;
 			}

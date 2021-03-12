@@ -20,7 +20,7 @@ namespace CLanguage.Interpreter
 
         public override string ToString ()
         {
-            return string.Format ("{0}: {1}", Name, VariableType);
+            return string.Format ("{0} {1}", VariableType, Name);
         }
     }
 }

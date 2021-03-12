@@ -36,6 +36,11 @@ namespace CLanguage.Syntax
             LoopBody = body;
         }
 
+        public override string ToString ()
+        {
+            return $"for ({InitBlock}; {ContinueExpression}; {NextExpression}) {LoopBody}";
+        }
+
         protected override void DoEmit (EmitContext initialContext)
         {
             initialContext.BeginBlock (InitBlock);
@@ -85,6 +90,12 @@ namespace CLanguage.Syntax
 			ec.EmitLabel (endLabel);
 
             ec.EndBlock ();
+        }
+
+        public override void AddDeclarationToBlock (BlockContext context)
+        {
+            InitBlock.AddDeclarationToBlock (context);
+            LoopBody.AddDeclarationToBlock (context);
         }
 
         public override bool AlwaysReturns => false;

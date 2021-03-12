@@ -29,5 +29,9 @@ namespace CLanguage.Syntax
         protected override void DoEmit (EmitContext ec)
         {
         }
+
+        public override void AddDeclarationToBlock (BlockContext context)
+        {
+        }
     }
 }

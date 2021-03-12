@@ -35,6 +35,13 @@ namespace CLanguage.Syntax
             VariableScope = variableScope;
         }
 
+        public override string ToString ()
+        {
+            if (InitStatements.Count > 0)
+                return $"{{[{string.Join ("; ", InitStatements)}] {string.Join("; ", Statements)}}}";
+            return $"{{{string.Join("; ", Statements)}}}";
+        }
+
         public void AddStatement (Statement? stmt)
         {
             if (stmt != null)
@@ -67,6 +74,14 @@ namespace CLanguage.Syntax
         public void AddVariable (string name, CType ctype)
         {
             Variables.Add (new CompiledVariable (name, 0, ctype));
+        }
+
+        public override void AddDeclarationToBlock (BlockContext context)
+        {
+            var subContext = new BlockContext (this, context);
+            foreach (var s in Statements) {
+                s.AddDeclarationToBlock (subContext);
+            }
         }
     }
 }

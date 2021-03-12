@@ -64,7 +64,13 @@ namespace CLanguage.Syntax
             return string.Format("if ({0}) {1};", Condition, TrueStatement);
         }
 
-		public override bool AlwaysReturns {
+        public override void AddDeclarationToBlock (BlockContext context)
+        {
+            TrueStatement.AddDeclarationToBlock (context);
+            FalseStatement?.AddDeclarationToBlock (context);
+        }
+
+        public override bool AlwaysReturns {
 			get {
 				var tr = TrueStatement.AlwaysReturns;
 				var fr = FalseStatement != null ? FalseStatement.AlwaysReturns : false;
