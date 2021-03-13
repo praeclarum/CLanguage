@@ -5,15 +5,20 @@
     <Authors>praeclarum</Authors>
     <Description>C parser, compiler, and interpreter.</Description>
     <PackageTags>C;Compiler;Interpreter;Language</PackageTags>
-    <PackageIconUrl>https://github.com/praeclarum/CLanguage/raw/master/Documentation/Icon.png</PackageIconUrl>
+    <PackageIcon>Icon.png</PackageIcon>
     <PackageProjectUrl>https://github.com/praeclarum/CLanguage</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <RepositoryUrl>https://github.com/praeclarum/CLanguage.git</RepositoryUrl>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+
     <TargetFrameworks>netstandard1.2;netstandard2.0</TargetFrameworks>
+
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <LangVersion>8.0</LangVersion>
     <Nullable>enable</Nullable>
-    
   </PropertyGroup>
 
   <ItemGroup>
@@ -21,9 +26,13 @@
     <Folder Include="Parser\" />
     <Folder Include="Syntax\" />
     <Folder Include="Types\" />
+    <Content Include="..\Documentation\Icon.png" Link="Icon.png" Pack="true" PackagePath="\" >
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All"/>
     <PackageReference Condition=" $(TargetFramework) == 'netstandard1.2' " Include="System.ValueTuple" Version="4.5.0" />
   </ItemGroup>
 </Project>
