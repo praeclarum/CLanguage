@@ -32,6 +32,9 @@ namespace CLanguage.Compiler
 			tus = new List<TranslationUnit> ();
 
             ProcessDocument (new Document ("_machine.h", options.MachineInfo.GeneratedHeaderCode));
+            foreach (var kv in options.MachineInfo.SystemHeadersCode) {
+                ProcessDocument (new Document (kv.Key, kv.Value));
+            }
             foreach (var d in options.Documents) {
                 ProcessDocument (d);
             }
@@ -63,8 +66,11 @@ namespace CLanguage.Compiler
             }
         }
 
-        Token[]? Include (string filePath, bool relative)
+        Token[]? Include (string path, bool relative)
         {
+            if (lexedDocuments.TryGetValue(path, out var doc)) {
+                return doc.Tokens;
+            }
             return null;
         }
 

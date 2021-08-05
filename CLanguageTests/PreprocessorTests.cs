@@ -334,6 +334,17 @@ void main() {
 ");
         }
 
+        [TestMethod]
+        public void IncludeAbsoluteMathH ()
+        {
+            Run (@"
+#include <math.h>
+void main() {
+    assertFloatsAreEqual(3.1415927410125732, M_PI);
+}
+");
+        }
+
 
     }
 }

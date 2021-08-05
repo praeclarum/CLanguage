@@ -48,10 +48,13 @@ namespace CLanguage
             }
         }
 
+        public Dictionary<string, string> SystemHeadersCode = new Dictionary<string, string> ();
+
         public MachineInfo ()
 		{
 			InternalFunctions = new Collection<BaseFunction> ();
 			HeaderCode = "";
+            SystemHeadersCode["math.h"] = SystemHeaders.MathH;
 		}
 
         public void AddInternalFunction (string prototype, InternalFunctionAction? action = null)
