@@ -15,7 +15,7 @@ namespace CLanguage.Tests
     /// http://en.wikipedia.org/wiki/C_variable_types_and_declarations
     /// </summary>
 	[TestClass]
-    public class DeclarationTests
+    public class DeclarationTests : TestsBase
     {
         List<CompiledVariable> ParseVariables (string code)
         {
@@ -471,6 +471,23 @@ namespace CLanguage.Tests
             var exe = CLanguageService.Compile (fullCode, machineInfo: new ArduinoTestMachineInfo ());
             var g = exe.Globals.FirstOrDefault (x => x.Name == "x");
             Assert.AreEqual (expectedType, g.VariableType);
+        }
+
+        [TestMethod]
+        public void VarInitializationOrder ()
+        {
+            Run (@"
+void main() {
+    int x = 42;
+    assertAreEqual(42, x);
+    x = 32;
+    assertAreEqual(32, x);
+    int y = x * 100;
+    assertAreEqual(3200, y);
+    y += 1;
+    assertAreEqual(3201, y);
+}
+");
         }
     }
 }

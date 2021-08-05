@@ -66,10 +66,9 @@ public:
 };
 C c;
 void main() {
-    int z;
     c.x = 42;
     c.y = 1000;
-    z = c.x + c.y + 5000;
+    int z = c.x + c.y + 5000;
     assertAreEqual(42, c.x);
     assertAreEqual(1000, c.y);
     assertAreEqual(6042, z);

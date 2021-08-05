@@ -26,6 +26,22 @@ namespace CLanguage.Syntax
 
         protected override void DoEmit (EmitContext ec)
         {
+            var multi = this;
+            if (multi.InitDeclarators != null) {
+                foreach (var idecl in multi.InitDeclarators) {
+                    if ((multi.Specifiers.StorageClassSpecifier & StorageClassSpecifier.Typedef) != 0) {
+                    }
+                    else {
+                        if (idecl.Initializer != null) {
+                            var name = idecl.Declarator.DeclaredIdentifier;
+                            var varExpr = new VariableExpression (name, Location.Null, Location.Null);
+                            var initExpr = GetInitializerExpression (idecl.Initializer);
+                            new ExpressionStatement (new AssignExpression (varExpr, initExpr)).Emit (ec);
+                        }
+
+                    }
+                }
+            }
         }
 
         public override void AddDeclarationToBlock (BlockContext context)

@@ -41,7 +41,7 @@ namespace CLanguage.Types
                     return offset;
                 offset += m.MemberType.NumValues;
             }
-            return offset;
+            throw new Exception ($"Member '{member.Name}' not found");
         }
     }
 }
