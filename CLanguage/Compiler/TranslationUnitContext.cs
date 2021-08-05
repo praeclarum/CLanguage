@@ -17,8 +17,10 @@ namespace CLanguage.Compiler
 
         public override CType ResolveTypeName (string typeName)
         {
-            if (TranslationUnit.Typedefs.TryGetValue (typeName, out var t))
-                return t;
+            if (TranslationUnit.Typedefs.TryGetValue (typeName, out var tt))
+                return tt;
+            if (TranslationUnit.Structures.TryGetValue (typeName, out var st))
+                return st;
             return base.ResolveTypeName (typeName);
         }
 

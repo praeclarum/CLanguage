@@ -346,7 +346,9 @@ declaration
 	}
 	| declaration_specifiers init_declarator_list ';'
 	{
-		$$ = new MultiDeclaratorStatement ((DeclarationSpecifiers)$1, (List<InitDeclarator>)$2);
+		DeclarationSpecifiers ds = (DeclarationSpecifiers)$1;
+		List<InitDeclarator> decls = (List<InitDeclarator>)$2;
+		$$ = new MultiDeclaratorStatement (ds, decls);
 	}
 	;
 
@@ -360,7 +362,7 @@ declaration_specifiers
 	| storage_class_specifier declaration_specifiers
 	{
 		var ds = (DeclarationSpecifiers)$2;
-		ds.StorageClassSpecifier = ds.StorageClassSpecifier | (StorageClassSpecifier)$1;
+		ds.StorageClassSpecifier = ds.StorageClassSpecifier | (StorageClassSpecifier)$1;		
 		$$ = ds;
 	}
 	| type_specifier
@@ -448,18 +450,23 @@ type_specifier
 	| BOOL					{ $$ = new TypeSpecifier(TypeSpecifierKind.Builtin, "bool"); }
 	| COMPLEX				{ $$ = new TypeSpecifier(TypeSpecifierKind.Builtin, "complex"); }
 	| IMAGINARY				{ $$ = new TypeSpecifier(TypeSpecifierKind.Builtin, "imaginary"); }
-	| struct_or_union_specifier
+	| struct_or_union_or_class_specifier
 	| enum_specifier
 	| TYPE_NAME				{ $$ = new TypeSpecifier(TypeSpecifierKind.Typename, ($1).ToString()); }
 	;
 
-struct_or_union_specifier
-	: struct_or_union IDENTIFIER compound_statement { $$ = new TypeSpecifier((TypeSpecifierKind)$1, ($2).ToString(), (Block)$3); }
-	| struct_or_union compound_statement            { $$ = new TypeSpecifier((TypeSpecifierKind)$1, "", (Block)$2); }
-	| struct_or_union IDENTIFIER                    { $$ = new TypeSpecifier((TypeSpecifierKind)$1, ($2).ToString()); }
+identifier_or_typename
+	: IDENTIFIER
+	| TYPE_NAME
 	;
 
-struct_or_union
+struct_or_union_or_class_specifier
+	: struct_or_union_or_class identifier_or_typename compound_statement { $$ = new TypeSpecifier((TypeSpecifierKind)$1, ($2).ToString(), (Block)$3); }
+	| struct_or_union_or_class compound_statement            { $$ = new TypeSpecifier((TypeSpecifierKind)$1, "", (Block)$2); }
+	| struct_or_union_or_class identifier_or_typename                    { $$ = new TypeSpecifier((TypeSpecifierKind)$1, ($2).ToString()); }
+	;
+
+struct_or_union_or_class
 	: STRUCT { $$ = TypeSpecifierKind.Struct; }
     | CLASS  { $$ = TypeSpecifierKind.Class; }
 	| UNION  { $$ = TypeSpecifierKind.Union; }
@@ -492,10 +499,10 @@ specifier_qualifier_list
 
 enum_specifier
 	: ENUM '{' enumerator_list '}'                 { $$ = new TypeSpecifier(TypeSpecifierKind.Enum, "", (Block)$3); }
-	| ENUM IDENTIFIER '{' enumerator_list '}'      { $$ = new TypeSpecifier(TypeSpecifierKind.Enum, ($2).ToString(), (Block)$4); }
+	| ENUM identifier_or_typename '{' enumerator_list '}'      { $$ = new TypeSpecifier(TypeSpecifierKind.Enum, ($2).ToString(), (Block)$4); }
 	| ENUM '{' enumerator_list ',' '}'             { $$ = new TypeSpecifier(TypeSpecifierKind.Enum, "", (Block)$3); }
-	| ENUM IDENTIFIER '{' enumerator_list ',' '}'  { $$ = new TypeSpecifier(TypeSpecifierKind.Enum, ($2).ToString(), (Block)$4); }
-	| ENUM IDENTIFIER                              { $$ = new TypeSpecifier(TypeSpecifierKind.Enum, ($2).ToString()); }
+	| ENUM identifier_or_typename '{' enumerator_list ',' '}'  { $$ = new TypeSpecifier(TypeSpecifierKind.Enum, ($2).ToString(), (Block)$4); }
+	| ENUM identifier_or_typename                              { $$ = new TypeSpecifier(TypeSpecifierKind.Enum, ($2).ToString()); }
 	;
 
 enumerator_list

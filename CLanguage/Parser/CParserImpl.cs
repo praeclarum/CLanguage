@@ -99,6 +99,17 @@ namespace CLanguage.Parser
                             lexer.AddTypedef (i.Declarator.DeclaredIdentifier);
                         }
                         break;
+                    case StorageClassSpecifier.None when mds.Specifiers.TypeSpecifiers.Count > 0:
+                        foreach (var i in mds.Specifiers.TypeSpecifiers) {
+                            if (i.Kind == TypeSpecifierKind.Class ||
+                                i.Kind == TypeSpecifierKind.Struct ||
+                                i.Kind == TypeSpecifierKind.Union ||
+                                i.Kind == TypeSpecifierKind.Enum) {
+                                Debug.WriteLine ($"Typdef {i.Name}");
+                                lexer.AddTypedef (i.Name);
+                            }
+                        }
+                        break;
                 }
             }
         }

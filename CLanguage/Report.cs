@@ -71,7 +71,7 @@ namespace CLanguage
             string m = "";
             switch (code) {
                 case 103:
-                    m = "'{0}' not found";
+                    m = "{0} '{1}' not found";
                     break;
                 default:
                     Error (code, loc, endLoc, string.Join (", ", args));

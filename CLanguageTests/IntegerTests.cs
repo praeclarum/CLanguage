@@ -367,6 +367,18 @@ void main () {
             AssertEqual (-11 >> -1, "-11 >> -1");
             AssertEqual (34 >> 5, "34 >> 5");
         }
-    }
+
+		[TestMethod]
+		public void StdInts ()
+		{
+			Run (@"
+#include <stdint.h>
+int8_t byteValue = 42;
+void main() {
+    assertAreEqual(42, byteValue);
+}
+");
+		}
+	}
 }
 

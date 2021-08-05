@@ -41,7 +41,7 @@ namespace CLanguage.Compiler
             if (r != null)
                 return r;
 
-            Report.ErrorCode (103, typeName);
+            Report.ErrorCode (103, "Type", typeName);
             return CBasicType.SignedInt;
         }
 
@@ -57,7 +57,7 @@ namespace CLanguage.Compiler
             if (r != null)
                 return r;
 
-            Report.ErrorCode (103, variable.Location, variable.EndLocation, name);
+            Report.ErrorCode (103, variable.Location, variable.EndLocation, "Variable", name);
             return new ResolvedVariable (VariableScope.Global, 0, CBasicType.SignedInt);
         }
 
@@ -365,7 +365,7 @@ namespace CLanguage.Compiler
             }
 
             //
-            // Structs and Classes
+            // Structs, Classes, Unions, and Enums
             //
             var structTs = specs.TypeSpecifiers.FirstOrDefault (x => x.Kind == TypeSpecifierKind.Struct || x.Kind == TypeSpecifierKind.Class);
             if (structTs != null) {
@@ -438,12 +438,12 @@ namespace CLanguage.Compiler
                 if (multi.InitDeclarators != null) {
                     foreach (var i in multi.InitDeclarators) {
                         var type = MakeCType (multi.Specifiers, i.Declarator, i.Initializer, block);
-                        if (type is CFunctionType functionType) {
-                            var name = i.Declarator.DeclaredIdentifier;
+                        var name = i.Declarator.DeclaredIdentifier;
+                        if (type is CFunctionType functionType) {                            
                             st.Members.Add (new CStructMethod { Name = name, MemberType = type });
                         }
                         else {
-                            throw new NotSupportedException ($"Cannot add `{i}` to struct");
+                            st.Members.Add (new CStructField { Name = name, MemberType = type });
                         }
                     }
                 }
