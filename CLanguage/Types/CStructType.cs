@@ -32,5 +32,16 @@ namespace CLanguage.Types
             }
             return s;
         }
+
+        public int GetFieldOffset (CStructMember member, EmitContext c)
+        {
+            var offset = 0;
+            foreach (var m in Members) {
+                if (ReferenceEquals (m, member))
+                    return offset;
+                offset += m.MemberType.GetByteSize (c);
+            }
+            return offset;
+        }
     }
 }

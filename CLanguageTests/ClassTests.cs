@@ -38,5 +38,40 @@ void main() {
 }
 ");
         }
+
+        [TestMethod]
+        public void Visibility ()
+        {
+            Run (@"
+class C {
+    int x;
+public:
+    int y;
+};
+C c;
+void main() {
+    int z = c.y;
+    assertAreEqual(z, c.y);
+}
+");
+        }
+
+        [TestMethod, Ignore]
+        public void InlineConstructor ()
+        {
+            Run (@"
+class C {
+    int x;
+public:
+    C(int x) { this->x = x; }
+    int getX() { return x; }
+};
+C c(42);
+void main() {
+    assertAreEqual(42, c.getX());
+}
+");
+        }
+
     }
 }

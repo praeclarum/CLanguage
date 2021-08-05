@@ -439,7 +439,7 @@ namespace CLanguage.Compiler
                     foreach (var i in multi.InitDeclarators) {
                         var type = MakeCType (multi.Specifiers, i.Declarator, i.Initializer, block);
                         var name = i.Declarator.DeclaredIdentifier;
-                        if (type is CFunctionType functionType) {                            
+                        if (type is CFunctionType functionType) {
                             st.Members.Add (new CStructMethod { Name = name, MemberType = type });
                         }
                         else {
@@ -447,6 +447,9 @@ namespace CLanguage.Compiler
                         }
                     }
                 }
+            }
+            else if (s is VisibilityStatement vs) {
+                // Ignoring visibility at the moment
             }
             else {
                 throw new NotSupportedException ($"Cannot add statement `{s}` to struct");

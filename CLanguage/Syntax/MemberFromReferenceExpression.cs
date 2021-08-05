@@ -58,12 +58,15 @@ namespace CLanguage.Syntax
                         }
                     }
                     else {
-                        throw new NotSupportedException ("Member field access on struct " + structType.Name);
+                        Left.EmitPointer (ec);
+                        ec.Emit (OpCode.LoadConstant, Value.Pointer (structType.GetFieldOffset(member, ec)));
+                        ec.Emit (OpCode.OffsetPointer);
+                        ec.Emit (OpCode.LoadPointer);
                     }
                 }
             }
             else {
-                throw new NotSupportedException ("Member access on " + targetType?.GetType ().Name);
+                throw new NotSupportedException ($"Cannot read '{MemberName}' on " + targetType?.GetType ().Name);
             }
         }
 

@@ -28,6 +28,7 @@ namespace CLanguage.Parser
 %token BINARY_AND_ASSIGN BINARY_XOR_ASSIGN BINARY_OR_ASSIGN
 %token AND_ASSIGN OR_ASSIGN
 %token TYPE_NAME
+%token PUBLIC PRIVATE PROTECTED
 
 %token TYPEDEF EXTERN STATIC AUTO REGISTER INLINE RESTRICT
 %token CHAR SHORT INT LONG SIGNED UNSIGNED FLOAT DOUBLE CONST VOLATILE VOID
@@ -872,6 +873,13 @@ block_item_list
 block_item
 	: declaration
 	| statement
+	| visibility
+	;
+
+visibility
+	: PUBLIC ':'		{ $$ = new VisibilityStatement(DeclarationsVisibility.Public); }
+	| PRIVATE ':'		{ $$ = new VisibilityStatement(DeclarationsVisibility.Private); }
+	| PROTECTED ':'		{ $$ = new VisibilityStatement(DeclarationsVisibility.Protected); }
 	;
 
 expression_statement
