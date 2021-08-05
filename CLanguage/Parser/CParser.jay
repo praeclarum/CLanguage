@@ -546,8 +546,17 @@ declarator
 
 
 direct_declarator_identifier_list
-    : IDENTIFIER                                               { $$ = new IdentifierDeclarator(($1).ToString()); }
-    | direct_declarator_identifier_list COLONCOLON IDENTIFIER  { $$ = ((IdentifierDeclarator)($1)).Push (($3).ToString()); }
+    : IDENTIFIER
+	{
+		$$ = new IdentifierDeclarator(($1).ToString());
+	}
+	| '~' IDENTIFIER
+	{
+		$$ = new IdentifierDeclarator("~" + $2);
+	}
+    | direct_declarator_identifier_list COLONCOLON IDENTIFIER
+	{ $$ = ((IdentifierDeclarator)($1)).Push (($3).ToString()); }
+	;
 
 direct_declarator
 	: direct_declarator_identifier_list

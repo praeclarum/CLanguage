@@ -76,22 +76,58 @@ void main() {
 ");
         }
 
+        [TestMethod]
+        public void LocalFieldReadAndWrite ()
+        {
+            Run (@"
+class C {
+public:
+    int x;
+    int y;
+};
+void main() {
+    C c;
+    c.x = 42;
+    c.y = 1000;
+    int z = c.x + c.y + 5000;
+    assertAreEqual(42, c.x);
+    assertAreEqual(1000, c.y);
+    assertAreEqual(6042, z);
+}
+");
+        }
+
         [TestMethod, Ignore]
-        public void InlineConstructor ()
+        public void Constructor ()
         {
             Run (@"
 class C {
     int x;
 public:
-    C(int x) { this->x = x; }
-    int getX() { return x; }
+    C(int x);
 };
 C c(42);
+C::C(int x) { this->x = x; }
 void main() {
     assertAreEqual(42, c.getX());
 }
 ");
         }
 
+        [TestMethod, Ignore]
+        public void Destructor ()
+        {
+            Run (@"
+class C {
+    int x;
+public:
+    ~C();
+};
+C::~C() { this->x = 0; }
+void main() {
+    C c;
+}
+");
+        }
     }
 }
