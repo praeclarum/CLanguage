@@ -51,7 +51,28 @@ public:
 C c;
 void main() {
     int z = c.y;
-    assertAreEqual(z, c.y);
+}
+");
+        }
+
+        [TestMethod]
+        public void FieldReadAndWrite ()
+        {
+            Run (@"
+class C {
+public:
+    int x;
+    int y;
+};
+C c;
+void main() {
+    int z;
+    c.x = 42;
+    c.y = 1000;
+    z = c.x + c.y + 5000;
+    assertAreEqual(42, c.x);
+    assertAreEqual(1000, c.y);
+    assertAreEqual(6042, z);
 }
 ");
         }

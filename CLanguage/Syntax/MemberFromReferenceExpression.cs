@@ -13,6 +13,8 @@ namespace CLanguage.Syntax
         public Expression Left { get; private set; }
         public string MemberName { get; private set; }
 
+        public override bool CanEmitPointer => true;
+
         public MemberFromReferenceExpression(Expression left, string memberName)
         {
             Left = left;
@@ -59,7 +61,7 @@ namespace CLanguage.Syntax
                     }
                     else {
                         Left.EmitPointer (ec);
-                        ec.Emit (OpCode.LoadConstant, Value.Pointer (structType.GetFieldOffset(member, ec)));
+                        ec.Emit (OpCode.LoadConstant, Value.Pointer (structType.GetFieldValueOffset(member, ec)));
                         ec.Emit (OpCode.OffsetPointer);
                         ec.Emit (OpCode.LoadPointer);
                     }
@@ -67,6 +69,33 @@ namespace CLanguage.Syntax
             }
             else {
                 throw new NotSupportedException ($"Cannot read '{MemberName}' on " + targetType?.GetType ().Name);
+            }
+        }
+
+        protected override void DoEmitPointer (EmitContext ec)
+        {
+            var targetType = Left.GetEvaluatedCType (ec);
+
+            if (targetType is CStructType structType) {
+
+                var member = structType.Members.FirstOrDefault (x => x.Name == MemberName);
+
+                if (member == null) {
+                    ec.Report.Error (1061, "'{1}' not found in '{0}'", structType.Name, MemberName);
+                }
+                else {
+                    if (member is CStructMethod method && member.MemberType is CFunctionType functionType) {
+                        ec.Report.Error (1656, "Cannot assign to '{0}'", MemberName);
+                    }
+                    else {
+                        Left.EmitPointer (ec);
+                        ec.Emit (OpCode.LoadConstant, Value.Pointer (structType.GetFieldValueOffset (member, ec)));
+                        ec.Emit (OpCode.OffsetPointer);
+                    }
+                }
+            }
+            else {
+                throw new NotSupportedException ($"Cannot write '{MemberName}' on " + targetType?.GetType ().Name);
             }
         }
 

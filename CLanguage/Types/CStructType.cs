@@ -33,13 +33,13 @@ namespace CLanguage.Types
             return s;
         }
 
-        public int GetFieldOffset (CStructMember member, EmitContext c)
+        public int GetFieldValueOffset (CStructMember member, EmitContext c)
         {
             var offset = 0;
             foreach (var m in Members) {
                 if (ReferenceEquals (m, member))
                     return offset;
-                offset += m.MemberType.GetByteSize (c);
+                offset += m.MemberType.NumValues;
             }
             return offset;
         }
