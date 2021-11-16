@@ -57,6 +57,23 @@ namespace CLanguage.Interpreter
             return ReadStringWithEncoding (address, Encoding.UTF8);
         }
 
+        public Value ReadThis ()
+        {
+            var frame = ActiveFrame;
+            if (frame == null)
+                return 0;
+            var functionType = frame.Function.FunctionType;
+            int frameOffset;
+            if (functionType.IsInstance) {
+                frameOffset = -1;
+            }
+            else {
+                return 0;
+            }
+            var address = frame.FP + frameOffset;
+            return Stack[address];
+        }
+
         public Value ReadArg (int index)
         {
             var frame = ActiveFrame;
