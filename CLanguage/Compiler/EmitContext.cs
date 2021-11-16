@@ -429,7 +429,7 @@ namespace CLanguage.Compiler
             //
             // Rest
             //
-            throw new NotImplementedException (GetType ().Name);
+            return CBasicType.Void;
         }
 
         void AddStructMember (CStructType st, Statement s, Block block)

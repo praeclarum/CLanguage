@@ -97,25 +97,42 @@ void main() {
 ");
         }
 
-        [TestMethod, Ignore]
-        public void Constructor ()
+        [TestMethod]
+        public void GlobalConstructor ()
         {
             Run (@"
 class C {
-    int x;
 public:
+    int x;
     C(int x);
 };
-C c(42);
 C::C(int x) { this->x = x; }
+C c(42);
 void main() {
-    assertAreEqual(42, c.getX());
+    assertAreEqual(42, c->x);
 }
 ");
         }
 
-        [TestMethod, Ignore]
-        public void Destructor ()
+        [TestMethod]
+        public void LocalConstructor ()
+        {
+            Run (@"
+class C {
+public:
+    int x;
+    C(int x);
+};
+C::C(int x) { this->x = x; }
+void main() {
+    C c(42);
+    assertAreEqual(42, c->x);
+}
+");
+        }
+
+        [TestMethod]
+        public void LocalDestructor ()
         {
             Run (@"
 class C {

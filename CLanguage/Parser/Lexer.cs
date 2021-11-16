@@ -467,6 +467,11 @@ namespace CLanguage.Parser
                     _value = null;
                     _lastR = Read ();
                 }
+                else if (nr == '>') {
+                    _token = TokenKind.PTR_OP;
+                    _value = null;
+                    _lastR = Read ();
+                }
                 else {
                     _token = r;
                     _value = null;

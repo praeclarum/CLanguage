@@ -74,7 +74,7 @@ postfix_expression
 	}
 	| postfix_expression PTR_OP IDENTIFIER
 	{
-		throw new NotSupportedException ("Syntax: postfix_expression PTR_OP IDENTIFIER");
+		$$ = new MemberFromPointerExpression((Expression)$1, ($3).ToString());
 	}
 	| postfix_expression INC_OP
 	{
@@ -462,8 +462,8 @@ identifier_or_typename
 	;
 
 struct_or_union_or_class_specifier
-	: struct_or_union_or_class identifier_or_typename compound_statement { $$ = new TypeSpecifier((TypeSpecifierKind)$1, ($2).ToString(), (Block)$3); }
-	| struct_or_union_or_class compound_statement            { $$ = new TypeSpecifier((TypeSpecifierKind)$1, "", (Block)$2); }
+	: struct_or_union_or_class identifier_or_typename class_body { $$ = new TypeSpecifier((TypeSpecifierKind)$1, ($2).ToString(), (Block)$3); }
+	| struct_or_union_or_class class_body            { $$ = new TypeSpecifier((TypeSpecifierKind)$1, "", (Block)$2); }
 	| struct_or_union_or_class identifier_or_typename                    { $$ = new TypeSpecifier((TypeSpecifierKind)$1, ($2).ToString()); }
 	;
 
@@ -550,12 +550,14 @@ direct_declarator_identifier_list
 	{
 		$$ = new IdentifierDeclarator(($1).ToString());
 	}
-	| '~' IDENTIFIER
+    | '~' IDENTIFIER
 	{
-		$$ = new IdentifierDeclarator("~" + $2);
+		$$ = new IdentifierDeclarator("~" + ($1).ToString());
 	}
     | direct_declarator_identifier_list COLONCOLON IDENTIFIER
 	{ $$ = ((IdentifierDeclarator)($1)).Push (($3).ToString()); }
+    | direct_declarator_identifier_list COLONCOLON '~' IDENTIFIER
+	{ $$ = ((IdentifierDeclarator)($1)).Push ("~" + ($3).ToString()); }
 	;
 
 direct_declarator
@@ -882,13 +884,56 @@ block_item_list
 block_item
 	: declaration
 	| statement
+	;
+
+class_body
+	: '{' '}'
+	{
+		$$ = new Block (Compiler.VariableScope.Local);
+	}
+	| '{' class_block_item_list '}'
+	{
+        $$ = new Block (Compiler.VariableScope.Local, (List<Statement>)$2);
+	}
+	;
+
+class_block_item_list
+	: class_block_item                 { $$ = new List<Statement> (1) { (Statement)$1 }; }
+	| class_block_item_list class_block_item { ((List<Statement>)$1).Add ((Statement)$2); $$ = $1; }
+	;
+
+class_block_item
+	: declaration
 	| visibility
+	| ctor_declaration
 	;
 
 visibility
 	: PUBLIC ':'		{ $$ = new VisibilityStatement(DeclarationsVisibility.Public); }
 	| PRIVATE ':'		{ $$ = new VisibilityStatement(DeclarationsVisibility.Private); }
 	| PROTECTED ':'		{ $$ = new VisibilityStatement(DeclarationsVisibility.Protected); }
+	;
+
+ctor_declarator
+	: direct_declarator_identifier_list '(' parameter_type_list ')'
+	{
+		$$ = new FunctionDeclarator(innerDeclarator: (Declarator)$1, parameters: (List<ParameterDeclaration>)$3);
+	}
+	| direct_declarator_identifier_list '(' ')'
+	{
+		$$ = new FunctionDeclarator(innerDeclarator: (Declarator)$1, parameters: new List<ParameterDeclaration>());
+	}
+	;
+
+ctor_declaration
+	: ctor_declarator ';'
+	{
+		var fdecl = (FunctionDeclarator)$1;
+		DeclarationSpecifiers ds = new DeclarationSpecifiers();
+		List<InitDeclarator> decls = new List<InitDeclarator> {
+			new InitDeclarator(fdecl, null) };
+		$$ = new MultiDeclaratorStatement (ds, decls);
+	}
 	;
 
 expression_statement
@@ -978,6 +1023,7 @@ external_declaration
 	: function_definition
 	| declaration
     | ';'
+	| ctor_definition
     ;
 
 function_definition
@@ -998,6 +1044,36 @@ function_definition
 			null,
 			(Block)$3);
 		$$ = f;
+	}
+	;
+
+ctor_identifier_list
+    : TYPE_NAME
+	{
+		$$ = new IdentifierDeclarator(($1).ToString());
+	}
+    | ctor_identifier_list COLONCOLON TYPE_NAME { $$ = ((IdentifierDeclarator)($1)).Push (($3).ToString()); }
+    | ctor_identifier_list COLONCOLON '~' TYPE_NAME { $$ = ((IdentifierDeclarator)($1)).Push ("~" + ($4).ToString()); }
+	;
+
+ctor_definition
+	: ctor_identifier_list '(' ')' compound_statement
+	{
+		var d = new FunctionDeclarator(innerDeclarator: (Declarator)$1, parameters: new List<ParameterDeclaration> ());
+		$$ = new FunctionDefinition(
+			new DeclarationSpecifiers(),
+			d,
+			null,
+			(Block)$4);
+	}
+	| ctor_identifier_list '(' parameter_type_list ')' compound_statement
+	{
+		var d = new FunctionDeclarator(innerDeclarator: (Declarator)$1, parameters: (List<ParameterDeclaration>)$3);
+		$$ = new FunctionDefinition(
+			new DeclarationSpecifiers(),
+			d,
+			null,
+			(Block)$5);
 	}
 	;
 
