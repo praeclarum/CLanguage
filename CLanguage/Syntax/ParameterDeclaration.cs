@@ -12,10 +12,21 @@ namespace CLanguage.Syntax
         public DeclarationSpecifiers? DeclarationSpecifiers { get; private set; }
         public Declarator? Declarator { get; private set; }
         public Expression? DefaultValue { get; }
+        public Expression? CtorArgumentValue { get; private set; }
 
         public ParameterDeclaration (string name)
         {
             Name = name;
+        }
+
+        public ParameterDeclaration (Expression ctorArgumentValue)
+        {
+            Name = "";
+            // So... C++ constructors look just like function declarations
+            // except that instead of parameter declarations, it has expressions
+            // to pass to the ctor. We re-use this object type for ctor args
+            // to keep the parser simple.
+            CtorArgumentValue = ctorArgumentValue;
         }
 
         public ParameterDeclaration (DeclarationSpecifiers specs)

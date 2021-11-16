@@ -610,11 +610,11 @@ direct_declarator
 	{
 		$$ = new FunctionDeclarator(innerDeclarator: (Declarator)$1, parameters: (List<ParameterDeclaration>)$3);
 	}
-	| direct_declarator '(' identifier_list ')'
+	| direct_declarator '(' argument_expression_list ')'
 	{
 		var d = new FunctionDeclarator(innerDeclarator: (Declarator)$1, parameters: new List<ParameterDeclaration>());
-		foreach (var n in (List<string>)$3) {
-			d.Parameters.Add(new ParameterDeclaration(n));
+		foreach (var n in (List<Expression>)$3) {
+			d.Parameters.Add(new ParameterDeclaration(ctorArgumentValue: n));
 		}
 		$$ = d;
 	}
@@ -689,21 +689,6 @@ parameter_declaration
     | declaration_specifiers
 	{
 		$$ = new ParameterDeclaration((DeclarationSpecifiers)$1);
-	}
-	;
-
-identifier_list
-	: IDENTIFIER
-	{
-		var l = new List<string>();
-		l.Add(($1).ToString());
-		$$ = l;
-	}
-	| identifier_list ',' IDENTIFIER
-	{
-		var l = (List<string>)$1;
-		l.Add(($3).ToString());
-		$$ = l;
 	}
 	;
 
