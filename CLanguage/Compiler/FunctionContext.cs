@@ -35,6 +35,11 @@ namespace CLanguage.Compiler
             allLocals = new List<CompiledVariable> ();
         }
 
+        public override string ToString ()
+        {
+            return $"{fexe} function context";
+        }
+
         public override CType ResolveTypeName (string typeName)
         {
             //

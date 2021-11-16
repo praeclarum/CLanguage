@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using CLanguage.Types;
 
 namespace CLanguage.Syntax
@@ -78,6 +79,8 @@ namespace CLanguage.Syntax
                 return (InnerDeclarator != null) ? InnerDeclarator.DeclaredIdentifier : "";
             }
         }
+
+        public bool CouldBeCtorCall => Parameters.Count == 0 || Parameters.All (x => x.CtorArgumentValue != null);
 
         public FunctionDeclarator (Declarator innerDeclarator, List<ParameterDeclaration> parameters)
             : base (innerDeclarator)

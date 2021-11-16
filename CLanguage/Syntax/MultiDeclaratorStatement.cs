@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using CLanguage.Interpreter;
 using CLanguage.Types;
 using CLanguage.Compiler;
+using System.Diagnostics;
 
 namespace CLanguage.Syntax
 {
@@ -60,10 +61,21 @@ namespace CLanguage.Syntax
                         var name = idecl.Declarator.DeclaredIdentifier;
 
                         if (ctype is CFunctionType ftype && !HasStronglyBoundPointer (idecl.Declarator)) {
-                            var nameContext = (idecl.Declarator.InnerDeclarator is IdentifierDeclarator ndecl && ndecl.Context.Count > 0) ?
-                                string.Join ("::", ndecl.Context) : "";
-                            var f = new CompiledFunction (name, nameContext, ftype);
-                            block.Functions.Add (f);
+
+                            // Ctors look like function definitions
+                            if (ftype.ReturnType is CStructType ctorDeclType && idecl.Initializer == null && idecl.Declarator is FunctionDeclarator ctorDecl && ctorDecl.CouldBeCtorCall) {
+                                //var varExpr = new VariableExpression (name, Location.Null, Location.Null);
+                                block.AddVariable (name, ctorDeclType);
+                                //throw new NotImplementedException ("Can't call ctors yet");
+                                //block.InitStatements.Add (new ExpressionStatement (new AssignExpression (varExpr, initExpr)));
+                            }
+                            else {
+
+                                var nameContext = (idecl.Declarator.InnerDeclarator is IdentifierDeclarator ndecl && ndecl.Context.Count > 0) ?
+                                    string.Join ("::", ndecl.Context) : "";
+                                var f = new CompiledFunction (name, nameContext, ftype);
+                                block.Functions.Add (f);
+                            }
                         }
                         else {
                             if ((ctype is CArrayType atype) &&

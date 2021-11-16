@@ -14,6 +14,11 @@ namespace CLanguage.Types
             Name = name;
         }
 
+        public override string ToString ()
+        {
+            return string.IsNullOrEmpty(Name) ? "struct" : Name;
+        }
+
         public override int NumValues {
             get {
                 var s = 0;

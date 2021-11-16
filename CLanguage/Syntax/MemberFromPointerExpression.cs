@@ -25,7 +25,9 @@ namespace CLanguage.Syntax
         {
             var targetType = Left.GetEvaluatedCType (ec);
 
-            if (targetType is CPointerType pType && pType.InnerType is CStructType structType) {
+            var pType = targetType as CPointerType;
+
+            if (pType != null && pType.InnerType is CStructType structType) {
 
                 var member = structType.Members.FirstOrDefault (x => x.Name == MemberName);
                 if (member == null) {
@@ -35,8 +37,14 @@ namespace CLanguage.Syntax
 
                 return member.MemberType;
             }
+
+            if (pType != null) {
+                ec.Report.Error (1061, "'{1}' not found in '{0}'", pType, MemberName);
+                return CBasicType.SignedInt;
+            }
             else {
-                throw new NotImplementedException ("Cannot find members on " + targetType?.GetType ().Name);
+                ec.Report.Error (1061, "-> cannot be used with '{0}'", targetType);
+                return CBasicType.SignedInt;
             }
         }
 

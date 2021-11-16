@@ -109,7 +109,7 @@ public:
 C::C(int x) { this->x = x; }
 C c(42);
 void main() {
-    assertAreEqual(42, c->x);
+    assertAreEqual(42, c.x);
 }
 ");
         }
@@ -126,7 +126,9 @@ public:
 C::C(int x) { this->x = x; }
 void main() {
     C c(42);
-    assertAreEqual(42, c->x);
+    C c2(-1);
+    assertAreEqual(42, c.x);
+    assertAreEqual(-1, c2.x);
 }
 ");
         }
