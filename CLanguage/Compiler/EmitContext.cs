@@ -292,10 +292,14 @@ namespace CLanguage.Compiler
         {
             var fdecl = (FunctionDeclarator)decl;
 
-            bool isInstance = decl.InnerDeclarator is IdentifierDeclarator ident && ident.Context.Count > 0;
+            //bool isInstance = (decl.InnerDeclarator is IdentifierDeclarator ident && ident.Context.Count > 0);
+
+            var declaringTypeName = (decl.InnerDeclarator is IdentifierDeclarator ident && ident.Context.Count > 0) ? ident.Context[0] : null;
+            var declaringType = declaringTypeName != null ? ResolveTypeName (declaringTypeName) : null;
+            var isInstance = declaringType != null;
 
             var name = decl.DeclaredIdentifier;
-            var ftype = new CFunctionType (returnType, isInstance);
+            var ftype = new CFunctionType (returnType, isInstance, declaringType);
             foreach (var pdecl in fdecl.Parameters) {
                 var pt = pdecl.DeclarationSpecifiers != null
                     ? MakeCType (pdecl.DeclarationSpecifiers, pdecl.Declarator, null, block)

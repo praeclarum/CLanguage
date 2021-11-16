@@ -82,6 +82,13 @@ namespace CLanguage.Compiler
                 }
             }
 
+            //
+            // This?
+            //
+            if (name == "this" && fexe.FunctionType.IsInstance && fexe.FunctionType.DeclaringType is CStructType dtype) {
+                return new ResolvedVariable (VariableScope.Arg, -1, dtype.Pointer);
+            }
+
             return base.TryResolveVariable (name, argTypes);
         }
 

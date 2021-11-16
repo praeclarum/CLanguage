@@ -6,8 +6,8 @@ namespace CLanguage.Types
 {
     public class CFunctionType : CType
     {
-        public static readonly CFunctionType VoidProcedure = new CFunctionType (CType.Void, isInstance: false);
-        public static readonly CFunctionType VoidMethod = new CFunctionType (CType.Void, isInstance: true);
+        public static readonly CFunctionType VoidProcedure = new CFunctionType (CType.Void, isInstance: false, declaringType: null);
+        //public static readonly CFunctionType VoidMethod = new CFunctionType (CType.Void, isInstance: true);
 
         public class Parameter
         {
@@ -35,11 +35,15 @@ namespace CLanguage.Types
         public IReadOnlyList<Parameter> Parameters => parameters;
 
         public bool IsInstance { get; private set; }
+        public CType? DeclaringType { get; }
 
-        public CFunctionType(CType returnType, bool isInstance)
+        public CFunctionType(CType returnType, bool isInstance, CType? declaringType)
         {
             ReturnType = returnType;
             IsInstance = isInstance;
+            DeclaringType = declaringType;
+            if (IsInstance && DeclaringType == null)
+                throw new ArgumentNullException (nameof (declaringType));
         }
 
         public void AddParameter (string name, CType type, Value? defaultValue)
