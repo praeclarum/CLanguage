@@ -28,19 +28,29 @@ namespace CLanguage.Syntax
 
         protected override void DoEmit (EmitContext ec)
         {
+            // This code should be changed to take advantage of the data in
+            // BlockContext.Block.InitStatements that is filled in by AddDeclarationToBlock
             var multi = this;
             if (multi.InitDeclarators != null) {
                 foreach (var idecl in multi.InitDeclarators) {
                     if ((multi.Specifiers.StorageClassSpecifier & StorageClassSpecifier.Typedef) != 0) {
                     }
                     else {
-                        if (idecl.Initializer != null) {
-                            var name = idecl.Declarator.DeclaredIdentifier;
+                        CType ctype = ec.MakeCType (multi.Specifiers, idecl.Declarator, idecl.Initializer, null);
+                        var name = idecl.Declarator.DeclaredIdentifier;
+
+                        if (ctype is CFunctionType ftype && !HasStronglyBoundPointer (idecl.Declarator)) {
+
+                            // Ctors look like function declarations
+                            if (ftype.ReturnType is CStructType ctorDeclType && idecl.Initializer == null && idecl.Declarator is FunctionDeclarator ctorDecl && ctorDecl.CouldBeCtorCall) {
+                                GetCtorInitializerStatement (name, ctorDeclType, ctorDecl).Emit (ec);
+                            }
+                        }
+                        else if (idecl.Initializer != null) {
                             var varExpr = new VariableExpression (name, Location.Null, Location.Null);
                             var initExpr = GetInitializerExpression (idecl.Initializer);
                             new ExpressionStatement (new AssignExpression (varExpr, initExpr)).Emit (ec);
                         }
-
                     }
                 }
             }
@@ -66,14 +76,8 @@ namespace CLanguage.Syntax
                             // Ctors look like function declarations
                             if (ftype.ReturnType is CStructType ctorDeclType && idecl.Initializer == null && idecl.Declarator is FunctionDeclarator ctorDecl && ctorDecl.CouldBeCtorCall) {
                                 block.AddVariable (name, ctorDeclType);
-                                //throw new NotImplementedException ("Can't call ctors yet");
-                                var varExpr = new VariableExpression (name, Location.Null, Location.Null);
-                                var pointerExpr = new AddressOfExpression (varExpr);
-                                var memExpr = new MemberFromReferenceExpression (varExpr, ctorDeclType.Name);
-                                var args = from p in ctorDecl.Parameters
-                                           select p.CtorArgumentValue;
-                                var callExpr = new FuncallExpression (memExpr, args);
-                                block.InitStatements.Add (new ExpressionStatement (callExpr));
+                                var callStmt = GetCtorInitializerStatement (name, ctorDeclType, ctorDecl);
+                                block.InitStatements.Add (callStmt);
                             }
                             else {
 
@@ -134,6 +138,18 @@ namespace CLanguage.Syntax
                     block.Enums[n] = enumType;
                 }
             }
+        }
+
+        private static ExpressionStatement GetCtorInitializerStatement (string name, CStructType ctorDeclType, FunctionDeclarator ctorDecl)
+        {
+            var varExpr = new VariableExpression (name, Location.Null, Location.Null);
+            var pointerExpr = new AddressOfExpression (varExpr);
+            var memExpr = new MemberFromReferenceExpression (varExpr, ctorDeclType.Name);
+            var args = from p in ctorDecl.Parameters
+                       select p.CtorArgumentValue;
+            var callExpr = new FuncallExpression (memExpr, args);
+            var callStmt = new ExpressionStatement (callExpr);
+            return callStmt;
         }
 
         static Expression GetInitializerExpression (Initializer init)

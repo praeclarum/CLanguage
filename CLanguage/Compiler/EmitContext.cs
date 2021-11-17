@@ -210,13 +210,13 @@ namespace CLanguage.Compiler
             throw new NotSupportedException ("Arithmetic on type '" + cType + "'");
         }
 
-        public CType MakeCType (DeclarationSpecifiers specs, Declarator? decl, Initializer? init, Block block)
+        public CType MakeCType (DeclarationSpecifiers specs, Declarator? decl, Initializer? init, Block? block)
         {
             var type = MakeCType (specs, init, block);
             return MakeCType (type, decl, init, block);
         }
 
-        CType MakeCType (CType type, Declarator? decl, Initializer? init, Block block)
+        CType MakeCType (CType type, Declarator? decl, Initializer? init, Block? block)
         {
             if (decl is IdentifierDeclarator) {
                 // This is the name
@@ -288,7 +288,7 @@ namespace CLanguage.Compiler
             return type;
         }
 
-        CType MakeCFunctionType (CType returnType, Declarator decl, Block block)
+        CType MakeCFunctionType (CType returnType, Declarator decl, Block? block)
         {
             var fdecl = (FunctionDeclarator)decl;
 
@@ -315,7 +315,7 @@ namespace CLanguage.Compiler
             return type;
         }
 
-        public CType MakeCType (DeclarationSpecifiers specs, Initializer? init, Block block)
+        public CType MakeCType (DeclarationSpecifiers specs, Initializer? init, Block? block)
         {
             //
             // Infer types
@@ -383,7 +383,7 @@ namespace CLanguage.Compiler
                 else {
                     // Lookup
                     var name = structTs.Name;
-                    if (block.Structures.TryGetValue (name, out var structType)) {
+                    if (block != null && block.Structures.TryGetValue (name, out var structType)) {
                         return structType;
                     }
                     else {
@@ -410,7 +410,7 @@ namespace CLanguage.Compiler
                 else {
                     // Lookup
                     var name = enumTs.Name;
-                    if (block.Enums.TryGetValue (name, out var et)) {
+                    if (block != null && block.Enums.TryGetValue (name, out var et)) {
                         return et;
                     }
                     else {
@@ -436,7 +436,7 @@ namespace CLanguage.Compiler
             return CBasicType.Void;
         }
 
-        void AddStructMember (CStructType st, Statement s, Block block)
+        void AddStructMember (CStructType st, Statement s, Block? block)
         {
             if (s is MultiDeclaratorStatement multi) {
                 if (multi.InitDeclarators != null) {
@@ -460,7 +460,7 @@ namespace CLanguage.Compiler
             }
         }
 
-        void AddEnumMember (CEnumType st, Statement s, Block block, EnumContext context)
+        void AddEnumMember (CEnumType st, Statement s, Block? block, EnumContext context)
         {
             if (s is EnumeratorStatement es) {
                 var value = es.LiteralValue != null ? (int)es.LiteralValue.EvalConstant(context) : st.NextValue;
