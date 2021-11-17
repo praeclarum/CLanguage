@@ -84,6 +84,39 @@ void loop() {
         }
 
         [TestMethod]
+        public void InternalLocalCtorTest ()
+        {
+            var code = @"
+void setup() {
+  Serial.begin(9600);
+}
+
+void loop() {
+  CtorTest ctor(1234);
+  Serial.println(ctor.x);
+  delay(1);
+}";
+            var arduino = Run (code);
+            Assert.AreEqual ("1234", arduino.SerialOut.ToString ().Split ("\n").First ().Trim ());
+        }
+
+        [TestMethod]
+        public void InternalGlobalCtorTest ()
+        {
+            var code = @"
+void setup() {
+  Serial.begin(9600);
+}
+CtorTest ctor(5678);
+void loop() {  
+  Serial.println(ctor.x);
+  delay(1);
+}";
+            var arduino = Run (code);
+            Assert.AreEqual ("5678", arduino.SerialOut.ToString ().Split ("\n").First ().Trim ());
+        }
+
+        [TestMethod]
         public void AnalogReadSerial ()
         {
             var code = @"

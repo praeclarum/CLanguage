@@ -63,6 +63,10 @@ struct MemberTest {
 };
 struct MemberTest test;
 struct SerialClass Serial;
+struct CtorTest {
+    int x;
+    CtorTest(int x);
+};
 ";
 
             AddInternalFunction ("void pinMode (int pin, int mode)", Arduino.PinMode);
@@ -83,7 +87,12 @@ struct SerialClass Serial;
             AddInternalFunction ("void SerialClass::println (const char *value)", Arduino.SerialPrintlnS);
             AddInternalFunction ("int MemberTest::f (int)", x => x.Push (1));
             AddInternalFunction ("int MemberTest::f (double)", x => x.Push (2));
-		}
+            AddInternalFunction ("void CtorTest::CtorTest (int)", x => {
+                var _this = x.ReadThis ().PointerValue;
+                var arg = x.ReadArg (0);
+                x.Stack[_this] = arg;
+            });
+        }
 
         public override ResolvedVariable GetUnresolvedVariable (string name, CType[] argTypes, EmitContext context)
         {
