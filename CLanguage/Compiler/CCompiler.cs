@@ -128,7 +128,7 @@ namespace CLanguage.Compiler
                 if (tu.InitStatements.Count > 0) {
                     var tuInitBody = new Block (VariableScope.Local);
                     tuInitBody.AddStatements (tu.InitStatements);
-                    var tuInit = new CompiledFunction ($"__{tu.Name}__cinit", CFunctionType.VoidProcedure, tuInitBody);
+                    var tuInit = new CompiledFunction ($"__{tu.Name}__cinit", "", CFunctionType.VoidProcedure, tuInitBody);
                     exeInitBody.AddStatement (new ExpressionStatement (new FuncallExpression (new VariableExpression (tuInit.Name, Location.Null, Location.Null))));
                     tuInits.Add ((tuInit, tuc));
                     exe.Functions.Add (tuInit);
@@ -138,7 +138,7 @@ namespace CLanguage.Compiler
             //
             // Generate a function to init globals
             //
-            var exeInit = new CompiledFunction ($"__cinit", CFunctionType.VoidProcedure, exeInitBody);
+            var exeInit = new CompiledFunction ($"__cinit", "", CFunctionType.VoidProcedure, exeInitBody);
             exe.Functions.Add (exeInit);
 
             //

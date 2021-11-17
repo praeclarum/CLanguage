@@ -29,7 +29,8 @@ namespace CLanguage.Syntax
             var block = context.Block;
             if (context.MakeCType (fdef.Specifiers, fdef.Declarator, null, block) is CFunctionType ftype) {
                 var name = fdef.Declarator.DeclaredIdentifier;
-                var f = new CompiledFunction (name, ftype, fdef.Body);
+                var nameContext = fdef.Declarator.InnerDeclarator is IdentifierDeclarator idents ? String.Join("::", idents.Context) : "";
+                var f = new CompiledFunction (name, nameContext, ftype, fdef.Body);
                 block.Functions.Add (f);
             }
         }

@@ -4,6 +4,7 @@ using CLanguage.Interpreter;
 using CLanguage.Types;
 using CLanguage.Compiler;
 using System.Diagnostics;
+using System.Linq;
 
 namespace CLanguage.Syntax
 {
@@ -62,18 +63,23 @@ namespace CLanguage.Syntax
 
                         if (ctype is CFunctionType ftype && !HasStronglyBoundPointer (idecl.Declarator)) {
 
-                            // Ctors look like function definitions
+                            // Ctors look like function declarations
                             if (ftype.ReturnType is CStructType ctorDeclType && idecl.Initializer == null && idecl.Declarator is FunctionDeclarator ctorDecl && ctorDecl.CouldBeCtorCall) {
-                                //var varExpr = new VariableExpression (name, Location.Null, Location.Null);
                                 block.AddVariable (name, ctorDeclType);
                                 //throw new NotImplementedException ("Can't call ctors yet");
-                                //block.InitStatements.Add (new ExpressionStatement (new AssignExpression (varExpr, initExpr)));
+                                var varExpr = new VariableExpression (name, Location.Null, Location.Null);
+                                var pointerExpr = new AddressOfExpression (varExpr);
+                                var memExpr = new MemberFromReferenceExpression (varExpr, ctorDeclType.Name);
+                                var args = from p in ctorDecl.Parameters
+                                           select p.CtorArgumentValue;
+                                var callExpr = new FuncallExpression (memExpr, args);
+                                block.InitStatements.Add (new ExpressionStatement (callExpr));
                             }
                             else {
 
                                 var nameContext = (idecl.Declarator.InnerDeclarator is IdentifierDeclarator ndecl && ndecl.Context.Count > 0) ?
                                     string.Join ("::", ndecl.Context) : "";
-                                var f = new CompiledFunction (name, nameContext, ftype);
+                                var f = new CompiledFunction (name, nameContext, ftype, null);
                                 block.Functions.Add (f);
                             }
                         }

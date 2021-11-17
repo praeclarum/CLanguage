@@ -14,19 +14,14 @@ namespace CLanguage.Interpreter
         public List<CompiledVariable> LocalVariables { get; }
         public List<Instruction> Instructions { get; }
 
-        public CompiledFunction (string name, CFunctionType functionType, Block? body)
+        public CompiledFunction (string name, string nameContext, CFunctionType functionType, Block? body)
         {
             Name = name;
+            NameContext = nameContext;
             FunctionType = functionType;
             Body = body;
             LocalVariables = new List<CompiledVariable> ();
             Instructions = new List<Instruction> ();
-        }
-
-        public CompiledFunction (string name, string nameContext, CFunctionType functionType)
-            : this (name, functionType, null)
-        {
-            NameContext = nameContext;
         }
 
         public override string ToString ()
