@@ -148,5 +148,25 @@ void main() {
 }
 ");
         }
+
+        [TestMethod, Ignore]
+        public void MethodDefinitions ()
+        {
+            Run (@"
+class C {
+    int x;
+public:
+    void setX(int newX);
+    int getX();
+};
+void C::setX(int x);// { this->x = x; }
+int C::getX() { return this->x; }
+void main() {
+    C c;
+    c.setX(101);
+    assertAreEqual(101, c.getX());
+}
+");
+        }
     }
 }
