@@ -130,6 +130,9 @@ namespace CLanguage.Compiler
             else if (fromType is CEnumType et && toType is CIntType bt) {
                 // Enums act like ints
             }
+            else if (fromType is CFunctionType fft && toType is CFunctionType tft) {
+                // Function to function is OK
+            }
             else {
                 Report.Error (30, "Cannot convert type '" + fromType + "' to '" + toType + "'");
             }

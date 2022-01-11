@@ -24,6 +24,8 @@ namespace CLanguage.Interpreter
 
         public ExecutionFrame? ActiveFrame { get { return (0 <= FI && FI < Frames.Length) ? Frames[FI] : null; } }
 
+        public int CallStackDepth => FI;
+
         static readonly BaseFunction unusedStackFrameFunction = new InternalFunction ("unused", "", Types.CFunctionType.VoidProcedure);
 
 
