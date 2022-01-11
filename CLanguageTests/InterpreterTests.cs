@@ -8,45 +8,45 @@ namespace CLanguage.Tests
 	[TestClass]
 	public class InterpreterTests : TestsBase
 	{
-        [TestMethod]
-        public void YieldingDelay ()
-        {
-            var mi = new TestMachineInfo ();
-            bool[] hit = new bool[3];
-            mi.AddInternalFunction ("int yieldingDelay(int ms)", i => {
-                var ms = i.ReadArg (0).Int16Value;
-                Console.WriteLine ($"RUN Y={i.YieldedValue}");
-                hit[i.YieldedValue] = true;
-                if (i.YieldedValue == 0) {
-                    i.Yield (1);
-                }
-                else if (i.YieldedValue == 1) {
-                    i.Yield (2);
-                }
-                else {
-                    i.Yield (0);
-                    i.Push (ms * 1000);
-                }
-            });
-            var it = Run (@"
+		[TestMethod]
+		public void YieldingDelay ()
+		{
+			var mi = new TestMachineInfo ();
+			bool[] hit = new bool[3];
+			mi.AddInternalFunction ("int yieldingDelay(int ms)", i => {
+				var ms = i.ReadArg (0).Int16Value;
+				Console.WriteLine ($"RUN Y={i.YieldedValue}");
+				hit[i.YieldedValue] = true;
+				if (i.YieldedValue == 0) {
+					i.Yield (1);
+				}
+				else if (i.YieldedValue == 1) {
+					i.Yield (2);
+				}
+				else {
+					i.Yield (0);
+					i.Push (ms * 1000);
+				}
+			});
+			var it = Run (@"
 void main () {
     auto x = yieldingDelay(3);
     assertAreEqual (3000, x);
 }", mi);
-            Assert.IsTrue (hit[0]);
-            Assert.IsFalse (hit[1]);
-            Assert.IsFalse (hit[2]);
-            it.Step ();
-            Assert.IsTrue (hit[0]);
-            Assert.IsTrue (hit[1]);
-            Assert.IsFalse (hit[2]);
-            it.Step ();
-            Assert.IsTrue (hit[0]);
-            Assert.IsTrue (hit[1]);
-            Assert.IsTrue (hit[2]);
-        }
+			Assert.IsTrue (hit[0]);
+			Assert.IsFalse (hit[1]);
+			Assert.IsFalse (hit[2]);
+			it.Step ();
+			Assert.IsTrue (hit[0]);
+			Assert.IsTrue (hit[1]);
+			Assert.IsFalse (hit[2]);
+			it.Step ();
+			Assert.IsTrue (hit[0]);
+			Assert.IsTrue (hit[1]);
+			Assert.IsTrue (hit[2]);
+		}
 
-        [TestMethod]
+		[TestMethod]
 		public void InfiniteRecursionThrows ()
 		{
 			try {
@@ -389,22 +389,22 @@ void main () {
 }");
 		}
 
-        [TestMethod]
-        public void GlobalVariableInitialization ()
-        {
-            var i = Run (@"
+		[TestMethod]
+		public void GlobalVariableInitialization ()
+		{
+			var i = Run (@"
 int a = 4;
 int b = 8;
 int c = a + b;
 void main () {
     assertAreEqual (12, c);
 }");
-        }
+		}
 
-        [TestMethod]
-        public void AddressOfLocal ()
-        {
-            var i = Run (@"
+		[TestMethod]
+		public void AddressOfLocal ()
+		{
+			var i = Run (@"
 void main () {
     int a = 4;
     int *pa = &a;
@@ -412,12 +412,12 @@ void main () {
     a = *pa + 1;
     assertAreEqual (5, *pa);
 }");
-        }
+		}
 
-        [TestMethod]
-        public void AddressOfGlobal ()
-        {
-            var i = Run (@"
+		[TestMethod]
+		public void AddressOfGlobal ()
+		{
+			var i = Run (@"
 int a = 0;
 void main () {
     int *pa = &a;
@@ -425,49 +425,49 @@ void main () {
     a = *pa + 1;
     assertAreEqual (1, *pa);
 }");
-        }
+		}
 
-        [TestMethod]
-        public void PreDecrement ()
-        {
-            var i = Run (@"
+		[TestMethod]
+		public void PreDecrement ()
+		{
+			var i = Run (@"
 void main () {
     int a = 100;
     assertAreEqual (99, --a);
 }");
-        }
+		}
 
-        [TestMethod]
-        public void PreIncrement ()
-        {
-            var i = Run (@"
+		[TestMethod]
+		public void PreIncrement ()
+		{
+			var i = Run (@"
 void main () {
     int a = 100;
     assertAreEqual (101, ++a);
 }");
-        }
+		}
 
-        [TestMethod]
-        public void PostDecrement ()
-        {
-            var i = Run (@"
+		[TestMethod]
+		public void PostDecrement ()
+		{
+			var i = Run (@"
 void main () {
     int a = 100;
     assertAreEqual (100, a--);
     assertAreEqual (99, a);
 }");
-        }
+		}
 
-        [TestMethod]
-        public void PostIncrement ()
-        {
-            var i = Run (@"
+		[TestMethod]
+		public void PostIncrement ()
+		{
+			var i = Run (@"
 void main () {
     int a = 100;
     assertAreEqual (100, a++);
     assertAreEqual (101, a);
 }");
-        }
+		}
 
 		[TestMethod]
 		public void PostIncrementPointer ()
@@ -496,9 +496,9 @@ void main () {
 		}
 
 		[TestMethod]
-        public void BoolAssignment ()
-        {
-            var i = Run (@"
+		public void BoolAssignment ()
+		{
+			var i = Run (@"
 void main () {
     bool a = false;
     assertAreEqual (false, a);
@@ -507,12 +507,12 @@ void main () {
     assertAreEqual (true, a);
     assertAreEqual ((bool)1, a);
 }");
-        }
+		}
 
-        [TestMethod]
-        public void BoolLoopEnd ()
-        {
-            var i = Run (@"
+		[TestMethod]
+		public void BoolLoopEnd ()
+		{
+			var i = Run (@"
 void main () {
     int i = 0;
     bool b = true;
@@ -523,7 +523,7 @@ void main () {
     assertAreEqual (false, b);
     assertAreEqual (10, i);
 }");
-        }
+		}
 
 		[TestMethod]
 		public void ArrayElementAssignment ()
@@ -564,6 +564,41 @@ void main () {
 	assertAreEqual (33, c);
 	assign(&c);
 	assertAreEqual (42, c);
+}
+");
+		}
+
+		[TestMethod]
+		public void VoidCallbackFunction ()
+		{
+			Run (@"
+int result = 0;
+void callback(int x) {
+	result = 10 * x;
+}
+void callCallback(void (*cb)(int), int cbx) {
+	cb(cbx);
+}
+void main () {
+	callCallback(callback, 12);
+	assertAreEqual(120, result);
+}
+");
+		}
+
+		[TestMethod]
+		public void IntCallbackFunction ()
+		{
+			Run (@"
+int callback(int x) {
+	return 10 * x;
+}
+int callCallback(int (*cb)(int), int cbx) {
+	return cb(cbx);
+}
+void main () {
+	int result = callCallback(callback, 123);
+	assertAreEqual(1230, result);
 }
 ");
 		}

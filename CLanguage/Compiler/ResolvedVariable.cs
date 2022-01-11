@@ -35,6 +35,29 @@ namespace CLanguage.Compiler
             VariableType = variableType;
         }
 
+        public void Emit (EmitContext ec)
+        {
+            switch (Scope) {
+                case VariableScope.Function:
+                    ec.Emit (OpCode.LoadConstant, Value.Pointer (Address));
+                    break;
+                case VariableScope.Global:
+                    ec.Emit (OpCode.LoadGlobal, Value.Pointer (Address));
+                    break;
+                case VariableScope.Arg:
+                    ec.Emit (OpCode.LoadArg, Value.Pointer (Address));
+                    break;
+                case VariableScope.Local:
+                    ec.Emit (OpCode.LoadLocal, Value.Pointer (Address));
+                    break;
+                case VariableScope.Constant:
+                    ec.Emit (OpCode.LoadConstant, 0);
+                    break;
+                default:
+                    throw new NotSupportedException ("Cannot get value of variable scope '" + Scope + "'");
+            }
+        }
+
         public void EmitPointer (EmitContext ec)
         {
             switch (Scope) {

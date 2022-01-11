@@ -148,7 +148,7 @@ namespace CLanguage.Syntax
                 if (res != null) {
                     return new Overload (
                         res.VariableType,
-                        res.EmitPointer);
+                        res.VariableType is CFunctionType ? (Action<EmitContext>)res.Emit : res.EmitPointer);
                 }
                 else {
                     return Overload.Error;

@@ -60,7 +60,7 @@ namespace CLanguage.Interpreter
 
                 var i = Instructions[ip];
 
-                //Debug.WriteLine (i);
+                //Debug.WriteLine (new string(' ', 4*state.CallStackDepth) + i + " ;" + state.ActiveFrame?.Function.Name);
 
                 if (state.SP < frame.FP)
                     throw new Exception ($"{(ip - 1 >= 0 ? Instructions[ip - 1] : null)} {this.Name}@{ip - 1} stack underflow");

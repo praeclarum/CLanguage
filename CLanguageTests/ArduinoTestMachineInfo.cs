@@ -92,6 +92,19 @@ struct CtorTest {
                 var arg = x.ReadArg (0);
                 x.Stack[_this] = arg;
             });
+            AddInternalFunction ("void voidCallbackTest (void (*callback)(int x, int y), int xx, int yy)", x => {
+                var callback = x.ReadArg (0);
+                var xx = x.ReadArg (1);
+                var yy = x.ReadArg (2);
+                x.RunFunction (callback, xx, yy, 1_000_000);
+            });
+            AddInternalFunction ("int intCallbackTest (int (*callback)(int x, int y), int xx, int yy)", x => {
+                var callback = x.ReadArg (0);
+                var xx = x.ReadArg (1);
+                var yy = x.ReadArg (2);
+                var result = x.RunFunction (callback, xx, yy, 1_000_000);
+                x.Push (result);
+            });
         }
 
         public override ResolvedVariable GetUnresolvedVariable (string name, CType[] argTypes, EmitContext context)
