@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using CLanguage.Types;
 
 namespace CLanguage.Interpreter
 {
@@ -236,5 +237,93 @@ namespace CLanguage.Interpreter
 				}
 			}
 		}
+
+        public Value RunFunction (Value functionAddress, int microseconds)
+        {
+            Call (functionAddress);
+            return StepFunction (microseconds);
+        }
+
+        public Value RunFunction (Value functionAddress, Value arg0, int microseconds)
+        {
+            Push (arg0);
+            Call (functionAddress);
+            return StepFunction (microseconds);
+        }
+
+        public Value RunFunction (Value functionAddress, Value arg0, Value arg1, int microseconds)
+        {
+            Push (arg0);
+            Push (arg1);
+            Call (functionAddress);
+            return StepFunction (microseconds);
+        }
+
+        public Value RunFunction (Value functionAddress, Value arg0, Value arg1, Value arg2, int microseconds)
+        {
+            Push (arg0);
+            Push (arg1);
+            Push (arg2);
+            Call (functionAddress);
+            return StepFunction (microseconds);
+        }
+
+        Value StepFunction (int microseconds)
+        {
+            if (ActiveFrame == null)
+                return 0;
+
+            var startFI = FI;
+            var startReturnType = ActiveFrame?.Function.FunctionType.ReturnType;
+
+            if (microseconds <= SleepTime) {
+                SleepTime -= microseconds;
+            }
+            else {
+                RemainingTime = microseconds - SleepTime;
+                SleepTime = 0;
+
+                try {
+                    var a = ActiveFrame;
+                    while (a != null && FI >= startFI && RemainingTime > 0) {
+                        RemainingTime -= CpuSpeed;
+                        a.Function.Step (this, a);
+                        a = ActiveFrame;
+                        if (YieldedValue != 0)
+                            break;
+                    }
+                }
+                catch (Exception) {
+                    Reset ();
+                    throw;
+                }
+            }
+
+            // Pop frames until we are back to the caller
+            while (FI >= startFI) {
+                // Failed to return. Force it.
+                if (ActiveFrame?.Function.FunctionType.ReturnType is CType rt) {
+                    // Return 0.
+                    if (!rt.IsVoid) {
+                        int n = rt.NumValues;
+                        for (int i = 0; i < n; i++) {
+                            Stack[SP++] = 0;
+                        }
+                    }
+                    Return ();
+                }
+                else {
+                    break;
+                }
+            }
+
+            // Get the return value
+            Value returnValue = 0;
+            int numReturnValues = startReturnType != null ? startReturnType.NumValues : 0;
+            for (var i = 0; i < numReturnValues; i++) {
+                returnValue = Stack[--SP];
+            }
+            return returnValue;
+        }
     }
 }

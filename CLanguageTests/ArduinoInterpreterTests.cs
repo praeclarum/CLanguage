@@ -117,6 +117,42 @@ void loop() {
         }
 
         [TestMethod]
+        public void VoidCallbackTest ()
+        {
+            var code = @"
+int result = 0;
+void callback(int x, int y) {
+  result = x*1000 + y;
+}
+void setup() {
+  voidCallbackTest(callback, 2, 3);
+}
+void loop() {
+  Serial.println(result);
+}";
+            var arduino = Run (code);
+            Assert.AreEqual ("2003", arduino.SerialOut.ToString ().Split ("\n").First ().Trim ());
+        }
+
+        [TestMethod]
+        public void IntCallbackTest ()
+        {
+            var code = @"
+int result = 0;
+int callback(int x, int y) {
+  return x*100 + y;
+}
+void setup() {
+  result = intCallbackTest(callback, 2, 3);
+}
+void loop() {
+  Serial.println(result);
+}";
+            var arduino = Run (code);
+            Assert.AreEqual ("203", arduino.SerialOut.ToString ().Split ("\n").First ().Trim ());
+        }
+
+        [TestMethod]
         public void AnalogReadSerial ()
         {
             var code = @"
