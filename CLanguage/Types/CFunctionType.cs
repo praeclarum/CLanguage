@@ -46,6 +46,19 @@ namespace CLanguage.Types
                 throw new ArgumentNullException (nameof (declaringType));
         }
 
+        public override bool Equals (object obj)
+        {
+            return obj is CFunctionType o && ReturnType.Equals (o.ReturnType) && ParameterTypesEqual (o);
+        }
+
+        public override int GetHashCode ()
+        {
+            int pcode = 17;
+            foreach (var p in Parameters)
+                pcode += p.ParameterType.GetHashCode ();
+            return base.GetHashCode ()*13 + ReturnType.GetHashCode()*11 + pcode*7;
+        }
+
         public void AddParameter (string name, CType type, Value? defaultValue)
         {
             parameters.Add (new Parameter (name, type, defaultValue));

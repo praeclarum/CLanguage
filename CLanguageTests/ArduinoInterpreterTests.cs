@@ -117,7 +117,7 @@ void loop() {
         }
 
         [TestMethod]
-        public void VoidCallbackTest ()
+        public void CallbackVoidIntIntTest ()
         {
             var code = @"
 int result = 0;
@@ -135,7 +135,7 @@ void loop() {
         }
 
         [TestMethod]
-        public void IntCallbackTest ()
+        public void CallbackIntIntIntTest ()
         {
             var code = @"
 int result = 0;
@@ -150,6 +150,24 @@ void loop() {
 }";
             var arduino = Run (code);
             Assert.AreEqual ("203", arduino.SerialOut.ToString ().Split ("\n").First ().Trim ());
+        }
+
+        [TestMethod]
+        public void CallbackMemberVoidIntTest ()
+        {
+            var code = @"
+int result = 0;
+void setup() {
+  Wire.onReceive(receiveEvent);
+}
+void receiveEvent(int x) {
+  result = x*1000;
+}
+void loop() {
+  Serial.println(result);
+}";
+            var arduino = Run (code);
+            Assert.AreEqual ("22000", arduino.SerialOut.ToString ().Split ("\n").First ().Trim ());
         }
 
         [TestMethod]

@@ -67,6 +67,10 @@ struct CtorTest {
     int x;
     CtorTest(int x);
 };
+struct WireClass {
+    void onReceive(void (*callback)(int x));
+};
+struct WireClass Wire;
 ";
 
             AddInternalFunction ("void pinMode (int pin, int mode)", Arduino.PinMode);
@@ -103,6 +107,11 @@ struct CtorTest {
                 var xx = x.ReadArg (1);
                 var yy = x.ReadArg (2);
                 var result = x.RunFunction (callback, xx, yy, 1_000_000);
+                x.Push (result);
+            });
+            AddInternalFunction ("void WireClass::onReceive(void (*callback)(int x))", x => {
+                var callback = x.ReadArg (0);
+                var result = x.RunFunction (callback, 22, 1_000_000);
                 x.Push (result);
             });
         }
