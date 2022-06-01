@@ -139,11 +139,13 @@ namespace CLanguage.Editor
 
         public NSDictionary WarningAttributes (string message, NSDictionary existingAttributes)
         {
+#pragma warning disable CS0618 // Type or member is obsolete
             return new NativeStringAttributes {
-                UnderlineColor = NativeColor.SystemYellow,// !isDark ? Rgb (120, 73, 42) : Rgb (0xFF, 0xD3, 0x20),
+                UnderlineColor = NativeColor.SystemYellowColor,// !isDark ? Rgb (120, 73, 42) : Rgb (0xFF, 0xD3, 0x20),
                 UnderlineStyle = NSUnderlineStyle.Thick.ToKit (),
                 ToolTip = message,
             }.Dictionary;
+#pragma warning restore CS0618 // Type or member is obsolete
         }
 #elif __IOS__
         public NSDictionary ErrorAttributes (string message, NSDictionary existingAttributes)
