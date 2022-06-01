@@ -140,7 +140,7 @@ namespace CLanguage.Editor
         public NSDictionary WarningAttributes (string message, NSDictionary existingAttributes)
         {
             return new NativeStringAttributes {
-                UnderlineColor = NativeColor.SystemYellowColor,// !isDark ? Rgb (120, 73, 42) : Rgb (0xFF, 0xD3, 0x20),
+                UnderlineColor = NativeColor.SystemYellow,// !isDark ? Rgb (120, 73, 42) : Rgb (0xFF, 0xD3, 0x20),
                 UnderlineStyle = NSUnderlineStyle.Thick.ToKit (),
                 ToolTip = message,
             }.Dictionary;
