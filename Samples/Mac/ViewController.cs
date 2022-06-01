@@ -7,12 +7,15 @@ using CLanguage.Tests;
 using System.Linq;
 using System.Threading.Tasks;
 using CoreGraphics;
+using CLanguage;
 
 namespace CEditor
 {
     public partial class ViewController : NSViewController
     {
         private Document document;
+
+        readonly MachineInfo machineInfo = new ArduinoTestMachineInfo ();
 
         public Document Document {
             get => document;
@@ -51,7 +54,7 @@ namespace CEditor
             if (document == null)
                 return;
             document.CodeChanged += Document_CodeChanged;
-            textEditor.Options = new CLanguage.Compiler.CompilerOptions (new ArduinoTestMachineInfo ());
+            textEditor.SetCLanguage (machineInfo);
             //await Task.Delay (1000);
             textEditor.Text = document.Code;
             textEditor.TextChanged += TextEditor_TextChanged;
@@ -75,9 +78,8 @@ namespace CEditor
             document.Code = textEditor.Text;
 
             var code = "void start() { __cinit(); main(); } " + document.Code;
-            var mi = textEditor.Options.MachineInfo;
             Task.Run (() => {
-                var interpreter = CLanguage.CLanguageService.CreateInterpreter (code, mi);
+                var interpreter = CLanguage.CLanguageService.CreateInterpreter (code, machineInfo);
                 interpreter.Reset ("start");
                 interpreter.Step (1_000_000);
             });

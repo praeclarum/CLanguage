@@ -8,6 +8,7 @@ using Foundation;
 
 using CLanguage.Compiler;
 using static CLanguage.Editor.Extensions;
+using CLanguage.Syntax;
 
 #if __IOS__
 using UIKit;
@@ -42,7 +43,8 @@ namespace CLanguage.Editor
             }
         }
 
-        public CompilerOptions Options { get; set; } = new CompilerOptions (new MachineInfo (), new Report (), Enumerable.Empty<CLanguage.Syntax.Document> ());
+		//public CompilerOptions Options { get; set; } = new CompilerOptions (new MachineInfo (), new Report (), Enumerable.Empty<CLanguage.Syntax.Document> ());
+		public ColorizeFunc Colorize { get; set; } = (x, y) => Array.Empty<ColorSpan> ();
         public EditorPrinter LastPrinter { get; private set; } = new EditorPrinter ();
 
         public EditorTextStorage ()
@@ -119,7 +121,7 @@ namespace CLanguage.Editor
 
                     // Parse the file
                     var printer = new EditorPrinter ();
-					var spans = CLanguage.CLanguageService.Colorize (code, Options.MachineInfo, printer);
+					var spans = Colorize (code, printer);
                     LastPrinter = printer;
 
                     // Flatten the spans

@@ -28,12 +28,10 @@ using NativeFont = AppKit.NSFont;
 using NativeStringAttributes = AppKit.NSStringAttributes;
 #endif
 
-using CLanguage.Compiler;
-using CLanguage.Syntax;
-using static CLanguage.Editor.Extensions;
-
 namespace CLanguage.Editor
 {
+    public delegate Syntax.ColorSpan[] ColorizeFunc (string code, Report.Printer printer);
+
     [Register ("CEditor")]
     public class CEditor : NativeView, INSTextStorageDelegate, INativeTextViewDelegate
     {
@@ -71,13 +69,18 @@ namespace CLanguage.Editor
             set => textView.SelectedRange = value;
         }
 
-        CompilerOptions options = new CompilerOptions (new MachineInfo (), new Report (), Enumerable.Empty<Document> ());
-        public CompilerOptions Options {
-            get => options;
-            set {
-                options = value;
-                ColorizeCode (textView.TextStorage);
-            }
+        ColorizeFunc colorize = (code, printer) => Array.Empty<Syntax.ColorSpan> ();
+
+        public void SetCLanguage (MachineInfo? machineInfo = null)
+        {
+            var mi = machineInfo ?? new MachineInfo ();
+            SetLanguage ((code, printer) => CLanguageService.Colorize (code, mi, printer));
+        }
+
+        public void SetLanguage (ColorizeFunc colorize)
+        {
+            this.colorize = colorize;
+            ColorizeCode (textView.TextStorage);
         }
 
         Theme theme;
@@ -278,6 +281,7 @@ namespace CLanguage.Editor
 #endif
             UpdateMarginWidth ();
             OnThemeChanged ();
+            SetCLanguage ();
         }
 
         [Export ("toggleComment:")]
@@ -524,7 +528,7 @@ namespace CLanguage.Editor
             // Use the language service to determine colors and errors
             //
             var printer = new EditorPrinter ();
-            var spans = CLanguage.CLanguageService.Colorize (code, options.MachineInfo, printer);
+            var spans = colorize (code, printer);
 
             //
             // Color the text
@@ -562,7 +566,7 @@ namespace CLanguage.Editor
             }
 #elif __IOS__
             var ts = (EditorTextStorage)textView.TextStorage;
-            ts.Options = options;
+            ts.Colorize = colorize;
             ts.Theme = Theme;
             var printer = ts.LastPrinter;
 #endif

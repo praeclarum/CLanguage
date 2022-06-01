@@ -15,7 +15,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Update Versions
       env:
-        VERSION_PREFIX: 0.17
+        VERSION_PREFIX: 0.18
         VERSION_SUFFIX: ${{github.run_number}}
       run: |
         VERSION=$VERSION_PREFIX.$VERSION_SUFFIX

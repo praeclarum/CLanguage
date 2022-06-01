@@ -18,10 +18,7 @@ namespace CEditor
         {
             this.initialDocumentUrlTask = initialDocumentUrlTask;
 
-            Editor.Options = new CLanguage.Compiler.CompilerOptions (
-                new ArduinoTestMachineInfo (),
-                new CLanguage.Report (),
-                Enumerable.Empty<CLanguage.Syntax.Document> ());
+            Editor.SetCLanguage (new ArduinoTestMachineInfo ());
         }
 
         public override void ViewDidLoad()
