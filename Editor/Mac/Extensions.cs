@@ -37,10 +37,9 @@ namespace CLanguage.Editor
             return line.Substring (0, e);
         }
 
-        [Obsolete]
         public static string Localize (this string english)
         {
-            return NSBundle.MainBundle.LocalizedString (key: english, comment: "");
+            return NSBundle.MainBundle.GetLocalizedString(key: english);
         }
 
 #if __IOS__
