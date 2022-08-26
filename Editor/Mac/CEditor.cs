@@ -418,7 +418,17 @@ namespace CLanguage.Editor
             UpdateMargin ();
             ColorizeCode (TextView.TextStorage);
             //Console.WriteLine ("Text changed old");
-            TextChanged?.Invoke (this, EventArgs.Empty);
+            try {
+                TextChanged?.Invoke (this, EventArgs.Empty);
+            }
+            catch (Exception ex) {
+                ReportError (ex);
+            }
+        }
+
+        void ReportError (Exception ex)
+        {
+            Console.WriteLine ($"Error: {ex}");
         }
 
 #if __IOS__
@@ -458,41 +468,51 @@ namespace CLanguage.Editor
 
         void UpdateMargin ()
         {
-            var layoutManager = textView.LayoutManager;
-            var textContainer = textView.TextContainer;
+            try {
+                var layoutManager = textView.LayoutManager;
+                var textContainer = textView.TextContainer;
 #if __MACOS__
             var bounds = scroll.ContentView.Bounds;
             var lfpad = textView.TextContainerOrigin.Y;
 #elif __IOS__
-            var bounds = textView.Bounds;
-            var lfpad = textView.TextContainerInset.Top;
+                var bounds = textView.Bounds;
+                var lfpad = textView.TextContainerInset.Top;
 #endif
-            var visibleGlyphs = layoutManager.GlyphRangeForBoundingRect (bounds, textContainer);
-            var visibleChars = layoutManager.CharacterRangeForGlyphRange (visibleGlyphs);
-            var lines = textView.GetLinesInRange (visibleChars);
-            var index = lines.Range.Location;
-            var lineBounds = new List<CGRect> (lines.Lines.Count);
-            for (var i = 0; i < lines.Lines.Count && index <= lines.AllText.Length; i++) {
-                var line = lines.Lines[i];
-                var cr = new NSRange (index, line.Length);
-                var gr = layoutManager.GlyphRangeForCharacterRange (cr);
-                var b = layoutManager.BoundingRectForGlyphRange (gr, textContainer);
-                b.Y += lfpad;
-                lineBounds.Add (b);
-                index += line.Length + 1;
+                var visibleGlyphs = layoutManager.GlyphRangeForBoundingRect (bounds, textContainer);
+                var visibleChars = layoutManager.CharacterRangeForGlyphRange (visibleGlyphs);
+                var lines = textView.GetLinesInRange (visibleChars);
+                var index = lines.Range.Location;
+                var lineBounds = new List<CGRect> (lines.Lines.Count);
+                for (var i = 0; i < lines.Lines.Count && index <= lines.AllText.Length; i++) {
+                    var line = lines.Lines[i];
+                    var cr = new NSRange (index, line.Length);
+                    var gr = layoutManager.GlyphRangeForCharacterRange (cr);
+                    var b = layoutManager.BoundingRectForGlyphRange (gr, textContainer);
+                    b.Y += lfpad;
+                    lineBounds.Add (b);
+                    index += line.Length + 1;
+                }
+
+                margin.SetLinePositions ((int)lines.Range.Location, lineBounds, bounds, lineStarts);
+
+                UpdateMarginWidth ();
             }
-
-            margin.SetLinePositions ((int)lines.Range.Location, lineBounds, bounds, lineStarts);
-
-            UpdateMarginWidth ();
+            catch (Exception ex) {
+                ReportError (ex);
+            }
         }
 
         void UpdateMarginWidth ()
         {
-            if (marginWidthConstraint != null) {
-                var lineCount = Math.Max (10, lineStarts.Count);
-                var size = lineCount.ToString ().StringSize (theme.LineNumberAttributes);
-                marginWidthConstraint.Constant = (nfloat)(size.Width + 10 * theme.FontScale);
+            try {
+                if (marginWidthConstraint != null) {
+                    var lineCount = Math.Max (10, lineStarts.Count);
+                    var size = lineCount.ToString ().StringSize (theme.LineNumberAttributes);
+                    marginWidthConstraint.Constant = (nfloat)(size.Width + 10 * theme.FontScale);
+                }
+            }
+            catch (Exception ex) {
+                ReportError (ex);
             }
         }
 
@@ -500,28 +520,28 @@ namespace CLanguage.Editor
 
         void ColorizeCode (NSTextStorage textStorage)
         {
-            //await Task.Delay (1000);
+            try {
 
-            var code = textStorage.Value;
-            var managers = textStorage.LayoutManagers;
+                var code = textStorage.Value;
+                var managers = textStorage.LayoutManagers;
 
-            //
-            // Count the lines
-            //
-            var lineStarts = new List<int> (code.Length / 20) { 0 };
-            var lc = 1;
-            var li = code.IndexOfAny (newlineChars);
-            while (li >= 0) {
-                if (li + 1 <= code.Length)
-                    lineStarts.Add (li + 1);
-                lc++;
-                li = li + 1 < code.Length ? code.IndexOfAny (newlineChars, li + 1) : -1;
-            }
-            Debug.Assert (lc == lineStarts.Count, $"Line count mismatch: {lc} != {lineStarts.Count}");
-            this.lineStarts = lineStarts;
-            //await Task.Delay (1000);
-            UpdateMargin ();
-            //await Task.Delay (1000);
+                //
+                // Count the lines
+                //
+                var lineStarts = new List<int> (code.Length / 20) { 0 };
+                var lc = 1;
+                var li = code.IndexOfAny (newlineChars);
+                while (li >= 0) {
+                    if (li + 1 <= code.Length)
+                        lineStarts.Add (li + 1);
+                    lc++;
+                    li = li + 1 < code.Length ? code.IndexOfAny (newlineChars, li + 1) : -1;
+                }
+                Debug.Assert (lc == lineStarts.Count, $"Line count mismatch: {lc} != {lineStarts.Count}");
+                this.lineStarts = lineStarts;
+                //await Task.Delay (1000);
+                UpdateMargin ();
+                //await Task.Delay (1000);
 
 #if __MACOS__
             //
@@ -565,16 +585,20 @@ namespace CLanguage.Editor
                 }
             }
 #elif __IOS__
-            var ts = (EditorTextStorage)textView.TextStorage;
-            ts.Colorize = colorize;
-            ts.Theme = Theme;
-            var printer = ts.LastPrinter;
+                var ts = (EditorTextStorage)textView.TextStorage;
+                ts.Colorize = colorize;
+                ts.Theme = Theme;
+                var printer = ts.LastPrinter;
 #endif
 
-            //
-            // Inform the error view
-            //
-            errorView.Message = printer.Messages.FirstOrDefault (x => x.MessageType == "Error") ?? new Report.AbstractMessage ("Info", "");
+                //
+                // Inform the error view
+                //
+                errorView.Message = printer.Messages.FirstOrDefault (x => x.MessageType == "Error") ?? new Report.AbstractMessage ("Info", "");
+            }
+            catch (Exception ex) {
+                ReportError (ex);
+            }
         }
 
         void OnThemeChanged ()
