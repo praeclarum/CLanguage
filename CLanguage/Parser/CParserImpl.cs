@@ -105,7 +105,7 @@ namespace CLanguage.Parser
                                 i.Kind == TypeSpecifierKind.Struct ||
                                 i.Kind == TypeSpecifierKind.Union ||
                                 i.Kind == TypeSpecifierKind.Enum) {
-                                Debug.WriteLine ($"Add typedef `{i.Name}`");
+                                //Debug.WriteLine ($"Add typedef `{i.Name}`");
                                 lexer.AddTypedef (i.Name);
                             }
                         }
