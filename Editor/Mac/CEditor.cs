@@ -217,6 +217,7 @@ namespace CLanguage.Editor
             textView.AlwaysBounceHorizontal = false;
             textView.InputAssistantItem.LeadingBarButtonGroups = null;
             textView.InputAssistantItem.TrailingBarButtonGroups = null;
+            textView.InputAssistantItem.AllowsHidingShortcuts = true;
             textView.AutocorrectionType = UITextAutocorrectionType.No;
             textView.AutocapitalizationType = UITextAutocapitalizationType.None;
             textView.AllowsEditingTextAttributes = false;
@@ -228,6 +229,7 @@ namespace CLanguage.Editor
                 textView.SmartQuotesType = UITextSmartQuotesType.No;
                 errorVMargin = 0; // Safe area insets are used instead
             }
+            textView.TextContainerInset = new UIEdgeInsets (0, 0, 480, 0);
             var initialFontScale = theme.FontScale;
             var pinch = new PinchGesture ((UIPinchGestureRecognizer obj) => {
                 if (obj.State == UIGestureRecognizerState.Began) {
