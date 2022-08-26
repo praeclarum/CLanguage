@@ -472,8 +472,8 @@ namespace CLanguage.Editor
                 var layoutManager = textView.LayoutManager;
                 var textContainer = textView.TextContainer;
 #if __MACOS__
-            var bounds = scroll.ContentView.Bounds;
-            var lfpad = textView.TextContainerOrigin.Y;
+                var bounds = scroll.ContentView.Bounds;
+                var lfpad = textView.TextContainerOrigin.Y;
 #elif __IOS__
                 var bounds = textView.Bounds;
                 var lfpad = textView.TextContainerInset.Top;

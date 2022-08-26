@@ -250,8 +250,13 @@ namespace CLanguage.Editor
             var lines = new LinesInRange ();
 
             var text = TextStorage.Value;
-            var lineStartIndex = (int)range.Location;
-            var lineEndIndex = (int)(range.Location + range.Length);
+            if (text.Length == 0) {
+                lines.Lines.Add ("");
+                return lines;
+            }
+
+            var lineStartIndex = Math.Clamp((int)range.Location, 0, text.Length - 1);
+            var lineEndIndex = Math.Clamp((int)(range.Location + range.Length), 0, text.Length);
 
             while (lineStartIndex > 0 && text[lineStartIndex - 1] != '\n') {
                 lineStartIndex--;
