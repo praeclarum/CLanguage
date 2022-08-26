@@ -99,9 +99,9 @@ namespace CLanguage.Editor
         public event EventHandler? TextChanged;
 
 #if __IOS__
-        public event EventHandler EditingEnded;
-        NativeColor EffectiveAppearance => TintColor;
-        static bool IsDark (NativeColor a) => true;
+        public event EventHandler? EditingEnded;
+        NativeColor? EffectiveAppearance => TintColor;
+        static bool IsDark (NativeColor? a) => true;
         bool NeedsLayout { get => false; set => SetNeedsLayout (); }
         static readonly bool ios11 = UIDevice.CurrentDevice.CheckSystemVersion (11, 0);
         EditorKeyboardAccessory keyboardAccessory;
@@ -123,6 +123,7 @@ namespace CLanguage.Editor
 #if __MACOS__
             scroll = new NSScrollView (Bounds);
 #elif __IOS__
+            keyboardAccessory = new EditorKeyboardAccessory (this);
 #endif
             theme = new Theme (IsDark (EffectiveAppearance), fontScale: 1);
             Initialize ();
@@ -134,6 +135,7 @@ namespace CLanguage.Editor
 #if __MACOS__
             scroll = new NSScrollView (Bounds);
 #elif __IOS__
+            keyboardAccessory = new EditorKeyboardAccessory (this);
 #endif
             theme = new Theme (IsDark (EffectiveAppearance), fontScale: 1);
             Initialize ();
@@ -145,6 +147,7 @@ namespace CLanguage.Editor
 #if __MACOS__
             scroll = new NSScrollView (Bounds);
 #elif __IOS__
+            keyboardAccessory = new EditorKeyboardAccessory (this);
 #endif
             theme = new Theme (IsDark (EffectiveAppearance), fontScale: 1);
             Initialize ();
@@ -218,7 +221,6 @@ namespace CLanguage.Editor
             textView.AutocapitalizationType = UITextAutocapitalizationType.None;
             textView.AllowsEditingTextAttributes = false;
             textView.KeyboardType = UIKeyboardType.Default;
-            keyboardAccessory = new EditorKeyboardAccessory (this);
             textView.InputAccessoryView = keyboardAccessory;
             if (ios11) {
                 textView.SmartInsertDeleteType = UITextSmartInsertDeleteType.No;
@@ -478,7 +480,10 @@ namespace CLanguage.Editor
                 var bounds = textView.Bounds;
                 var lfpad = textView.TextContainerInset.Top;
 #endif
+
                 var visibleGlyphs = layoutManager.GlyphRangeForBoundingRect (bounds, textContainer);
+
+#pragma warning disable CS0618 // Type or member is obsolete
                 var visibleChars = layoutManager.CharacterRangeForGlyphRange (visibleGlyphs);
                 var lines = textView.GetLinesInRange (visibleChars);
                 var index = lines.Range.Location;
@@ -492,6 +497,7 @@ namespace CLanguage.Editor
                     lineBounds.Add (b);
                     index += line.Length + 1;
                 }
+#pragma warning restore CS0618 // Type or member is obsolete
 
                 margin.SetLinePositions ((int)lines.Range.Location, lineBounds, bounds, lineStarts);
 
