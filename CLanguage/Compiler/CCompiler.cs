@@ -121,7 +121,7 @@ namespace CLanguage.Compiler
             //
             var exeInitBody = new Block (VariableScope.Local);
             var tucs = tus.Select (x => new TranslationUnitContext (x, exeContext));
-            var tuInits = new List<(CompiledFunction, EmitContext)> ();
+            var tuInits = new List<FunctionToCompile> ();
             foreach (var tuc in tucs) {
                 var tu = tuc.TranslationUnit;
                 AddStatementDeclarations (tuc);
@@ -130,7 +130,7 @@ namespace CLanguage.Compiler
                     tuInitBody.AddStatements (tu.InitStatements);
                     var tuInit = new CompiledFunction ($"__{tu.Name}__cinit", "", CFunctionType.VoidProcedure, tuInitBody);
                     exeInitBody.AddStatement (new ExpressionStatement (new FuncallExpression (new VariableExpression (tuInit.Name, Location.Null, Location.Null))));
-                    tuInits.Add ((tuInit, tuc));
+                    tuInits.Add (new FunctionToCompile (tuInit, tuc));
                     exe.Functions.Add (tuInit);
                 }
             }
@@ -145,7 +145,7 @@ namespace CLanguage.Compiler
             // Link everything together
             // This is done before compilation to make sure everything is visible (for recursion)
             //
-            var functionsToCompile = new List<(CompiledFunction, EmitContext)> { (exeInit, exeContext) };
+            var functionsToCompile = new List<FunctionToCompile> { new FunctionToCompile (exeInit, exeContext) };
             functionsToCompile.AddRange (tuInits);
             foreach (var tuc in tucs) {
                 var tu = tuc.TranslationUnit;
@@ -155,13 +155,15 @@ namespace CLanguage.Compiler
                 }
                 var funcs = tu.Functions.Where (x => x.Body != null).ToList ();
                 exe.Functions.AddRange (funcs);
-                functionsToCompile.AddRange (funcs.Select (x => (x, (EmitContext)tuc)));
+                functionsToCompile.AddRange (funcs.Select (x => new FunctionToCompile (x, (EmitContext)tuc)));
             }
 
             //
             // Compile functions
             //
-            foreach (var (f, pc) in functionsToCompile) {
+            foreach (var fAndPC in functionsToCompile) {
+                var f = fAndPC.Function;
+                var pc = fAndPC.Context;
                 var body = f.Body;
                 if (body == null)
                     continue;
@@ -183,6 +185,18 @@ namespace CLanguage.Compiler
 
 			return exe;
 		}
+
+        class FunctionToCompile
+        {
+            public readonly CompiledFunction Function;
+            public readonly EmitContext Context;
+
+            public FunctionToCompile (CompiledFunction function, EmitContext context)
+            {
+                Function = function;
+                Context = context;
+            }
+        }
 
         void AddStatementDeclarations (BlockContext context)
         {
