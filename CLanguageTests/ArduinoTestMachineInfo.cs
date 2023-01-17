@@ -52,13 +52,17 @@ typedef unsigned char byte;
 typedef unsigned short word;
 struct SerialClass {
     void begin(int baud);
+    //void print(char value);
+    //void print(int value);
     void print(const char *value);
     void println(int value, int bas);
     void println(int value);
     void println(const char *value);
 };
 struct MemberTest {
+    int f(char testme);
     int f(int testme);
+    int f(float testme);
     int f(double testme);
 };
 struct MemberTest test;
@@ -85,12 +89,16 @@ struct WireClass Wire;
             AddInternalFunction ("void noTone (int pin)");
             AddInternalFunction ("long millis ()", Arduino.Millis);
             AddInternalFunction ("void SerialClass::begin (int baud)", Arduino.SerialBegin);
+            // AddInternalFunction ("void SerialClass::print (char value)", Arduino.SerialPrintC);
+            // AddInternalFunction ("void SerialClass::print (int value)", Arduino.SerialPrintI);
             AddInternalFunction ("void SerialClass::print (const char *value)", Arduino.SerialPrintS);
             AddInternalFunction ("void SerialClass::println (int value, int base)", Arduino.SerialPrintlnII);
             AddInternalFunction ("void SerialClass::println (int value)", Arduino.SerialPrintlnI);
             AddInternalFunction ("void SerialClass::println (const char *value)", Arduino.SerialPrintlnS);
-            AddInternalFunction ("int MemberTest::f (int)", x => x.Push (1));
-            AddInternalFunction ("int MemberTest::f (double)", x => x.Push (2));
+            AddInternalFunction ("int MemberTest::f (char)", x => x.Push (1));
+            AddInternalFunction ("int MemberTest::f (int)", x => x.Push (2));
+            AddInternalFunction ("int MemberTest::f (float)", x => x.Push (3));
+            AddInternalFunction ("int MemberTest::f (double)", x => x.Push (4));
             AddInternalFunction ("void CtorTest::CtorTest (int)", x => {
                 var _this = x.ReadThis ().PointerValue;
                 var arg = x.ReadArg (0);

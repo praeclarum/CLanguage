@@ -45,8 +45,10 @@ void main () {
         {
             var i = Run (@"
 void main () {
-    assertAreEqual (1, test.f(0));
-    assertAreEqual (2, test.f(0.0));
+    assertAreEqual (1, test.f((char)0));
+    assertAreEqual (2, test.f(0));
+    assertAreEqual (3, test.f(0.0f));
+    assertAreEqual (4, test.f(0.0));
 }");
         }
 
@@ -65,6 +67,32 @@ void main () {
     assertDoublesAreEqual (2.14, f(-1.0));
     assertDoublesAreEqual (2, f(0.0, 2));
     assertDoublesAreEqual (1, f(-1.0, 2));
+}");
+        }
+
+        [TestMethod]
+        public void GlobalCharVsIntVariable ()
+        {
+            var i = Run (@"
+int f(char x) { return 1; }
+int f(int x) { return 2; }
+void main () {
+    char cval = 'F';
+    int ival = 42;
+    assertAreEqual (1, f(cval));
+    assertAreEqual (2, f(ival));
+}");
+        }
+
+        [TestMethod]
+        public void MemberCharVsIntVariable ()
+        {
+            var i = Run (@"
+void main () {
+    char cval = 'F';
+    int ival = 42;
+    assertAreEqual (1, test.f(cval));
+    assertAreEqual (2, test.f(ival));
 }");
         }
     }
