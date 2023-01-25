@@ -45,10 +45,13 @@ void main () {
         {
             var i = Run (@"
 void main () {
+    char msg[5];
     assertAreEqual (1, test.f((char)0));
     assertAreEqual (2, test.f(0));
     assertAreEqual (3, test.f(0.0f));
     assertAreEqual (4, test.f(0.0));
+    assertAreEqual (6, test.f(""hello""));
+    assertAreEqual (6, test.f(msg));
 }");
         }
 

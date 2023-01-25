@@ -64,6 +64,7 @@ struct MemberTest {
     int f(int testme);
     int f(float testme);
     int f(double testme);
+    int f(const char *testme);
 };
 struct MemberTest test;
 struct SerialClass Serial;
@@ -89,8 +90,8 @@ struct WireClass Wire;
             AddInternalFunction ("void noTone (int pin)");
             AddInternalFunction ("long millis ()", Arduino.Millis);
             AddInternalFunction ("void SerialClass::begin (int baud)", Arduino.SerialBegin);
-            // AddInternalFunction ("void SerialClass::print (char value)", Arduino.SerialPrintC);
-            // AddInternalFunction ("void SerialClass::print (int value)", Arduino.SerialPrintI);
+            //AddInternalFunction ("void SerialClass::print (char value)", Arduino.SerialPrintC);
+            //AddInternalFunction ("void SerialClass::print (int value)", Arduino.SerialPrintI);
             AddInternalFunction ("void SerialClass::print (const char *value)", Arduino.SerialPrintS);
             AddInternalFunction ("void SerialClass::println (int value, int base)", Arduino.SerialPrintlnII);
             AddInternalFunction ("void SerialClass::println (int value)", Arduino.SerialPrintlnI);
@@ -99,6 +100,7 @@ struct WireClass Wire;
             AddInternalFunction ("int MemberTest::f (int)", x => x.Push (2));
             AddInternalFunction ("int MemberTest::f (float)", x => x.Push (3));
             AddInternalFunction ("int MemberTest::f (double)", x => x.Push (4));
+            AddInternalFunction ("int MemberTest::f (const char*)", x => x.Push (6));
             AddInternalFunction ("void CtorTest::CtorTest (int)", x => {
                 var _this = x.ReadThis ().PointerValue;
                 var arg = x.ReadArg (0);
