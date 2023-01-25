@@ -140,8 +140,7 @@
     <ItemGroup>
         <Compile Include="Main.cs" />
         <Compile Include="AppDelegate.cs" />
-        <Compile Include="TestRunner.cs" />
-        <Compile Include="TestViewController.cs" />
+        <Compile Include="UnitTestingViewController.cs" />
         <Compile Include="..\CLanguageTests\ArduinoInterpreterTests.cs">
           <Link>Tests\ArduinoInterpreterTests.cs</Link>
         </Compile>

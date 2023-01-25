@@ -1,4 +1,5 @@
 ﻿using Foundation;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UIKit;
 
 namespace CLanguageTestsiOS
@@ -13,7 +14,7 @@ namespace CLanguageTestsiOS
         public bool FinishedLaunching (UIApplication application, NSDictionary launchOptions)
         {
             Window = new UIWindow(UIScreen.MainScreen.Bounds);
-            Window.RootViewController = new UINavigationController (new TestViewController());
+            Window.RootViewController = new UINavigationController (new UnitTestingViewController ());
             Window.MakeKeyAndVisible();
             return true;
         }
