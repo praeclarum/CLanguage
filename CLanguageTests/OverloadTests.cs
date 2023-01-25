@@ -46,8 +46,10 @@ void main () {
             var i = Run (@"
 void main () {
     char msg[5];
+    assertAreEqual (0, test.f());
     assertAreEqual (1, test.f((char)0));
     assertAreEqual (2, test.f(0));
+    assertAreEqual (22, test.f(0, 0));
     assertAreEqual (3, test.f(0.0f));
     assertAreEqual (4, test.f(0.0));
     assertAreEqual (6, test.f(""hello""));
@@ -97,6 +99,16 @@ void main () {
     assertAreEqual (1, test.f(cval));
     assertAreEqual (2, test.f(ival));
 }");
+        }
+
+        [TestMethod]
+        public void PrintlnConstCharPtr ()
+        {
+            var i = Run (@"
+void main () {
+    Serial.println(""hello"");
+}");
+            Assert.AreEqual("hello\n", ((ArduinoTestMachineInfo)i.Executable.MachineInfo).Arduino.SerialOut.ToString());
         }
     }
 }

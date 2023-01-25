@@ -55,13 +55,20 @@ struct SerialClass {
     //void print(char value);
     //void print(int value);
     void print(const char *value);
+    void println();
     void println(int value, int bas);
     void println(int value);
+	void println(char value);
+    void println(unsigned long value);
+    void println(double value);
+    void println(float value);
     void println(const char *value);
 };
 struct MemberTest {
+    int f();
     int f(char testme);
     int f(int testme);
+    int f(int testme, int bas);
     int f(float testme);
     int f(double testme);
     int f(const char *testme);
@@ -93,11 +100,18 @@ struct WireClass Wire;
             //AddInternalFunction ("void SerialClass::print (char value)", Arduino.SerialPrintC);
             //AddInternalFunction ("void SerialClass::print (int value)", Arduino.SerialPrintI);
             AddInternalFunction ("void SerialClass::print (const char *value)", Arduino.SerialPrintS);
-            AddInternalFunction ("void SerialClass::println (int value, int base)", Arduino.SerialPrintlnII);
+            AddInternalFunction ("void SerialClass::println ()", Arduino.SerialPrintln);
+            AddInternalFunction ("void SerialClass::println (int value, int bas)", Arduino.SerialPrintlnBas);
             AddInternalFunction ("void SerialClass::println (int value)", Arduino.SerialPrintlnI);
-            AddInternalFunction ("void SerialClass::println (const char *value)", Arduino.SerialPrintlnS);
+            AddInternalFunction ("void SerialClass::println (char value)", Arduino.SerialPrintlnC);
+            AddInternalFunction ("void SerialClass::println (unsigned long value)", Arduino.SerialPrintlnUL);
+            AddInternalFunction ("void SerialClass::println (float value)", Arduino.SerialPrintlnF);
+            AddInternalFunction ("void SerialClass::println (double value)", Arduino.SerialPrintlnD);
+            AddInternalFunction ("void SerialClass::println (const char* value)", Arduino.SerialPrintlnS);
+            AddInternalFunction ("int MemberTest::f ()", x => x.Push (0));
             AddInternalFunction ("int MemberTest::f (char)", x => x.Push (1));
             AddInternalFunction ("int MemberTest::f (int)", x => x.Push (2));
+            AddInternalFunction ("int MemberTest::f (int, int)", x => x.Push (22));
             AddInternalFunction ("int MemberTest::f (float)", x => x.Push (3));
             AddInternalFunction ("int MemberTest::f (double)", x => x.Push (4));
             AddInternalFunction ("int MemberTest::f (const char*)", x => x.Push (6));
@@ -213,9 +227,41 @@ struct WireClass Wire;
                 SerialOut.WriteLine (v);
             }
 
+            public void SerialPrintlnBas (CInterpreter state)
+            {
+                var p = state.ReadArg (0).Int32Value;
+                var b = state.ReadArg (1).Int32Value;
+                var s = Convert.ToString (p, b);
+                SerialOut.WriteLine (s);
+            }
+
             public void SerialPrintlnI (CInterpreter state)
             {
                 var v = state.ReadArg(0).Int16Value;
+                SerialOut.WriteLine (v);
+            }
+
+            public void SerialPrintlnUL (CInterpreter state)
+            {
+                var v = state.ReadArg(0).UInt32Value;
+                SerialOut.WriteLine (v);
+            }
+
+            public void SerialPrintlnC (CInterpreter state)
+            {
+                var v = state.ReadArg(0).CharValue;
+                SerialOut.WriteLine (v);
+            }
+
+            public void SerialPrintlnF (CInterpreter state)
+            {
+                var v = state.ReadArg(0).Float32Value;
+                SerialOut.WriteLine (v);
+            }
+
+            public void SerialPrintlnD (CInterpreter state)
+            {
+                var v = state.ReadArg(0).Float64Value;
                 SerialOut.WriteLine (v);
             }
 
@@ -223,6 +269,11 @@ struct WireClass Wire;
             {
                 var p = state.ReadArg (0).PointerValue;
                 SerialOut.Write (state.ReadString (p));
+            }
+
+            public void SerialPrintln (CInterpreter state)
+            {
+                SerialOut.WriteLine ();
             }
 
             public void SerialPrintlnS (CInterpreter state)
