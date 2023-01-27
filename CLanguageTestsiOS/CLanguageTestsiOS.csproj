@@ -30,7 +30,8 @@
         <MtouchFloat32>true</MtouchFloat32>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
-        <DebugType>none</DebugType>
+      <DebugSymbols>true</DebugSymbols>
+        <DebugType>full</DebugType>
         <Optimize>true</Optimize>
         <OutputPath>bin\iPhoneSimulator\Release</OutputPath>
         <ErrorReport>prompt</ErrorReport>
@@ -56,17 +57,23 @@
         <MtouchFloat32>true</MtouchFloat32>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
-      <DebugSymbols>true</DebugSymbols>
+        <DebugSymbols>true</DebugSymbols>
         <DebugType>full</DebugType>
-        <Optimize>true</Optimize>
+        <Optimize>True</Optimize>
         <OutputPath>bin\iPhone\Release</OutputPath>
         <ErrorReport>prompt</ErrorReport>
         <WarningLevel>4</WarningLevel>
-        <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
+        <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+        <MtouchUseArmv7>false</MtouchUseArmv7>
         <MtouchArch>ARM64</MtouchArch>
-        <CodesignKey>iPhone Developer</CodesignKey>
-        <LangVersion>9.0</LangVersion>
+        <DefineConstants>__IOS__;__MOBILE__;__UNIFIED__;MONOTOUCH;HAS_APPCENTER</DefineConstants>
+        <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
+        <IpaPackageName>
+        </IpaPackageName>
         <MtouchFloat32>true</MtouchFloat32>
+        <MtouchEnableSGenConc>true</MtouchEnableSGenConc>
+        <MtouchLink>SdkOnly</MtouchLink>
+        <LangVersion>9.0</LangVersion>
         <MtouchUseLlvm>true</MtouchUseLlvm>
     </PropertyGroup>
     <ItemGroup>
