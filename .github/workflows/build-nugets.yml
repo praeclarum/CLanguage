@@ -29,17 +29,15 @@ jobs:
     - name: Install dependencies
       run: msbuild /t:Restore /p:Configuration=Release CLanguage.sln
     - name: Build
-      run: msbuild /p:Configuration=Release CLanguage/CLanguage.csproj
-    - name: Build Test
-      run: msbuild /p:Configuration=Release CLanguageTests/CLanguageTests.csproj
+      run: dotnet build -c Release CLanguage/CLanguage.csproj
+    - name: Test
+      run: dotnet test -c Release CLanguageTests/CLanguageTests.csproj
     - name: Build iOS Test
       run: msbuild /p:Configuration=Release CLanguageTestsiOS/CLanguageTestsiOS.csproj
     - name: Build Mac Editor
       run: msbuild /p:Configuration=Release Editor/Mac/CLanguage.Editor.Mac.csproj
     - name: Build iOS Editor
       run: msbuild /p:Configuration=Release Editor/iOS/CLanguage.Editor.iOS.csproj
-    - name: Test
-      run: dotnet test -c Release --no-build CLanguageTests/CLanguageTests.csproj
     - name: Package Library
       run: |
         mkdir PackageOut
