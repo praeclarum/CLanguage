@@ -95,6 +95,17 @@ namespace CLanguage.Syntax
 			}
         }
 
+        class ScoredMethod {
+            public CStructMethod Method;
+            public int Score;
+
+            public ScoredMethod (CStructMethod method, int score)
+            {
+                Method = method;
+                Score = score;
+            }
+        }
+
         Overload ResolveOverload (Expression function, CType[] argTypes, EmitContext ec)
         {
             if (function is MemberFromReferenceExpression memr) {
@@ -102,28 +113,36 @@ namespace CLanguage.Syntax
 
                 if (targetType is CStructType structType) {
 
-                    var methods = structType.Members.OfType<CStructMethod> ().Where (x => x.Name == memr.MemberName).ToList ();
+                    var methods = new List<CStructMethod> ();
+                    foreach (var mem in structType.Members) {
+                        if (mem is CStructMethod meth && meth.Name == memr.MemberName)
+                            methods.Add(meth);
+                    }
 
                     if (methods.Count == 0) {
                         ec.Report.Error (1061, "'{1}' not found in '{0}'", structType.Name, memr.MemberName);
                         return Overload.Error;
                     }
                     else {
-                        var methodq = from m in methods
-                                      let mt = m.MemberType as CFunctionType
-                                      where mt != null
-                                      let score = mt.ScoreParameterTypeMatches (argTypes)
-                                      where score > 0
-                                      orderby score descending
-                                      select m;
-                        var method = methodq.FirstOrDefault ();
-                        if (method == null) {
+                        var scoredMethods = new List<ScoredMethod> ();
+                        foreach (var m in methods) {
+                            if (m.MemberType is CFunctionType mt) {
+                                var score = mt.ScoreParameterTypeMatches (argTypes);
+                                if (score > 0) {
+                                    scoredMethods.Add (new ScoredMethod (m, score));
+                                }
+                            }
+                        }
+                        scoredMethods.Sort((a, b) => b.Score - a.Score);
+                        var bestMatch = scoredMethods.Count > 0 ? scoredMethods[0] : null;
+
+                        if (bestMatch == null) {
                             var fmethod = methods.FirstOrDefault ();
                             ec.Report.Error (1503, $"'{function}' argument type mismatch");
                             return Overload.Error;
                         }
                         else {
-                            var res = ec.ResolveMethodFunction (structType, method);
+                            var res = ec.ResolveMethodFunction (structType, bestMatch.Method);
                             if (res != null) {
                                 return new Overload (
                                     res.Function?.FunctionType,
