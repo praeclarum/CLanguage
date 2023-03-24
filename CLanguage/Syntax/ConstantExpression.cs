@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -55,19 +55,19 @@ namespace CLanguage.Syntax
 			}
             else if (Value is uint)
             {
-                ConstantType = CBasicType.UnsignedInt;
+                ConstantType = CBasicType.UnsignedLongInt;
 			}
             else if (Value is int)
             {
-                ConstantType = CBasicType.SignedInt;
+                ConstantType = CBasicType.SignedLongInt;
 			}
             else if (Value is ulong)
             {
-                ConstantType = CBasicType.UnsignedLongInt;
+                ConstantType = CBasicType.UnsignedLongLongInt;
 			}
             else if (Value is long)
             {
-                ConstantType = CBasicType.SignedLongInt;
+                ConstantType = CBasicType.SignedLongLongInt;
 			}
             else if (Value is float)
             {
