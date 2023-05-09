@@ -38,7 +38,10 @@ namespace CLanguage.Syntax
         protected override void DoEmit (EmitContext ec)
         {
             DoEmitPointer (ec);
-            ec.Emit (OpCode.LoadPointer);
+            if (!(Array is ArrayElementExpression)) {  // support multidimensional array
+                ec.Emit (OpCode.LoadPointer);
+            }
+
         }
 
         public override string ToString ()
