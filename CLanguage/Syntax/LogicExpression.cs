@@ -30,11 +30,21 @@ namespace CLanguage.Syntax
 
 		protected override void DoEmit (EmitContext ec)
 		{
+            var label = new Label ();
 			Left.Emit (ec);
 			ec.EmitCastToBoolean (Left.GetEvaluatedCType (ec));
 
-			Right.Emit (ec);
-			ec.EmitCastToBoolean (Right.GetEvaluatedCType (ec));
+            switch (Op) {
+                case LogicOp.And:
+                    ec.Emit (OpCode.BranchIfFalseNoSPChange, label);  //or Dup instruction. 
+                    break;
+                case LogicOp.Or:
+                    ec.Emit (OpCode.BranchIfTrueNoSPChange, label);
+                    break;
+            }
+
+			Right.Emit (ec); // (true)||(1/0) <- second part not executed in C 
+            ec.EmitCastToBoolean (Right.GetEvaluatedCType (ec));
 
 			switch (Op) {
 			case LogicOp.And:
@@ -46,9 +56,12 @@ namespace CLanguage.Syntax
 			default:
 				throw new NotSupportedException ("Unsupported logical operator '" + Op + "'");
 			}
+            ec.EmitLabel (label);
 		}
 
-		public override CType GetEvaluatedCType (EmitContext ec)
+
+
+        public override CType GetEvaluatedCType (EmitContext ec)
 		{
             return CBasicType.Bool;
 		}
