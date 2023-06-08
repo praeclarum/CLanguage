@@ -107,7 +107,6 @@ namespace CLanguage.Interpreter
                             ip++;
                         }
                         break;
-
                     case OpCode.BranchIfFalseNoSPChange:
                         a = state.Stack[state.SP - 1];
                         if (a.UInt8Value == 0) {

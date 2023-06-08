@@ -6,21 +6,17 @@ namespace CLanguage.Compiler
 {
     public class LoopContext : EmitContext
     {
-        public Label BreakLabel { get; }
-        public Label ContinueLabel { get; }
+        public Label LoopBreakLabel { get; }
+        public Label? LoopContinueLabel { get; }
 
-        public override LoopContext? Loop => this;
+        public override Label? BreakLabel => LoopBreakLabel;
+        public override Label? ContinueLabel => LoopContinueLabel ?? ParentContext?.ContinueLabel;
 
-        public LoopContext (Label breakLabel, Label continueLabel, EmitContext parentContext)
+        public LoopContext (Label breakLabel, Label? continueLabel, EmitContext parentContext)
             : base (parentContext)
         {
-            BreakLabel = breakLabel ?? throw new ArgumentNullException (nameof (breakLabel));
-            ContinueLabel = continueLabel ?? throw new ArgumentNullException (nameof (continueLabel));
-        }
-
-        public override ResolvedVariable? TryResolveVariable (string name, CType[]? argTypes)
-        {
-            return base.TryResolveVariable (name, argTypes);
+            LoopBreakLabel = breakLabel ?? throw new ArgumentNullException (nameof (breakLabel));
+            LoopContinueLabel = continueLabel;
         }
     }
 }

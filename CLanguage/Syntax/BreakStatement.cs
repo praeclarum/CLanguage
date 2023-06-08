@@ -17,11 +17,11 @@ namespace CLanguage.Syntax
 
         protected override void DoEmit (EmitContext ec)
         {
-            if (ec.Loop is object) {
-                ec.Emit (Interpreter.OpCode.Jump, ec.Loop.BreakLabel);
+            if (ec.BreakLabel is object) {
+                ec.Emit (Interpreter.OpCode.Jump, ec.BreakLabel);
             }
             else {
-                ec.Report.Error (139, "No enclosing loop out of which to break");
+                ec.Report.Error (139, "No enclosing statement out of which to break");
             }
         }
     }

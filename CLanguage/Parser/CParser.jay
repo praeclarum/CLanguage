@@ -846,8 +846,6 @@ statement
     
 labeled_statement
 	: IDENTIFIER ':' statement
-	| CASE constant_expression ':' statement
-	| DEFAULT ':' statement
 	;
 
 compound_statement
@@ -941,7 +939,37 @@ selection_statement
 	{
 		$$ = new IfStatement((Expression)$3, (Statement)$5, (Statement)$7, GetLocation($1));
 	}
-	| SWITCH '(' expression ')' statement
+	| SWITCH '(' expression ')' '{' switch_cases '}'
+	{
+		$$ = new SwitchStatement((Expression)$3, (List<SwitchCase>)$6, GetLocation($1));
+	}
+	| SWITCH '(' expression ')' '{' '}'
+	{
+		$$ = new SwitchStatement((Expression)$3, new List<SwitchCase>(), GetLocation($1));
+	}
+	;
+
+switch_cases
+	: switch_case
+	{
+		$$ = new List<SwitchCase> { (SwitchCase)$1 };
+	}
+	| switch_cases switch_case
+	{
+		((List<SwitchCase>)$1).Add((SwitchCase)$2);
+		$$ = $1;
+	}
+	;
+
+switch_case
+	: CASE constant_expression ':' block_item_list
+	{
+		$$ = new SwitchCase((Expression)$2, (List<Statement>)$4);
+	}
+	| DEFAULT ':' block_item_list
+	{
+		$$ = new SwitchCase(null, (List<Statement>)$3);
+	}
 	;
 
 iteration_statement
