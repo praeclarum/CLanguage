@@ -24,6 +24,8 @@ namespace CLanguage.Syntax
 
         protected override void DoEmit (EmitContext initialContext)
         {
+            var valueType = Value.GetEvaluatedCType(initialContext);
+
             Value.Emit(initialContext);
 
             if (Cases.Count == 0) {
@@ -32,18 +34,41 @@ namespace CLanguage.Syntax
             }
 
             var caseLabels = new List<Label>();
+            Label? defaultLabel = null;
             foreach (var c in Cases) {
                 var caseLabel = initialContext.DefineLabel();
                 caseLabels.Add(caseLabel);
+                if (c.Value is null) {
+                    if (defaultLabel is object) {
+                        initialContext.Report.Error(139, "Duplicate default labels in switch");
+                    }
+                    defaultLabel = caseLabel;
+                }
             }
             var endLabel = initialContext.DefineLabel();
 
             var ec = initialContext.PushLoop (breakLabel: endLabel, continueLabel: null);
-            
+
             // Emit case tests
+			var ioff = ec.GetInstructionOffset (valueType);
+			var eqOp = (OpCode)(OpCode.EqualToInt8 + ioff);
             for (var ci = 0; ci < Cases.Count; ci++) {
                 var c = Cases[ci];
                 var caseLabel = caseLabels[ci];
+                if (c.Value is null) continue;
+                ec.Emit(OpCode.Dup);
+                c.Value.Emit(ec);
+    			ec.EmitCast (c.Value.GetEvaluatedCType (ec), valueType);
+                ec.Emit(eqOp);
+                ec.Emit(OpCode.BranchIfTrue, caseLabel);
+            }
+            if (defaultLabel is object) {
+                ec.Emit(OpCode.Pop);
+                ec.Emit(OpCode.Jump, defaultLabel);
+            }
+            else {
+                ec.Emit(OpCode.Pop);
+                ec.Emit(OpCode.Jump, endLabel);
             }
 
             // Emit case statements

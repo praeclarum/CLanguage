@@ -54,7 +54,6 @@ namespace CLanguage.Interpreter
         BranchIfFalseNoSPChange,
         BranchIfTrueNoSPChange,
 
-
         Call,
         Return,
 
