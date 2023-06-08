@@ -15,7 +15,8 @@ namespace CLanguage.Compiler
 
         public MachineInfo MachineInfo { get; private set; }
 
-        public virtual LoopContext? Loop => ParentContext?.Loop;
+        public virtual Label? BreakLabel => ParentContext?.BreakLabel;
+        public virtual Label? ContinueLabel => ParentContext?.ContinueLabel;
 
         protected EmitContext (EmitContext parentContext)
             : this (parentContext.MachineInfo, parentContext.Report, parentContext.FunctionDecl, parentContext)
@@ -61,7 +62,7 @@ namespace CLanguage.Compiler
             return new ResolvedVariable (VariableScope.Global, 0, CBasicType.SignedInt);
         }
 
-        public EmitContext PushLoop (Label breakLabel, Label continueLabel)
+        public EmitContext PushLoop (Label breakLabel, Label? continueLabel)
         {
             return new LoopContext (breakLabel, continueLabel, parentContext: this);
         }

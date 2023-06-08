@@ -22,18 +22,41 @@ namespace CLanguage.Syntax
             Location = loc;
         }
 
-        protected override void DoEmit (EmitContext ec)
+        protected override void DoEmit (EmitContext initialContext)
         {
-            Value.Emit(ec);
+            Value.Emit(initialContext);
 
             if (Cases.Count == 0) {
-                ec.Emit(OpCode.Pop);
+                initialContext.Emit(OpCode.Pop);
                 return;
             }
 
             var caseLabels = new List<Label>();
+            foreach (var c in Cases) {
+                var caseLabel = initialContext.DefineLabel();
+                caseLabels.Add(caseLabel);
+            }
+            var endLabel = initialContext.DefineLabel();
 
-			throw new NotImplementedException();
+            var ec = initialContext.PushLoop (breakLabel: endLabel, continueLabel: null);
+            
+            // Emit case tests
+            for (var ci = 0; ci < Cases.Count; ci++) {
+                var c = Cases[ci];
+                var caseLabel = caseLabels[ci];
+            }
+
+            // Emit case statements
+            for (var ci = 0; ci < Cases.Count; ci++) {
+                var c = Cases[ci];
+                var caseLabel = caseLabels[ci];
+                ec.EmitLabel(caseLabel);
+                foreach (var s in c.Statements) {
+                    s.Emit(ec);
+                }
+            }
+
+			ec.EmitLabel(endLabel);
         }
 
         public override string ToString()

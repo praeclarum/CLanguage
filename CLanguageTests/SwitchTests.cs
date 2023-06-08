@@ -20,5 +20,40 @@ void main()
 }
 ");
         }
+
+        [TestMethod]
+        public void OnlyDefault ()
+        {
+            Run (@"
+void main()
+{
+    int x = 6;
+	switch (x)
+	{
+        default:
+            x = 1000;
+	}
+    assertAreEqual(1000, x);
+}
+");
+        }
+
+        [TestMethod]
+        public void OnlyDefaultBreak ()
+        {
+            Run (@"
+void main()
+{
+    int x = 6;
+	switch (x)
+	{
+        default:
+            break;
+            x = 1000;
+	}
+    assertAreEqual(6, x);
+}
+");
+        }
     }
 }
