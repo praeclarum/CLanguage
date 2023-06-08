@@ -164,6 +164,7 @@ namespace CLanguage.Interpreter
                         state.SP--;
                         ip++;
                         break;
+
                     case OpCode.AddInt8:
                         a = state.Stack[state.SP - 2];
                         b = state.Stack[state.SP - 1];
@@ -234,6 +235,7 @@ namespace CLanguage.Interpreter
                         state.SP--;
                         ip++;
                         break;
+
                     case OpCode.SubtractInt8:
                         a = state.Stack[state.SP - 2];
                         b = state.Stack[state.SP - 1];
@@ -279,14 +281,14 @@ namespace CLanguage.Interpreter
                     case OpCode.SubtractInt64:
                         a = state.Stack[state.SP - 2];
                         b = state.Stack[state.SP - 1];
-                        state.Stack[state.SP - 2] = (long)a + (long)b;
+                        state.Stack[state.SP - 2] = (long)a - (long)b;
                         state.SP--;
                         ip++;
                         break;
                     case OpCode.SubtractUInt64:
                         a = state.Stack[state.SP - 2];
                         b = state.Stack[state.SP - 1];
-                        state.Stack[state.SP - 2] = (ulong)a + (ulong)b;
+                        state.Stack[state.SP - 2] = (ulong)a - (ulong)b;
                         state.SP--;
                         ip++;
                         break;
@@ -304,6 +306,7 @@ namespace CLanguage.Interpreter
                         state.SP--;
                         ip++;
                         break;
+
                     case OpCode.MultiplyInt8:
                         a = state.Stack[state.SP - 2];
                         b = state.Stack[state.SP - 1];
@@ -346,6 +349,20 @@ namespace CLanguage.Interpreter
                         state.SP--;
                         ip++;
                         break;
+                    case OpCode.MultiplyInt64:
+                        a = state.Stack[state.SP - 2];
+                        b = state.Stack[state.SP - 1];
+                        state.Stack[state.SP - 2] = (long)((long)a * (long)b);
+                        state.SP--;
+                        ip++;
+                        break;
+                    case OpCode.MultiplyUInt64:
+                        a = state.Stack[state.SP - 2];
+                        b = state.Stack[state.SP - 1];
+                        state.Stack[state.SP - 2] = (ulong)((ulong)a * (ulong)b);
+                        state.SP--;
+                        ip++;
+                        break;
                     case OpCode.MultiplyFloat32:
                         a = state.Stack[state.SP - 2];
                         b = state.Stack[state.SP - 1];
@@ -360,6 +377,7 @@ namespace CLanguage.Interpreter
                         state.SP--;
                         ip++;
                         break;
+
                     case OpCode.DivideInt8:
                         a = state.Stack[state.SP - 2];
                         b = state.Stack[state.SP - 1];
@@ -402,6 +420,20 @@ namespace CLanguage.Interpreter
                         state.SP--;
                         ip++;
                         break;
+                    case OpCode.DivideInt64:
+                        a = state.Stack[state.SP - 2];
+                        b = state.Stack[state.SP - 1];
+                        state.Stack[state.SP - 2] = (long)((long)a / (long)b);
+                        state.SP--;
+                        ip++;
+                        break;
+                    case OpCode.DivideUInt64:
+                        a = state.Stack[state.SP - 2];
+                        b = state.Stack[state.SP - 1];
+                        state.Stack[state.SP - 2] = (ulong)((ulong)a / (ulong)b);
+                        state.SP--;
+                        ip++;
+                        break;
                     case OpCode.DivideFloat32:
                         a = state.Stack[state.SP - 2];
                         b = state.Stack[state.SP - 1];
@@ -416,6 +448,7 @@ namespace CLanguage.Interpreter
                         state.SP--;
                         ip++;
                         break;
+
                     case OpCode.ShiftLeftInt8:
                         a = state.Stack[state.SP - 2];
                         b = state.Stack[state.SP - 1];
@@ -458,6 +491,21 @@ namespace CLanguage.Interpreter
                         state.SP--;
                         ip++;
                         break;
+                    case OpCode.ShiftLeftInt64:
+                        a = state.Stack[state.SP - 2];
+                        b = state.Stack[state.SP - 1];
+                        state.Stack[state.SP - 2] = (long)((long)a << (int)(long)b);
+                        state.SP--;
+                        ip++;
+                        break;
+                    case OpCode.ShiftLeftUInt64:
+                        a = state.Stack[state.SP - 2];
+                        b = state.Stack[state.SP - 1];
+                        state.Stack[state.SP - 2] = (ulong)((ulong)a << (int)(ulong)b);
+                        state.SP--;
+                        ip++;
+                        break;
+                        // invalid instruction in C
                     case OpCode.ShiftLeftFloat32:
                         a = state.Stack[state.SP - 2];
                         b = state.Stack[state.SP - 1];
@@ -465,6 +513,7 @@ namespace CLanguage.Interpreter
                         state.SP--;
                         ip++;
                         break;
+                    // invalid instruction in C
                     case OpCode.ShiftLeftFloat64:
                         a = state.Stack[state.SP - 2];
                         b = state.Stack[state.SP - 1];
@@ -472,6 +521,7 @@ namespace CLanguage.Interpreter
                         state.SP--;
                         ip++;
                         break;
+
                     case OpCode.ShiftRightInt8:
                         a = state.Stack[state.SP - 2];
                         b = state.Stack[state.SP - 1];
@@ -514,6 +564,21 @@ namespace CLanguage.Interpreter
                         state.SP--;
                         ip++;
                         break;
+                    case OpCode.ShiftRightInt64:
+                        a = state.Stack[state.SP - 2];
+                        b = state.Stack[state.SP - 1];
+                        state.Stack[state.SP - 2] = (long)((long)a >> (int)(long)b);
+                        state.SP--;
+                        ip++;
+                        break;
+                    case OpCode.ShiftRightUInt64:
+                        a = state.Stack[state.SP - 2];
+                        b = state.Stack[state.SP - 1];
+                        state.Stack[state.SP - 2] = (ulong)((ulong)a >> (int)(ulong)b);
+                        state.SP--;
+                        ip++;
+                        break;
+                    // invalid instruction in C
                     case OpCode.ShiftRightFloat32:
                         a = state.Stack[state.SP - 2];
                         b = state.Stack[state.SP - 1];
@@ -521,6 +586,7 @@ namespace CLanguage.Interpreter
                         state.SP--;
                         ip++;
                         break;
+                    // invalid instruction in C
                     case OpCode.ShiftRightFloat64:
                         a = state.Stack[state.SP - 2];
                         b = state.Stack[state.SP - 1];
@@ -528,6 +594,7 @@ namespace CLanguage.Interpreter
                         state.SP--;
                         ip++;
                         break;
+
                     case OpCode.ModuloInt16:
                         a = state.Stack[state.SP - 2];
                         b = state.Stack[state.SP - 1];
@@ -556,6 +623,21 @@ namespace CLanguage.Interpreter
                         state.SP--;
                         ip++;
                         break;
+                    case OpCode.ModuloInt64:
+                        a = state.Stack[state.SP - 2];
+                        b = state.Stack[state.SP - 1];
+                        state.Stack[state.SP - 2] = (long)((long)a % (long)b);
+                        state.SP--;
+                        ip++;
+                        break;
+                    case OpCode.ModuloUInt64:
+                        a = state.Stack[state.SP - 2];
+                        b = state.Stack[state.SP - 1];
+                        state.Stack[state.SP - 2] = (ulong)((ulong)a % (ulong)b);
+                        state.SP--;
+                        ip++;
+                        break;
+                    // invalid instruction in C
                     case OpCode.ModuloFloat32:
                         a = state.Stack[state.SP - 2];
                         b = state.Stack[state.SP - 1];
@@ -563,6 +645,7 @@ namespace CLanguage.Interpreter
                         state.SP--;
                         ip++;
                         break;
+                    // invalid instruction in C
                     case OpCode.ModuloFloat64:
                         a = state.Stack[state.SP - 2];
                         b = state.Stack[state.SP - 1];
@@ -570,6 +653,7 @@ namespace CLanguage.Interpreter
                         state.SP--;
                         ip++;
                         break;
+
                     case OpCode.BinaryAndInt8:
                         a = state.Stack[state.SP - 2];
                         b = state.Stack[state.SP - 1];
@@ -626,6 +710,7 @@ namespace CLanguage.Interpreter
                         state.SP--;
                         ip++;
                         break;
+                    // invalid instruction in C
                     case OpCode.BinaryAndFloat32:
                         a = state.Stack[state.SP - 2];
                         b = state.Stack[state.SP - 1];
@@ -633,6 +718,7 @@ namespace CLanguage.Interpreter
                         state.SP--;
                         ip++;
                         break;
+                    // invalid instruction in C
                     case OpCode.BinaryAndFloat64:
                         a = state.Stack[state.SP - 2];
                         b = state.Stack[state.SP - 1];
@@ -696,6 +782,7 @@ namespace CLanguage.Interpreter
                         state.SP--;
                         ip++;
                         break;
+                    // invalid instruction in C
                     case OpCode.BinaryOrFloat32:
                         a = state.Stack[state.SP - 2];
                         b = state.Stack[state.SP - 1];
@@ -703,6 +790,7 @@ namespace CLanguage.Interpreter
                         state.SP--;
                         ip++;
                         break;
+                    // invalid instruction in C
                     case OpCode.BinaryOrFloat64:
                         a = state.Stack[state.SP - 2];
                         b = state.Stack[state.SP - 1];
@@ -766,6 +854,7 @@ namespace CLanguage.Interpreter
                         state.SP--;
                         ip++;
                         break;
+                    // invalid instruction in C
                     case OpCode.BinaryXorFloat32:
                         a = state.Stack[state.SP - 2];
                         b = state.Stack[state.SP - 1];
@@ -773,6 +862,7 @@ namespace CLanguage.Interpreter
                         state.SP--;
                         ip++;
                         break;
+                    // invalid instruction in C
                     case OpCode.BinaryXorFloat64:
                         a = state.Stack[state.SP - 2];
                         b = state.Stack[state.SP - 1];
