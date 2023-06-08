@@ -94,6 +94,46 @@ namespace CLanguage.Interpreter
                             ip++;
                         }
                         break;
+                    case OpCode.BranchIfTrue:
+                        a = state.Stack[state.SP - 1];
+                        state.SP--;
+                        if (a.UInt8Value != 0) {
+                            if (i.Label != null)
+                                ip = i.Label.Index;
+                            else
+                                throw new InvalidOperationException ($"BranchIfTrue label not set");
+                        }
+                        else {
+                            ip++;
+                        }
+                        break;
+
+                    case OpCode.BranchIfFalseNoSPChange:
+                        a = state.Stack[state.SP - 1];
+                        if (a.UInt8Value == 0) {
+                            if (i.Label != null)
+                                ip = i.Label.Index;
+                            else
+                                throw new InvalidOperationException ($"BranchIfFalse label not set");
+                        }
+                        else {
+                            ip++;
+                        }
+                        break;
+                    case OpCode.BranchIfTrueNoSPChange:
+                        a = state.Stack[state.SP - 1];
+                        if (a.UInt8Value != 0) {
+                            if (i.Label != null)
+                                ip = i.Label.Index;
+                            else
+                                throw new InvalidOperationException ($"BranchIfTrue label not set");
+                        }
+                        else {
+                            ip++;
+                        }
+                        break;
+
+
                     case OpCode.Call:
                         a = state.Stack[state.SP - 1];
                         state.SP--;

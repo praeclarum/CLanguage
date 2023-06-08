@@ -50,6 +50,11 @@ namespace CLanguage.Interpreter
 
         Jump,
         BranchIfFalse,
+        BranchIfTrue,
+        BranchIfFalseNoSPChange,
+        BranchIfTrueNoSPChange,
+
+
         Call,
         Return,
 
