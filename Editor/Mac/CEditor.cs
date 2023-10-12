@@ -4,11 +4,13 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 
 using Foundation;
 using CoreGraphics;
+using ObjCRuntime;
 
 #if __IOS__
 using UIKit;
@@ -49,10 +51,10 @@ namespace CLanguage.Editor
         NSLayoutConstraint? marginWidthConstraint;
 
         public string Text {
-            get => textView.TextStorage.Value;
+            get => textView.TextStorage.Value ?? "";
             set {
                 var val = value ?? "";
-                var oldText = textView.TextStorage.Value;
+                var oldText = textView.TextStorage.Value ?? "";
                 if (oldText == val)
                     return;
                 textView.TextStorage.SetString (new NSAttributedString (value ?? "", theme.CommentAttributes));
@@ -530,7 +532,7 @@ namespace CLanguage.Editor
         {
             try {
 
-                var code = textStorage.Value;
+                var code = textStorage.Value ?? "";
                 var managers = textStorage.LayoutManagers;
 
                 //

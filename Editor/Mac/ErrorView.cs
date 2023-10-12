@@ -69,7 +69,9 @@ namespace CLanguage.Editor
         protected override void DrawDirtyRect (CGRect dirtyRect)
         {
             NativeColor.Clear.Set ();
-            NativeGraphics.RectFill (dirtyRect);
+            var drawRect = Bounds;
+            drawRect.Intersect (dirtyRect);
+            NativeGraphics.RectFill (drawRect);
 
             var bounds = Bounds;
             if (bounds.Width < bounds.Height)

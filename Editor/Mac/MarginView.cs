@@ -32,7 +32,9 @@ namespace CLanguage.Editor
         protected override void DrawDirtyRect (CGRect dirtyRect)
         {
             Theme.BackgroundColor.Set ();
-            NativeGraphics.RectFill (dirtyRect);
+            var drawRect = Bounds;
+            drawRect.Intersect (dirtyRect);
+            NativeGraphics.RectFill (drawRect);
 
             var la = Theme.LineNumberAttributes;
             var fontHeight = "123".StringSize (la).Height;
