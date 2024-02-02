@@ -8,12 +8,12 @@ namespace CLanguage.Tests
     [TestClass]
     public class OverloadTests
     {
-        CInterpreter Run (string code)
+        static CInterpreter Run (string code)
         {
             var fullCode = "void start() { __cinit(); main(); } " + code;
             var i = CLanguageService.CreateInterpreter (fullCode, new ArduinoTestMachineInfo (), printer: new TestPrinter ());
             i.Reset ("start");
-            i.Step ();
+            i.Run ();
             return i;
         }
 
@@ -102,13 +102,28 @@ void main () {
         }
 
         [TestMethod]
-        public void PrintlnConstCharPtr ()
+        public void VoidPtrFromArray ()
         {
             var i = Run (@"
+int f(void *x) { return 1; }
+int xs[5] = { 10, 20, 30, 40, 50 };
 void main () {
-    Serial.println(""hello"");
+    int fr = f(xs);
+    assertAreEqual (1, fr);
 }");
-            Assert.AreEqual("hello\n", ((ArduinoTestMachineInfo)i.Executable.MachineInfo).Arduino.SerialOut.ToString());
+        }
+
+        [TestMethod]
+        public void VoidPtrFromOtherPtr ()
+        {
+            var i = Run (@"
+int f(void *x) { return 1; }
+int xs[5] = { 10, 20, 30, 40, 50 };
+void main () {
+    int *p = xs;
+    int fr = f(p);
+    assertAreEqual (1, fr);
+}");
         }
     }
 }

@@ -122,11 +122,17 @@ namespace CLanguage.Compiler
                 Emit (op);
                 // This conversion is implicit with how the evaluator stores its stuff
             }
-            else if (fromBasicType != null && fromBasicType.IsIntegral && toType is CPointerType && fromBasicType.NumValues == toType.NumValues) {
+            else if (fromBasicType != null && fromBasicType.IsIntegral && toType is CPointerType) {
                 // Support `const char *p = 0;`
             }
             else if (fromType is CArrayType fat && toType is CPointerType tpt && fat.ElementType.NumValues == tpt.InnerType.NumValues) {
                 // Demote arrays to pointers
+            }
+            else if (fromType is CArrayType && toType.IsVoidPointer) {
+                // Demote arrays to void pointers without size check. Better hope sizeof works.
+            }
+            else if (fromType.IsPointer && toType.IsVoidPointer) {
+                // Demote pointers to void pointers without size check. Better hope sizeof works.
             }
             else if (fromType is CEnumType et && toType is CIntType bt) {
                 // Enums act like ints
