@@ -12,7 +12,7 @@ jobs:
     runs-on: macos-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: Update Versions
       env:
         VERSION_PREFIX: 0.20
@@ -23,7 +23,7 @@ jobs:
         sed -i bak "s:<version>1.0.0</version>:<version>$VERSION</version>:g" CLanguage.Editor.nuspec
         sed -i bak2 "s:version=\"1.0.0\":version=\"$VERSION\":g" CLanguage.Editor.nuspec
     - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
+      uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 6.0.300
     - name: Install dependencies
@@ -39,13 +39,16 @@ jobs:
     - name: Build iOS Editor
       run: msbuild /p:Configuration=Release Editor/iOS/CLanguage.Editor.iOS.csproj
     - name: Package Library
+      if: github.event_name == 'push'
       run: |
         mkdir PackageOut
         cd CLanguage && dotnet pack --include-symbols --no-build -c Release -v normal -o ../PackageOut
     - name: Package Editor
+      if: github.event_name == 'push'
       run: |
         nuget pack CLanguage.Editor.nuspec -OutputDirectory PackageOut
     - name: Package
+      if: github.event_name == 'push'
       uses: actions/upload-artifact@master
       with:
         path: PackageOut
