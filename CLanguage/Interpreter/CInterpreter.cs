@@ -42,6 +42,11 @@ namespace CLanguage.Interpreter
             return Stack[address];
         }
 
+        public Value WriteMemory (int address, Value value)
+        {
+            return Stack[address] = value;
+        }
+
         public string ReadStringWithEncoding (int address, Encoding encoding)
         {
             var b = (byte)Stack[address];
