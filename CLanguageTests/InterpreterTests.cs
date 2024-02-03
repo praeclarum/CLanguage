@@ -330,7 +330,7 @@ void main () {
 			var i = Run (@"
 void main () {
 	int s = sizeof(int);
-	assertAreEqual (2, s);
+	assertAreEqual (1, s);
 }");
 		}
 
@@ -340,7 +340,7 @@ void main () {
 			var i = Run (@"
 void main () {
 	int s = sizeof(sizeof(int));
-	assertAreEqual (4, s);
+	assertAreEqual (1, s);
 }");
 		}
 
@@ -350,7 +350,7 @@ void main () {
 			var i = Run (@"
 void main () {
 	int s = sizeof(int*);
-	assertAreEqual (2, s);
+	assertAreEqual (1, s);
 }");
 		}
 
@@ -360,7 +360,7 @@ void main () {
 			var i = Run (@"
 void main () {
 	int s = sizeof(long int);
-	assertAreEqual (4, s);
+	assertAreEqual (1, s);
 }");
 		}
 
@@ -370,10 +370,31 @@ void main () {
 			var i = Run (@"
 int array[] = { 0, 1, 2, 3, 4 };
 void main () {
-	int num = sizeof(array) / sizeof(array[0]);
-    int num2 = sizeof(array) / sizeof(int);
+	int sa = sizeof(array);
+	assertAreEqual (5, sa);
+	int num = sa / sizeof(array[0]);
+    int num2 = sa / sizeof(int);
 	assertAreEqual (5, num);
     assertAreEqual (5, num2);
+}");
+		}
+
+		[TestMethod]
+		public void InternalFunctionMemcmpWorks ()
+		{
+			var i = Run (@"
+int memcmp (const void *s1, const void *s2, int n);
+int ones[5] = { 1, 1, 1, 1, 1 };
+int ones2[5] = { 1, 1, 1, 1, 1 };
+int twos[5] = { 2, 2, 2, 2, 2 };
+void main () {
+	assertAreEqual (0, memcmp(ones, ones2, sizeof(ones)));
+	assertAreEqual (0, memcmp(ones2, ones, sizeof(ones)));
+	assertAreEqual (0, memcmp(ones, ones, sizeof(ones)));
+	assertAreEqual (0, memcmp(ones2, ones2, sizeof(ones)));
+	assertAreEqual (0, memcmp(twos, twos, sizeof(twos)));
+	assertAreEqual (-1, memcmp(ones, twos, sizeof(ones)));
+	assertAreEqual (1, memcmp(twos, ones, sizeof(ones)));
 }");
 		}
 

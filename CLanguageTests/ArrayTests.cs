@@ -13,7 +13,7 @@ namespace CLanguage.Tests
             var fullCode = "void start() { __cinit(); main(); } " + code;
             var i = CLanguageService.CreateInterpreter (fullCode, new ArduinoTestMachineInfo (), printer: new TestPrinter ());
             i.Reset ("start");
-            i.Step ();
+            i.Run ();
             return i;
         }
 

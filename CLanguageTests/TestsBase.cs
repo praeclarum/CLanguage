@@ -21,7 +21,7 @@ namespace CLanguage.Tests
             var i = CLanguageService.CreateInterpreter (fullCode, mi ?? new TestMachineInfo (), printer: printer);
             printer.CheckForErrors ();
             i.Reset ("start");
-            i.Step ();
+            i.Run ();
             return i;
         }
 

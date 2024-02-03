@@ -21,7 +21,7 @@ namespace CLanguage.Tests
             var fullCode = code + "\n\nvoid main() { __cinit(); setup(); while(1){loop();}}";
             var i = CLanguageService.CreateInterpreter (fullCode, machine, new TestPrinter ());
             i.Reset ("main");
-            i.Step ();
+            i.Run ();
             return machine.Arduino;
         }
 

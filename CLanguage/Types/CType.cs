@@ -24,6 +24,16 @@ namespace CLanguage.Types
 
         public CPointerType Pointer => pointer.Value;
 
+        public bool IsVoidPointer => this switch {
+            CPointerType pt => pt.InnerType.IsVoid || pt.InnerType.IsVoidPointer,
+            _ => false,
+        };
+
+        public bool IsPointer => this switch {
+            CPointerType pt => true,
+            _ => false,
+        };
+
         public CType ()
         {
             pointer = new Lazy<CPointerType> (CreatePointerType);

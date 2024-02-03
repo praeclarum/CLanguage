@@ -33,8 +33,8 @@ typedef class C {
 } OtherC;
 OtherC c;
 void main() {
-    assertAreEqual(2, sizeof(c));
-    assertAreEqual(2, sizeof(OtherC));
+    assertAreEqual(1, sizeof(c));
+    assertAreEqual(1, sizeof(OtherC));
 }
 ");
         }
