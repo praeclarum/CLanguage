@@ -32,6 +32,7 @@ namespace CLanguage.Tests
             AddInternalFunction ("void assertBoolsAreEqual (bool expected, bool actual)", AssertBoolsAreEqual);
             AddInternalFunction ("void assertFloatsAreEqual (float expected, float actual)", AssertFloatsAreEqual);
             AddInternalFunction ("void assertDoublesAreEqual (double expected, double actual)", AssertDoublesAreEqual);
+            AddInternalFunction ("int memcmp (void* s1, void* s2, int n)", Memcmp);
         }
 
         static void AssertAreEqual (CInterpreter state)
@@ -81,6 +82,25 @@ namespace CLanguage.Tests
             var expected = state.ReadArg (0);
             var actual = state.ReadArg (1);
             Assert.AreEqual ((int)expected, (int)actual);
+        }
+
+        static void Memcmp (CInterpreter interpreter)
+        {
+            var s1 = interpreter.ReadArg (0).PointerValue;
+            var s2 = interpreter.ReadArg (1).PointerValue;
+            var n = interpreter.ReadArg (2).UInt32Value;
+            while (n > 0) {
+                var v1 = interpreter.ReadMemory (s1).UInt8Value;
+                var v2 = interpreter.ReadMemory (s2).UInt8Value;
+                if (v1 != v2) {
+                    interpreter.Push (v1 - v2);
+                    return;
+                }
+                s1++;
+                s2++;
+                n--;
+            }
+            interpreter.Push (0);
         }
     }
 }

@@ -3,7 +3,7 @@
 # Test files
 
 CLanguageTests/a.out
-CLanguageTests/test.c
+CLanguageTests/test*.c
 
 
 /*.nupkg
