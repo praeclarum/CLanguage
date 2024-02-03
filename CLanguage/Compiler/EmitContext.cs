@@ -129,10 +129,10 @@ namespace CLanguage.Compiler
                 // Demote arrays to pointers
             }
             else if (fromType is CArrayType && toType.IsVoidPointer) {
-                // Demote arrays to void pointers without size check. Better hope sizeof works.
+                // Demote arrays to void pointers without size check. sizeof() reports type.NumValues.
             }
             else if (fromType.IsPointer && toType.IsVoidPointer) {
-                // Demote pointers to void pointers without size check. Better hope sizeof works.
+                // Demote pointers to void pointers without size check. sizeof() reports type.NumValues.
             }
             else if (fromType is CEnumType et && toType is CIntType bt) {
                 // Enums act like ints

@@ -25,7 +25,7 @@ namespace CLanguage.Syntax
         protected override void DoEmit(EmitContext ec)
         {
             var type = Query.GetEvaluatedCType (ec);
-            Value cval = type.GetByteSize (ec);
+            Value cval = type.NumValues;
             ec.Emit (OpCode.LoadConstant, cval);
         }
     }

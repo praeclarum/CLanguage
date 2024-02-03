@@ -330,7 +330,7 @@ void main () {
 			var i = Run (@"
 void main () {
 	int s = sizeof(int);
-	assertAreEqual (2, s);
+	assertAreEqual (1, s);
 }");
 		}
 
@@ -340,7 +340,7 @@ void main () {
 			var i = Run (@"
 void main () {
 	int s = sizeof(sizeof(int));
-	assertAreEqual (4, s);
+	assertAreEqual (1, s);
 }");
 		}
 
@@ -350,7 +350,7 @@ void main () {
 			var i = Run (@"
 void main () {
 	int s = sizeof(int*);
-	assertAreEqual (2, s);
+	assertAreEqual (1, s);
 }");
 		}
 
@@ -360,7 +360,7 @@ void main () {
 			var i = Run (@"
 void main () {
 	int s = sizeof(long int);
-	assertAreEqual (4, s);
+	assertAreEqual (1, s);
 }");
 		}
 
@@ -370,8 +370,10 @@ void main () {
 			var i = Run (@"
 int array[] = { 0, 1, 2, 3, 4 };
 void main () {
-	int num = sizeof(array) / sizeof(array[0]);
-    int num2 = sizeof(array) / sizeof(int);
+	int sa = sizeof(array);
+	assertAreEqual (5, sa);
+	int num = sa / sizeof(array[0]);
+    int num2 = sa / sizeof(int);
 	assertAreEqual (5, num);
     assertAreEqual (5, num2);
 }");

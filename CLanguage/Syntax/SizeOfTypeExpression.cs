@@ -22,7 +22,7 @@ namespace CLanguage.Syntax
         protected override void DoEmit (EmitContext ec)
         {
             var type = ec.ResolveTypeName (TypeName);
-            Value cval = type.GetByteSize (ec);
+            Value cval = type.NumValues;
             ec.Emit (OpCode.LoadConstant, cval);
         }
     }
