@@ -22,9 +22,10 @@ jobs:
         sed -i bak "s:<Version>1.0.0</Version>:<Version>$VERSION</Version>:g" CLanguage/CLanguage.csproj
         sed -i bak "s:<version>1.0.0</version>:<version>$VERSION</version>:g" CLanguage.Editor.nuspec
         sed -i bak2 "s:version=\"1.0.0\":version=\"$VERSION\":g" CLanguage.Editor.nuspec
-    - name: Setup Xamarin.iOS
+    - name: Setup Xamarin.iOS and Xamarin.Mac
       run: |
         brew install --cask xamarin-ios
+        brew install --cask xamarin-mac
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v4
       with:
