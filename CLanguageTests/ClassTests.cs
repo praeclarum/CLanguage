@@ -167,6 +167,19 @@ void main() {
 ");
         }
 
+        [TestMethod]
+        public void ParseExternalMethodDeclarations ()
+        {
+            Parse (@"
+class C {
+    int x;
+public:
+    void setX(int newX);
+    int getX();
+};
+");
+        }
+
         [TestMethod, Ignore]
         public void ExternalMethodDefinitions ()
         {
