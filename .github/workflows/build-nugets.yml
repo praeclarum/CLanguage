@@ -9,13 +9,10 @@ on:
 jobs:
   build:
 
-    runs-on: macos-latest
+    runs-on: macos-13
 
     steps:
     - uses: actions/checkout@v4
-    - name: Set default Xamarin SDK versions
-      run: |
-        $VM_ASSETS/select-xamarin-sdk-v2.sh --mono=6.12 --ios=16.4
     - name: Update Versions
       env:
         VERSION_PREFIX: '0.20'
@@ -25,6 +22,9 @@ jobs:
         sed -i bak "s:<Version>1.0.0</Version>:<Version>$VERSION</Version>:g" CLanguage/CLanguage.csproj
         sed -i bak "s:<version>1.0.0</version>:<version>$VERSION</version>:g" CLanguage.Editor.nuspec
         sed -i bak2 "s:version=\"1.0.0\":version=\"$VERSION\":g" CLanguage.Editor.nuspec
+    - name: Setup Xamarin.iOS
+      run: |
+        brew install --cask xamarin-ios
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v4
       with:
