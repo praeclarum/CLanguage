@@ -22,6 +22,11 @@ jobs:
         sed -i bak "s:<Version>1.0.0</Version>:<Version>$VERSION</Version>:g" CLanguage/CLanguage.csproj
         sed -i bak "s:<version>1.0.0</version>:<version>$VERSION</version>:g" CLanguage.Editor.nuspec
         sed -i bak2 "s:version=\"1.0.0\":version=\"$VERSION\":g" CLanguage.Editor.nuspec
+    - name: Setup Mono
+      run: |
+        #brew install --cask mono-mdk
+        which msbuild
+        msbuild /version
     - name: Setup Xamarin.iOS
       run: |
         brew install --cask xamarin-ios
