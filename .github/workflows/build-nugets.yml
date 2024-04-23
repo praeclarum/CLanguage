@@ -27,7 +27,7 @@ jobs:
         brew install --cask xamarin-ios
     - name: Setup Xamarin.Mac
       run: |
-        wget https://download.visualstudio.microsoft.com/download/pr/ceb0ea3f-4db8-46b4-8dc3-8049d27c0107/7b04843d469aae253519989fcb8e750f/xamarin.mac-9.3.0.23.pkg
+        wget -q https://download.visualstudio.microsoft.com/download/pr/ceb0ea3f-4db8-46b4-8dc3-8049d27c0107/7b04843d469aae253519989fcb8e750f/xamarin.mac-9.3.0.23.pkg
         sudo installer -pkg xamarin.mac-9.3.0.23.pkg -target LocalSystem
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v4
