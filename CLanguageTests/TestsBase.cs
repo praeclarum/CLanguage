@@ -38,6 +38,20 @@ namespace CLanguage.Tests
             printer.CheckForErrors ();
             return i.Executable;
         }
+
+        protected TranslationUnit Parse (string code, params int[] expectedErrors)
+        {
+            return Parse (code, null, expectedErrors);
+        }
+
+        protected TranslationUnit Parse (string code, MachineInfo mi, params int[] expectedErrors)
+        {
+            var fullCode = "void start() { __cinit(); main(); } " + code;
+            var printer = new TestPrinter (expectedErrors);
+            var tu = CLanguageService.ParseTranslationUnit (fullCode, printer);
+            printer.CheckForErrors ();
+            return tu;
+        }
     }
 }
 
