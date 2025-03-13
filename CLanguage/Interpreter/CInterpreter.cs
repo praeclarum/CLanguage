@@ -253,7 +253,7 @@ namespace CLanguage.Interpreter
         {
             Push (arg0);
             Call (functionAddress);
-            return StepFunction (microseconds);
+            return StepFunction (microseconds, 1);
         }
 
         public Value RunFunction (Value functionAddress, Value arg0, Value arg1, int microseconds)
@@ -261,7 +261,7 @@ namespace CLanguage.Interpreter
             Push (arg0);
             Push (arg1);
             Call (functionAddress);
-            return StepFunction (microseconds);
+            return StepFunction (microseconds, 2);
         }
 
         public Value RunFunction (Value functionAddress, Value arg0, Value arg1, Value arg2, int microseconds)
@@ -270,14 +270,19 @@ namespace CLanguage.Interpreter
             Push (arg1);
             Push (arg2);
             Call (functionAddress);
-            return StepFunction (microseconds);
+            return StepFunction (microseconds, 3);
         }
 
-        Value StepFunction (int microseconds)
+        Value StepFunction (int microseconds, int argCount = 0)
         {
             if (ActiveFrame == null)
                 return 0;
 
+            var parametersCount = ActiveFrame.Function.FunctionType.Parameters.Count;
+            if (argCount != parametersCount) {
+                throw new InvalidOperationException ($"Expected {parametersCount} arguments, got {argCount} for function {ActiveFrame.Function.Name}");
+            }
+            
             var startFI = FI;
             var startReturnType = ActiveFrame?.Function.FunctionType.ReturnType;
 
