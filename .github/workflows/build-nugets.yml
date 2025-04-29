@@ -12,6 +12,8 @@ jobs:
     runs-on: macos-15
 
     steps:
+    - uses: actions/checkout@v4
+
     - name: Set Xcode
       uses: maxim-lobanov/setup-xcode@v1
       with:
@@ -21,7 +23,6 @@ jobs:
       with:
         global-json-file: global.json
 
-    - uses: actions/checkout@v4
     - name: Update Versions
       env:
         VERSION_PREFIX: '0.21'
