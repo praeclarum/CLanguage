@@ -26,7 +26,7 @@ namespace CLanguage.Types
             return InnerType + "*";
         }
 
-        public override bool Equals (object obj)
+        public override bool Equals (object? obj)
         {
             return obj is CPointerType o && InnerType.Equals (o.InnerType);
         }
