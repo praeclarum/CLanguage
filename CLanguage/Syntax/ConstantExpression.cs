@@ -95,7 +95,7 @@ namespace CLanguage.Syntax
 
         public override string ToString()
         {
-            return Value.ToString();
+            return Value.ToString() ?? "";
         }
 
         public override Value EvalConstant (EmitContext ec)

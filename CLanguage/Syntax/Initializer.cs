@@ -18,7 +18,7 @@ namespace CLanguage.Syntax
 
         public override string ToString ()
         {
-            return Expression.ToString ();
+            return Expression.ToString () ?? "";
         }
     }
 

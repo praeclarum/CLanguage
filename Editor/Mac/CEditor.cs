@@ -485,18 +485,18 @@ namespace CLanguage.Editor
                 var lfpad = textView.TextContainerInset.Top;
 #endif
 
-                var visibleGlyphs = layoutManager.GlyphRangeForBoundingRect (bounds, textContainer);
+                var visibleGlyphs = layoutManager.GetGlyphRangeForBoundingRect (bounds, textContainer);
 
 #pragma warning disable CS0618 // Type or member is obsolete
-                var visibleChars = layoutManager.CharacterRangeForGlyphRange (visibleGlyphs);
+                var visibleChars = layoutManager.GetCharacterRange (visibleGlyphs);
                 var lines = textView.GetLinesInRange (visibleChars);
                 var index = lines.Range.Location;
                 var lineBounds = new List<CGRect> (lines.Lines.Count);
                 for (var i = 0; i < lines.Lines.Count && index <= lines.AllText.Length; i++) {
                     var line = lines.Lines[i];
                     var cr = new NSRange (index, line.Length);
-                    var gr = layoutManager.GlyphRangeForCharacterRange (cr);
-                    var b = layoutManager.BoundingRectForGlyphRange (gr, textContainer);
+                    var gr = layoutManager.GetGlyphRange (cr);
+                    var b = layoutManager.GetBoundingRect (gr, textContainer);
                     b.Y += lfpad;
                     lineBounds.Add (b);
                     index += line.Length + 1;
@@ -590,7 +590,7 @@ namespace CLanguage.Editor
                 if (range.Location >= 0 && range.Length > 0 && range.Location < code.Length && range.Location + range.Length <= code.Length) {
                     var attrs = m.MessageType == "Error" ? theme.ErrorAttributes (m.Text, null) : theme.WarningAttributes (m.Text, null);
                     foreach (var lm in managers) {
-                        lm.AddTemporaryAttributes (attrs, range);
+                        lm.AddTemporaryAttributes ((NSDictionary<NSString, NSObject>)attrs, range);
                     }
                 }
             }

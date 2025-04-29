@@ -46,7 +46,7 @@ namespace CLanguage.Types
                 throw new ArgumentNullException (nameof (declaringType));
         }
 
-        public override bool Equals (object obj)
+        public override bool Equals (object? obj)
         {
             return obj is CFunctionType o && ReturnType.Equals (o.ReturnType) && ParameterTypesEqual (o);
         }

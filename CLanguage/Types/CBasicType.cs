@@ -16,7 +16,7 @@ namespace CLanguage.Types
             Size = size;
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return obj is CBasicType o && (Name == o.Name) && (Signedness == o.Signedness) && (Size == o.Size);
         }

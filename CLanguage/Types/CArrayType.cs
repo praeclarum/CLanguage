@@ -50,7 +50,7 @@ namespace CLanguage.Types
             return 0;
         }
 
-        public override bool Equals (object obj)
+        public override bool Equals (object? obj)
         {
             return obj is CArrayType a && Length == a.Length && ElementType.Equals (a.ElementType);
         }

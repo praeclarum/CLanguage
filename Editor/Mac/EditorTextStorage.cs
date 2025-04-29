@@ -169,12 +169,7 @@ namespace CLanguage.Editor
 			});
 		}
 
-#if __IOS__
 		static readonly NSTextStorageEditActions CharsEdited = NSTextStorageEditActions.Characters;
 		static readonly NSTextStorageEditActions AttrsEdited = NSTextStorageEditActions.Attributes;
-#else
-		static readonly nuint CharsEdited = (nuint)(int)(NSTextStorageEditedFlags.EditedCharacters);
-		static readonly nuint AttrsEdited = (nuint)(int)(NSTextStorageEditedFlags.EditedAttributed);
-#endif
 	}
 }

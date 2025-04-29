@@ -105,7 +105,7 @@ namespace CLanguage
             {
             }
 
-            public override bool Equals (object obj)
+            public override bool Equals (object? obj)
             {
                 var o = obj as AbstractMessage;
                 return (o != null) &&

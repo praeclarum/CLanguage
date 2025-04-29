@@ -9,50 +9,44 @@ on:
 jobs:
   build:
 
-    runs-on: macos-13
+    runs-on: macos-15
 
     steps:
     - uses: actions/checkout@v4
+
+    - name: Set Xcode
+      uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: "16.3"
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        global-json-file: global.json
+
     - name: Update Versions
       env:
-        VERSION_PREFIX: '0.20'
+        VERSION_PREFIX: '0.21'
         VERSION_SUFFIX: ${{github.run_number}}
       run: |
         VERSION=$VERSION_PREFIX.$VERSION_SUFFIX
         sed -i bak "s:<Version>1.0.0</Version>:<Version>$VERSION</Version>:g" CLanguage/CLanguage.csproj
         sed -i bak "s:<version>1.0.0</version>:<version>$VERSION</version>:g" CLanguage.Editor.nuspec
         sed -i bak2 "s:version=\"1.0.0\":version=\"$VERSION\":g" CLanguage.Editor.nuspec
-    - name: Patch Test Target Framework
-      run: |
-        sed -i bak "s:<TargetFramework>net6.0</TargetFramework>:<TargetFramework>net8.0</TargetFramework>:g" CLanguageTests/CLanguageTests.csproj
-    - name: Setup Mono
-      run: |
-        #brew install --cask mono-mdk
-        which msbuild
-        msbuild /version
-    - name: Setup Xamarin.iOS
-      run: |
-        brew install --cask xamarin-ios
-    - name: Setup Xamarin.Mac
-      run: |
-        wget -q https://download.visualstudio.microsoft.com/download/pr/ceb0ea3f-4db8-46b4-8dc3-8049d27c0107/7b04843d469aae253519989fcb8e750f/xamarin.mac-9.3.0.23.pkg
-        sudo installer -pkg xamarin.mac-9.3.0.23.pkg -target LocalSystem
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v4
-      with:
-        global-json-file: global.json
-    - name: Install dependencies
-      run: msbuild /t:Restore /p:Configuration=Release CLanguage.sln
+
+    - name: Install Workloads
+      run: dotnet workload restore CLanguage.sln
+    - name: Restore Packages
+      run: dotnet restore CLanguage.sln
+
     - name: Build
       run: dotnet build -c Release CLanguage/CLanguage.csproj
     - name: Test
       run: dotnet test -c Release CLanguageTests/CLanguageTests.csproj
-    - name: Build iOS Test
-      run: msbuild /p:Configuration=Release CLanguageTestsiOS/CLanguageTestsiOS.csproj
     - name: Build Mac Editor
-      run: msbuild /p:Configuration=Release Editor/Mac/CLanguage.Editor.Mac.csproj
+      run: dotnet build -c Release Editor/Mac/CLanguage.Editor.Mac.csproj
     - name: Build iOS Editor
-      run: msbuild /p:Configuration=Release Editor/iOS/CLanguage.Editor.iOS.csproj
+      run: dotnet build -c Release Editor/iOS/CLanguage.Editor.iOS.csproj
+
     - name: Package Library
       if: github.event_name == 'push'
       run: |

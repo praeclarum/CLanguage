@@ -141,7 +141,7 @@ namespace CLanguage.Editor
         {
 #pragma warning disable CS0618 // Type or member is obsolete
             return new NativeStringAttributes {
-                UnderlineColor = NativeColor.SystemYellowColor,// !isDark ? Rgb (120, 73, 42) : Rgb (0xFF, 0xD3, 0x20),
+                UnderlineColor = NativeColor.SystemYellow,
                 UnderlineStyle = NSUnderlineStyle.Thick.ToKit (),
                 ToolTip = message,
             }.Dictionary;
