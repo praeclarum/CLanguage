@@ -4,6 +4,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>CLanguage.Editor</RootNamespace>
     <AssemblyName>CLanguage.Editor.iOS</AssemblyName>
+    <SupportedOSPlatformVersion>12.2</SupportedOSPlatformVersion>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\Mac\Theme.cs">

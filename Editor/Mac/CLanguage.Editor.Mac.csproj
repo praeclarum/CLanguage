@@ -4,6 +4,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>CLanguage.Editor</RootNamespace>
     <AssemblyName>CLanguage.Editor.Mac</AssemblyName>
+    <SupportedOSPlatformVersion>12.0</SupportedOSPlatformVersion>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\CLanguage\CLanguage.csproj" />
