@@ -144,9 +144,9 @@ namespace CLanguage
             }
         }
 
-        static readonly MethodInfo miReadArg = typeof (CInterpreter).GetTypeInfo().GetDeclaredMethod (nameof(CInterpreter.ReadArg));
-        static readonly MethodInfo miPush = typeof (CInterpreter).GetTypeInfo().GetDeclaredMethod (nameof (CInterpreter.Push));
-        static readonly MethodInfo miReadString = typeof (CInterpreter).GetTypeInfo().GetDeclaredMethod (nameof (CInterpreter.ReadString));
+        static readonly MethodInfo miReadArg = typeof (CInterpreter).GetTypeInfo().GetDeclaredMethod (nameof(CInterpreter.ReadArg))!;
+        static readonly MethodInfo miPush = typeof (CInterpreter).GetTypeInfo().GetDeclaredMethod (nameof (CInterpreter.Push))!;
+        static readonly MethodInfo miReadString = typeof (CInterpreter).GetTypeInfo().GetDeclaredMethod (nameof (CInterpreter.ReadString))!;
 
         static readonly Expression[] noExprs = new Expression[0];
 

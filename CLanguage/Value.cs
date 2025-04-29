@@ -203,7 +203,7 @@ namespace CLanguage
 
         static ValueReflection ()
         {
-            TypedFields[typeof (string)] = typeof (Value).GetTypeInfo ().GetDeclaredField (nameof (Value.PointerValue));
+            TypedFields[typeof (string)] = typeof (Value).GetTypeInfo ().GetDeclaredField (nameof (Value.PointerValue))!;
         }
     }
 }

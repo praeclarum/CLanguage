@@ -10,7 +10,7 @@ namespace CLanguage.Syntax
         public readonly Location EndLocation;
         public readonly object? Value;
 
-        public string StringValue => Value is string s ? s : (Value != null ? Convert.ToString (Value, System.Globalization.CultureInfo.InvariantCulture) : "");
+        public string StringValue => Value is string s ? s : ((Value is not null ? Convert.ToString (Value, System.Globalization.CultureInfo.InvariantCulture) : "") ?? "");
 
         public Token (int kind, object? value, Location location, Location endLocation)
         {
