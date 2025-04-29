@@ -14,7 +14,7 @@
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
 
-    <TargetFrameworks>netstandard1.2;netstandard2.0;net9.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net9.0</TargetFrameworks>
 
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <LangVersion>13.0</LangVersion>
