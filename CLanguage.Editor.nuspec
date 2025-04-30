@@ -17,8 +17,8 @@
   </metadata>
   <files>
     <!--Mac-->
-    <file src="Editor/Mac/bin/Release/CLanguage.Editor.Mac.dll" target="lib\Xamarin.Mac" />
+    <file src="Editor/Mac/bin/Release/CLanguage.Editor.Mac.dll" target="lib\net9.0-macos15.0" />
     <!--iOS-->
-    <file src="Editor/iOS/bin/Release/CLanguage.Editor.iOS.dll" target="lib\Xamarin.iOS" />
+    <file src="Editor/iOS/bin/Release/CLanguage.Editor.iOS.dll" target="lib\net9.0-ios12.2" />
   </files>
 </package>
