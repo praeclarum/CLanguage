@@ -1,10 +1,12 @@
 ﻿using System;
-using UIKit;
 using CoreGraphics;
 using Foundation;
 using System.Linq;
 using System.Diagnostics;
 using CLanguage.Syntax;
+
+#if __IOS__
+using UIKit;
 
 namespace CLanguage.Editor
 {
@@ -151,3 +153,4 @@ namespace CLanguage.Editor
         }
     }
 }
+#endif

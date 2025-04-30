@@ -5,6 +5,7 @@
     <RootNamespace>CEditor</RootNamespace>
     <AssemblyName>CEditor</AssemblyName>
     <SupportedOSPlatformVersion>12.2</SupportedOSPlatformVersion>
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
   <ItemGroup>
     <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Contents.json" />
@@ -27,6 +28,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\CLanguage\CLanguage.csproj" />
-    <ProjectReference Include="..\..\Editor\iOS\CLanguage.Editor.iOS.csproj" />
+    <ProjectReference Include="..\..\Editor\CLanguage.Editor.csproj" />
   </ItemGroup>
 </Project>

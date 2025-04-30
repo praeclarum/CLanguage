@@ -30,8 +30,7 @@ jobs:
       run: |
         VERSION=$VERSION_PREFIX.$VERSION_SUFFIX
         sed -i bak "s:<Version>1.0.0</Version>:<Version>$VERSION</Version>:g" CLanguage/CLanguage.csproj
-        sed -i bak "s:<version>1.0.0</version>:<version>$VERSION</version>:g" CLanguage.Editor.nuspec
-        sed -i bak2 "s:version=\"1.0.0\":version=\"$VERSION\":g" CLanguage.Editor.nuspec
+        sed -i bak "s:<Version>1.0.0</Version>:<Version>$VERSION</Version>:g" Editor/CLanguage.Editor.csproj
 
     - name: Install Workloads
       run: dotnet workload restore CLanguage.sln
@@ -42,20 +41,16 @@ jobs:
       run: dotnet build -c Release CLanguage/CLanguage.csproj
     - name: Test
       run: dotnet test -c Release CLanguageTests/CLanguageTests.csproj
-    - name: Build Mac Editor
-      run: dotnet build -c Release Editor/Mac/CLanguage.Editor.Mac.csproj
-    - name: Build iOS Editor
-      run: dotnet build -c Release Editor/iOS/CLanguage.Editor.iOS.csproj
+    - name: Build Editor
+      run: dotnet build -c Release Editor/CLanguage.Editor.csproj
 
     - name: Package Library
-      if: github.event_name == 'push'
       run: |
         mkdir PackageOut
         cd CLanguage && dotnet pack --include-symbols --no-build -c Release -v normal -o ../PackageOut
     - name: Package Editor
-      if: github.event_name == 'push'
       run: |
-        dotnet nuget pack CLanguage.Editor.nuspec -OutputDirectory PackageOut
+        cd Editor && dotnet pack --include-symbols --no-build -c Release -v normal -o ../PackageOut
     - name: Package
       if: github.event_name == 'push'
       uses: actions/upload-artifact@master
