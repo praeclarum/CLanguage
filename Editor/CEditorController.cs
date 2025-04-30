@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Linq;
-using UIKit;
 using Foundation;
 using System.Threading.Tasks;
 using System.Diagnostics;
+
+#if __IOS__
+using UIKit;
 
 namespace CLanguage.Editor
 {
@@ -65,3 +67,4 @@ namespace CLanguage.Editor
         public void RestoreFontSize (NSObject sender) => textEditor.RestoreFontSize (sender);
     }
 }
+#endif

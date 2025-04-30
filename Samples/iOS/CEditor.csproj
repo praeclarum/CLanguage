@@ -27,6 +27,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\CLanguage\CLanguage.csproj" />
-    <ProjectReference Include="..\..\Editor\iOS\CLanguage.Editor.iOS.csproj" />
+    <ProjectReference Include="..\..\Editor\CLanguage.Editor.csproj" />
   </ItemGroup>
 </Project>
