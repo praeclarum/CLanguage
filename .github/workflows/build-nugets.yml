@@ -41,18 +41,14 @@ jobs:
       run: dotnet build -c Release CLanguage/CLanguage.csproj
     - name: Test
       run: dotnet test -c Release CLanguageTests/CLanguageTests.csproj
-    - name: Build Mac Editor
-      run: dotnet build -c Release Editor/Mac/CLanguage.Editor.Mac.csproj
-    - name: Build iOS Editor
-      run: dotnet build -c Release Editor/iOS/CLanguage.Editor.iOS.csproj
+    - name: Build Editor
+      run: dotnet build -c Release Editor/CLanguage.Editor.csproj
 
     - name: Package Library
-      if: github.event_name == 'push'
       run: |
         mkdir PackageOut
         cd CLanguage && dotnet pack --include-symbols --no-build -c Release -v normal -o ../PackageOut
     - name: Package Editor
-      if: true || github.event_name == 'push'
       run: |
         cd Editor && dotnet pack --include-symbols --no-build -c Release -v normal -o ../PackageOut
     - name: Package
