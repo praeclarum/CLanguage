@@ -246,7 +246,7 @@ namespace CLanguage.Interpreter
         public Value RunFunction (Value functionAddress, int microseconds)
         {
             Call (functionAddress);
-            return StepFunction (microseconds);
+            return StepFunction (microseconds, 0);
         }
 
         public Value RunFunction (Value functionAddress, Value arg0, int microseconds)
@@ -273,7 +273,7 @@ namespace CLanguage.Interpreter
             return StepFunction (microseconds, 3);
         }
 
-        Value StepFunction (int microseconds, int argCount = 0)
+        Value StepFunction (int microseconds, int argCount)
         {
             if (ActiveFrame == null)
                 return 0;
