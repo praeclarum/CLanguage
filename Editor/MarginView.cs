@@ -37,7 +37,6 @@ namespace CLanguage.Editor
             NativeGraphics.RectFill (drawRect);
 
             var la = Theme.LineNumberAttributes;
-            var fontHeight = "123".StringSize (la).Height;
 
             var bottom = Bounds.Bottom;
             var hpad = 4 * Theme.FontScale;
