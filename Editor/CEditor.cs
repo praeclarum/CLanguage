@@ -131,7 +131,7 @@ namespace CLanguage.Editor
             Initialize ();
         }
 
-        public CEditor (IntPtr handle) : base (handle)
+        public CEditor (NativeHandle handle) : base (handle)
         {
             textView = new EditorTextView (Bounds);
 #if __MACOS__
