@@ -127,25 +127,25 @@ namespace CLanguage.Editor
         }
 
 #if __MACOS__
-        public NSDictionary ErrorAttributes (string message, NSDictionary existingAttributes)
+        public NSDictionary<NSString, NSObject> ErrorAttributes (string message, NSDictionary existingAttributes)
         {
-            return new NativeStringAttributes {
+            var d = new NativeStringAttributes {
                 //BackgroundColor = !isDark ? Rgb (0xFF, 0xCC, 0xCC) : Rgb (0x55, 0x00, 0x00),
                 UnderlineColor = !IsDark ? Rgb (0xFE, 0x00, 0x0B) : Rgb (0xFF, 0x00, 0x0B),
                 UnderlineStyle = NSUnderlineStyle.Thick.ToKit (),
                 ToolTip = message,
             }.Dictionary;
+            return new NSDictionary<NSString, NSObject> (d.Keys.Cast<NSString> ().ToArray (), d.Values.ToArray ());
         }
 
-        public NSDictionary WarningAttributes (string message, NSDictionary existingAttributes)
+        public NSDictionary<NSString, NSObject> WarningAttributes (string message, NSDictionary existingAttributes)
         {
-#pragma warning disable CS0618 // Type or member is obsolete
-            return new NativeStringAttributes {
+            var d = new NativeStringAttributes {
                 UnderlineColor = NativeColor.SystemYellow,
                 UnderlineStyle = NSUnderlineStyle.Thick.ToKit (),
                 ToolTip = message,
             }.Dictionary;
-#pragma warning restore CS0618 // Type or member is obsolete
+            return new NSDictionary<NSString, NSObject> (d.Keys.Cast<NSString> ().ToArray (), d.Values.ToArray ());
         }
 #elif __IOS__
         public NSDictionary ErrorAttributes (string message, NSDictionary existingAttributes)
