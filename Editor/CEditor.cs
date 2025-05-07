@@ -275,7 +275,7 @@ namespace CLanguage.Editor
             if (ios11) {
                 AddConstraint (NSLayoutConstraint.Create (SafeAreaLayoutGuide, NSLayoutAttribute.Trailing, NSLayoutRelation.Equal, scroll, NSLayoutAttribute.Trailing, 1, 0));
                 AddConstraint (NSLayoutConstraint.Create (SafeAreaLayoutGuide, NSLayoutAttribute.Leading, NSLayoutRelation.Equal, margin, NSLayoutAttribute.Leading, 1, 0));
-                AddConstraint (errorBottomConstraint = NSLayoutConstraint.Create (SafeAreaLayoutGuide, NSLayoutAttribute.Top, NSLayoutRelation.Equal, errorView, NSLayoutAttribute.Top, 1, errorVMargin));
+                AddConstraint (errorBottomConstraint = NSLayoutConstraint.Create (SafeAreaLayoutGuide, NSLayoutAttribute.Bottom, NSLayoutRelation.Equal, errorView, NSLayoutAttribute.Bottom, 1, errorVMargin));
                 AddConstraint (NSLayoutConstraint.Create (SafeAreaLayoutGuide, NSLayoutAttribute.Trailing, NSLayoutRelation.Equal, errorView, NSLayoutAttribute.Trailing, 1, errorHMargin));
             }
             else {
@@ -590,7 +590,7 @@ namespace CLanguage.Editor
                 if (range.Location >= 0 && range.Length > 0 && range.Location < code.Length && range.Location + range.Length <= code.Length) {
                     var attrs = m.MessageType == "Error" ? theme.ErrorAttributes (m.Text, null) : theme.WarningAttributes (m.Text, null);
                     foreach (var lm in managers) {
-                        lm.AddTemporaryAttributes ((NSDictionary<NSString, NSObject>)attrs, range);
+                        lm.AddTemporaryAttributes (attrs, range);
                     }
                 }
             }
