@@ -17,6 +17,22 @@ namespace CLanguage.Compiler
             Executable = executable;
         }
 
+        // --- BEGIN VTABLE MODIFICATION ---
+        public int RegisterVTable(List<CompiledFunction> vtable)
+        {
+            // Check if an identical vtable already exists to avoid duplicates
+            for (int i = 0; i < Executable.VTables.Count; i++)
+            {
+                if (Executable.VTables[i].SequenceEqual(vtable)) // Assumes SequenceEqual is sufficient
+                {
+                    return i;
+                }
+            }
+            Executable.VTables.Add(vtable);
+            return Executable.VTables.Count - 1;
+        }
+        // --- END VTABLE MODIFICATION ---
+
         public override ResolvedVariable ResolveMethodFunction (CStructType structType, CStructMethod method)
         {
             if (method.MemberType is CFunctionType ftype) {

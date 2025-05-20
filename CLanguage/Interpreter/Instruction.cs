@@ -56,6 +56,7 @@ namespace CLanguage.Interpreter
 
         Call,
         Return,
+        ResolveVirtualFunction, // Added for virtual method dispatch
 
         #endregion
 

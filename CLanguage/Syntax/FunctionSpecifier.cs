@@ -9,6 +9,7 @@ namespace CLanguage.Syntax
     public enum FunctionSpecifier
     {
         None = 0,
-        Inline = 1
+        Inline = 1,
+        Virtual = 2 // Added for virtual methods
     }
 }

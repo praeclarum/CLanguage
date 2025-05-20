@@ -33,7 +33,7 @@ namespace CLanguage.Parser
 %token TYPEDEF EXTERN STATIC AUTO REGISTER INLINE RESTRICT
 %token CHAR SHORT INT LONG SIGNED UNSIGNED FLOAT DOUBLE CONST VOLATILE VOID
 %token BOOL COMPLEX IMAGINARY TRUE FALSE
-%token STRUCT CLASS UNION ENUM ELLIPSIS
+%token STRUCT CLASS UNION ENUM ELLIPSIS VIRTUAL // Added VIRTUAL
 
 %token CASE DEFAULT IF ELSE SWITCH WHILE DO FOR GOTO CONTINUE BREAK RETURN
 
@@ -461,15 +461,25 @@ identifier_or_typename
 	| TYPE_NAME
 	;
 
+// Modified to include optional base class specifier
 struct_or_union_or_class_specifier
-	: struct_or_union_or_class identifier_or_typename class_body { $$ = new TypeSpecifier((TypeSpecifierKind)$1, ($2).ToString(), (Block)$3); }
-	| struct_or_union_or_class class_body            { $$ = new TypeSpecifier((TypeSpecifierKind)$1, "", (Block)$2); }
-	| struct_or_union_or_class identifier_or_typename                    { $$ = new TypeSpecifier((TypeSpecifierKind)$1, ($2).ToString()); }
+	: struct_or_union_or_class identifier_or_typename opt_base_class_specifier class_body 
+	  { $$ = new TypeSpecifier((TypeSpecifierKind)$1, ($2).ToString(), (Block)$4, (string)$3); }
+	| struct_or_union_or_class opt_base_class_specifier class_body            
+	  { $$ = new TypeSpecifier((TypeSpecifierKind)$1, "", (Block)$3, (string)$2); } // Anonymous struct with body
+	| struct_or_union_or_class identifier_or_typename opt_base_class_specifier                    
+	  { $$ = new TypeSpecifier((TypeSpecifierKind)$1, ($2).ToString(), null, (string)$3); } // Forward declaration or reference
 	;
+
+// Optional base class specifier rule
+opt_base_class_specifier
+    : ':' IDENTIFIER { $$ = ($2).ToString(); }
+    | /* empty */    { $$ = null; }
+    ;
 
 struct_or_union_or_class
 	: STRUCT { $$ = TypeSpecifierKind.Struct; }
-    | CLASS  { $$ = TypeSpecifierKind.Class; }
+    | CLASS  { $$ = TypeSpecifierKind.Class; } // Assuming Class is similar to Struct for now
 	| UNION  { $$ = TypeSpecifierKind.Union; }
 	;
 
@@ -534,6 +544,7 @@ enumerator
 
 function_specifier
 	: INLINE		{ $$ = FunctionSpecifier.Inline; }
+	| VIRTUAL		{ $$ = FunctionSpecifier.Virtual; } // Added VIRTUAL
 	;
 
 declarator

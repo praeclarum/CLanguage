@@ -87,6 +87,7 @@ namespace CLanguage.Parser
             { "typedef", TokenKind.TYPEDEF },
             { "union", TokenKind.UNION },
             { "unsigned", TokenKind.UNSIGNED },
+            { "virtual", TokenKind.VIRTUAL }, // Added virtual keyword
             { "void", TokenKind.VOID },
             { "volatile", TokenKind.VOLATILE },
             { "while", TokenKind.WHILE },

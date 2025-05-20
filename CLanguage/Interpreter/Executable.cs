@@ -17,11 +17,18 @@ namespace CLanguage.Interpreter
         readonly List<CompiledVariable> globals = new List<CompiledVariable> ();
         public IReadOnlyList<CompiledVariable> Globals => globals;
 
+        // --- BEGIN VTABLE MODIFICATION ---
+        public List<List<CompiledFunction>> VTables { get; private set; }
+        // --- END VTABLE MODIFICATION ---
+
         public Executable (MachineInfo machineInfo)
 		{
 			MachineInfo = machineInfo;
 			Functions = new List<BaseFunction> ();
 			Functions.AddRange (machineInfo.InternalFunctions.Cast<BaseFunction> ());
+            // --- BEGIN VTABLE MODIFICATION ---
+            VTables = new List<List<CompiledFunction>>();
+            // --- END VTABLE MODIFICATION ---
 		}
 
         public CompiledVariable AddGlobal (string name, CType type)

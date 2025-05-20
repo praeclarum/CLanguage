@@ -134,15 +134,64 @@ namespace CLanguage.Interpreter
 
 
                     case OpCode.Call:
-                        a = state.Stack[state.SP - 1];
-                        state.SP--;
+                        // Stack: [this_ptr (if instance), arg1, ..., argN, function_index_in_exe_Value]
+                        // Or for non-instance: [arg1, ..., argN, function_index_in_exe_Value]
+                        a = state.Stack[state.SP - 1]; // function_index_in_exe_Value
+                        state.SP--; 
+                        // SP now points to the last argument, or to this_ptr if IsInstance and no args, or below if no args & not instance.
                         ip++;
-                        state.Call (a);
+                        state.Call (a); // CInterpreter.Call(Value) will use a.PointerValue as index into exe.Functions
+                                        // CInterpreter.Call(BaseFunction) sets new_frame.FP = SP (current SP).
+                                        // Parameters (including 'this' for instance methods) are accessed via negative offsets from FP.
+                                        // This relies on FuncallExpression.DoEmit pushing 'this' first, then args, then this Overload.Emit action pushing the func_index.
                         done = true;
                         break;
                     case OpCode.Return:
                         state.Return ();
                         done = true;
+                        break;
+                    case OpCode.ResolveVirtualFunction:
+                        // Stack: [..., this_ptr, vtable_id_value, vtableIndex_value]
+                        // Pops vtable_id_value and vtableIndex_value.
+                        // Pushes a Value whose PointerValue is the index of the resolved CompiledFunction in exe.Functions.
+                        // Leaves this_ptr on stack below the resolved function index.
+                        var vtableIndexVal = state.Stack[state.SP - 1]; state.SP--;
+                        var vtableIdVal = state.Stack[state.SP - 1];    state.SP--;
+                        
+                        var vtableId = vtableIdVal.Int32Value;
+                        var vtableIndex = vtableIndexVal.Int32Value;
+
+                        if (vtableId < 0 || vtableId >= state.Executable.VTables.Count) {
+                            throw new ExecutionException($"Invalid vtableId: {vtableId}");
+                        }
+                        var vtable = state.Executable.VTables[vtableId];
+                        if (vtableIndex < 0 || vtableIndex >= vtable.Count) {
+                            throw new ExecutionException($"Invalid vtableIndex: {vtableIndex} for vtableId: {vtableId}");
+                        }
+
+                        var targetFunction = vtable[vtableIndex]; // This is a CompiledFunction
+
+                        // Find the index of this targetFunction in the global exe.Functions list
+                        int functionIndexInExe = -1;
+                        for (int funcIdx = 0; funcIdx < state.Executable.Functions.Count; funcIdx++) {
+                            if (ReferenceEquals(state.Executable.Functions[funcIdx], targetFunction)) {
+                                functionIndexInExe = funcIdx;
+                                break;
+                            }
+                        }
+
+                        if (functionIndexInExe == -1) {
+                            // If this happens, it means a function present in a VTable (and thus presumably compiled)
+                            // was not added to the global Executable.Functions list. This indicates an issue
+                            // during compilation/linking phase, specifically when CStructType.FinalizeLayout
+                            // creates the VTable, or when ExecutableContext.RegisterVTable stores it.
+                            // All functions that can be part of a VTable should be in Executable.Functions.
+                            throw new ExecutionException($"Virtual function '{targetFunction.Name}' (VTableID: {vtableId}, VTableIndex: {vtableIndex}) not found in Executable.Functions global list. Ensure all VTable member functions are globally registered.");
+                        }
+                        
+                        state.Stack[state.SP] = Value.Pointer(functionIndexInExe); state.SP++;
+                        // Stack is now: [..., this_ptr, function_index_in_exe_Value]
+                        ip++;
                         break;
                     case OpCode.LoadConstant:
                         state.Stack[state.SP] = i.X;
