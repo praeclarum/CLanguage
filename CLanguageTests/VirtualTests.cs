@@ -864,10 +864,10 @@ void main() {
         public void NonVirtualInteropUnchanged ()
         {
             // Verify that AddGlobalReference with non-virtual type still works
-            var mi = new ArduinoTestMachineInfo ();
+            var mi = new TestMachineInfo ();
             var helper = new InteropHelper ();
             mi.AddGlobalReference ("h", helper);
-            Run (@"void main() { h.store(42); assert32AreEqual(42, h.load()); }", mi);
+            Run (@"void main() { h.store(42); assertAreEqual(42, h.load()); }", mi);
             Assert.AreEqual (42, helper.Value);
         }
 

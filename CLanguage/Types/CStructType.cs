@@ -34,7 +34,7 @@ namespace CLanguage.Types
         public bool IsDerivedFrom (CStructType other)
         {
             for (var t = BaseType; t != null; t = t.BaseType) {
-                if (ReferenceEquals (t, other) || t.Name == other.Name)
+                if (ReferenceEquals (t, other))
                     return true;
             }
             return false;
