@@ -21,7 +21,7 @@ namespace CLanguage.Types
         /// foundation for future <c>dynamic_cast</c> and <c>typeid</c> support.
         /// Stored at slot 0 of the runtime vtable array.
         /// </summary>
-        public int TypeId { get; set; }
+        public int TypeId { get; internal set; }
 
         /// <summary>
         /// The ordered list of virtual method slots. Indices in this list correspond

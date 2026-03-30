@@ -142,9 +142,12 @@ namespace CLanguage.Interpreter
                         break;
                     case OpCode.CallVirtual: {
                         // vtableSlot is 0-based method index; runtime methods start at slot 1 (slot 0 = type_id)
+                        // this_ptr is at SP-1: it was the last value pushed before CallVirtual
+                        // (arguments are below it on the stack)
                         var vtableSlot = i.X.Int32Value;
                         var thisAddr = state.Stack[state.SP - 1].PointerValue;
                         var vptr = state.Stack[thisAddr].PointerValue;
+                        // Skip slot 0 (type_id) to reach method pointers starting at slot 1
                         var funcPtr = state.Stack[vptr + 1 + vtableSlot].PointerValue;
                         ip++;
                         state.Call (state.Executable.Functions[funcPtr]);

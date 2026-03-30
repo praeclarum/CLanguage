@@ -151,7 +151,8 @@ namespace CLanguage.Syntax
                                     functionType,
                                     nec => {
                                         memr.Left.EmitPointer (nec);              // push &obj (this)
-                                    }) { VTableSlotIndex = method.VTableSlotIndex.Value };
+                                    },
+                                    method.VTableSlotIndex.Value);
                             }
                             else {
                                 // Non-virtual direct call path
@@ -213,7 +214,8 @@ namespace CLanguage.Syntax
                                     functionType,
                                     nec => {
                                         memp.Left.Emit (nec);                      // push ptr (this)
-                                    }) { VTableSlotIndex = method.VTableSlotIndex.Value };
+                                    },
+                                    method.VTableSlotIndex.Value);
                             }
                             else {
                                 // Non-virtual direct call path (via pointer)
@@ -260,15 +262,16 @@ namespace CLanguage.Syntax
         {
             public readonly CType? CType;
             public readonly Action<EmitContext> Emit;
-            public int? VTableSlotIndex;
+            public readonly int? VTableSlotIndex;
 
             public static readonly Action<EmitContext> NoEmit = _ => { };
             public static readonly Overload Error = new Overload (CBasicType.SignedInt, NoEmit);
 
-            public Overload (CType? type, Action<EmitContext> emit)
+            public Overload (CType? type, Action<EmitContext> emit, int? vTableSlotIndex = null)
             {
                 CType = type;
                 Emit = emit ?? throw new ArgumentNullException (nameof (emit));
+                VTableSlotIndex = vTableSlotIndex;
             }
         }
 

@@ -13,6 +13,11 @@ namespace CLanguage.Compiler
 {
     public class CCompiler
     {
+        /// <summary>
+        /// Type IDs start at 1 so that 0 can be reserved as "no type" / invalid.
+        /// </summary>
+        const int FirstTypeId = 1;
+
         CompilerOptions options;
 
         readonly Dictionary<string, LexedDocument> lexedDocuments = new Dictionary<string, LexedDocument> ();
@@ -159,7 +164,7 @@ namespace CLanguage.Compiler
                 };
                 exe.Functions.Add (pureVirtualTrap);
             }
-            var nextTypeId = 1;
+            var nextTypeId = FirstTypeId;
             foreach (var st in polymorphicTypes) {
                 // Assign unique type ID for RTTI
                 st.VTable!.TypeId = nextTypeId++;
