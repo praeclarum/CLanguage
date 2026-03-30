@@ -62,6 +62,17 @@ namespace CLanguage.Syntax
         protected override void DoEmit (EmitContext ec)
         {
             ec.BeginBlock (this);
+            // Emit vptr initialization for local polymorphic variables
+            foreach (var v in Variables) {
+                if (v.VariableType is CStructType st && st.IsPolymorphic && st.VTableGlobalAddress.HasValue) {
+                    // StorePointer pops: [value, address] and stores value at address
+                    ec.Emit (OpCode.LoadConstant, Value.Pointer (st.VTableGlobalAddress.Value)); // value = vtable addr
+                    ec.Emit (OpCode.LoadFramePointer);                                           // FP
+                    ec.Emit (OpCode.LoadConstant, Value.Pointer (v.StackOffset));                // local offset
+                    ec.Emit (OpCode.OffsetPointer);                                              // FP + offset = &variable
+                    ec.Emit (OpCode.StorePointer);                                               // store vtable addr at variable[0]
+                }
+            }
             foreach (var s in Statements) {
                 s.Emit (ec);
             }

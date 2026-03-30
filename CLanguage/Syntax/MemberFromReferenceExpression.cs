@@ -21,13 +21,18 @@ namespace CLanguage.Syntax
             MemberName = memberName;
         }
 
+        static CStructMember? FindMember (CStructType structType, string name)
+        {
+            return structType.FindMember (name);
+        }
+
 		public override CType GetEvaluatedCType (EmitContext ec)
 		{
             var targetType = Left.GetEvaluatedCType (ec);
 
             if (targetType is CStructType structType) {
 
-                var member = structType.Members.FirstOrDefault (x => x.Name == MemberName);
+                var member = FindMember (structType, MemberName);
                 if (member == null) {
                     ec.Report.Error (1061, "'{1}' not found in '{0}'", structType.Name, MemberName);
                     return CBasicType.SignedInt;
@@ -46,17 +51,29 @@ namespace CLanguage.Syntax
 
             if (targetType is CStructType structType) {
 
-                var member = structType.Members.FirstOrDefault (x => x.Name == MemberName);
+                var member = FindMember (structType, MemberName);
 
                 if (member == null) {
                     ec.Report.Error (1061, "'{1}' not found in '{0}'", structType.Name, MemberName);
                 }
                 else {
                     if (member is CStructMethod method && member.MemberType is CFunctionType functionType) {
-                        var res = ec.ResolveMethodFunction (structType, method);
-                        if (res != null) {
+                        if (method.VTableSlotIndex.HasValue && structType.VTableGlobalAddress.HasValue) {
+                            // Virtual dispatch path
                             Left.EmitPointer (ec);
-                            ec.Emit (OpCode.LoadConstant, Value.Pointer (res.Address));
+                            ec.Emit (OpCode.Dup);
+                            ec.Emit (OpCode.LoadPointer);
+                            ec.Emit (OpCode.LoadConstant, Value.Pointer (method.VTableSlotIndex.Value));
+                            ec.Emit (OpCode.OffsetPointer);
+                            ec.Emit (OpCode.LoadPointer);
+                        }
+                        else {
+                            // Non-virtual direct path
+                            var res = ec.ResolveMethodFunction (structType, method);
+                            if (res != null) {
+                                Left.EmitPointer (ec);
+                                ec.Emit (OpCode.LoadConstant, Value.Pointer (res.Address));
+                            }
                         }
                     }
                     else {
@@ -78,7 +95,7 @@ namespace CLanguage.Syntax
 
             if (targetType is CStructType structType) {
 
-                var member = structType.Members.FirstOrDefault (x => x.Name == MemberName);
+                var member = FindMember (structType, MemberName);
 
                 if (member == null) {
                     ec.Report.Error (1061, "'{1}' not found in '{0}'", structType.Name, MemberName);

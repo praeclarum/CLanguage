@@ -29,9 +29,20 @@ namespace CLanguage.Parser
 
         public object value () => CurrentToken.Value ?? "";
 
-        public Token CurrentToken => Tokens[index].Kind == TokenKind.IDENTIFIER && typedefs.Contains(Tokens[index].StringValue) ?
-            Tokens[index].AsKind (TokenKind.TYPE_NAME) :
-            Tokens[index];
+        public Token CurrentToken {
+            get {
+                var tok = Tokens[index];
+                if (tok.Kind == TokenKind.IDENTIFIER && typedefs.Contains (tok.StringValue)) {
+                    // Don't convert to TYPE_NAME if followed by :: (scope qualifier)
+                    // This allows `B::f` to be parsed as a declarator in method definitions
+                    if (index + 1 < Tokens.Length && Tokens[index + 1].Kind == TokenKind.COLONCOLON) {
+                        return tok;
+                    }
+                    return tok.AsKind (TokenKind.TYPE_NAME);
+                }
+                return tok;
+            }
+        }
 
         public void AddTypedef (string declaredIdentifier)
         {

@@ -113,11 +113,7 @@ namespace CLanguage.Syntax
 
                 if (targetType is CStructType structType) {
 
-                    var methods = new List<CStructMethod> ();
-                    foreach (var mem in structType.Members) {
-                        if (mem is CStructMethod meth && meth.Name == memr.MemberName)
-                            methods.Add(meth);
-                    }
+                    var methods = structType.FindMethods (memr.MemberName);
 
                     if (methods.Count == 0) {
                         ec.Report.Error (1061, "'{1}' not found in '{0}'", structType.Name, memr.MemberName);
@@ -142,23 +138,108 @@ namespace CLanguage.Syntax
                             return Overload.Error;
                         }
                         else {
-                            var res = ec.ResolveMethodFunction (structType, bestMatch.Method);
-                            if (res != null) {
+                            var method = bestMatch.Method;
+                            if (method.VTableSlotIndex.HasValue && structType.VTableGlobalAddress.HasValue) {
+                                // Virtual dispatch path
+                                var functionType = method.MemberType as CFunctionType;
                                 return new Overload (
-                                    res.Function?.FunctionType,
+                                    functionType,
                                     nec => {
-                                        memr.Left.EmitPointer (nec);
-                                        nec.Emit (OpCode.LoadConstant, Value.Pointer (res.Address));
-                                    });                                
+                                        memr.Left.EmitPointer (nec);              // push &obj (this)
+                                        nec.Emit (OpCode.Dup);                     // &obj, &obj
+                                        nec.Emit (OpCode.LoadPointer);             // &obj, vptr
+                                        nec.Emit (OpCode.LoadConstant, Value.Pointer (method.VTableSlotIndex.Value));
+                                        nec.Emit (OpCode.OffsetPointer);           // &obj, &vtable[slot]
+                                        nec.Emit (OpCode.LoadPointer);             // &obj, func_ptr
+                                    });
                             }
                             else {
-                                return Overload.Error;
+                                // Non-virtual direct call path
+                                var res = ec.ResolveMethodFunction (structType, method);
+                                if (res != null) {
+                                    return new Overload (
+                                        res.Function?.FunctionType,
+                                        nec => {
+                                            memr.Left.EmitPointer (nec);
+                                            nec.Emit (OpCode.LoadConstant, Value.Pointer (res.Address));
+                                        });                                
+                                }
+                                else {
+                                    return Overload.Error;
+                                }
                             }
                         }
                     }
                 }
                 else {
                     ec.Report.Error (119, $"'{memr.Left}' is not valid in the given context");
+                    return Overload.Error;
+                }
+            }
+            else if (function is MemberFromPointerExpression memp) {
+                var targetType = memp.Left.GetEvaluatedCType (ec);
+
+                if (targetType is CPointerType pType && pType.InnerType is CStructType structType) {
+
+                    var methods = structType.FindMethods (memp.MemberName);
+
+                    if (methods.Count == 0) {
+                        ec.Report.Error (1061, "'{1}' not found in '{0}'", structType.Name, memp.MemberName);
+                        return Overload.Error;
+                    }
+                    else {
+                        var scoredMethods = new List<ScoredMethod> ();
+                        foreach (var m in methods) {
+                            if (m.MemberType is CFunctionType mt) {
+                                var score = mt.ScoreParameterTypeMatches (argTypes);
+                                if (score > 0) {
+                                    scoredMethods.Add (new ScoredMethod (m, score));
+                                }
+                            }
+                        }
+                        scoredMethods.Sort ((a, b) => b.Score - a.Score);
+                        var bestMatch = scoredMethods.Count > 0 ? scoredMethods[0] : null;
+
+                        if (bestMatch == null) {
+                            ec.Report.Error (1503, $"'{function}' argument type mismatch");
+                            return Overload.Error;
+                        }
+                        else {
+                            var method = bestMatch.Method;
+                            if (method.VTableSlotIndex.HasValue && structType.VTableGlobalAddress.HasValue) {
+                                // Virtual dispatch path (via pointer)
+                                var functionType = method.MemberType as CFunctionType;
+                                return new Overload (
+                                    functionType,
+                                    nec => {
+                                        memp.Left.Emit (nec);                      // push ptr (this)
+                                        nec.Emit (OpCode.Dup);                      // ptr, ptr
+                                        nec.Emit (OpCode.LoadPointer);              // ptr, vptr
+                                        nec.Emit (OpCode.LoadConstant, Value.Pointer (method.VTableSlotIndex.Value));
+                                        nec.Emit (OpCode.OffsetPointer);            // ptr, &vtable[slot]
+                                        nec.Emit (OpCode.LoadPointer);              // ptr, func_ptr
+                                    });
+                            }
+                            else {
+                                // Non-virtual direct call path (via pointer)
+                                var res = ec.ResolveMethodFunction (structType, method);
+                                if (res != null) {
+                                    return new Overload (
+                                        res.Function?.FunctionType,
+                                        nec => {
+                                            memp.Left.Emit (nec);
+                                            nec.Emit (OpCode.LoadConstant, Value.Pointer (res.Address));
+                                        });
+                                }
+                                else {
+                                    return Overload.Error;
+                                }
+                            }
+                        }
+                    }
+                }
+                else {
+                    ec.Report.Error (119, $"'{memp.Left}' is not valid for -> operator");
                     return Overload.Error;
                 }
             }
