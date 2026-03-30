@@ -53,7 +53,11 @@ namespace CLanguage.Editor
         public override bool IsFlipped => true;
         public override void DrawRect (CGRect dirtyRect)
         {
+            var context = NSGraphicsContext.CurrentContext?.CGContext;
+            context?.SaveState ();
+            context?.ClipToRect (Bounds);
             DrawDirtyRect (dirtyRect);
+            context?.RestoreState ();
         }
 #elif __IOS__
         public nfloat AlphaValue { get => Alpha; set => Alpha = value; }
