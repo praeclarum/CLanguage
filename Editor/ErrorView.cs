@@ -1,25 +1,8 @@
 ﻿using System;
-using CoreGraphics;
-
-#if __IOS__ || __MACCATALYST__
-using UIKit;
-using NativeColor = UIKit.UIColor;
-using NativeFont = UIKit.UIFont;
-using NativeGraphics = UIKit.UIGraphics;
-using NativeStringAttributes = UIKit.UIStringAttributes;
-using NativeBezierPath = UIKit.UIBezierPath;
-#elif __MACOS__
-using AppKit;
-using NativeColor = AppKit.NSColor;
-using NativeFont = AppKit.NSFont;
-using NativeGraphics = AppKit.NSGraphics;
-using NativeStringAttributes = AppKit.NSStringAttributes;
-using NativeBezierPath = AppKit.NSBezierPath;
-#endif
 
 using static CLanguage.Editor.Extensions;
 
-using Foundation;
+#if __IOS__ || __MACCATALYST__ || __MACOS__
 
 namespace CLanguage.Editor
 {
@@ -126,3 +109,5 @@ namespace CLanguage.Editor
         }
     }
 }
+
+#endif

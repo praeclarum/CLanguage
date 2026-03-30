@@ -1,11 +1,11 @@
 ﻿using System;
-using CoreGraphics;
-using Foundation;
 using System.Linq;
 using System.Diagnostics;
 using CLanguage.Syntax;
 
 #if __IOS__ || __MACCATALYST__
+using CoreGraphics;
+using Foundation;
 using UIKit;
 
 namespace CLanguage.Editor

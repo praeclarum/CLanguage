@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Linq;
-using Foundation;
 using System.Threading.Tasks;
 using System.Diagnostics;
 
 #if __IOS__ || __MACCATALYST__
+using Foundation;
 using UIKit;
 
 namespace CLanguage.Editor

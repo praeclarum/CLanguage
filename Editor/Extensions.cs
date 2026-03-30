@@ -1,28 +1,5 @@
 ﻿using System;
 
-#if __IOS__ || __MACCATALYST__
-using UIKit;
-using NativeColor = UIKit.UIColor;
-using NativeFont = UIKit.UIFont;
-using NativeGraphics = UIKit.UIGraphics;
-using NativeStringAttributes = UIKit.UIStringAttributes;
-using NativeTextAlignment = UIKit.UITextAlignment;
-using NativeTextView = UIKit.UITextView;
-using NativeLineBreakMode = UIKit.UILineBreakMode;
-#elif __MACOS__
-using AppKit;
-using NativeColor = AppKit.NSColor;
-using NativeFont = AppKit.NSFont;
-using NativeGraphics = AppKit.NSGraphics;
-using NativeStringAttributes = AppKit.NSStringAttributes;
-using NativeTextAlignment = AppKit.NSTextAlignment;
-using NativeTextView = AppKit.NSTextView;
-using NativeLineBreakMode = AppKit.NSLineBreakMode;
-#endif
-
-using Foundation;
-using CoreGraphics;
-
 namespace CLanguage.Editor
 {
     static class Extensions
@@ -36,6 +13,8 @@ namespace CLanguage.Editor
                 return string.Empty;
             return line.Substring (0, e);
         }
+
+#if __IOS__ || __MACCATALYST__ || __MACOS__
 
         public static string Localize (this string english)
         {
@@ -73,5 +52,7 @@ namespace CLanguage.Editor
         public static NSRange GlyphRangeForCharacterRange (this NSLayoutManager layoutManager, NSRange charRange) => layoutManager.GetGlyphRange (charRange);
         public static NativeLineBreakMode NativeLineBreakModeClipping => NativeLineBreakMode.Clipping;
 #endif
+#endif
     }
 }
+

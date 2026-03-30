@@ -1,19 +1,8 @@
 ﻿using System;
-using CoreGraphics;
 
 using static CLanguage.Editor.Extensions;
 
-#if __IOS__ || __MACCATALYST__
-using UIKit;
-using NativeColor = UIKit.UIColor;
-using NativeFont = UIKit.UIFont;
-using NativeStringAttributes = UIKit.UIStringAttributes;
-using NativeView = UIKit.UIView;
-#elif __MACOS__
-using AppKit;
-using NativeView = AppKit.NSView;
-using NativeColor = AppKit.NSColor;
-#endif
+#if __IOS__ || __MACCATALYST__ || __MACOS__
 
 namespace CLanguage.Editor
 {
@@ -70,3 +59,5 @@ namespace CLanguage.Editor
         protected abstract void DrawDirtyRect (CGRect dirtyRect);
     }
 }
+
+#endif

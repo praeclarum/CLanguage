@@ -8,27 +8,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 
-using Foundation;
-using CoreGraphics;
-using ObjCRuntime;
-
-#if __IOS__ || __MACCATALYST__
-using UIKit;
-using NativeTextView = UIKit.UITextView;
-using INativeTextViewDelegate = UIKit.IUITextViewDelegate;
-using NativeView = UIKit.UIView;
-using NativeColor = UIKit.UIColor;
-using NativeFont = UIKit.UIFont;
-using NativeStringAttributes = UIKit.UIStringAttributes;
-#elif __MACOS__
-using AppKit;
-using NativeTextView = AppKit.NSTextView;
-using INativeTextViewDelegate = AppKit.INSTextViewDelegate;
-using NativeView = AppKit.NSView;
-using NativeColor = AppKit.NSColor;
-using NativeFont = AppKit.NSFont;
-using NativeStringAttributes = AppKit.NSStringAttributes;
-#endif
+#if __IOS__ || __MACCATALYST__ || __MACOS__
 
 namespace CLanguage.Editor
 {
@@ -683,3 +663,5 @@ namespace CLanguage.Editor
 #endif
     }
 }
+
+#endif

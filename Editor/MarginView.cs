@@ -1,24 +1,11 @@
 ﻿using System;
-using CoreGraphics;
 
 using static CLanguage.Editor.Extensions;
 using System.Collections.Generic;
 
-#if __IOS__ || __MACCATALYST__
-using UIKit;
-using NativeColor = UIKit.UIColor;
-using NativeFont = UIKit.UIFont;
-using NativeGraphics = UIKit.UIGraphics;
-using NativeStringAttributes = UIKit.UIStringAttributes;
-using NativeTextAlignment = UIKit.UITextAlignment;
-#elif __MACOS__
-using AppKit;
-using NativeColor = AppKit.NSColor;
-using NativeFont = AppKit.NSFont;
-using NativeGraphics = AppKit.NSGraphics;
-using NativeStringAttributes = AppKit.NSStringAttributes;
-using NativeTextAlignment = AppKit.NSTextAlignment;
-#endif
+#if __IOS__ || __MACCATALYST__ || __MACOS__
+
+using CoreGraphics;
 
 namespace CLanguage.Editor
 {
@@ -83,3 +70,5 @@ namespace CLanguage.Editor
         }
     }
 }
+
+#endif

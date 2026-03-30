@@ -4,22 +4,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 
-using Foundation;
 using static CLanguage.Editor.Extensions;
 
-#if __IOS__ || __MACCATALYST__
-using UIKit;
-using NativeColor = UIKit.UIColor;
-using NativeFont = UIKit.UIFont;
-using NativeStringAttributes = UIKit.UIStringAttributes;
-using NativeLineBreakMode = UIKit.UILineBreakMode;
-#elif __MACOS__
-using AppKit;
-using NativeColor = AppKit.NSColor;
-using NativeFont = AppKit.NSFont;
-using NativeStringAttributes = AppKit.NSStringAttributes;
-using NativeLineBreakMode = AppKit.NSLineBreakMode;
-#endif
+#if __IOS__ || __MACCATALYST__ || __MACOS__
 
 namespace CLanguage.Editor
 {
@@ -196,3 +183,5 @@ namespace CLanguage.Editor
         }
     }
 }
+
+#endif

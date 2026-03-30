@@ -4,18 +4,7 @@ using System.IO;
 using System.Diagnostics;
 using System.Linq;
 
-using Foundation;
-using CoreGraphics;
-
-#if __IOS__ || __MACCATALYST__
-using UIKit;
-using NativeTextView = UIKit.UITextView;
-using NativeColor = UIKit.UIColor;
-using NativeFont = UIKit.UIFont;
-using NativeStringAttributes = UIKit.UIStringAttributes;
-#elif __MACOS__
-using NativeTextView = AppKit.NSTextView;
-#endif
+#if __IOS__ || __MACCATALYST__ || __MACOS__
 
 namespace CLanguage.Editor
 {
@@ -293,3 +282,5 @@ namespace CLanguage.Editor
         }
     }
 }
+
+#endif
