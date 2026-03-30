@@ -21,6 +21,15 @@ namespace CLanguage.Syntax
             MemberName = memberName;
         }
 
+        static CStructMember? FindMember (CStructType structType, string name)
+        {
+            for (CStructType? t = structType; t != null; t = t.BaseType) {
+                var m = t.Members.FirstOrDefault (x => x.Name == name);
+                if (m != null) return m;
+            }
+            return null;
+        }
+
         public override CType GetEvaluatedCType (EmitContext ec)
         {
             var targetType = Left.GetEvaluatedCType (ec);
@@ -29,7 +38,7 @@ namespace CLanguage.Syntax
 
             if (pType != null && pType.InnerType is CStructType structType) {
 
-                var member = structType.Members.FirstOrDefault (x => x.Name == MemberName);
+                var member = FindMember (structType, MemberName);
                 if (member == null) {
                     ec.Report.Error (1061, "'{1}' not found in '{0}'", structType.Name, MemberName);
                     return CBasicType.SignedInt;
@@ -54,7 +63,7 @@ namespace CLanguage.Syntax
 
             if (targetType is CPointerType pType && pType.InnerType is CStructType structType) {
 
-                var member = structType.Members.FirstOrDefault (x => x.Name == MemberName);
+                var member = FindMember (structType, MemberName);
 
                 if (member == null) {
                     ec.Report.Error (1061, "'{1}' not found in '{0}'", structType.Name, MemberName);
@@ -98,7 +107,7 @@ namespace CLanguage.Syntax
 
             if (targetType is CPointerType pType && pType.InnerType is CStructType structType) {
 
-                var member = structType.Members.FirstOrDefault (x => x.Name == MemberName);
+                var member = FindMember (structType, MemberName);
 
                 if (member == null) {
                     ec.Report.Error (1061, "'{1}' not found in '{0}'", structType.Name, MemberName);

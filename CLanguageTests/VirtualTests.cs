@@ -225,5 +225,307 @@ class C : public A, public B {
 void main() {}
 ", 1500);
         }
+
+        // ---- Phase 3: Vtable allocation and population ----
+
+        [TestMethod]
+        public void VtableGlobalAllocatedForPolymorphicType ()
+        {
+            var exe = Compile (@"
+class B {
+public:
+    virtual int f();
+};
+int B::f() { return 42; }
+B b;
+void main() {}
+");
+            var vtableGlobal = exe.Globals.FirstOrDefault (g => g.Name == "__vtable_B");
+            Assert.IsNotNull (vtableGlobal, "Vtable global should be allocated");
+            Assert.IsNotNull (vtableGlobal!.InitialValue, "Vtable should have initial values");
+            Assert.AreEqual (1, vtableGlobal.InitialValue!.Length, "Vtable should have 1 slot");
+        }
+
+        [TestMethod]
+        public void VtableNotAllocatedForNonPolymorphicType ()
+        {
+            var exe = Compile (@"
+class C {
+public:
+    int x;
+};
+C c;
+void main() {}
+");
+            var vtableGlobal = exe.Globals.FirstOrDefault (g => g.Name == "__vtable_C");
+            Assert.IsNull (vtableGlobal, "No vtable should be allocated for non-polymorphic type");
+        }
+
+        [TestMethod]
+        public void GlobalVptrSetForPolymorphicVariable ()
+        {
+            var exe = Compile (@"
+class B {
+public:
+    virtual int f();
+};
+int B::f() { return 42; }
+B b;
+void main() {}
+");
+            var vtableGlobal = exe.Globals.FirstOrDefault (g => g.Name == "__vtable_B");
+            Assert.IsNotNull (vtableGlobal);
+            var bGlobal = exe.Globals.FirstOrDefault (g => g.Name == "b");
+            Assert.IsNotNull (bGlobal);
+            Assert.IsNotNull (bGlobal!.InitialValue);
+            Assert.AreEqual (vtableGlobal!.StackOffset, bGlobal.InitialValue![0].PointerValue,
+                "b's vptr should point to B's vtable");
+        }
+
+        [TestMethod]
+        public void DerivedVtableOverridesBaseSlot ()
+        {
+            var exe = Compile (@"
+class A {
+public:
+    virtual int f();
+};
+int A::f() { return 1; }
+class B : public A {
+public:
+    int f() override;
+};
+int B::f() { return 2; }
+B b;
+void main() {}
+");
+            var vtableA = exe.Globals.FirstOrDefault (g => g.Name == "__vtable_A");
+            var vtableB = exe.Globals.FirstOrDefault (g => g.Name == "__vtable_B");
+            Assert.IsNotNull (vtableA);
+            Assert.IsNotNull (vtableB);
+            Assert.IsNotNull (vtableA!.InitialValue);
+            Assert.IsNotNull (vtableB!.InitialValue);
+            // Both vtables have 1 slot but point to different functions
+            Assert.AreEqual (1, vtableA.InitialValue!.Length);
+            Assert.AreEqual (1, vtableB.InitialValue!.Length);
+            Assert.AreNotEqual (vtableA.InitialValue[0].PointerValue,
+                vtableB.InitialValue[0].PointerValue,
+                "Derived vtable should have overridden function pointer");
+        }
+
+        // ---- Phase 3: Virtual dispatch at runtime ----
+
+        [TestMethod]
+        public void VirtualCallOnBaseObject ()
+        {
+            Run (@"
+class B {
+public:
+    int x;
+    virtual int f();
+};
+int B::f() { return 42; }
+void main() {
+    B b;
+    b.x = 10;
+    assertAreEqual(42, b.f());
+}
+");
+        }
+
+        [TestMethod]
+        public void VirtualCallOnGlobalBaseObject ()
+        {
+            Run (@"
+class B {
+public:
+    int x;
+    virtual int f();
+};
+int B::f() { return 42; }
+B b;
+void main() {
+    b.x = 10;
+    assertAreEqual(42, b.f());
+}
+");
+        }
+
+        [TestMethod]
+        public void VirtualCallDispatchesToDerived ()
+        {
+            Run (@"
+class A {
+public:
+    int x;
+    virtual int f();
+};
+int A::f() { return 1; }
+class B : public A {
+public:
+    int f() override;
+};
+int B::f() { return 2; }
+void main() {
+    B b;
+    assertAreEqual(2, b.f());
+}
+");
+        }
+
+        [TestMethod]
+        public void VirtualCallInheritedMethodNotOverridden ()
+        {
+            Run (@"
+class A {
+public:
+    virtual int f();
+    virtual int g();
+};
+int A::f() { return 10; }
+int A::g() { return 20; }
+class B : public A {
+public:
+    int f() override;
+};
+int B::f() { return 100; }
+void main() {
+    B b;
+    assertAreEqual(100, b.f());
+    assertAreEqual(20, b.g());
+}
+");
+        }
+
+        [TestMethod]
+        public void ThreeLevelInheritanceChain ()
+        {
+            Run (@"
+class A {
+public:
+    virtual int f();
+};
+int A::f() { return 1; }
+class B : public A {
+public:
+    int f() override;
+};
+int B::f() { return 2; }
+class C : public B {
+public:
+    int f() override;
+};
+int C::f() { return 3; }
+void main() {
+    A a;
+    B b;
+    C c;
+    assertAreEqual(1, a.f());
+    assertAreEqual(2, b.f());
+    assertAreEqual(3, c.f());
+}
+");
+        }
+
+        [TestMethod]
+        public void VirtualCallWithFieldAccess ()
+        {
+            Run (@"
+class A {
+public:
+    int x;
+    virtual int getX();
+};
+int A::getX() { return this->x; }
+class B : public A {
+public:
+    int getX() override;
+};
+int B::getX() { return this->x + 100; }
+void main() {
+    A a;
+    a.x = 5;
+    assertAreEqual(5, a.getX());
+    B b;
+    b.x = 5;
+    assertAreEqual(105, b.getX());
+}
+");
+        }
+
+        [TestMethod]
+        public void NonVirtualMethodOnPolymorphicType ()
+        {
+            Run (@"
+class B {
+public:
+    int x;
+    virtual int f();
+    int g();
+};
+int B::f() { return 42; }
+int B::g() { return 99; }
+void main() {
+    B b;
+    b.x = 0;
+    assertAreEqual(42, b.f());
+    assertAreEqual(99, b.g());
+}
+");
+        }
+
+        [TestMethod]
+        public void VirtualCallMultipleMethods ()
+        {
+            Run (@"
+class Shape {
+public:
+    virtual int area();
+    virtual int perimeter();
+};
+int Shape::area() { return 0; }
+int Shape::perimeter() { return 0; }
+class Rect : public Shape {
+public:
+    int w;
+    int h;
+    int area() override;
+    int perimeter() override;
+};
+int Rect::area() { return this->w * this->h; }
+int Rect::perimeter() { return 2 * (this->w + this->h); }
+void main() {
+    Rect r;
+    r.w = 3;
+    r.h = 4;
+    assertAreEqual(12, r.area());
+    assertAreEqual(14, r.perimeter());
+}
+");
+        }
+
+        [TestMethod]
+        public void NonVirtualTypesUnchangedCodegen ()
+        {
+            // Ensure non-virtual struct produces no vtable overhead
+            var exe = Compile (@"
+struct Point {
+    int x;
+    int y;
+};
+Point p;
+void main() {
+    p.x = 1;
+    p.y = 2;
+    assertAreEqual(1, p.x);
+    assertAreEqual(2, p.y);
+}
+");
+            var vtableGlobal = exe.Globals.FirstOrDefault (g => g.Name.StartsWith ("__vtable_"));
+            Assert.IsNull (vtableGlobal, "Non-polymorphic code should produce no vtable globals");
+            // Also verify pure_virtual_called trap is not added
+            var trapFunc = exe.Functions.FirstOrDefault (f => f.Name == "__pure_virtual_called");
+            Assert.IsNull (trapFunc, "Non-polymorphic code should not add trap function");
+        }
     }
 }

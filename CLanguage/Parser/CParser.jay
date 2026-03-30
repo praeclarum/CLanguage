@@ -1119,6 +1119,14 @@ ctor_identifier_list
 	{
 		$$ = new IdentifierDeclarator(($1).ToString());
 	}
+    | IDENTIFIER COLONCOLON TYPE_NAME
+	{
+		$$ = new IdentifierDeclarator(($1).ToString()).Push(($3).ToString());
+	}
+    | IDENTIFIER COLONCOLON '~' TYPE_NAME
+	{
+		$$ = new IdentifierDeclarator(($1).ToString()).Push("~" + ($4).ToString());
+	}
     | ctor_identifier_list COLONCOLON TYPE_NAME { $$ = ((IdentifierDeclarator)($1)).Push (($3).ToString()); }
     | ctor_identifier_list COLONCOLON '~' TYPE_NAME { $$ = ((IdentifierDeclarator)($1)).Push ("~" + ($4).ToString()); }
 	;
