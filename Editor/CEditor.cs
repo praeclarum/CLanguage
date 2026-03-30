@@ -621,7 +621,9 @@ namespace CLanguage.Editor
                 //
                 // Inform the error view
                 //
-                errorView.Message = printer.Messages.FirstOrDefault (x => x.MessageType == "Error") ?? new Report.AbstractMessage ("Info", "");
+                errorView.Message = printer.Messages.FirstOrDefault (x => x.MessageType == "Error")
+                    ?? printer.Messages.FirstOrDefault (x => x.MessageType == "Warning")
+                    ?? new Report.AbstractMessage ("Info", "");
             }
             catch (Exception ex) {
                 ReportError (ex);

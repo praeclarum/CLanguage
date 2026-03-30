@@ -16,6 +16,7 @@ namespace CLanguage.Editor
         public readonly nfloat LineHeightMultiple;
 
         public NativeColor ErrorBubbleBackgroundColor { get; }
+        public NativeColor WarningBubbleBackgroundColor { get; }
         public readonly NSDictionary ErrorBubbleTextAttributes;
 
         public NativeColor BackgroundColor { get; }
@@ -64,6 +65,7 @@ namespace CLanguage.Editor
 
             BackgroundColor = !isDark ? Rgb (0xFF, 0xFF, 0xFF) : Rgb (41, 42, 47);
             ErrorBubbleBackgroundColor = !isDark ? Rgb (0xC5, 0, 0xB) : Rgb (0xC5 * 5 / 8, 0, 0xB);
+            WarningBubbleBackgroundColor = !isDark ? Rgb (0xC5, 0xA0, 0x00) : Rgb (0xC5 * 5 / 8, 0xA0 * 5 / 8, 0x00);
             ErrorBubbleTextAttributes = new NativeStringAttributes {
                 ForegroundColor = Gray (255).ColorWithAlphaComponent (0.9375f),
                 Font = NativeFont.BoldSystemFontOfSize ((nfloat)(NativeFont.SystemFontSize)),
