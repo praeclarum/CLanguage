@@ -117,6 +117,26 @@ void loop() {
         }
 
         [TestMethod]
+        public void CtorWithDefineExpressionArg ()
+        {
+            var code = @"
+#define NEO_GRB 6 // GRB bitstream
+#define NEO_KHZ800 256 // 800 KHz datastream
+int numPixels = 16;
+int neoPixelPin = 6;
+void setup() {
+  Serial.begin(9600);
+}
+CtorTest strip(NEO_GRB + NEO_KHZ800);
+void loop() {
+  Serial.println(strip.x);
+  delay(1);
+}";
+            var arduino = Run (code);
+            Assert.AreEqual ("262", arduino.SerialOut.ToString ().Split ("\n").First ().Trim ());
+        }
+
+        [TestMethod]
         public void CallbackVoidIntIntTest ()
         {
             var code = @"

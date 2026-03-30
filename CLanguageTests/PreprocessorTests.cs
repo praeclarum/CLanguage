@@ -345,6 +345,56 @@ void main() {
 ");
         }
 
+        [TestMethod]
+        public void DefineWithLineComment ()
+        {
+            Run (@"
+#define FOO 10 // this is a comment
+#define BAR 20
+void main() {
+    assertAreEqual(10, FOO);
+    assertAreEqual(20, BAR);
+}
+");
+        }
+
+        [TestMethod]
+        public void DefineWithLineCommentInExpression ()
+        {
+            Run (@"
+#define FOO 10 // first value
+#define BAR 20 // second value
+void main() {
+    assertAreEqual(30, FOO + BAR);
+}
+");
+        }
+
+        [TestMethod]
+        public void DefineWithBlockComment ()
+        {
+            Run (@"
+#define FOO 10 /* this is a comment */
+#define BAR 20
+void main() {
+    assertAreEqual(10, FOO);
+    assertAreEqual(20, BAR);
+}
+");
+        }
+
+        [TestMethod]
+        public void MultipleDefinesWithLineComments ()
+        {
+            Run (@"
+#define A 1 // first
+#define B 2 // second
+#define C 4 // third
+void main() {
+    assertAreEqual(7, A + B + C);
+}
+");
+        }
 
     }
 }

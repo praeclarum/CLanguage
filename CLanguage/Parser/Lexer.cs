@@ -162,10 +162,7 @@ namespace CLanguage.Parser
                     while (nr > 0 && nr != '\n' && nr != 8232) {
                         nr = Read ();
                     }
-                    r = Read ();
-                    line++;
-                    column = 1;
-                    skippedComment = true;
+                    r = nr;
                 }
                 else if (r == '/' && Peek () == '*') {
                     var nr = Read ();
