@@ -17,7 +17,7 @@ The Jay parser generator (C# Yacc) produces `CLanguage/Parser/CParser.cs` from t
 cd CLanguage && bash prebuild.sh
 ```
 
-This compiles `Jay/src/*.c` into the `jay` binary, then runs it on `CParser.jay` with `Jay/skeleton.cs` to produce the generated parser.
+This compiles `Jay/src/*.c` into the `jay` binary, then runs it on `CParser.jay` with `Jay/skeleton.cs` to produce the generated parser. It outputs the file `CLanguage/Parser/jay_warnings.txt` with any warnings from the grammar (e.g., shift/reduce conflicts).
 
 ## Project Structure
 
