@@ -11,7 +11,7 @@ namespace CLanguage.Types
         public List<CStructMember> Members { get; set; } = new List<CStructMember> ();
 
         public CStructType? BaseType { get; set; }
-        public List<VTableEntry>? VTable { get; set; }
+        public VTable? VTable { get; set; }
 
         public bool HasVTable => VTable != null && VTable.Count > 0;
         public bool IsPolymorphic => HasVTable || (BaseType?.IsPolymorphic ?? false);
@@ -152,7 +152,7 @@ namespace CLanguage.Types
 
             // Copy base vtable entries
             if (BaseType?.VTable != null) {
-                foreach (var baseEntry in BaseType.VTable) {
+                foreach (var baseEntry in BaseType.VTable.Entries) {
                     entries.Add (new VTableEntry (
                         baseEntry.SlotIndex,
                         baseEntry.MethodName,
@@ -189,7 +189,14 @@ namespace CLanguage.Types
                 }
             }
 
-            VTable = entries.Count > 0 ? entries : null;
+            if (entries.Count > 0) {
+                var vtable = new VTable ();
+                vtable.Entries.AddRange (entries);
+                VTable = vtable;
+            }
+            else {
+                VTable = null;
+            }
         }
     }
 }
