@@ -403,6 +403,7 @@ namespace CLanguage.Compiler
                     foreach (var s in structTs.Body.Statements) {
                         AddStructMember (st, s, block);
                     }
+                    st.BuildVTable ();
                     return st;
                 }
                 else {

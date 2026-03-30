@@ -142,6 +142,30 @@ namespace CLanguage.Compiler
             exe.Functions.Add (exeInit);
 
             //
+            // Allocate vtable globals for polymorphic types
+            // This must happen before globals are added so vptr InitialValues can reference vtable addresses
+            //
+            var polymorphicTypes = new List<CStructType> ();
+            foreach (var tuc in tucs) {
+                CollectPolymorphicTypes (tuc.TranslationUnit, polymorphicTypes);
+            }
+            BaseFunction? pureVirtualTrap = null;
+            if (polymorphicTypes.Count > 0) {
+                // Add the pure-virtual trap function (only when needed)
+                pureVirtualTrap = new InternalFunction (
+                    "__pure_virtual_called", "", CFunctionType.VoidProcedure) {
+                    Action = (CInterpreter state) => throw new ExecutionException ("Pure virtual function called")
+                };
+                exe.Functions.Add (pureVirtualTrap);
+            }
+            foreach (var st in polymorphicTypes) {
+                var vtableSize = st.VTable!.Count;
+                var vtableType = new CArrayType (CBasicType.SignedInt, vtableSize);
+                var vtableVar = exe.AddGlobal ($"__vtable_{st.Name}", vtableType);
+                st.VTableGlobalAddress = vtableVar.StackOffset;
+            }
+
+            //
             // Link everything together
             // This is done before compilation to make sure everything is visible (for recursion)
             //
@@ -152,10 +176,26 @@ namespace CLanguage.Compiler
                 foreach (var g in tu.Variables) {
                     var v = exe.AddGlobal (g.Name, g.VariableType);
                     v.InitialValue = g.InitialValue;
+                    // Set vptr for polymorphic global variables
+                    if (g.VariableType is CStructType gst && gst.IsPolymorphic && gst.VTableGlobalAddress.HasValue) {
+                        var numValues = gst.NumValues;
+                        if (v.InitialValue == null || v.InitialValue.Length < numValues) {
+                            v.InitialValue = new Value[numValues];
+                        }
+                        v.InitialValue[0] = Value.Pointer (gst.VTableGlobalAddress.Value);
+                    }
                 }
                 var funcs = tu.Functions.Where (x => x.Body != null).ToList ();
                 exe.Functions.AddRange (funcs);
                 functionsToCompile.AddRange (funcs.Select (x => new FunctionToCompile (x, (EmitContext)tuc)));
+            }
+
+            //
+            // Populate vtable initial values with function pointers
+            // Now that all functions have their indices, we can resolve them
+            //
+            foreach (var st in polymorphicTypes) {
+                PopulateVTable (exe, st, pureVirtualTrap!);
             }
 
             //
@@ -185,6 +225,60 @@ namespace CLanguage.Compiler
 
 			return exe;
 		}
+
+        void CollectPolymorphicTypes (Block block, List<CStructType> result)
+        {
+            foreach (var kv in block.Structures) {
+                if (kv.Value.IsPolymorphic && kv.Value.VTable != null && !result.Contains (kv.Value)) {
+                    result.Add (kv.Value);
+                }
+            }
+        }
+
+        void PopulateVTable (Executable exe, CStructType st, BaseFunction pureVirtualTrap)
+        {
+            if (st.VTableGlobalAddress == null || st.VTable == null)
+                return;
+
+            var vtableVar = FindGlobalByOffset (exe, st.VTableGlobalAddress.Value);
+            if (vtableVar == null)
+                return;
+
+            var initialValues = new Value[st.VTable.Count];
+            for (var i = 0; i < st.VTable.Count; i++) {
+                var entry = st.VTable[i];
+                var funcIndex = FindFunctionIndex (exe, entry.DeclaringType.Name, entry.MethodName, entry.Signature);
+                if (funcIndex >= 0) {
+                    initialValues[i] = Value.Pointer (funcIndex);
+                }
+                else {
+                    // Use pure virtual trap for unresolved methods
+                    var trapIndex = exe.Functions.IndexOf (pureVirtualTrap);
+                    initialValues[i] = Value.Pointer (trapIndex >= 0 ? trapIndex : 0);
+                }
+            }
+            vtableVar.InitialValue = initialValues;
+        }
+
+        static CompiledVariable? FindGlobalByOffset (Executable exe, int offset)
+        {
+            foreach (var g in exe.Globals) {
+                if (g.StackOffset == offset)
+                    return g;
+            }
+            return null;
+        }
+
+        static int FindFunctionIndex (Executable exe, string nameContext, string methodName, CFunctionType signature)
+        {
+            for (var i = 0; i < exe.Functions.Count; i++) {
+                var f = exe.Functions[i];
+                if (f.NameContext == nameContext && f.Name == methodName && f.FunctionType.ParameterTypesEqual (signature)) {
+                    return i;
+                }
+            }
+            return -1;
+        }
 
         class FunctionToCompile
         {

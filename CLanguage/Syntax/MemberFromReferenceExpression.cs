@@ -53,10 +53,22 @@ namespace CLanguage.Syntax
                 }
                 else {
                     if (member is CStructMethod method && member.MemberType is CFunctionType functionType) {
-                        var res = ec.ResolveMethodFunction (structType, method);
-                        if (res != null) {
+                        if (method.VTableSlotIndex.HasValue && structType.VTableGlobalAddress.HasValue) {
+                            // Virtual dispatch path
                             Left.EmitPointer (ec);
-                            ec.Emit (OpCode.LoadConstant, Value.Pointer (res.Address));
+                            ec.Emit (OpCode.Dup);
+                            ec.Emit (OpCode.LoadPointer);
+                            ec.Emit (OpCode.LoadConstant, Value.Pointer (method.VTableSlotIndex.Value));
+                            ec.Emit (OpCode.OffsetPointer);
+                            ec.Emit (OpCode.LoadPointer);
+                        }
+                        else {
+                            // Non-virtual direct path
+                            var res = ec.ResolveMethodFunction (structType, method);
+                            if (res != null) {
+                                Left.EmitPointer (ec);
+                                ec.Emit (OpCode.LoadConstant, Value.Pointer (res.Address));
+                            }
                         }
                     }
                     else {

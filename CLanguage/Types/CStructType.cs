@@ -13,6 +13,12 @@ namespace CLanguage.Types
         public CStructType? BaseType { get; set; }
         public VTable? VTable { get; set; }
 
+        /// <summary>
+        /// The stack offset of the vtable global in the Executable's global memory.
+        /// Set during the link phase after vtable globals are allocated.
+        /// </summary>
+        public int? VTableGlobalAddress { get; set; }
+
         public bool HasVTable => VTable != null && VTable.Count > 0;
         public bool IsPolymorphic => HasVTable || (BaseType?.IsPolymorphic ?? false);
 
