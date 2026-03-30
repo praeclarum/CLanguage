@@ -159,8 +159,12 @@ namespace CLanguage.Compiler
                 };
                 exe.Functions.Add (pureVirtualTrap);
             }
+            var nextTypeId = 1;
             foreach (var st in polymorphicTypes) {
-                var vtableSize = st.VTable!.Count;
+                // Assign unique type ID for RTTI
+                st.VTable!.TypeId = nextTypeId++;
+                // Vtable runtime layout: [type_id, method0, method1, ...]
+                var vtableSize = st.VTable.RuntimeSlotCount;
                 var vtableType = new CArrayType (CBasicType.SignedInt, vtableSize);
                 var vtableVar = exe.AddGlobal ($"__vtable_{st.Name}", vtableType);
                 st.VTableGlobalAddress = vtableVar.StackOffset;
@@ -201,6 +205,17 @@ namespace CLanguage.Compiler
                 if (vtableVars.TryGetValue (st, out var vtableVar)) {
                     PopulateVTable (exe, st, vtableVar, funcIndex, pureVirtualTrap!);
                 }
+            }
+
+            //
+            // Build compile-time type hierarchy table for RTTI
+            //
+            foreach (var st in polymorphicTypes) {
+                var baseTypeId = -1;
+                if (st.BaseType?.VTable != null) {
+                    baseTypeId = st.BaseType.VTable.TypeId;
+                }
+                exe.AddTypeHierarchyEntry (new TypeHierarchyEntry (st.VTable!.TypeId, baseTypeId, st.Name));
             }
 
             //
@@ -245,17 +260,19 @@ namespace CLanguage.Compiler
             if (st.VTable == null)
                 return;
 
-            var initialValues = new Value[st.VTable.Count];
+            // Runtime layout: [type_id, method0, method1, ...]
+            var initialValues = new Value[st.VTable.RuntimeSlotCount];
+            initialValues[0] = st.VTable.TypeId;
             var trapIndex = exe.Functions.IndexOf (pureVirtualTrap);
             for (var i = 0; i < st.VTable.Count; i++) {
                 var entry = st.VTable[i];
                 var idx = FindFunctionInIndex (funcIndex, entry.DeclaringType.Name, entry.MethodName, entry.Signature);
                 if (idx >= 0) {
-                    initialValues[i] = Value.Pointer (idx);
+                    initialValues[i + 1] = Value.Pointer (idx);
                 }
                 else {
                     // Use pure virtual trap for unresolved methods
-                    initialValues[i] = Value.Pointer (trapIndex >= 0 ? trapIndex : 0);
+                    initialValues[i + 1] = Value.Pointer (trapIndex >= 0 ? trapIndex : 0);
                 }
             }
             vtableVar.InitialValue = initialValues;
