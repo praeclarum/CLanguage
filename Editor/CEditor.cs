@@ -465,7 +465,7 @@ namespace CLanguage.Editor
             }
             var safeBottom = ios11 ? SafeAreaInsets.Bottom : 0;
             var keyboardOffset = (nfloat)Math.Max (0, overlap - safeBottom);
-            AnimateNotify (e.AnimationDuration, 0, (UIViewAnimationOptions)(ulong)e.AnimationCurve << 16, () => {
+            AnimateNotify (e.AnimationDuration, 0, (UIViewAnimationOptions)((ulong)e.AnimationCurve << 16), () => {
                 errorBottomConstraint.Constant = keyboardOffset + errorVMargin;
                 LayoutIfNeeded ();
             }, null);
@@ -474,7 +474,7 @@ namespace CLanguage.Editor
         {
             if (errorBottomConstraint == null)
                 return;
-            AnimateNotify (e.AnimationDuration, 0, (UIViewAnimationOptions)(ulong)e.AnimationCurve << 16, () => {
+            AnimateNotify (e.AnimationDuration, 0, (UIViewAnimationOptions)((ulong)e.AnimationCurve << 16), () => {
                 errorBottomConstraint.Constant = errorVMargin;
                 LayoutIfNeeded ();
             }, null);
