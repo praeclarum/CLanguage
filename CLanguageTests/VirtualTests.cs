@@ -133,12 +133,20 @@ void main() {}
         [TestMethod]
         public void VirtualMethodSetsIsVirtual ()
         {
-            Parse (@"
+            var exe = Compile (@"
 class B {
     virtual int f();
 };
+B b;
 void main() {}
 ");
+            var bVar = exe.Globals.FirstOrDefault (g => g.Name == "b");
+            Assert.IsNotNull (bVar);
+            var bType = bVar!.VariableType as CStructType;
+            Assert.IsNotNull (bType);
+            var method = bType!.Members.OfType<CStructMethod> ().FirstOrDefault (m => m.Name == "f");
+            Assert.IsNotNull (method);
+            Assert.IsTrue (method!.IsVirtual);
         }
 
         [TestMethod]
@@ -153,8 +161,15 @@ class B : public A {
 public:
     int y;
 };
+B b;
 void main() {}
 ");
+            var bVar = exe.Globals.FirstOrDefault (g => g.Name == "b");
+            Assert.IsNotNull (bVar);
+            var bType = bVar!.VariableType as CStructType;
+            Assert.IsNotNull (bType);
+            Assert.IsNotNull (bType!.BaseType);
+            Assert.AreEqual ("A", bType.BaseType!.Name);
         }
 
         [TestMethod]

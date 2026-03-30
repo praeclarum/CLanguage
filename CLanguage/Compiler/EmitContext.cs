@@ -473,6 +473,7 @@ namespace CLanguage.Compiler
                         var type = MakeCType (multi.Specifiers, i.Declarator, i.Initializer, block);
                         var name = i.Declarator.DeclaredIdentifier;
                         if (type is CFunctionType functionType) {
+                            // Pure virtual methods are inherently virtual in C++
                             st.Members.Add (new CStructMethod {
                                 Name = name,
                                 MemberType = type,

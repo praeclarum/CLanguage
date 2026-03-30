@@ -18,12 +18,12 @@ namespace CLanguage.Syntax
 
         protected override void DoEmit (EmitContext ec)
         {
-            // Nothing to do at this phase — codegen is Phase 3
+            // Class body declarations are processed by EmitContext.AddStructMember, not DoEmit
         }
 
         public override void AddDeclarationToBlock (BlockContext context)
         {
-            // Nothing to do at this phase — codegen is Phase 3
+            // Class body declarations are processed by EmitContext.AddStructMember, not AddDeclarationToBlock
         }
     }
 }
