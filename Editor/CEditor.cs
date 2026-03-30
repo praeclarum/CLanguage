@@ -107,6 +107,8 @@ namespace CLanguage.Editor
         bool NeedsLayout { get => false; set => SetNeedsLayout (); }
         static readonly bool ios11 = UIDevice.CurrentDevice.CheckSystemVersion (11, 0);
         EditorKeyboardAccessory keyboardAccessory;
+        NSObject? keyboardShowObserver;
+        NSObject? keyboardHideObserver;
 #elif __MACOS__
         readonly bool Is1010 = false;
         readonly bool Is1011 = false;
@@ -242,6 +244,8 @@ namespace CLanguage.Editor
                 }
             });
             AddGestureRecognizer (pinch);
+            keyboardShowObserver = UIKeyboard.Notifications.ObserveWillShow (OnKeyboardWillShow);
+            keyboardHideObserver = UIKeyboard.Notifications.ObserveWillHide (OnKeyboardWillHide);
 #endif
 
             scroll.Frame = sframe;
@@ -448,6 +452,39 @@ namespace CLanguage.Editor
         {
             EditingEnded?.Invoke (this, EventArgs.Empty);
         }
+        void OnKeyboardWillShow (object? sender, UIKeyboardEventArgs e)
+        {
+            if (errorBottomConstraint == null || Window == null)
+                return;
+            var keyboardFrame = e.FrameEnd;
+            var localFrame = ConvertRectFromView (keyboardFrame, null);
+            var overlap = Bounds.GetMaxY () - localFrame.Y;
+            if (overlap <= 0) {
+                errorBottomConstraint.Constant = errorVMargin;
+                return;
+            }
+            var safeBottom = ios11 ? SafeAreaInsets.Bottom : 0;
+            var keyboardOffset = (nfloat)Math.Max (0, overlap - safeBottom);
+            AnimateNotify (e.AnimationDuration, 0, CurveToAnimationOptions (e.AnimationCurve), () => {
+                errorBottomConstraint.Constant = keyboardOffset + errorVMargin;
+                LayoutIfNeeded ();
+            }, null);
+        }
+        void OnKeyboardWillHide (object? sender, UIKeyboardEventArgs e)
+        {
+            if (errorBottomConstraint == null)
+                return;
+            AnimateNotify (e.AnimationDuration, 0, CurveToAnimationOptions (e.AnimationCurve), () => {
+                errorBottomConstraint.Constant = errorVMargin;
+                LayoutIfNeeded ();
+            }, null);
+        }
+        static UIViewAnimationOptions CurveToAnimationOptions (UIViewAnimationCurve curve) => curve switch {
+            UIViewAnimationCurve.EaseIn => UIViewAnimationOptions.CurveEaseIn,
+            UIViewAnimationCurve.EaseOut => UIViewAnimationOptions.CurveEaseOut,
+            UIViewAnimationCurve.Linear => UIViewAnimationOptions.CurveLinear,
+            _ => UIViewAnimationOptions.CurveEaseInOut,
+        };
         class PinchGesture : UIPinchGestureRecognizer
         {
             public PinchGesture (Action<UIPinchGestureRecognizer> action) : base (action)
@@ -631,5 +668,18 @@ namespace CLanguage.Editor
 #endif
             SetNeedsDisplayInRect (Bounds);
         }
+
+#if __IOS__
+        protected override void Dispose (bool disposing)
+        {
+            if (disposing) {
+                keyboardShowObserver?.Dispose ();
+                keyboardShowObserver = null;
+                keyboardHideObserver?.Dispose ();
+                keyboardHideObserver = null;
+            }
+            base.Dispose (disposing);
+        }
+#endif
     }
 }
