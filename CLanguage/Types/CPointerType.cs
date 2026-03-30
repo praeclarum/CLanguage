@@ -16,6 +16,19 @@ namespace CLanguage.Types
 
         public override int NumValues => 1;
 
+        public override int ScoreCastTo (CType otherType)
+        {
+            if (Equals (otherType))
+                return 1000;
+            // Derived* -> Base* (implicit pointer upcast)
+            if (otherType is CPointerType opt
+                && InnerType is CStructType derivedStruct
+                && opt.InnerType is CStructType baseStruct
+                && derivedStruct.IsDerivedFrom (baseStruct))
+                return 900;
+            return 0;
+        }
+
         public override int GetByteSize(EmitContext c)
         {
             return c.MachineInfo.PointerSize;

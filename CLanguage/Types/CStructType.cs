@@ -28,6 +28,19 @@ namespace CLanguage.Types
         }
 
         /// <summary>
+        /// Returns true if this type derives from the given type,
+        /// walking up the inheritance chain via BaseType.
+        /// </summary>
+        public bool IsDerivedFrom (CStructType other)
+        {
+            for (var t = BaseType; t != null; t = t.BaseType) {
+                if (ReferenceEquals (t, other) || t.Name == other.Name)
+                    return true;
+            }
+            return false;
+        }
+
+        /// <summary>
         /// Searches this type and its base types for a member with the given name.
         /// Returns null if no matching member is found in the inheritance chain.
         /// </summary>
