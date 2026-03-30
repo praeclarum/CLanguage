@@ -140,6 +140,13 @@ namespace CLanguage.Compiler
             else if (fromType is CFunctionType fft && toType is CFunctionType tft) {
                 // Function to function is OK
             }
+            else if (fromType is CPointerType fromPtr && toType is CPointerType toPtr
+                     && fromPtr.InnerType is CStructType derivedStruct
+                     && toPtr.InnerType is CStructType baseStruct
+                     && derivedStruct.IsDerivedFrom (baseStruct)) {
+                // Derived pointer to base pointer (implicit upcast) — no code needed,
+                // the pointer value is the same since base is at the start of the object.
+            }
             else {
                 Report.Error (30, "Cannot convert type '" + fromType + "' to '" + toType + "'");
             }
