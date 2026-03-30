@@ -140,6 +140,16 @@ namespace CLanguage.Interpreter
                         state.Call (a);
                         done = true;
                         break;
+                    case OpCode.CallVirtual: {
+                        var vtableSlot = i.X.Int32Value;
+                        var thisAddr = state.Stack[state.SP - 1].PointerValue;
+                        var vptr = state.Stack[thisAddr].PointerValue;
+                        var funcPtr = state.Stack[vptr + vtableSlot].PointerValue;
+                        ip++;
+                        state.Call (state.Executable.Functions[funcPtr]);
+                        done = true;
+                        break;
+                    }
                     case OpCode.Return:
                         state.Return ();
                         done = true;

@@ -88,7 +88,12 @@ namespace CLanguage.Syntax
 
             function.Emit (ec);
 
-            ec.Emit (OpCode.Call, type.Parameters.Count);
+            if (function.VTableSlotIndex.HasValue) {
+                ec.Emit (OpCode.CallVirtual, function.VTableSlotIndex.Value);
+            }
+            else {
+                ec.Emit (OpCode.Call, type.Parameters.Count);
+            }
 
 			if (type.ReturnType.IsVoid) {
 				ec.Emit (OpCode.LoadConstant, 0); // Expressions should leave something on the stack
@@ -146,12 +151,7 @@ namespace CLanguage.Syntax
                                     functionType,
                                     nec => {
                                         memr.Left.EmitPointer (nec);              // push &obj (this)
-                                        nec.Emit (OpCode.Dup);                     // &obj, &obj
-                                        nec.Emit (OpCode.LoadPointer);             // &obj, vptr
-                                        nec.Emit (OpCode.LoadConstant, Value.Pointer (method.VTableSlotIndex.Value));
-                                        nec.Emit (OpCode.OffsetPointer);           // &obj, &vtable[slot]
-                                        nec.Emit (OpCode.LoadPointer);             // &obj, func_ptr
-                                    });
+                                    }) { VTableSlotIndex = method.VTableSlotIndex.Value };
                             }
                             else {
                                 // Non-virtual direct call path
@@ -213,12 +213,7 @@ namespace CLanguage.Syntax
                                     functionType,
                                     nec => {
                                         memp.Left.Emit (nec);                      // push ptr (this)
-                                        nec.Emit (OpCode.Dup);                      // ptr, ptr
-                                        nec.Emit (OpCode.LoadPointer);              // ptr, vptr
-                                        nec.Emit (OpCode.LoadConstant, Value.Pointer (method.VTableSlotIndex.Value));
-                                        nec.Emit (OpCode.OffsetPointer);            // ptr, &vtable[slot]
-                                        nec.Emit (OpCode.LoadPointer);              // ptr, func_ptr
-                                    });
+                                    }) { VTableSlotIndex = method.VTableSlotIndex.Value };
                             }
                             else {
                                 // Non-virtual direct call path (via pointer)
@@ -265,6 +260,7 @@ namespace CLanguage.Syntax
         {
             public readonly CType? CType;
             public readonly Action<EmitContext> Emit;
+            public int? VTableSlotIndex;
 
             public static readonly Action<EmitContext> NoEmit = _ => { };
             public static readonly Overload Error = new Overload (CBasicType.SignedInt, NoEmit);
