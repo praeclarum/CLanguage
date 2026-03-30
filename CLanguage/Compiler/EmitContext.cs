@@ -385,13 +385,19 @@ namespace CLanguage.Compiler
             if (structTs != null) {
                 if (structTs.Body != null) {
                     var st = new CStructType (structTs.Name);
-                    if (structTs.BaseClassName is string baseName && baseName.Length > 0) {
-                        var baseType = ResolveTypeName (baseName);
-                        if (baseType is CStructType baseStructType) {
-                            st.BaseType = baseStructType;
-                        }
-                        else {
-                            Report.Error (246, "Base type '{0}' is not a class or struct", baseName);
+                    if (structTs.BaseSpecifiers is { } baseSpecs) {
+                        foreach (var baseSpec in baseSpecs) {
+                            if (st.BaseType != null) {
+                                Report.Error (1500, "Multiple inheritance is not supported");
+                                continue;
+                            }
+                            var baseType = ResolveTypeName (baseSpec.Name);
+                            if (baseType is CStructType baseStructType) {
+                                st.BaseType = baseStructType;
+                            }
+                            else {
+                                Report.Error (246, "Base type '{0}' is not a class or struct", baseSpec.Name);
+                            }
                         }
                     }
                     foreach (var s in structTs.Body.Statements) {

@@ -211,5 +211,19 @@ private:
 void main() {}
 ");
         }
+
+        [TestMethod]
+        public void ParseMultipleBaseSpecifiers ()
+        {
+            // Multiple base specifiers should parse but compiler reports an error
+            Compile (@"
+class A { int x; };
+class B { int y; };
+class C : public A, public B {
+    int z;
+};
+void main() {}
+", 1500);
+        }
     }
 }
