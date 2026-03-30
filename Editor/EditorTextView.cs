@@ -7,7 +7,7 @@ using System.Linq;
 using Foundation;
 using CoreGraphics;
 
-#if __IOS__
+#if __IOS__ || __MACCATALYST__
 using UIKit;
 using NativeTextView = UIKit.UITextView;
 using NativeColor = UIKit.UIColor;
@@ -30,13 +30,13 @@ namespace CLanguage.Editor
         public EditorTextView (CGRect frameRect)
 #if __MACOS__
             : base (frameRect)
-#elif __IOS__
+#elif __IOS__ || __MACCATALYST__
             : base (frameRect, CreateContainer (frameRect.Size))
 #endif
         {
 #if __MACOS__
             TextContainerInset = new CGSize (0, BottomPadding);
-#elif __IOS__
+#elif __IOS__ || __MACCATALYST__
             //TextContainerInset = new UIEdgeInsets (0, 0, BottomPadding, 0);
 #endif
         }
@@ -74,7 +74,7 @@ namespace CLanguage.Editor
                 BeginInvokeOnMainThread (() => SelectedRange = insert.SelectRange.Value);
             }
         }
-#elif __IOS__
+#elif __IOS__ || __MACCATALYST__
         static NSTextContainer CreateContainer (CGSize size)
         {
             var storage = new EditorTextStorage ();
@@ -220,7 +220,7 @@ namespace CLanguage.Editor
                     var newLinesText = string.Join ("\n", newLines);
 #if __MACOS__
                     TextStorage.Replace (lines.Range, newLinesText);
-#elif __IOS__
+#elif __IOS__ || __MACCATALYST__
                     var rangeStart = GetPosition (BeginningOfDocument, lines.Range.Location);
                     var rangeEnd = GetPosition (rangeStart, lines.Range.Length);
                     ReplaceText (GetTextRange (rangeStart, rangeEnd), newLinesText);

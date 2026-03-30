@@ -7,7 +7,7 @@ using System.Threading;
 using Foundation;
 using static CLanguage.Editor.Extensions;
 
-#if __IOS__
+#if __IOS__ || __MACCATALYST__
 using UIKit;
 using NativeColor = UIKit.UIColor;
 using NativeFont = UIKit.UIFont;
@@ -70,7 +70,7 @@ namespace CLanguage.Editor
             SelectedAttributes = new NativeStringAttributes {
 #if __MACOS__
                 BackgroundColor = !isDark ? NativeColor.SelectedTextBackground : NativeColor.SelectedTextBackground.ColorWithAlphaComponent (0.5f),
-#elif __IOS__
+#elif __IOS__ || __MACCATALYST__
                 BackgroundColor = Rgb (0, 0x84, 0xD1).ColorWithAlpha (0.5f),
 #endif
             }.Dictionary;
@@ -83,7 +83,7 @@ namespace CLanguage.Editor
                 ParagraphStyle = new NSMutableParagraphStyle {
 #if __MACOS__
                     LineBreakMode = NativeLineBreakMode.ByWordWrapping,
-#elif __IOS__
+#elif __IOS__ || __MACCATALYST__
                     LineBreakMode = NativeLineBreakMode.WordWrap,
 #endif
                 },
@@ -147,7 +147,7 @@ namespace CLanguage.Editor
             }.Dictionary;
             return new NSDictionary<NSString, NSObject> (d.Keys.Cast<NSString> ().ToArray (), d.Values.ToArray ());
         }
-#elif __IOS__
+#elif __IOS__ || __MACCATALYST__
         public NSDictionary ErrorAttributes (string message, NSDictionary existingAttributes)
         {
             return new NativeStringAttributes ((NSDictionary)existingAttributes.MutableCopy ()) {

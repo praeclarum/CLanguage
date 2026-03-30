@@ -10,7 +10,7 @@ using CLanguage.Compiler;
 using static CLanguage.Editor.Extensions;
 using CLanguage.Syntax;
 
-#if __IOS__
+#if __IOS__ || __MACCATALYST__
 using UIKit;
 using NativeColor = UIKit.UIColor;
 using NativeFont = UIKit.UIFont;

@@ -1,7 +1,7 @@
 ﻿using System;
 using CoreGraphics;
 
-#if __IOS__
+#if __IOS__ || __MACCATALYST__
 using UIKit;
 using NativeColor = UIKit.UIColor;
 using NativeFont = UIKit.UIFont;
@@ -90,7 +90,7 @@ namespace CLanguage.Editor
             if (bounds.Width < bounds.Height)
                 return;
 
-#if __IOS__
+#if __IOS__ || __MACCATALYST__
             var p = NativeBezierPath.FromRoundedRect (bounds, bounds.Height / 2);
 #elif __MACOS__
             var p = NativeBezierPath.FromRoundedRect (bounds, bounds.Height / 2, bounds.Height / 2);
@@ -103,7 +103,7 @@ namespace CLanguage.Editor
             var ctx = new NSStringDrawingContext ();
 #if __MACOS__
             var bmt = amt.BoundingRectWithSize (new CGSize (abounds.Width, 1_000), NSStringDrawingOptions.UsesLineFragmentOrigin, ctx);
-#elif __IOS__
+#elif __IOS__ || __MACCATALYST__
             var bmt = amt.GetBoundingRect (new CGSize (abounds.Width, 1_000), NSStringDrawingOptions.UsesLineFragmentOrigin, ctx);
 #endif
             //Console.WriteLine (bmt);
@@ -115,7 +115,7 @@ namespace CLanguage.Editor
                 amt = ammt;
 #if __MACOS__
                 bmt = amt.BoundingRectWithSize (new CGSize (abounds.Width, 1_000), NSStringDrawingOptions.UsesLineFragmentOrigin, ctx);
-#elif __IOS__
+#elif __IOS__ || __MACCATALYST__
                 bmt = amt.GetBoundingRect (new CGSize (abounds.Width, 1_000), NSStringDrawingOptions.UsesLineFragmentOrigin, ctx);
 #endif
             }

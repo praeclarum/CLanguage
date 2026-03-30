@@ -12,7 +12,7 @@ using Foundation;
 using CoreGraphics;
 using ObjCRuntime;
 
-#if __IOS__
+#if __IOS__ || __MACCATALYST__
 using UIKit;
 using NativeTextView = UIKit.UITextView;
 using INativeTextViewDelegate = UIKit.IUITextViewDelegate;
@@ -100,7 +100,7 @@ namespace CLanguage.Editor
 
         public event EventHandler? TextChanged;
 
-#if __IOS__
+#if __IOS__ || __MACCATALYST__
         public event EventHandler? EditingEnded;
         NativeColor? EffectiveAppearance => TintColor;
         static bool IsDark (NativeColor? a) => true;
@@ -126,7 +126,7 @@ namespace CLanguage.Editor
             textView = new EditorTextView (Bounds);
 #if __MACOS__
             scroll = new NSScrollView (Bounds);
-#elif __IOS__
+#elif __IOS__ || __MACCATALYST__
             keyboardAccessory = new EditorKeyboardAccessory (this);
 #endif
             theme = new Theme (IsDark (EffectiveAppearance), fontScale: 1);
@@ -138,7 +138,7 @@ namespace CLanguage.Editor
             textView = new EditorTextView (Bounds);
 #if __MACOS__
             scroll = new NSScrollView (Bounds);
-#elif __IOS__
+#elif __IOS__ || __MACCATALYST__
             keyboardAccessory = new EditorKeyboardAccessory (this);
 #endif
             theme = new Theme (IsDark (EffectiveAppearance), fontScale: 1);
@@ -150,7 +150,7 @@ namespace CLanguage.Editor
             textView = new EditorTextView (Bounds);
 #if __MACOS__
             scroll = new NSScrollView (Bounds);
-#elif __IOS__
+#elif __IOS__ || __MACCATALYST__
             keyboardAccessory = new EditorKeyboardAccessory (this);
 #endif
             theme = new Theme (IsDark (EffectiveAppearance), fontScale: 1);
@@ -215,7 +215,7 @@ namespace CLanguage.Editor
                     Theme = new Theme (isDark: IsDark (a), fontScale: Theme.FontScale);
                 }
             });
-#elif __IOS__
+#elif __IOS__ || __MACCATALYST__
             var scroll = textView;
             textView.AlwaysBounceVertical = true;
             textView.AlwaysBounceHorizontal = false;
@@ -275,7 +275,7 @@ namespace CLanguage.Editor
             AddConstraint (errorBottomConstraint = NSLayoutConstraint.Create (this, NSLayoutAttribute.Bottom, NSLayoutRelation.Equal, errorView, NSLayoutAttribute.Bottom, 1, errorVMargin));
             AddConstraint (NSLayoutConstraint.Create (this, NSLayoutAttribute.Leading, NSLayoutRelation.Equal, margin, NSLayoutAttribute.Leading, 1, 0));
             AddConstraint (NSLayoutConstraint.Create (this, NSLayoutAttribute.Trailing, NSLayoutRelation.Equal, errorView, NSLayoutAttribute.Trailing, 1, errorHMargin));
-#elif __IOS__
+#elif __IOS__ || __MACCATALYST__
             if (ios11) {
                 AddConstraint (NSLayoutConstraint.Create (SafeAreaLayoutGuide, NSLayoutAttribute.Trailing, NSLayoutRelation.Equal, scroll, NSLayoutAttribute.Trailing, 1, 0));
                 AddConstraint (NSLayoutConstraint.Create (SafeAreaLayoutGuide, NSLayoutAttribute.Leading, NSLayoutRelation.Equal, margin, NSLayoutAttribute.Leading, 1, 0));
@@ -441,7 +441,7 @@ namespace CLanguage.Editor
             Console.WriteLine ($"Error: {ex}");
         }
 
-#if __IOS__
+#if __IOS__ || __MACCATALYST__
         [Export ("scrollViewDidScroll:")]
         void Scrolled (UIScrollView scrollView)
         {
@@ -517,7 +517,7 @@ namespace CLanguage.Editor
 #if __MACOS__
                 var bounds = scroll.ContentView.Bounds;
                 var lfpad = textView.TextContainerOrigin.Y;
-#elif __IOS__
+#elif __IOS__ || __MACCATALYST__
                 var bounds = textView.Bounds;
                 var lfpad = textView.TextContainerInset.Top;
 #endif
@@ -631,7 +631,7 @@ namespace CLanguage.Editor
                     }
                 }
             }
-#elif __IOS__
+#elif __IOS__ || __MACCATALYST__
                 var ts = (EditorTextStorage)textView.TextStorage;
                 ts.Colorize = colorize;
                 ts.Theme = Theme;
@@ -660,7 +660,7 @@ namespace CLanguage.Editor
             textView.TypingAttributes = theme.TypingAttributes;
             scroll.DrawsBackground = true;
             scroll.BackgroundColor = textView.BackgroundColor;
-#elif __IOS__
+#elif __IOS__ || __MACCATALYST__
             ((EditorTextStorage)textView.TextStorage).Theme = theme;
             BackgroundColor = theme.BackgroundColor;
             textView.KeyboardAppearance = theme.IsDark ? UIKeyboardAppearance.Dark : UIKeyboardAppearance.Light;
@@ -669,7 +669,7 @@ namespace CLanguage.Editor
             SetNeedsDisplayInRect (Bounds);
         }
 
-#if __IOS__
+#if __IOS__ || __MACCATALYST__
         protected override void Dispose (bool disposing)
         {
             if (disposing) {

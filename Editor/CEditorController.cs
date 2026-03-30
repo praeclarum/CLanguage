@@ -4,7 +4,7 @@ using Foundation;
 using System.Threading.Tasks;
 using System.Diagnostics;
 
-#if __IOS__
+#if __IOS__ || __MACCATALYST__
 using UIKit;
 
 namespace CLanguage.Editor

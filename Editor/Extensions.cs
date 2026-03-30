@@ -1,6 +1,6 @@
 ﻿using System;
 
-#if __IOS__
+#if __IOS__ || __MACCATALYST__
 using UIKit;
 using NativeColor = UIKit.UIColor;
 using NativeFont = UIKit.UIFont;
@@ -42,7 +42,7 @@ namespace CLanguage.Editor
             return NSBundle.MainBundle.GetLocalizedString(key: english);
         }
 
-#if __IOS__
+#if __IOS__ || __MACCATALYST__
         public static NativeColor Rgb (int r, int g, int b) => NativeColor.FromRGB (r, g, b);
         public static NativeColor Gray (int g) => NativeColor.FromWhiteAlpha (g / ((nfloat)255), 1);
         public static NativeColor ColorWithAlphaComponent (this NativeColor color, nfloat alpha) => color.ColorWithAlpha (alpha);

@@ -3,7 +3,7 @@ using CoreGraphics;
 
 using static CLanguage.Editor.Extensions;
 
-#if __IOS__
+#if __IOS__ || __MACCATALYST__
 using UIKit;
 using NativeColor = UIKit.UIColor;
 using NativeFont = UIKit.UIFont;
@@ -21,7 +21,7 @@ namespace CLanguage.Editor
     {
         protected DrawingView ()
         {
-#if __IOS__
+#if __IOS__ || __MACCATALYST__
             Opaque = false;
             ContentMode = UIViewContentMode.Redraw;
             UserInteractionEnabled = false;
@@ -59,7 +59,7 @@ namespace CLanguage.Editor
             DrawDirtyRect (dirtyRect);
             context?.RestoreState ();
         }
-#elif __IOS__
+#elif __IOS__ || __MACCATALYST__
         public nfloat AlphaValue { get => Alpha; set => Alpha = value; }
         public override void Draw (CGRect rect)
         {

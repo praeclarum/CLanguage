@@ -5,7 +5,7 @@ using System.Linq;
 using System.Diagnostics;
 using CLanguage.Syntax;
 
-#if __IOS__
+#if __IOS__ || __MACCATALYST__
 using UIKit;
 
 namespace CLanguage.Editor

@@ -4,7 +4,7 @@ using CoreGraphics;
 using static CLanguage.Editor.Extensions;
 using System.Collections.Generic;
 
-#if __IOS__
+#if __IOS__ || __MACCATALYST__
 using UIKit;
 using NativeColor = UIKit.UIColor;
 using NativeFont = UIKit.UIFont;
@@ -49,7 +49,7 @@ namespace CLanguage.Editor
 
 #if __MACOS__
             var tyoff = Theme.LineHeightMultiple * Theme.CodeFont.PointSize - numLineHeight * 0.8f;
-#elif __IOS__
+#elif __IOS__ || __MACCATALYST__
             var tyoff = codeLineHeight - numLineHeight;
 #endif
 
