@@ -25,7 +25,7 @@ jobs:
 
     - name: Update Versions
       env:
-        VERSION_PREFIX: '0.21'
+        VERSION_PREFIX: '0.22'
         VERSION_SUFFIX: ${{github.run_number}}
       run: |
         VERSION=$VERSION_PREFIX.$VERSION_SUFFIX
