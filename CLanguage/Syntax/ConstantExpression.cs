@@ -84,8 +84,76 @@ namespace CLanguage.Syntax
 
 		public override CType GetEvaluatedCType (EmitContext ec)
 		{
+			if (ConstantType is CIntType intType) {
+				return PromoteIntConstant (intType, ec);
+			}
 			return ConstantType;
         }
+
+		/// <summary>
+		/// C11 §6.4.4.1: Integer constants get the first type in the
+		/// promotion sequence that can represent the value.
+		/// Signed: int → long → long long
+		/// Unsigned: unsigned int → unsigned long → unsigned long long
+		/// </summary>
+		CIntType PromoteIntConstant (CIntType intType, EmitContext ec)
+		{
+			var mi = ec.MachineInfo;
+			var curSize = intType.GetByteSize (mi);
+
+			if (intType.Signedness == Signedness.Signed) {
+				long val;
+				try { val = Convert.ToInt64 (Value); }
+				catch (Exception ex) when (ex is OverflowException || ex is InvalidCastException || ex is FormatException) { return intType; }
+
+				if (FitsInSignedBytes (val, curSize))
+					return intType;
+
+				if (mi.LongIntSize > curSize && FitsInSignedBytes (val, mi.LongIntSize))
+					return CBasicType.SignedLongInt;
+
+				if (mi.LongLongIntSize > curSize && FitsInSignedBytes (val, mi.LongLongIntSize))
+					return CBasicType.SignedLongLongInt;
+			}
+			else {
+				ulong val;
+				try { val = Convert.ToUInt64 (Value); }
+				catch (Exception ex) when (ex is OverflowException || ex is InvalidCastException || ex is FormatException) { return intType; }
+
+				if (FitsInUnsignedBytes (val, curSize))
+					return intType;
+
+				if (mi.LongIntSize > curSize && FitsInUnsignedBytes (val, mi.LongIntSize))
+					return CBasicType.UnsignedLongInt;
+
+				if (mi.LongLongIntSize > curSize && FitsInUnsignedBytes (val, mi.LongLongIntSize))
+					return CBasicType.UnsignedLongLongInt;
+			}
+
+			return intType;
+		}
+
+		static bool FitsInSignedBytes (long val, int byteSize)
+		{
+			switch (byteSize) {
+				case 1: return val >= sbyte.MinValue && val <= sbyte.MaxValue;
+				case 2: return val >= short.MinValue && val <= short.MaxValue;
+				case 4: return val >= int.MinValue && val <= int.MaxValue;
+				case 8: return true;
+				default: return false;
+			}
+		}
+
+		static bool FitsInUnsignedBytes (ulong val, int byteSize)
+		{
+			switch (byteSize) {
+				case 1: return val <= byte.MaxValue;
+				case 2: return val <= ushort.MaxValue;
+				case 4: return val <= uint.MaxValue;
+				case 8: return true;
+				default: return false;
+			}
+		}
 
         protected override void DoEmit (EmitContext ec)
         {
@@ -100,7 +168,8 @@ namespace CLanguage.Syntax
 
         public override Value EvalConstant (EmitContext ec)
         {
-            if (ConstantType is CIntType intType) {
+            var evalType = GetEvaluatedCType (ec);
+            if (evalType is CIntType intType) {
                 var size = intType.GetByteSize (ec);
                 if (intType.Signedness == Signedness.Signed) {
                     unchecked {
