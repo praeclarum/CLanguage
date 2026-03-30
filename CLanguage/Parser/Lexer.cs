@@ -569,6 +569,9 @@ namespace CLanguage.Parser
                                 case '\"':
                                     _chbuf[_chbuflen++] = '\"';
                                     break;
+                                case '0':
+                                    _chbuf[_chbuflen++] = '\0';
+                                    break;
                                 default: {
                                         if (char.IsWhiteSpace ((char)r)) {
                                             while (r > 0 && r != '\n' && r != 8232) {
@@ -639,6 +642,10 @@ namespace CLanguage.Parser
                             break;
                         case '\"':
                             _chbuf[0] = '\"';
+                            _chbuflen = 1;
+                            break;
+                        case '0':
+                            _chbuf[0] = '\0';
                             _chbuflen = 1;
                             break;
                         default:

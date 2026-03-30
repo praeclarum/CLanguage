@@ -64,6 +64,30 @@ void main () {
         }
 
         [TestMethod]
+        public void NullCharLiteral ()
+        {
+            var i = Run (@"
+void main () {
+    char c = '\0';
+    assertAreEqual (0, c);
+}");
+        }
+
+        [TestMethod]
+        public void NullEscapeInString ()
+        {
+            var i = Run (@"
+char *bar = ""ab\0cd"";
+void main () {
+    assertAreEqual ('a', bar[0]);
+    assertAreEqual ('b', bar[1]);
+    assertAreEqual (0, bar[2]);
+    assertAreEqual ('c', bar[3]);
+    assertAreEqual ('d', bar[4]);
+}");
+        }
+
+        [TestMethod]
         public void Multiline ()
         {
             var i = Run (@"
