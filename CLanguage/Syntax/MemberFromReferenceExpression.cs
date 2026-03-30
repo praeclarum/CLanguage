@@ -23,11 +23,7 @@ namespace CLanguage.Syntax
 
         static CStructMember? FindMember (CStructType structType, string name)
         {
-            for (CStructType? t = structType; t != null; t = t.BaseType) {
-                var m = t.Members.FirstOrDefault (x => x.Name == name);
-                if (m != null) return m;
-            }
-            return null;
+            return structType.FindMember (name);
         }
 
 		public override CType GetEvaluatedCType (EmitContext ec)

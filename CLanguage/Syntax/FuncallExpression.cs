@@ -113,14 +113,7 @@ namespace CLanguage.Syntax
 
                 if (targetType is CStructType structType) {
 
-                    var methods = new List<CStructMethod> ();
-                    for (CStructType? searchType = structType; searchType != null; searchType = searchType.BaseType) {
-                        foreach (var mem in searchType.Members) {
-                            if (mem is CStructMethod meth && meth.Name == memr.MemberName)
-                                methods.Add (meth);
-                        }
-                        if (methods.Count > 0) break; // stop at first type that has the method
-                    }
+                    var methods = structType.FindMethods (memr.MemberName);
 
                     if (methods.Count == 0) {
                         ec.Report.Error (1061, "'{1}' not found in '{0}'", structType.Name, memr.MemberName);
@@ -188,14 +181,7 @@ namespace CLanguage.Syntax
 
                 if (targetType is CPointerType pType && pType.InnerType is CStructType structType) {
 
-                    var methods = new List<CStructMethod> ();
-                    for (CStructType? searchType = structType; searchType != null; searchType = searchType.BaseType) {
-                        foreach (var mem in searchType.Members) {
-                            if (mem is CStructMethod meth && meth.Name == memp.MemberName)
-                                methods.Add (meth);
-                        }
-                        if (methods.Count > 0) break;
-                    }
+                    var methods = structType.FindMethods (memp.MemberName);
 
                     if (methods.Count == 0) {
                         ec.Report.Error (1061, "'{1}' not found in '{0}'", structType.Name, memp.MemberName);

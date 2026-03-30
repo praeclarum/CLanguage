@@ -146,6 +146,7 @@ namespace CLanguage.Compiler
             // This must happen before globals are added so vptr InitialValues can reference vtable addresses
             //
             var polymorphicTypes = new List<CStructType> ();
+            var vtableVars = new Dictionary<CStructType, CompiledVariable> ();
             foreach (var tuc in tucs) {
                 CollectPolymorphicTypes (tuc.TranslationUnit, polymorphicTypes);
             }
@@ -163,6 +164,7 @@ namespace CLanguage.Compiler
                 var vtableType = new CArrayType (CBasicType.SignedInt, vtableSize);
                 var vtableVar = exe.AddGlobal ($"__vtable_{st.Name}", vtableType);
                 st.VTableGlobalAddress = vtableVar.StackOffset;
+                vtableVars[st] = vtableVar;
             }
 
             //
@@ -194,8 +196,11 @@ namespace CLanguage.Compiler
             // Populate vtable initial values with function pointers
             // Now that all functions have their indices, we can resolve them
             //
+            var funcIndex = BuildFunctionIndex (exe);
             foreach (var st in polymorphicTypes) {
-                PopulateVTable (exe, st, pureVirtualTrap!);
+                if (vtableVars.TryGetValue (st, out var vtableVar)) {
+                    PopulateVTable (exe, st, vtableVar, funcIndex, pureVirtualTrap!);
+                }
             }
 
             //
@@ -235,46 +240,48 @@ namespace CLanguage.Compiler
             }
         }
 
-        void PopulateVTable (Executable exe, CStructType st, BaseFunction pureVirtualTrap)
+        void PopulateVTable (Executable exe, CStructType st, CompiledVariable vtableVar, Dictionary<(string, string), List<(int Index, BaseFunction Func)>> funcIndex, BaseFunction pureVirtualTrap)
         {
-            if (st.VTableGlobalAddress == null || st.VTable == null)
-                return;
-
-            var vtableVar = FindGlobalByOffset (exe, st.VTableGlobalAddress.Value);
-            if (vtableVar == null)
+            if (st.VTable == null)
                 return;
 
             var initialValues = new Value[st.VTable.Count];
+            var trapIndex = exe.Functions.IndexOf (pureVirtualTrap);
             for (var i = 0; i < st.VTable.Count; i++) {
                 var entry = st.VTable[i];
-                var funcIndex = FindFunctionIndex (exe, entry.DeclaringType.Name, entry.MethodName, entry.Signature);
-                if (funcIndex >= 0) {
-                    initialValues[i] = Value.Pointer (funcIndex);
+                var idx = FindFunctionInIndex (funcIndex, entry.DeclaringType.Name, entry.MethodName, entry.Signature);
+                if (idx >= 0) {
+                    initialValues[i] = Value.Pointer (idx);
                 }
                 else {
                     // Use pure virtual trap for unresolved methods
-                    var trapIndex = exe.Functions.IndexOf (pureVirtualTrap);
                     initialValues[i] = Value.Pointer (trapIndex >= 0 ? trapIndex : 0);
                 }
             }
             vtableVar.InitialValue = initialValues;
         }
 
-        static CompiledVariable? FindGlobalByOffset (Executable exe, int offset)
+        static Dictionary<(string, string), List<(int Index, BaseFunction Func)>> BuildFunctionIndex (Executable exe)
         {
-            foreach (var g in exe.Globals) {
-                if (g.StackOffset == offset)
-                    return g;
-            }
-            return null;
-        }
-
-        static int FindFunctionIndex (Executable exe, string nameContext, string methodName, CFunctionType signature)
-        {
+            var index = new Dictionary<(string, string), List<(int, BaseFunction)>> ();
             for (var i = 0; i < exe.Functions.Count; i++) {
                 var f = exe.Functions[i];
-                if (f.NameContext == nameContext && f.Name == methodName && f.FunctionType.ParameterTypesEqual (signature)) {
-                    return i;
+                var key = (f.NameContext, f.Name);
+                if (!index.TryGetValue (key, out var list)) {
+                    list = new List<(int, BaseFunction)> ();
+                    index[key] = list;
+                }
+                list.Add ((i, f));
+            }
+            return index;
+        }
+
+        static int FindFunctionInIndex (Dictionary<(string, string), List<(int Index, BaseFunction Func)>> funcIndex, string nameContext, string methodName, CFunctionType signature)
+        {
+            if (funcIndex.TryGetValue ((nameContext, methodName), out var candidates)) {
+                foreach (var (idx, f) in candidates) {
+                    if (f.FunctionType.ParameterTypesEqual (signature))
+                        return idx;
                 }
             }
             return -1;

@@ -27,6 +27,36 @@ namespace CLanguage.Types
             Name = name;
         }
 
+        /// <summary>
+        /// Searches this type and its base types for a member with the given name.
+        /// Returns null if no matching member is found in the inheritance chain.
+        /// </summary>
+        public CStructMember? FindMember (string name)
+        {
+            for (CStructType? t = this; t != null; t = t.BaseType) {
+                var m = t.Members.FirstOrDefault (x => x.Name == name);
+                if (m != null) return m;
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Searches this type and its base types for methods with the given name.
+        /// Stops at the first type in the hierarchy that has matching methods.
+        /// </summary>
+        public List<CStructMethod> FindMethods (string name)
+        {
+            var methods = new List<CStructMethod> ();
+            for (CStructType? t = this; t != null; t = t.BaseType) {
+                foreach (var mem in t.Members) {
+                    if (mem is CStructMethod meth && meth.Name == name)
+                        methods.Add (meth);
+                }
+                if (methods.Count > 0) break;
+            }
+            return methods;
+        }
+
         public override string ToString ()
         {
             return string.IsNullOrEmpty(Name) ? "struct" : Name;
