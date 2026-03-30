@@ -465,7 +465,7 @@ namespace CLanguage.Editor
             }
             var safeBottom = ios11 ? SafeAreaInsets.Bottom : 0;
             var keyboardOffset = (nfloat)Math.Max (0, overlap - safeBottom);
-            AnimateNotify (e.AnimationDuration, 0, (UIViewAnimationOptions)((ulong)e.AnimationCurve << 16), () => {
+            AnimateNotify (e.AnimationDuration, 0, CurveToAnimationOptions (e.AnimationCurve), () => {
                 errorBottomConstraint.Constant = keyboardOffset + errorVMargin;
                 LayoutIfNeeded ();
             }, null);
@@ -474,11 +474,17 @@ namespace CLanguage.Editor
         {
             if (errorBottomConstraint == null)
                 return;
-            AnimateNotify (e.AnimationDuration, 0, (UIViewAnimationOptions)((ulong)e.AnimationCurve << 16), () => {
+            AnimateNotify (e.AnimationDuration, 0, CurveToAnimationOptions (e.AnimationCurve), () => {
                 errorBottomConstraint.Constant = errorVMargin;
                 LayoutIfNeeded ();
             }, null);
         }
+        static UIViewAnimationOptions CurveToAnimationOptions (UIViewAnimationCurve curve) => curve switch {
+            UIViewAnimationCurve.EaseIn => UIViewAnimationOptions.CurveEaseIn,
+            UIViewAnimationCurve.EaseOut => UIViewAnimationOptions.CurveEaseOut,
+            UIViewAnimationCurve.Linear => UIViewAnimationOptions.CurveLinear,
+            _ => UIViewAnimationOptions.CurveEaseInOut,
+        };
         class PinchGesture : UIPinchGestureRecognizer
         {
             public PinchGesture (Action<UIPinchGestureRecognizer> action) : base (action)
