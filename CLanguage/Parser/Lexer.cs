@@ -87,9 +87,11 @@ namespace CLanguage.Parser
             { "typedef", TokenKind.TYPEDEF },
             { "union", TokenKind.UNION },
             { "unsigned", TokenKind.UNSIGNED },
+            { "virtual", TokenKind.VIRTUAL },
             { "void", TokenKind.VOID },
             { "volatile", TokenKind.VOLATILE },
             { "while", TokenKind.WHILE },
+            { "override", TokenKind.OVERRIDE },
         };
 
         public static readonly HashSet<int> KeywordTokens = new HashSet<int> (_kwTokens.Values);

@@ -385,6 +385,21 @@ namespace CLanguage.Compiler
             if (structTs != null) {
                 if (structTs.Body != null) {
                     var st = new CStructType (structTs.Name);
+                    if (structTs.BaseSpecifiers is { } baseSpecs) {
+                        foreach (var baseSpec in baseSpecs) {
+                            if (st.BaseType != null) {
+                                Report.Error (1500, "Multiple inheritance is not supported");
+                                continue;
+                            }
+                            var baseType = ResolveTypeName (baseSpec.Name);
+                            if (baseType is CStructType baseStructType) {
+                                st.BaseType = baseStructType;
+                            }
+                            else {
+                                Report.Error (246, "Base type '{0}' is not a class or struct", baseSpec.Name);
+                            }
+                        }
+                    }
                     foreach (var s in structTs.Body.Statements) {
                         AddStructMember (st, s, block);
                     }
@@ -448,13 +463,30 @@ namespace CLanguage.Compiler
 
         void AddStructMember (CStructType st, Statement s, Block? block)
         {
+            if (s is VirtualDeclarationStatement vds) {
+                AddStructMember (st, vds.InnerDeclaration, block, vds.IsVirtual, vds.IsOverride, vds.IsPureVirtual);
+            }
+            else {
+                AddStructMember (st, s, block, false, false, false);
+            }
+        }
+
+        void AddStructMember (CStructType st, Statement s, Block? block, bool isVirtual, bool isOverride, bool isPureVirtual)
+        {
             if (s is MultiDeclaratorStatement multi) {
                 if (multi.InitDeclarators != null) {
                     foreach (var i in multi.InitDeclarators) {
                         var type = MakeCType (multi.Specifiers, i.Declarator, i.Initializer, block);
                         var name = i.Declarator.DeclaredIdentifier;
                         if (type is CFunctionType functionType) {
-                            st.Members.Add (new CStructMethod { Name = name, MemberType = type });
+                            // Pure virtual methods are inherently virtual in C++
+                            st.Members.Add (new CStructMethod {
+                                Name = name,
+                                MemberType = type,
+                                IsVirtual = isVirtual || isPureVirtual,
+                                IsOverride = isOverride,
+                                IsPureVirtual = isPureVirtual
+                            });
                         }
                         else {
                             st.Members.Add (new CStructField { Name = name, MemberType = type });
