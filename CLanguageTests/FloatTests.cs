@@ -83,5 +83,34 @@ void main () {
             AssertTrue (10.0f <= 10.0f, "10.0f<=10.0f");
             AssertTrue (10.0f >= 10.0f, "10.0f>=10.0f");
         }
+
+        [TestMethod]
+        public void LargeIntegerConstantToDouble ()
+        {
+            // Issue: integer constants that don't fit in 16-bit int
+            // should be promoted to long before casting to double
+            var i = Run (@"
+double f(double x) { return 10.0 * x; }
+void main () {
+    assertDoublesAreEqual (2400000.0, f(240000));
+}");
+        }
+
+        [TestMethod]
+        public void IntegerConstantToDoubleParam ()
+        {
+            var i = Run (@"
+double f(double x) { return x; }
+void main () {
+    assertDoublesAreEqual (240000.0, f(240000));
+}");
+        }
+
+        [TestMethod]
+        public void IntegerConstantArithmeticWithDouble ()
+        {
+            AssertEqual (100000.0 + 1.5, "100000 + 1.5");
+            AssertEqual (100000.0 * 2.0, "100000 * 2.0");
+        }
     }
 }

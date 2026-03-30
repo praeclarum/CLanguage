@@ -262,10 +262,20 @@ namespace CLanguage.Parser
                     }
                     else {
                         if (isunsigned) {
-                            _value = uint.Parse (vals, style, icult);
+                            if (uint.TryParse (vals, style, icult, out var uiv)) {
+                                _value = uiv;
+                            }
+                            else {
+                                _value = ulong.Parse (vals, style, icult);
+                            }
                         }
                         else {
-                            _value = int.Parse (vals, style, icult);
+                            if (int.TryParse (vals, style, icult, out var iv)) {
+                                _value = iv;
+                            }
+                            else {
+                                _value = long.Parse (vals, style, icult);
+                            }
                         }
                     }
                 }
