@@ -49,7 +49,8 @@ namespace CLanguage.Types
         public override int NumValues {
             get {
                 if (!IsPolymorphic && BaseType == null) {
-                    // Non-polymorphic, no base: original behavior
+                    // Non-polymorphic, no base: preserve original behavior exactly
+                    // (includes all members, not just fields, for backward compatibility)
                     var s = 0;
                     foreach (var m in Members) {
                         s += m.MemberType.NumValues;
@@ -67,7 +68,8 @@ namespace CLanguage.Types
         public override int GetByteSize (EmitContext c)
         {
             if (!IsPolymorphic && BaseType == null) {
-                // Non-polymorphic, no base: original behavior
+                // Non-polymorphic, no base: preserve original behavior exactly
+                // (includes all members, not just fields, for backward compatibility)
                 var s = 0;
                 foreach (var m in Members) {
                     s += m.MemberType.GetByteSize (c);
