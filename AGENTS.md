@@ -267,19 +267,18 @@ public struct Instruction {
 ```
 
 **Opcode categories:**
-- **Control**: `Jump`, `BranchIfTrue/False`, `BranchIfTrue/FalseNoSPChange`, `Call`, `Return`
+- **Control**: `Jump`, `BranchIfTrue/False`, `Call`, `Return`
 - **Memory**: `LoadConstant`, `LoadFramePointer`, `LoadGlobal/Arg/Local`, `StoreGlobal/Arg/Local`, `LoadPointer`, `StorePointer`, `OffsetPointer`
 - **Arithmetic**: `Add/Subtract/Multiply/Divide/Modulo/ShiftLeft/ShiftRight` × 10 type variants
 - **Relational**: `EqualTo/LessThan/GreaterThan` × 10 type variants
 - **Bitwise**: `BinaryAnd/BinaryOr/BinaryXor` × 10 type variants
 - **Unary**: `Not/BinaryNot/Negate` × 10 type variants
 - **Conversion**: `ConvertXtoY` for all 100 type pairs (10×10)
-- **Boolean**: `LogicalAnd`, `LogicalOr`
 - **Stack**: `Dup`, `Pop`
 
 **Type parameterization**: Opcodes are grouped in sets of 10 (Int8, UInt8, Int16, UInt16, Int32, UInt32, Int64, UInt64, Float32, Float64). The compiler computes an offset 0–9 via `GetInstructionOffset()` and adds it to the base opcode: `OpCode.AddInt8 + offset`.
 
-**`BranchIfFalseNoSPChange`**: Used for short-circuit evaluation (`&&`, `||`) — tests the top of stack without popping it.
+**Short-circuit `&&`/`||`**: Compiled using standard branch-based code generation. For `a && b`: emit left, `BranchIfFalse` to false path, emit right, `BranchIfFalse` to false path, `LoadConstant 1`, `Jump` end, false path: `LoadConstant 0`. For `||`: symmetric with `BranchIfTrue` and swapped constants. Every path pushes exactly one normalized boolean (0 or 1).
 
 **`OffsetPointer`**: Pops pointer + integer offset, pushes pointer + offset. Used for array indexing and struct member access (offset in Value-slot units, not bytes).
 

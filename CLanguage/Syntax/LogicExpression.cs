@@ -30,33 +30,65 @@ namespace CLanguage.Syntax
 
 		protected override void DoEmit (EmitContext ec)
 		{
-            var label = new Label ();
+            var shortCircuitLabel = ec.DefineLabel ();
+            var endLabel = ec.DefineLabel ();
+
 			Left.Emit (ec);
 			ec.EmitCastToBoolean (Left.GetEvaluatedCType (ec));
 
             switch (Op) {
                 case LogicOp.And:
-                    ec.Emit (OpCode.BranchIfFalseNoSPChange, label);  //or Dup instruction. 
+                    // For &&: if left is false, result is 0
+                    ec.Emit (OpCode.BranchIfFalse, shortCircuitLabel);
                     break;
                 case LogicOp.Or:
-                    ec.Emit (OpCode.BranchIfTrueNoSPChange, label);
+                    // For ||: if left is true, result is 1
+                    ec.Emit (OpCode.BranchIfTrue, shortCircuitLabel);
                     break;
             }
 
-			Right.Emit (ec); // (true)||(1/0) <- second part not executed in C 
+            // Left didn't short-circuit, so evaluate right side
+			Right.Emit (ec);
             ec.EmitCastToBoolean (Right.GetEvaluatedCType (ec));
 
-			switch (Op) {
-			case LogicOp.And:
-				ec.Emit (OpCode.LogicalAnd);
-				break;
-			case LogicOp.Or:
-				ec.Emit (OpCode.LogicalOr);
-				break;
-			default:
-				throw new NotSupportedException ("Unsupported logical operator '" + Op + "'");
-			}
-            ec.EmitLabel (label);
+            switch (Op) {
+                case LogicOp.And:
+                    // For &&: if right is also false, result is 0
+                    ec.Emit (OpCode.BranchIfFalse, shortCircuitLabel);
+                    break;
+                case LogicOp.Or:
+                    // For ||: if right is true, result is 1
+                    ec.Emit (OpCode.BranchIfTrue, shortCircuitLabel);
+                    break;
+            }
+
+            // Neither side triggered the short-circuit branch
+            switch (Op) {
+                case LogicOp.And:
+                    // Both sides were true
+                    ec.Emit (OpCode.LoadConstant, 1);
+                    break;
+                case LogicOp.Or:
+                    // Both sides were false
+                    ec.Emit (OpCode.LoadConstant, 0);
+                    break;
+                default:
+                    throw new NotSupportedException ("Unsupported logical operator '" + Op + "'");
+            }
+            ec.Emit (OpCode.Jump, endLabel);
+
+            // Short-circuit path
+            ec.EmitLabel (shortCircuitLabel);
+            switch (Op) {
+                case LogicOp.And:
+                    ec.Emit (OpCode.LoadConstant, 0);
+                    break;
+                case LogicOp.Or:
+                    ec.Emit (OpCode.LoadConstant, 1);
+                    break;
+            }
+
+            ec.EmitLabel (endLabel);
 		}
 
 

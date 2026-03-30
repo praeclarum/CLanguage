@@ -51,8 +51,6 @@ namespace CLanguage.Interpreter
         Jump,
         BranchIfFalse,
         BranchIfTrue,
-        BranchIfFalseNoSPChange,
-        BranchIfTrueNoSPChange,
 
         Call,
         CallVirtual,
@@ -273,12 +271,7 @@ namespace CLanguage.Interpreter
 
         #endregion
 
-        #region Boolean
 
-        LogicalAnd,
-        LogicalOr,
-
-        #endregion
 
         #region Conversion
 

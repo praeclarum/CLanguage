@@ -107,30 +107,7 @@ namespace CLanguage.Interpreter
                             ip++;
                         }
                         break;
-                    case OpCode.BranchIfFalseNoSPChange:
-                        a = state.Stack[state.SP - 1];
-                        if (a.UInt8Value == 0) {
-                            if (i.Label != null)
-                                ip = i.Label.Index;
-                            else
-                                throw new InvalidOperationException ($"BranchIfFalse label not set");
-                        }
-                        else {
-                            ip++;
-                        }
-                        break;
-                    case OpCode.BranchIfTrueNoSPChange:
-                        a = state.Stack[state.SP - 1];
-                        if (a.UInt8Value != 0) {
-                            if (i.Label != null)
-                                ip = i.Label.Index;
-                            else
-                                throw new InvalidOperationException ($"BranchIfTrue label not set");
-                        }
-                        else {
-                            ip++;
-                        }
-                        break;
+
 
 
                     case OpCode.Call:
@@ -1199,20 +1176,7 @@ namespace CLanguage.Interpreter
                         state.Stack[state.SP - 1] = (Value)(-(double)a);
                         ip++;
                         break;
-                    case OpCode.LogicalAnd:
-                        a = state.Stack[state.SP - 2];
-                        b = state.Stack[state.SP - 1];
-                        state.Stack[state.SP - 2] = ((a.Int32Value != 0) && (b.Int32Value != 0)) ? 1 : 0;
-                        state.SP--;
-                        ip++;
-                        break;
-                    case OpCode.LogicalOr:
-                        a = state.Stack[state.SP - 2];
-                        b = state.Stack[state.SP - 1];
-                        state.Stack[state.SP - 2] = ((a.Int32Value != 0) || (b.Int32Value != 0)) ? 1 : 0;
-                        state.SP--;
-                        ip++;
-                        break;
+
                     default:
                         a = state.Stack[state.SP - 1];
                         state.Stack[state.SP - 1] = Convert (a, i.Op);
