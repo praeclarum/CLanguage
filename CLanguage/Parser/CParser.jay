@@ -29,6 +29,7 @@ namespace CLanguage.Parser
 %token AND_ASSIGN OR_ASSIGN
 %token TYPE_NAME
 %token PUBLIC PRIVATE PROTECTED
+%token VIRTUAL OVERRIDE
 
 %token TYPEDEF EXTERN STATIC AUTO REGISTER INLINE RESTRICT
 %token CHAR SHORT INT LONG SIGNED UNSIGNED FLOAT DOUBLE CONST VOLATILE VOID
@@ -463,8 +464,21 @@ identifier_or_typename
 
 struct_or_union_or_class_specifier
 	: struct_or_union_or_class identifier_or_typename class_body { $$ = new TypeSpecifier((TypeSpecifierKind)$1, ($2).ToString(), (Block)$3); }
+	| struct_or_union_or_class identifier_or_typename ':' base_specifier class_body
+	{
+		var ts = new TypeSpecifier((TypeSpecifierKind)$1, ($2).ToString(), (Block)$5);
+		ts.BaseClassName = (string)$4;
+		$$ = ts;
+	}
 	| struct_or_union_or_class class_body            { $$ = new TypeSpecifier((TypeSpecifierKind)$1, "", (Block)$2); }
 	| struct_or_union_or_class identifier_or_typename                    { $$ = new TypeSpecifier((TypeSpecifierKind)$1, ($2).ToString()); }
+	;
+
+base_specifier
+	: identifier_or_typename                  { $$ = ($1).ToString(); }
+	| PUBLIC identifier_or_typename           { $$ = ($2).ToString(); }
+	| PRIVATE identifier_or_typename          { $$ = ($2).ToString(); }
+	| PROTECTED identifier_or_typename        { $$ = ($2).ToString(); }
 	;
 
 struct_or_union_or_class
@@ -889,6 +903,34 @@ class_block_item
 	: declaration
 	| visibility
 	| ctor_declaration
+	| VIRTUAL declaration
+	{
+		$$ = new VirtualDeclarationStatement((Statement)$2) { IsVirtual = true };
+	}
+	| declaration_specifiers init_declarator_list OVERRIDE ';'
+	{
+		var inner = new MultiDeclaratorStatement ((DeclarationSpecifiers)$1, (List<InitDeclarator>)$2);
+		$$ = new VirtualDeclarationStatement(inner) { IsOverride = true };
+	}
+	| VIRTUAL declaration_specifiers init_declarator_list OVERRIDE ';'
+	{
+		var inner = new MultiDeclaratorStatement ((DeclarationSpecifiers)$2, (List<InitDeclarator>)$3);
+		$$ = new VirtualDeclarationStatement(inner) { IsVirtual = true, IsOverride = true };
+	}
+	| VIRTUAL pure_virtual_declaration
+	{
+		$$ = $2;
+	}
+	;
+
+pure_virtual_declaration
+	: declaration_specifiers declarator '=' CONSTANT ';'
+	{
+		List<InitDeclarator> decls = new List<InitDeclarator> {
+			new InitDeclarator((Declarator)$2, null) };
+		var inner = new MultiDeclaratorStatement ((DeclarationSpecifiers)$1, decls);
+		$$ = new VirtualDeclarationStatement(inner) { IsVirtual = true, IsPureVirtual = true };
+	}
 	;
 
 visibility
