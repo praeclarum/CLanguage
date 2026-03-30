@@ -104,7 +104,7 @@ namespace CLanguage.Syntax
 			if (intType.Signedness == Signedness.Signed) {
 				long val;
 				try { val = Convert.ToInt64 (Value); }
-				catch { return intType; }
+				catch (Exception ex) when (ex is OverflowException || ex is InvalidCastException || ex is FormatException) { return intType; }
 
 				if (FitsInSignedBytes (val, curSize))
 					return intType;
@@ -118,7 +118,7 @@ namespace CLanguage.Syntax
 			else {
 				ulong val;
 				try { val = Convert.ToUInt64 (Value); }
-				catch { return intType; }
+				catch (Exception ex) when (ex is OverflowException || ex is InvalidCastException || ex is FormatException) { return intType; }
 
 				if (FitsInUnsignedBytes (val, curSize))
 					return intType;
