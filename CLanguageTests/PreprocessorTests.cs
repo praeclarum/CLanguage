@@ -396,6 +396,82 @@ void main() {
 ");
         }
 
+        [TestMethod]
+        public void IncludeAngleBracketWithLineComment ()
+        {
+            Run (@"
+#include <stdint.h> // include stdint
+void main() {
+    int16_t x = 42;
+    assertAreEqual(42, x);
+}
+");
+        }
+
+        [TestMethod]
+        public void IncludeQuotedWithLineComment ()
+        {
+            Run (@"
+#include ""stdint.h"" // quoted include
+void main() {
+    int16_t x = 42;
+    assertAreEqual(42, x);
+}
+");
+        }
+
+        [TestMethod]
+        public void LineCommentBeforeInclude ()
+        {
+            Run (@"
+// This is a comment
+#include <stdint.h>
+void main() {
+    int16_t x = 42;
+    assertAreEqual(42, x);
+}
+");
+        }
+
+        [TestMethod]
+        public void MultipleIncludesWithLineComments ()
+        {
+            Run (@"
+#include <stdint.h> // integer types
+#include <math.h> // math functions
+void main() {
+    int16_t x = 42;
+    assertAreEqual(42, x);
+    assertFloatsAreEqual(3.1415927410125732, M_PI);
+}
+");
+        }
+
+        [TestMethod]
+        public void DefineAndIncludeWithLineComments ()
+        {
+            Run (@"
+#define MAGIC 42 // magic number
+#include <stdint.h> // include stdint
+void main() {
+    int16_t x = MAGIC;
+    assertAreEqual(42, x);
+}
+");
+        }
+
+        [TestMethod]
+        public void IncludeWithBlockComment ()
+        {
+            Run (@"
+#include <stdint.h> /* block comment */
+void main() {
+    int16_t x = 42;
+    assertAreEqual(42, x);
+}
+");
+        }
+
     }
 }
 
