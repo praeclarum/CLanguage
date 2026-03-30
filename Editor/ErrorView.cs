@@ -78,7 +78,8 @@ namespace CLanguage.Editor
 #elif __MACOS__
             var p = NativeBezierPath.FromRoundedRect (bounds, bounds.Height / 2, bounds.Height / 2);
 #endif
-            Theme.ErrorBubbleBackgroundColor.ColorWithAlphaComponent (0.875f).SetFill ();
+            var bubbleColor = message.IsWarning ? Theme.WarningBubbleBackgroundColor : Theme.ErrorBubbleBackgroundColor;
+            bubbleColor.ColorWithAlphaComponent (0.875f).SetFill ();
             p.Fill ();
 
             var abounds = bounds;
