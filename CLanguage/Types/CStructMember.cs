@@ -14,5 +14,9 @@
 
     public class CStructMethod : CStructMember
     {
+        public bool IsVirtual { get; set; }
+        public bool IsOverride { get; set; }
+        public bool IsPureVirtual { get; set; }
+        public int? VTableSlotIndex { get; set; }
     }
 }
