@@ -245,7 +245,7 @@ void main() {}
             var vtableGlobal = exe.Globals.FirstOrDefault (g => g.Name == "__vtable_B");
             Assert.IsNotNull (vtableGlobal, "Vtable global should be allocated");
             Assert.IsNotNull (vtableGlobal!.InitialValue, "Vtable should have initial values");
-            Assert.AreEqual (1, vtableGlobal.InitialValue!.Length, "Vtable should have 1 slot");
+            Assert.AreEqual (2, vtableGlobal.InitialValue!.Length, "Vtable should have 2 slots (type_id + 1 method)");
         }
 
         [TestMethod]
@@ -307,11 +307,12 @@ void main() {}
             Assert.IsNotNull (vtableB);
             Assert.IsNotNull (vtableA!.InitialValue);
             Assert.IsNotNull (vtableB!.InitialValue);
-            // Both vtables have 1 slot but point to different functions
-            Assert.AreEqual (1, vtableA.InitialValue!.Length);
-            Assert.AreEqual (1, vtableB.InitialValue!.Length);
-            Assert.AreNotEqual (vtableA.InitialValue[0].PointerValue,
-                vtableB.InitialValue[0].PointerValue,
+            // Both vtables have 2 slots (type_id + 1 method) but method pointers differ
+            Assert.AreEqual (2, vtableA.InitialValue!.Length);
+            Assert.AreEqual (2, vtableB.InitialValue!.Length);
+            // Method pointer is at index 1 (index 0 is type_id)
+            Assert.AreNotEqual (vtableA.InitialValue[1].PointerValue,
+                vtableB.InitialValue[1].PointerValue,
                 "Derived vtable should have overridden function pointer");
         }
 
@@ -902,6 +903,174 @@ void main() {
             // Non-polymorphic: no vtable, no vptr overhead
             Assert.IsFalse (vType!.IsPolymorphic);
             Assert.AreEqual (2, vType.NumValues, "Non-polymorphic struct should have 2 value slots (x, y)");
+        }
+
+        // ---- Phase 5: CallVirtual opcode optimization and RTTI foundation ----
+
+        [TestMethod]
+        public void CallVirtualOpcodeUsedForVirtualDispatch ()
+        {
+            // Verify that CallVirtual opcode is emitted for virtual method calls
+            var exe = Compile (@"
+class Base {
+public:
+    virtual int f();
+};
+int Base::f() { return 42; }
+void main() {
+    Base b;
+    b.f();
+}
+");
+            // Find the main function and check for CallVirtual opcode
+            var mainFunc = exe.Functions.OfType<CLanguage.Interpreter.CompiledFunction> ()
+                .FirstOrDefault (f => f.Name == "main");
+            Assert.IsNotNull (mainFunc);
+            var hasCallVirtual = mainFunc!.Instructions.Any (
+                i => i.Op == CLanguage.Interpreter.OpCode.CallVirtual);
+            Assert.IsTrue (hasCallVirtual, "Virtual dispatch should use CallVirtual opcode");
+        }
+
+        [TestMethod]
+        public void CallVirtualNotUsedForNonVirtualMethod ()
+        {
+            var exe = Compile (@"
+class Base {
+public:
+    int f();
+};
+int Base::f() { return 42; }
+void main() {
+    Base b;
+    b.f();
+}
+");
+            var mainFunc = exe.Functions.OfType<CLanguage.Interpreter.CompiledFunction> ()
+                .FirstOrDefault (f => f.Name == "main");
+            Assert.IsNotNull (mainFunc);
+            var hasCallVirtual = mainFunc!.Instructions.Any (
+                i => i.Op == CLanguage.Interpreter.OpCode.CallVirtual);
+            Assert.IsFalse (hasCallVirtual, "Non-virtual dispatch should not use CallVirtual opcode");
+        }
+
+        [TestMethod]
+        public void CallVirtualWorksWithArguments ()
+        {
+            Run (@"
+class Base {
+public:
+    virtual int add(int a, int b);
+};
+int Base::add(int a, int b) { return a + b; }
+class Derived : public Base {
+public:
+    int add(int a, int b) override;
+};
+int Derived::add(int a, int b) { return a * b; }
+void main() {
+    Derived d;
+    Base* bp = &d;
+    assertAreEqual(12, bp->add(3, 4));
+    Base b2;
+    assertAreEqual(7, b2.add(3, 4));
+}
+");
+        }
+
+        [TestMethod]
+        public void VtableSlotZeroContainsTypeId ()
+        {
+            var exe = Compile (@"
+class A {
+public:
+    virtual int f();
+};
+int A::f() { return 1; }
+A a;
+void main() {}
+");
+            var vtableA = exe.Globals.FirstOrDefault (g => g.Name == "__vtable_A");
+            Assert.IsNotNull (vtableA);
+            Assert.IsNotNull (vtableA!.InitialValue);
+            // Slot 0 should be the type_id (a positive integer)
+            var typeId = vtableA.InitialValue![0].Int32Value;
+            Assert.IsTrue (typeId > 0, "Type ID at vtable slot 0 should be a positive integer");
+        }
+
+        [TestMethod]
+        public void DerivedTypesHaveDistinctTypeIds ()
+        {
+            var exe = Compile (@"
+class A {
+public:
+    virtual int f();
+};
+int A::f() { return 1; }
+class B : public A {
+public:
+    int f() override;
+};
+int B::f() { return 2; }
+A a;
+B b;
+void main() {}
+");
+            var vtableA = exe.Globals.FirstOrDefault (g => g.Name == "__vtable_A");
+            var vtableB = exe.Globals.FirstOrDefault (g => g.Name == "__vtable_B");
+            Assert.IsNotNull (vtableA?.InitialValue);
+            Assert.IsNotNull (vtableB?.InitialValue);
+            var typeIdA = vtableA!.InitialValue![0].Int32Value;
+            var typeIdB = vtableB!.InitialValue![0].Int32Value;
+            Assert.IsTrue (typeIdA > 0);
+            Assert.IsTrue (typeIdB > 0);
+            Assert.AreNotEqual (typeIdA, typeIdB, "Each polymorphic type should have a distinct type ID");
+        }
+
+        [TestMethod]
+        public void TypeHierarchyTableBuiltForPolymorphicTypes ()
+        {
+            var exe = Compile (@"
+class A {
+public:
+    virtual int f();
+};
+int A::f() { return 1; }
+class B : public A {
+public:
+    int f() override;
+};
+int B::f() { return 2; }
+class C : public B {
+public:
+    int f() override;
+};
+int C::f() { return 3; }
+void main() {}
+");
+            Assert.AreEqual (3, exe.TypeHierarchy.Count, "Should have 3 entries for A, B, C");
+            var entryA = exe.TypeHierarchy.FirstOrDefault (e => e.TypeName == "A");
+            var entryB = exe.TypeHierarchy.FirstOrDefault (e => e.TypeName == "B");
+            var entryC = exe.TypeHierarchy.FirstOrDefault (e => e.TypeName == "C");
+            Assert.IsNotNull (entryA);
+            Assert.IsNotNull (entryB);
+            Assert.IsNotNull (entryC);
+            Assert.AreEqual (-1, entryA!.BaseTypeId, "A has no polymorphic base");
+            Assert.AreEqual (entryA.TypeId, entryB!.BaseTypeId, "B's base should be A");
+            Assert.AreEqual (entryB.TypeId, entryC!.BaseTypeId, "C's base should be B");
+        }
+
+        [TestMethod]
+        public void TypeHierarchyNotBuiltForNonPolymorphicTypes ()
+        {
+            var exe = Compile (@"
+class Plain {
+public:
+    int x;
+};
+void main() {}
+");
+            Assert.AreEqual (0, exe.TypeHierarchy.Count,
+                "Non-polymorphic types should not appear in the type hierarchy");
         }
     }
 }

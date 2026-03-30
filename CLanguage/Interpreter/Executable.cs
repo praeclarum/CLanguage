@@ -17,6 +17,15 @@ namespace CLanguage.Interpreter
         readonly List<CompiledVariable> globals = new List<CompiledVariable> ();
         public IReadOnlyList<CompiledVariable> Globals => globals;
 
+        readonly List<TypeHierarchyEntry> typeHierarchy = new List<TypeHierarchyEntry> ();
+
+        /// <summary>
+        /// Compile-time type hierarchy table for all polymorphic types.
+        /// Each entry maps a type ID to its base type ID and name,
+        /// enabling future RTTI features like <c>dynamic_cast</c> and <c>typeid</c>.
+        /// </summary>
+        public IReadOnlyList<TypeHierarchyEntry> TypeHierarchy => typeHierarchy;
+
         public Executable (MachineInfo machineInfo)
 		{
 			MachineInfo = machineInfo;
@@ -31,6 +40,11 @@ namespace CLanguage.Interpreter
             var v = new CompiledVariable (name, offset, type);
             globals.Add (v);
             return v;
+        }
+
+        public void AddTypeHierarchyEntry (TypeHierarchyEntry entry)
+        {
+            typeHierarchy.Add (entry);
         }
 
         public Value GetConstantMemory (string stringConstant)

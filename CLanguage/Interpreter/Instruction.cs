@@ -55,6 +55,7 @@ namespace CLanguage.Interpreter
         BranchIfTrueNoSPChange,
 
         Call,
+        CallVirtual,
         Return,
 
         #endregion
