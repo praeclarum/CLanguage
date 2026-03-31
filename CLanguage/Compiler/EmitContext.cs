@@ -417,7 +417,28 @@ namespace CLanguage.Compiler
                         }
                     }
 
+                    // Validate size specifier combinations
+                    if (size != "" && size != "short" && size != "long" && size != "long long") {
+                        Report.Error (2078, "Invalid combination of type specifiers");
+                        size = "";
+                    }
+
                     var typeName = trueTs == null ? "int" : trueTs.Name;
+
+                    // Validate size modifiers with non-integer types
+                    if (size != "" && typeName == "float") {
+                        Report.Error (2078, "Invalid combination of type specifiers");
+                        size = "";
+                    }
+                    if (size != "" && typeName == "double" && size != "long") {
+                        Report.Error (2078, "Invalid combination of type specifiers");
+                        size = "";
+                    }
+                    if (size != "" && typeName == "bool") {
+                        Report.Error (2078, "Invalid combination of type specifiers");
+                        size = "";
+                    }
+
                     var type = typeName == "float" ? (CBasicType)CBasicType.Float
                         : (typeName == "double" ? (CBasicType)CBasicType.Double
                            : (typeName == "bool" ? (CBasicType)CBasicType.Bool
