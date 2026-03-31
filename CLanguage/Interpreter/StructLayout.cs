@@ -84,16 +84,13 @@ namespace CLanguage.Interpreter
         void BuildFieldMap (CStructType structType)
         {
             if (!structType.IsPolymorphic && structType.BaseType == null) {
-                // Non-polymorphic, no base: match GetFieldValueOffset's
-                // backward-compatible behavior that includes all members
-                // (methods occupy Value slots too in this layout mode).
                 var offset = 0;
                 foreach (var m in structType.Members) {
                     if (m is CStructField) {
                         fields[m.Name] = new FieldAccessor (offset, m.MemberType.NumValues);
                         fieldTypes[m.Name] = m.MemberType;
+                        offset += m.MemberType.NumValues;
                     }
-                    offset += m.MemberType.NumValues;
                 }
             }
             else {

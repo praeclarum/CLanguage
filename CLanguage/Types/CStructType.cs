@@ -110,13 +110,7 @@ namespace CLanguage.Types
         public override int NumValues {
             get {
                 if (!IsPolymorphic && BaseType == null) {
-                    // Non-polymorphic, no base: preserve original behavior exactly
-                    // (includes all members, not just fields, for backward compatibility)
-                    var s = 0;
-                    foreach (var m in Members) {
-                        s += m.MemberType.NumValues;
-                    }
-                    return s;
+                    return GetOwnFieldsNumValues ();
                 }
                 var total = IsPolymorphic ? 1 : 0; // vptr
                 if (BaseType != null)
@@ -129,13 +123,7 @@ namespace CLanguage.Types
         public override int GetByteSize (EmitContext c)
         {
             if (!IsPolymorphic && BaseType == null) {
-                // Non-polymorphic, no base: preserve original behavior exactly
-                // (includes all members, not just fields, for backward compatibility)
-                var s = 0;
-                foreach (var m in Members) {
-                    s += m.MemberType.GetByteSize (c);
-                }
-                return s;
+                return GetOwnFieldsByteSize (c);
             }
             var total = IsPolymorphic ? c.MachineInfo.PointerSize : 0; // vptr
             if (BaseType != null)
@@ -147,12 +135,13 @@ namespace CLanguage.Types
         public int GetFieldValueOffset (CStructMember member, EmitContext c)
         {
             if (!IsPolymorphic && BaseType == null) {
-                // Non-polymorphic, no base: original behavior
                 var offset = 0;
                 foreach (var m in Members) {
-                    if (ReferenceEquals (m, member))
-                        return offset;
-                    offset += m.MemberType.NumValues;
+                    if (m is CStructField) {
+                        if (ReferenceEquals (m, member))
+                            return offset;
+                        offset += m.MemberType.NumValues;
+                    }
                 }
                 throw new Exception ($"Member '{member.Name}' not found");
             }

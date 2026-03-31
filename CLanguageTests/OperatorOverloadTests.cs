@@ -516,10 +516,8 @@ void main() {
         [TestMethod]
         public void InternalOperatorPlus ()
         {
-            // Struct without operator in body — the operator is resolved
-            // externally from the InternalFunction via TryResolveOperatorFunction.
             var mi = new TestMachineInfo ();
-            mi.HeaderCode += "struct V { int x; };\n";
+            mi.HeaderCode += "struct V { int x; V operator+(V other); };\n";
             mi.AddInternalFunction ("V V::operator+(V other)", interp => {
                 var _this = interp.ReadThis ().PointerValue;
                 var thisX = interp.Stack[_this].Int32Value;
@@ -541,7 +539,7 @@ void main() {
         public void InternalOperatorEquals ()
         {
             var mi = new TestMachineInfo ();
-            mi.HeaderCode += "struct V { int x; };\n";
+            mi.HeaderCode += "struct V { int x; bool operator==(V other); };\n";
             mi.AddInternalFunction ("bool V::operator==(V other)", interp => {
                 var _this = interp.ReadThis ().PointerValue;
                 var thisX = interp.Stack[_this].Int32Value;
@@ -567,18 +565,16 @@ void main() {
             mi.HeaderCode += @"
 struct V {
     int x;
+    V operator+(V other);
     bool operator==(V other);
 };
 ";
             // operator+ is internal (C#), operator== is compiled (C code)
             mi.AddInternalFunction ("V V::operator+(V other)", interp => {
                 var _this = interp.ReadThis ().PointerValue;
-                // V has 2 NumValues (int x + operator==), so read x at the right offset
                 var thisX = interp.Stack[_this].Int32Value;
                 var otherX = interp.ReadArg (0).Int32Value;
-                // Push struct result (x value + operator== method slot)
                 interp.Push (thisX + otherX);
-                interp.Push (0);
             });
 
             var code = @"
@@ -599,7 +595,7 @@ void main() {
         public void InternalOperatorWithBasicReturnType ()
         {
             var mi = new TestMachineInfo ();
-            mi.HeaderCode += "struct V { int x; };\n";
+            mi.HeaderCode += "struct V { int x; int operator<(V other); };\n";
             mi.AddInternalFunction ("int V::operator<(V other)", interp => {
                 var _this = interp.ReadThis ().PointerValue;
                 var thisX = interp.Stack[_this].Int32Value;
@@ -621,7 +617,7 @@ void main() {
         public void InternalOperatorChained ()
         {
             var mi = new TestMachineInfo ();
-            mi.HeaderCode += "struct V { int x; };\n";
+            mi.HeaderCode += "struct V { int x; V operator+(V other); };\n";
             mi.AddInternalFunction ("V V::operator+(V other)", interp => {
                 var _this = interp.ReadThis ().PointerValue;
                 var thisX = interp.Stack[_this].Int32Value;
@@ -644,7 +640,7 @@ void main() {
         public void InternalOperatorWithConstRef ()
         {
             var mi = new TestMachineInfo ();
-            mi.HeaderCode += "struct V { int x; };\n";
+            mi.HeaderCode += "struct V { int x; V operator+(const V& other); };\n";
             mi.AddInternalFunction ("V V::operator+(const V& other)", interp => {
                 var _this = interp.ReadThis ().PointerValue;
                 var thisX = interp.Stack[_this].Int32Value;
@@ -669,7 +665,7 @@ void main() {
         {
             // Test multi-field struct return and parameter access
             var mi = new TestMachineInfo ();
-            mi.HeaderCode += "struct Vec { int x; int y; };\n";
+            mi.HeaderCode += "struct Vec { int x; int y; Vec operator+(Vec other); };\n";
             mi.AddInternalFunction ("Vec Vec::operator+(Vec other)", interp => {
                 var _this = interp.ReadThis ().PointerValue;
                 var thisX = interp.Stack[_this].Int32Value;
