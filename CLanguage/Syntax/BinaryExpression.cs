@@ -41,12 +41,18 @@ namespace CLanguage.Syntax
 
         protected override void DoEmit (EmitContext ec)
         {
+			var leftType = Left.GetEvaluatedCType (ec);
+			var rightType = Right.GetEvaluatedCType (ec);
+
+			if (TryEmitBinaryOperatorCall (ec, leftType, rightType, Left, Right, BinopToOperatorName (Op)))
+				return;
+
 			var aType = GetArithmeticType (Left, Right, Op.ToString (), ec);
 
 			Left.Emit (ec);
-			ec.EmitCast (Left.GetEvaluatedCType (ec), aType);
+			ec.EmitCast (leftType, aType);
 			Right.Emit(ec);
-			ec.EmitCast (Right.GetEvaluatedCType (ec), aType);
+			ec.EmitCast (rightType, aType);
 
 			var ioff = ec.GetInstructionOffset (aType);
 
@@ -88,6 +94,11 @@ namespace CLanguage.Syntax
 
 		public override CType GetEvaluatedCType (EmitContext ec)
 		{
+			var leftType = Left.GetEvaluatedCType (ec);
+			var rightType = Right.GetEvaluatedCType (ec);
+			var ft = TryResolveBinaryOperatorType (ec, leftType, rightType, BinopToOperatorName (Op));
+			if (ft != null)
+				return ft.ReturnType;
 			return GetArithmeticType (Left, Right, Op.ToString (), ec);
 		}
 

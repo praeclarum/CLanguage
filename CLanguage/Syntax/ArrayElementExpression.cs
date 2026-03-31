@@ -29,6 +29,14 @@ namespace CLanguage.Syntax
             else if (t is CPointerType p) {
                 return p.InnerType;
             }
+            else if (t is CStructType st) {
+                var indexType = ElementIndex.GetEvaluatedCType (ec);
+                var ft = TryResolveBinaryOperatorType (ec, t, indexType, "operator[]");
+                if (ft != null)
+                    return ft.ReturnType;
+                ec.Report.Error (601, "Left hand side of [ must be an array or pointer");
+                return CType.Void;
+            }
             else {
                 ec.Report.Error (601, "Left hand side of [ must be an array or pointer");
                 return CType.Void;
@@ -37,6 +45,14 @@ namespace CLanguage.Syntax
 
         protected override void DoEmit (EmitContext ec)
         {
+            var t = Array.GetEvaluatedCType (ec);
+            if (t is CStructType) {
+                var indexType = ElementIndex.GetEvaluatedCType (ec);
+                if (TryEmitBinaryOperatorCall (ec, t, indexType, Array, ElementIndex, "operator[]"))
+                    return;
+                ec.Report.Error (601, "Left hand side of [ must be an array or pointer");
+                return;
+            }
             DoEmitPointer (ec);
             ec.Emit (OpCode.LoadPointer);
         }

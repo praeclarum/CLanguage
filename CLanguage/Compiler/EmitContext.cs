@@ -85,6 +85,11 @@ namespace CLanguage.Compiler
             throw new Exception ("Cannot resolve method function");
         }
 
+        public virtual ResolvedVariable? TryResolveOperatorFunction (string structName, string operatorName, CType[]? argTypes)
+        {
+            return ParentContext?.TryResolveOperatorFunction (structName, operatorName, argTypes);
+        }
+
         public virtual void BeginBlock (Block b)
         {
             ParentContext?.BeginBlock (b);
@@ -423,7 +428,22 @@ namespace CLanguage.Compiler
             var structTs = specs.TypeSpecifiers.FirstOrDefault (x => x.Kind == TypeSpecifierKind.Struct || x.Kind == TypeSpecifierKind.Class);
             if (structTs != null) {
                 if (structTs.Body != null) {
-                    var st = new CStructType (structTs.Name);
+                    // Reuse an existing forward-declared struct type if one exists,
+                    // otherwise create a new one.
+                    CStructType st;
+                    if (!string.IsNullOrEmpty (structTs.Name) && block != null &&
+                        block.Structures.TryGetValue (structTs.Name, out var existing) &&
+                        existing.Members.Count == 0) {
+                        st = existing;
+                    }
+                    else {
+                        st = new CStructType (structTs.Name);
+                    }
+                    // Register the struct type early so members can reference it
+                    // (e.g., `struct V { V operator+(V other); };`)
+                    if (!string.IsNullOrEmpty (structTs.Name) && block != null) {
+                        block.Structures[structTs.Name] = st;
+                    }
                     if (structTs.BaseSpecifiers is { } baseSpecs) {
                         foreach (var baseSpec in baseSpecs) {
                             if (st.BaseType != null) {
@@ -446,10 +466,18 @@ namespace CLanguage.Compiler
                     return st;
                 }
                 else {
-                    // Lookup
+                    // Lookup (also handles forward declarations like `struct V;`)
                     var name = structTs.Name;
                     if (block != null && block.Structures.TryGetValue (name, out var structType)) {
                         return structType;
+                    }
+                    else if (!string.IsNullOrEmpty (name)) {
+                        // Forward declaration — create incomplete type that will be
+                        // completed when the full definition is encountered.
+                        var fwdStruct = new CStructType (name);
+                        if (block != null)
+                            block.Structures[name] = fwdStruct;
+                        return fwdStruct;
                     }
                     else {
                         Report.Error (246, "'{0}' not found", name);
