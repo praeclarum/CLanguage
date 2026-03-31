@@ -47,6 +47,25 @@ namespace CLanguage.Syntax
 			if (TryEmitBinaryOperatorCall (ec, leftType, rightType, Left, Right, BinopToOperatorName (Op)))
 				return;
 
+			if (Op == Binop.ShiftLeft || Op == Binop.ShiftRight) {
+				// C11 §6.5.7: The integer promotions are performed on each of the operands.
+				// The type of the result is that of the promoted left operand.
+				var promotedLeft = GetShiftPromotedType (leftType, ec);
+
+				Left.Emit (ec);
+				ec.EmitCast (leftType, promotedLeft);
+				Right.Emit (ec);
+				ec.EmitCast (rightType, promotedLeft);
+
+				var ioff = ec.GetInstructionOffset (promotedLeft);
+
+				if (Op == Binop.ShiftLeft)
+					ec.Emit ((OpCode)(OpCode.ShiftLeftInt8 + ioff));
+				else
+					ec.Emit ((OpCode)(OpCode.ShiftRightInt8 + ioff));
+				return;
+			}
+
 			var aType = GetArithmeticType (Left, Right, Op.ToString (), ec);
 
 			Left.Emit (ec);
@@ -54,38 +73,32 @@ namespace CLanguage.Syntax
 			Right.Emit(ec);
 			ec.EmitCast (rightType, aType);
 
-			var ioff = ec.GetInstructionOffset (aType);
+			var ioff2 = ec.GetInstructionOffset (aType);
 
             switch (Op) {
                 case Binop.Add:
-                    ec.Emit ((OpCode)(OpCode.AddInt8 + ioff));
+                    ec.Emit ((OpCode)(OpCode.AddInt8 + ioff2));
                     break;
                 case Binop.Subtract:
-                    ec.Emit ((OpCode)(OpCode.SubtractInt8 + ioff));
+                    ec.Emit ((OpCode)(OpCode.SubtractInt8 + ioff2));
                     break;
                 case Binop.Multiply:
-                    ec.Emit ((OpCode)(OpCode.MultiplyInt8 + ioff));
+                    ec.Emit ((OpCode)(OpCode.MultiplyInt8 + ioff2));
                     break;
                 case Binop.Divide:
-                    ec.Emit ((OpCode)(OpCode.DivideInt8 + ioff));
+                    ec.Emit ((OpCode)(OpCode.DivideInt8 + ioff2));
                     break;
                 case Binop.Mod:
-                    ec.Emit ((OpCode)(OpCode.ModuloInt8 + ioff));
+                    ec.Emit ((OpCode)(OpCode.ModuloInt8 + ioff2));
                     break;
                 case Binop.BinaryAnd:
-                    ec.Emit ((OpCode)(OpCode.BinaryAndInt8 + ioff));
+                    ec.Emit ((OpCode)(OpCode.BinaryAndInt8 + ioff2));
                     break;
                 case Binop.BinaryOr:
-                    ec.Emit ((OpCode)(OpCode.BinaryOrInt8 + ioff));
+                    ec.Emit ((OpCode)(OpCode.BinaryOrInt8 + ioff2));
                     break;
                 case Binop.BinaryXor:
-                    ec.Emit ((OpCode)(OpCode.BinaryXorInt8 + ioff));
-                    break;
-                case Binop.ShiftLeft:
-                    ec.Emit ((OpCode)(OpCode.ShiftLeftInt8 + ioff));
-                    break;
-                case Binop.ShiftRight:
-                    ec.Emit ((OpCode)(OpCode.ShiftRightInt8 + ioff));
+                    ec.Emit ((OpCode)(OpCode.BinaryXorInt8 + ioff2));
                     break;
                 default:
                     throw new NotSupportedException ("Unsupported binary operator '" + Op + "'");
@@ -99,7 +112,20 @@ namespace CLanguage.Syntax
 			var ft = TryResolveBinaryOperatorType (ec, leftType, rightType, BinopToOperatorName (Op));
 			if (ft != null)
 				return ft.ReturnType;
+			if (Op == Binop.ShiftLeft || Op == Binop.ShiftRight)
+				return GetShiftPromotedType (leftType, ec);
 			return GetArithmeticType (Left, Right, Op.ToString (), ec);
+		}
+
+		/// <summary>
+		/// C11 §6.5.7: For shift operators, each operand is independently integer-promoted.
+		/// The type of the result is that of the promoted left operand.
+		/// </summary>
+		static CType GetShiftPromotedType (CType type, EmitContext ec)
+		{
+			if (type is CBasicType basicType)
+				return basicType.IntegerPromote (ec);
+			return type;
 		}
 
         public override string ToString()

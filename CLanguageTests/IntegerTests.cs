@@ -369,6 +369,111 @@ void main () {
         }
 
 		[TestMethod]
+		public void ShiftLeftIntegerPromotion ()
+		{
+			// char promotes to int for shift
+			Run (@"
+void main () {
+    char c = 3;
+    assertAreEqual (48, c << 4);
+}");
+			// unsigned char promotes to signed int
+			Run (@"
+void main () {
+    unsigned char uc = 5;
+    assertAreEqual (40, uc << 3);
+}");
+			// int stays int
+			Run (@"
+void main () {
+    int i = 7;
+    assertAreEqual (112, i << 4);
+}");
+			// unsigned int stays unsigned int
+			Run (@"
+void main () {
+    unsigned int ui = 7;
+    assertU16AreEqual (112, ui << 4);
+}");
+			// long stays long for shift (can hold larger values than 16-bit int)
+			Run (@"
+void main () {
+    long l = 3;
+    assert32AreEqual (196608L, l << 16);
+}");
+			// unsigned long stays unsigned long
+			Run (@"
+void main () {
+    unsigned long ul = 5;
+    assertU32AreEqual (327680, ul << 16);
+}");
+		}
+
+		[TestMethod]
+		public void ShiftRightIntegerPromotion ()
+		{
+			// char promotes to int for right shift
+			Run (@"
+void main () {
+    char c = 96;
+    assertAreEqual (12, c >> 3);
+}");
+			// unsigned char promotes to int for right shift
+			Run (@"
+void main () {
+    unsigned char uc = 200;
+    assertAreEqual (25, uc >> 3);
+}");
+			// long stays long for right shift
+			Run (@"
+void main () {
+    long l = 196608L;
+    assert32AreEqual (3L, l >> 16);
+}");
+		}
+
+		[TestMethod]
+		public void ShiftResultTypeIsPromotedLeftOperand ()
+		{
+			// C11 6.5.7: result type is the promoted LEFT operand type,
+			// regardless of the right operand type.
+
+			// long left operand with char shift: result is long
+			Run (@"
+void main () {
+    long l = 7;
+    char shift = 16;
+    assert32AreEqual (458752L, l << shift);
+}");
+			// unsigned long left operand with char shift: result is unsigned long
+			Run (@"
+void main () {
+    unsigned long ul = 7;
+    char shift = 16;
+    assertU32AreEqual (458752, ul << shift);
+}");
+			// int left operand with long shift: result is int (promoted left), not long
+			Run (@"
+void main () {
+    int i = 7;
+    long shift = 4;
+    assertAreEqual (112, i << shift);
+}");
+		}
+
+		[TestMethod]
+		public void ShiftLeftByteToLongCast ()
+		{
+			// Original issue scenario: to get large shifts on small types,
+			// cast the left operand to long explicitly
+			Run (@"
+void main () {
+    byte b = 7;
+    assert32AreEqual (458752L, (long)b << 16);
+}");
+		}
+
+		[TestMethod]
 		public void StdInts ()
 		{
 			Run (@"
