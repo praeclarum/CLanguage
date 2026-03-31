@@ -32,3 +32,52 @@ var result = CLanguageService.Eval("2 + 3");
 Assert.AreEqual(5, result);
 ```
 
+### Parsing Header Files
+
+You can use `CLanguageService.ParseTranslationUnit()` to parse C/C++ header files and extract struct/enum definitions, global variables, function declarations, and typedefs without compiling to bytecode.
+
+```csharp
+using CLanguage;
+using CLanguage.Syntax;
+
+var code = File.ReadAllText("myheader.h");
+TranslationUnit tu = CLanguageService.ParseTranslationUnit(code);
+
+// Struct/class definitions
+foreach (var (name, structType) in tu.Structures)
+{
+    Console.WriteLine($"struct {name}:");
+    foreach (var member in structType.Members)
+        Console.WriteLine($"  {member.Name}: {member.MemberType}");
+}
+
+// Enum definitions
+foreach (var (name, enumType) in tu.Enums)
+{
+    Console.WriteLine($"enum {name}:");
+    foreach (var member in enumType.Members)
+        Console.WriteLine($"  {member.Name} = {member.Value}");
+}
+
+// Global variables
+foreach (var variable in tu.Variables)
+    Console.WriteLine($"var {variable.Name}: {variable.VariableType}");
+
+// Function declarations
+foreach (var func in tu.Functions)
+    Console.WriteLine($"func {func.Name}: {func.FunctionType}");
+
+// Typedefs
+foreach (var (name, type) in tu.Typedefs)
+    Console.WriteLine($"typedef {name} = {type}");
+```
+
+Key types you can inspect:
+
+- **`CStructType.Members`** — list of `CStructField` (with `Name`, `MemberType`) and `CStructMethod` entries
+- **`CEnumType.Members`** — list of `CEnumMember` (with `Name`, `Value`)
+- **`CFunctionType`** — has `ReturnType` and `Parameters` (each with `Name` and `ParameterType`)
+- **`CompiledVariable`** — has `Name` and `VariableType`
+
+If you need system headers resolved (e.g., `#include <stdint.h>`), use the `CParser` directly and provide an include callback.
+
