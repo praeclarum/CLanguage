@@ -1111,19 +1111,19 @@ iteration_statement
 	}
 	| FOR '(' expression_statement expression_statement ')' statement
 	{
-		$$ = new ForStatement((Statement)$3, ((ExpressionStatement)$4).Expression, ((Statement)$6).ToBlock ());
+		$$ = new ForStatement((Statement)$3, ($4 as ExpressionStatement)?.Expression, ((Statement)$6).ToBlock ());
 	}
 	| FOR '(' expression_statement expression_statement expression ')' statement
 	{
-		$$ = new ForStatement((Statement)$3, ((ExpressionStatement)$4).Expression, (Expression)$5, ((Statement)$7).ToBlock ());
+		$$ = new ForStatement((Statement)$3, ($4 as ExpressionStatement)?.Expression, (Expression)$5, ((Statement)$7).ToBlock ());
 	}
 	| FOR '(' declaration expression_statement ')' statement
 	{
-		$$ = new ForStatement((Statement)$3, ((ExpressionStatement)$4).Expression, ((Statement)$6).ToBlock ());
+		$$ = new ForStatement((Statement)$3, ($4 as ExpressionStatement)?.Expression, ((Statement)$6).ToBlock ());
 	}
 	| FOR '(' declaration expression_statement expression ')' statement
 	{
-        $$ = new ForStatement((Statement)$3, ((ExpressionStatement)$4).Expression, (Expression)$5, ((Statement)$7).ToBlock ());
+        $$ = new ForStatement((Statement)$3, ($4 as ExpressionStatement)?.Expression, (Expression)$5, ((Statement)$7).ToBlock ());
 	}
 	;
 

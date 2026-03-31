@@ -11,11 +11,11 @@ namespace CLanguage.Syntax
     public class ForStatement : Statement
     {
         public Block InitBlock { get; private set; }
-        public Expression ContinueExpression { get; private set; }
+        public Expression? ContinueExpression { get; private set; }
         public Expression? NextExpression { get; private set; }
         public Block LoopBody { get; private set; }
 
-        public ForStatement (Statement initStatement, Expression continueExpr, Block body)
+        public ForStatement (Statement initStatement, Expression? continueExpr, Block body)
         {
             InitBlock = new Block (VariableScope.Local);
             if (initStatement != null) {
@@ -25,7 +25,7 @@ namespace CLanguage.Syntax
             LoopBody = body;
         }
 
-        public ForStatement (Statement initStatement, Expression continueExpr, Expression nextExpr, Block body)
+        public ForStatement (Statement initStatement, Expression? continueExpr, Expression nextExpr, Block body)
         {
             InitBlock = new Block (VariableScope.Local);
             if (initStatement != null) {
@@ -63,9 +63,11 @@ namespace CLanguage.Syntax
             //
 			var conditionLabel = ec.DefineLabel ();
 			ec.EmitLabel (conditionLabel);
-			ContinueExpression.Emit (ec);
-			ec.EmitCastToBoolean (ContinueExpression.GetEvaluatedCType (ec));
-			ec.Emit (OpCode.BranchIfFalse, endLabel);
+			if (ContinueExpression != null) {
+				ContinueExpression.Emit (ec);
+				ec.EmitCastToBoolean (ContinueExpression.GetEvaluatedCType (ec));
+				ec.Emit (OpCode.BranchIfFalse, endLabel);
+			}
 
             //
             // Fall through to the loop body
