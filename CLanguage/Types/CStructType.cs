@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using CLanguage.Compiler;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,6 +26,21 @@ namespace CLanguage.Types
         public CStructType (string name)
         {
             Name = name;
+        }
+
+        /// <summary>
+        /// Named struct types are equal if they share the same name.
+        /// Anonymous structs (empty name) fall back to reference equality.
+        /// </summary>
+        public override bool Equals (object? obj)
+        {
+            if (ReferenceEquals (this, obj)) return true;
+            return obj is CStructType other && !string.IsNullOrEmpty (Name) && Name == other.Name;
+        }
+
+        public override int GetHashCode ()
+        {
+            return string.IsNullOrEmpty (Name) ? RuntimeHelpers.GetHashCode (this) : Name.GetHashCode ();
         }
 
         /// <summary>
@@ -98,13 +114,7 @@ namespace CLanguage.Types
         public override int NumValues {
             get {
                 if (!IsPolymorphic && BaseType == null) {
-                    // Non-polymorphic, no base: preserve original behavior exactly
-                    // (includes all members, not just fields, for backward compatibility)
-                    var s = 0;
-                    foreach (var m in Members) {
-                        s += m.MemberType.NumValues;
-                    }
-                    return s;
+                    return GetOwnFieldsNumValues ();
                 }
                 var total = IsPolymorphic ? 1 : 0; // vptr
                 if (BaseType != null)
@@ -117,13 +127,7 @@ namespace CLanguage.Types
         public override int GetByteSize (EmitContext c)
         {
             if (!IsPolymorphic && BaseType == null) {
-                // Non-polymorphic, no base: preserve original behavior exactly
-                // (includes all members, not just fields, for backward compatibility)
-                var s = 0;
-                foreach (var m in Members) {
-                    s += m.MemberType.GetByteSize (c);
-                }
-                return s;
+                return GetOwnFieldsByteSize (c);
             }
             var total = IsPolymorphic ? c.MachineInfo.PointerSize : 0; // vptr
             if (BaseType != null)
@@ -135,12 +139,13 @@ namespace CLanguage.Types
         public int GetFieldValueOffset (CStructMember member, EmitContext c)
         {
             if (!IsPolymorphic && BaseType == null) {
-                // Non-polymorphic, no base: original behavior
                 var offset = 0;
                 foreach (var m in Members) {
-                    if (ReferenceEquals (m, member))
-                        return offset;
-                    offset += m.MemberType.NumValues;
+                    if (m is CStructField) {
+                        if (ReferenceEquals (m, member))
+                            return offset;
+                        offset += m.MemberType.NumValues;
+                    }
                 }
                 throw new Exception ($"Member '{member.Name}' not found");
             }

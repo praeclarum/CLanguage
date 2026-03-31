@@ -1,5 +1,6 @@
 using System.Linq;
 using CLanguage.Syntax;
+using CLanguage.Interpreter;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace CLanguage.Tests
@@ -510,6 +511,219 @@ void main() {
     assertAreEqual(7, c.x);
 }";
             Run (code);
+        }
+
+        [TestMethod]
+        public void InternalOperatorPlus ()
+        {
+            var mi = new TestMachineInfo ();
+            mi.HeaderCode += "struct V { int x; V operator+(V other); };\n";
+            mi.AddInternalFunction ("V V::operator+(V other)", interp => {
+                var _this = interp.ReadThis ().PointerValue;
+                var thisX = interp.Stack[_this].Int32Value;
+                var otherX = interp.ReadArg (0).Int32Value;
+                interp.Push (thisX + otherX);
+            });
+
+            var code = @"
+void main() {
+    V a; a.x = 3;
+    V b; b.x = 4;
+    V c = a + b;
+    assertAreEqual(7, c.x);
+}";
+            Run (code, mi);
+        }
+
+        [TestMethod]
+        public void InternalOperatorEquals ()
+        {
+            var mi = new TestMachineInfo ();
+            mi.HeaderCode += "struct V { int x; bool operator==(V other); };\n";
+            mi.AddInternalFunction ("bool V::operator==(V other)", interp => {
+                var _this = interp.ReadThis ().PointerValue;
+                var thisX = interp.Stack[_this].Int32Value;
+                var otherX = interp.ReadArg (0).Int32Value;
+                interp.Push (thisX == otherX ? 1 : 0);
+            });
+
+            var code = @"
+void main() {
+    V a; a.x = 5;
+    V b; b.x = 5;
+    V c; c.x = 6;
+    assertAreEqual(1, a == b);
+    assertAreEqual(0, a == c);
+}";
+            Run (code, mi);
+        }
+
+        [TestMethod]
+        public void MixedInternalAndCompiledOperators ()
+        {
+            var mi = new TestMachineInfo ();
+            mi.HeaderCode += @"
+struct V {
+    int x;
+    V operator+(V other);
+    bool operator==(V other);
+};
+";
+            // operator+ is internal (C#), operator== is compiled (C code)
+            mi.AddInternalFunction ("V V::operator+(V other)", interp => {
+                var _this = interp.ReadThis ().PointerValue;
+                var thisX = interp.Stack[_this].Int32Value;
+                var otherX = interp.ReadArg (0).Int32Value;
+                interp.Push (thisX + otherX);
+            });
+
+            var code = @"
+bool V::operator==(V other) { return this->x == other.x; }
+void main() {
+    V a; a.x = 3;
+    V b; b.x = 4;
+    V c = a + b;
+    assertAreEqual(7, c.x);
+    V d; d.x = 7;
+    assertAreEqual(1, c == d);
+    assertAreEqual(0, a == b);
+}";
+            Run (code, mi);
+        }
+
+        [TestMethod]
+        public void InternalOperatorWithBasicReturnType ()
+        {
+            var mi = new TestMachineInfo ();
+            mi.HeaderCode += "struct V { int x; int operator<(V other); };\n";
+            mi.AddInternalFunction ("int V::operator<(V other)", interp => {
+                var _this = interp.ReadThis ().PointerValue;
+                var thisX = interp.Stack[_this].Int32Value;
+                var otherX = interp.ReadArg (0).Int32Value;
+                interp.Push (thisX < otherX ? 1 : 0);
+            });
+
+            var code = @"
+void main() {
+    V a; a.x = 3;
+    V b; b.x = 5;
+    assertAreEqual(1, a < b);
+    assertAreEqual(0, b < a);
+}";
+            Run (code, mi);
+        }
+
+        [TestMethod]
+        public void InternalOperatorChained ()
+        {
+            var mi = new TestMachineInfo ();
+            mi.HeaderCode += "struct V { int x; V operator+(V other); };\n";
+            mi.AddInternalFunction ("V V::operator+(V other)", interp => {
+                var _this = interp.ReadThis ().PointerValue;
+                var thisX = interp.Stack[_this].Int32Value;
+                var otherX = interp.ReadArg (0).Int32Value;
+                interp.Push (thisX + otherX);
+            });
+
+            var code = @"
+void main() {
+    V a; a.x = 1;
+    V b; b.x = 2;
+    V c; c.x = 3;
+    V d = a + b + c;
+    assertAreEqual(6, d.x);
+}";
+            Run (code, mi);
+        }
+
+        [TestMethod]
+        public void InternalOperatorWithConstRef ()
+        {
+            var mi = new TestMachineInfo ();
+            mi.HeaderCode += "struct V { int x; V operator+(const V& other); };\n";
+            mi.AddInternalFunction ("V V::operator+(const V& other)", interp => {
+                var _this = interp.ReadThis ().PointerValue;
+                var thisX = interp.Stack[_this].Int32Value;
+                // const V& parameter is passed as a pointer
+                var otherPtr = interp.ReadArg (0).PointerValue;
+                var otherX = interp.Stack[otherPtr].Int32Value;
+                interp.Push (thisX + otherX);
+            });
+
+            var code = @"
+void main() {
+    V a; a.x = 3;
+    V b; b.x = 4;
+    V c = a + b;
+    assertAreEqual(7, c.x);
+}";
+            Run (code, mi);
+        }
+
+        [TestMethod]
+        public void InternalOperatorWithStructLayout ()
+        {
+            // Test multi-field struct return and parameter access
+            var mi = new TestMachineInfo ();
+            mi.HeaderCode += "struct Vec { int x; int y; Vec operator+(Vec other); };\n";
+            mi.AddInternalFunction ("Vec Vec::operator+(Vec other)", interp => {
+                var _this = interp.ReadThis ().PointerValue;
+                var thisX = interp.Stack[_this].Int32Value;
+                var thisY = interp.Stack[_this + 1].Int32Value;
+                // Multi-value struct parameter: compute base address from frame pointer
+                var fp = interp.ActiveFrame!.FP;
+                var paramOffset = interp.ActiveFrame.Function.FunctionType.Parameters[0].Offset;
+                var otherBase = fp + paramOffset;
+                var otherX = interp.Stack[otherBase].Int32Value;
+                var otherY = interp.Stack[otherBase + 1].Int32Value;
+                interp.Push (thisX + otherX);
+                interp.Push (thisY + otherY);
+            });
+
+            var code = @"
+void main() {
+    Vec a; a.x = 1; a.y = 10;
+    Vec b; b.x = 2; b.y = 20;
+    Vec c = a + b;
+    assertAreEqual(3, c.x);
+    assertAreEqual(30, c.y);
+}";
+            Run (code, mi);
+        }
+        [TestMethod]
+        public void ReflectionBasedOperators ()
+        {
+            // C# class with operator+ exposed via AddGlobalReference.
+            // TestMachineInfo has IntSize=2, so C# int maps to C long,
+            // requiring assert32AreEqual for 32-bit comparison.
+            var mi = new TestMachineInfo ();
+            var calc = new TestCalculator ();
+            mi.AddGlobalReference ("calc", calc);
+
+            var code = @"
+void main() {
+    long result = calc + 10;
+    assert32AreEqual(20, result);
+}";
+            Run (code, mi);
+        }
+    }
+
+    /// <summary>
+    /// Test class with C# operators for reflection-based operator detection.
+    /// The operator+ deliberately uses only the second parameter and ignores the
+    /// first (this) to verify the marshalling plumbing works correctly.
+    /// </summary>
+    public class TestCalculator
+    {
+        public static int operator+ (TestCalculator a, int b)
+        {
+            return b * 2;
+        }
+
+        public int Add (int a, int b)
+        {
+            return a + b;
         }
     }
 }
