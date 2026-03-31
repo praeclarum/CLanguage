@@ -178,6 +178,45 @@ void main () {
 }");
 		}
 
+		[TestMethod]
+		public void VoidReturnEarlyOut ()
+		{
+			var i = Run (@"
+int x = 0;
+void foo () {
+	x = 42;
+	return;
+	x = 99;
+}
+void main () {
+	foo ();
+	assertAreEqual (42, x);
+}");
+		}
+
+		[TestMethod]
+		public void VoidReturnStackCorrectAfterEarlyOut ()
+		{
+			var i = Run (@"
+int x = 0;
+void bar () {
+	x = 10;
+	return;
+	x = 20;
+}
+int add (int a, int b) {
+	return a + b;
+}
+void main () {
+	int before = add (1, 2);
+	bar ();
+	int after = add (3, 4);
+	assertAreEqual (3, before);
+	assertAreEqual (7, after);
+	assertAreEqual (10, x);
+}");
+		}
+
 
 		[TestMethod]
 		public void ForLoop ()
