@@ -30,6 +30,7 @@ namespace CLanguage.Parser
 %token TYPE_NAME
 %token PUBLIC PRIVATE PROTECTED
 %token VIRTUAL OVERRIDE
+%token OPERATOR
 
 %token TYPEDEF EXTERN STATIC AUTO REGISTER INLINE RESTRICT
 %token CHAR SHORT INT LONG SIGNED UNSIGNED FLOAT DOUBLE CONST VOLATILE VOID
@@ -570,6 +571,38 @@ declarator
 	| direct_declarator		{ $$ = $1; }
 	;
 
+operator_name
+	: '+'		{ $$ = "+"; }
+	| '-'		{ $$ = "-"; }
+	| '*'		{ $$ = "*"; }
+	| '/'		{ $$ = "/"; }
+	| '%'		{ $$ = "%"; }
+	| EQ_OP	{ $$ = "=="; }
+	| NE_OP	{ $$ = "!="; }
+	| '<'		{ $$ = "<"; }
+	| '>'		{ $$ = ">"; }
+	| LE_OP	{ $$ = "<="; }
+	| GE_OP	{ $$ = ">="; }
+	| LEFT_OP	{ $$ = "<<"; }
+	| RIGHT_OP	{ $$ = ">>"; }
+	| '&'		{ $$ = "&"; }
+	| '|'		{ $$ = "|"; }
+	| '^'		{ $$ = "^"; }
+	| '!'		{ $$ = "!"; }
+	| '~'		{ $$ = "~"; }
+	| AND_OP	{ $$ = "&&"; }
+	| OR_OP		{ $$ = "||"; }
+	| INC_OP	{ $$ = "++"; }
+	| DEC_OP	{ $$ = "--"; }
+	| '='			{ $$ = "="; }
+	| ADD_ASSIGN		{ $$ = "+="; }
+	| SUB_ASSIGN		{ $$ = "-="; }
+	| MUL_ASSIGN		{ $$ = "*="; }
+	| DIV_ASSIGN		{ $$ = "/="; }
+	| MOD_ASSIGN		{ $$ = "%="; }
+	| '(' ')'		{ $$ = "()"; }
+	| '[' ']'		{ $$ = "[]"; }
+	;
 
 direct_declarator_identifier_list
     : IDENTIFIER
@@ -580,10 +613,16 @@ direct_declarator_identifier_list
 	{
 		$$ = new IdentifierDeclarator("~" + ($1).ToString());
 	}
+    | OPERATOR operator_name
+	{
+		$$ = new IdentifierDeclarator("operator" + (string)$2);
+	}
     | direct_declarator_identifier_list COLONCOLON IDENTIFIER
 	{ $$ = ((IdentifierDeclarator)($1)).Push (($3).ToString()); }
     | direct_declarator_identifier_list COLONCOLON '~' IDENTIFIER
 	{ $$ = ((IdentifierDeclarator)($1)).Push ("~" + ($3).ToString()); }
+    | direct_declarator_identifier_list COLONCOLON OPERATOR operator_name
+	{ $$ = ((IdentifierDeclarator)($1)).Push ("operator" + (string)$4); }
 	;
 
 direct_declarator
@@ -1129,6 +1168,10 @@ ctor_identifier_list
 	}
     | ctor_identifier_list COLONCOLON TYPE_NAME { $$ = ((IdentifierDeclarator)($1)).Push (($3).ToString()); }
     | ctor_identifier_list COLONCOLON '~' TYPE_NAME { $$ = ((IdentifierDeclarator)($1)).Push ("~" + ($4).ToString()); }
+    | IDENTIFIER COLONCOLON OPERATOR operator_name
+	{ $$ = new IdentifierDeclarator(($1).ToString()).Push("operator" + (string)$4); }
+    | ctor_identifier_list COLONCOLON OPERATOR operator_name
+	{ $$ = ((IdentifierDeclarator)($1)).Push ("operator" + (string)$4); }
 	;
 
 ctor_definition
