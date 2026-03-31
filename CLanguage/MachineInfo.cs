@@ -277,12 +277,15 @@ namespace CLanguage
                 }
             }
             var resultE = Expression.Call (null, method, argsE);
-            Expression bodyE = resultE;
-            if (method.ReturnType != typeof (void)) {
-                if (ValueReflection.CreateValueFromTypeMethods.TryGetValue (method.ReturnType, out var createMethod)) {
-                    var valueResultE = Expression.Call (createMethod, resultE);
-                    bodyE = Expression.Call (interpreterE, miPush, valueResultE);
-                }
+            Expression bodyE;
+            if (method.ReturnType != typeof (void) &&
+                ValueReflection.CreateValueFromTypeMethods.TryGetValue (method.ReturnType, out var createMethod)) {
+                var valueResultE = Expression.Call (createMethod, resultE);
+                bodyE = Expression.Call (interpreterE, miPush, valueResultE);
+            }
+            else {
+                // void return or unmarshalable return type — just invoke the method
+                bodyE = resultE;
             }
             var ee = Expression.Lambda<InternalFunctionAction> (bodyE, interpreterE);
             return ee.Compile ();

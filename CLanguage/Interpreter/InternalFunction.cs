@@ -44,6 +44,11 @@ namespace CLanguage.Interpreter
                     throw new Exception ("Failed to parse function prototype: " + prototype);
                 }
             }
+			// The prototype function is the last one in the TU. When parsed
+			// without headers, it's the only function (index 0). When parsed
+			// with headers, struct member method declarations stay in the
+			// struct body block — only top-level declarations appear in
+			// tu.Functions — so the prototype is still the last entry.
 			var f = tu.Functions[tu.Functions.Count - 1];
 
 			Name = f.Name;

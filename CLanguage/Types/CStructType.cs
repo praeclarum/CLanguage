@@ -28,6 +28,10 @@ namespace CLanguage.Types
             Name = name;
         }
 
+        /// <summary>
+        /// Named struct types are equal if they share the same name.
+        /// Anonymous structs (empty name) fall back to reference equality.
+        /// </summary>
         public override bool Equals (object? obj)
         {
             if (ReferenceEquals (this, obj)) return true;

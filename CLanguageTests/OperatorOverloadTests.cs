@@ -693,7 +693,9 @@ void main() {
         [TestMethod]
         public void ReflectionBasedOperators ()
         {
-            // C# class with operator+ exposed via AddGlobalReference
+            // C# class with operator+ exposed via AddGlobalReference.
+            // TestMachineInfo has IntSize=2, so C# int maps to C long,
+            // requiring assert32AreEqual for 32-bit comparison.
             var mi = new TestMachineInfo ();
             var calc = new TestCalculator ();
             mi.AddGlobalReference ("calc", calc);
@@ -709,6 +711,8 @@ void main() {
 
     /// <summary>
     /// Test class with C# operators for reflection-based operator detection.
+    /// The operator+ deliberately uses only the second parameter and ignores the
+    /// first (this) to verify the marshalling plumbing works correctly.
     /// </summary>
     public class TestCalculator
     {
