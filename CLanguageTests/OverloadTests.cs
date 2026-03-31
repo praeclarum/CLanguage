@@ -102,6 +102,30 @@ void main () {
         }
 
         [TestMethod]
+        public void GlobalCharVsIntCast ()
+        {
+            var i = Run (@"
+int f(char x) { return 1; }
+int f(int x) { return 2; }
+void main () {
+    int ival = 65;
+    assertAreEqual (1, f((char)ival));
+    assertAreEqual (2, f(ival));
+}");
+        }
+
+        [TestMethod]
+        public void MemberCharVsIntCast ()
+        {
+            var i = Run (@"
+void main () {
+    int ival = 65;
+    assertAreEqual (1, test.f((char)ival));
+    assertAreEqual (2, test.f(ival));
+}");
+        }
+
+        [TestMethod]
         public void VoidPtrFromArray ()
         {
             var i = Run (@"

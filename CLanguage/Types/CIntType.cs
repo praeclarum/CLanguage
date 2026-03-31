@@ -47,6 +47,7 @@ namespace CLanguage.Types
         {
             if (Equals (otherType)) return 1000;
             if (otherType is CIntType it) {
+                if (Name == it.Name && Size == it.Size) return 950;
                 if (Size == it.Size) return 900;
                 return 800;
             }
