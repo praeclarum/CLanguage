@@ -966,6 +966,16 @@ class_block_item
 	: declaration
 	| visibility
 	| ctor_declaration
+	| function_definition
+	| ctor_declarator compound_statement
+	{
+		var fdecl = (FunctionDeclarator)$1;
+		$$ = new FunctionDefinition(
+			new DeclarationSpecifiers(),
+			fdecl,
+			null,
+			(Block)$2);
+	}
 	| VIRTUAL declaration
 	{
 		$$ = new VirtualDeclarationStatement((Statement)$2) { IsVirtual = true };
