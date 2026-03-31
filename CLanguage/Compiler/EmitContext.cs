@@ -124,6 +124,16 @@ namespace CLanguage.Compiler
             ParentContext?.EmitLabel (l);
         }
 
+        public virtual Label? ResolveGotoLabel (string name)
+        {
+            return ParentContext?.ResolveGotoLabel (name);
+        }
+
+        public virtual Label? DefineGotoLabel (string name)
+        {
+            return ParentContext?.DefineGotoLabel (name);
+        }
+
         public void EmitCast (CType fromType, CType toType)
         {
             if (fromType.Equals (toType)) {
