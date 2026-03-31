@@ -261,6 +261,18 @@ namespace CLanguage.Syntax
                     return Overload.Error;
                 }
             }
+            else if (function is ScopeResolutionExpression scopeExpr) {
+                var res = ec.TryResolveQualifiedFunction (scopeExpr.TypeName, scopeExpr.MemberName, argTypes);
+                if (res != null) {
+                    return new Overload (
+                        res.VariableType,
+                        res.VariableType is CFunctionType ? (Action<EmitContext>)res.Emit : res.EmitPointer);
+                }
+                else {
+                    ec.Report.Error (103, $"'{scopeExpr}' not found");
+                    return Overload.Error;
+                }
+            }
             else if (function is VariableExpression v) {
                 var res = ec.ResolveVariable (v, argTypes);
                 if (res != null) {

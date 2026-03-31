@@ -90,6 +90,11 @@ namespace CLanguage.Compiler
             return ParentContext?.TryResolveOperatorFunction (structName, operatorName, argTypes);
         }
 
+        public virtual ResolvedVariable? TryResolveQualifiedFunction (string nameContext, string name, CType[]? argTypes)
+        {
+            return ParentContext?.TryResolveQualifiedFunction (nameContext, name, argTypes);
+        }
+
         public virtual void BeginBlock (Block b)
         {
             ParentContext?.BeginBlock (b);
@@ -560,6 +565,34 @@ namespace CLanguage.Compiler
                             st.Members.Add (new CStructField { Name = name, MemberType = type });
                         }
                     }
+                }
+            }
+            else if (s is FunctionDefinition fdef) {
+                var methodType = MakeCType (fdef.Specifiers, fdef.Declarator, null, block);
+                var name = fdef.Declarator.DeclaredIdentifier;
+                if (methodType is CFunctionType ftype) {
+                    var isStatic = fdef.Specifiers.StorageClassSpecifier == StorageClassSpecifier.Static;
+                    // For inline method definitions, the function type won't have
+                    // declaring type info since the declarator has no namespace context.
+                    // Create an instance function type unless the method is static.
+                    if (!isStatic && !ftype.IsInstance) {
+                        var instanceFtype = new CFunctionType (ftype.ReturnType, isInstance: true, declaringType: st);
+                        foreach (var p in ftype.Parameters) {
+                            instanceFtype.AddParameter (p.Name, p.ParameterType, p.DefaultValue);
+                        }
+                        ftype = instanceFtype;
+                    }
+                    st.Members.Add (new CStructMethod {
+                        Name = name,
+                        MemberType = ftype,
+                        IsVirtual = isVirtual || isPureVirtual,
+                        IsOverride = isOverride,
+                        IsPureVirtual = isPureVirtual
+                    });
+                    // Register the compiled function on the enclosing block so the
+                    // compiler can find and compile it later.
+                    var f = new CompiledFunction (name, st.Name, ftype, fdef.Body);
+                    block?.Functions.Add (f);
                 }
             }
             else if (s is VisibilityStatement vs) {

@@ -149,7 +149,7 @@ void main() {
 ");
         }
 
-        [TestMethod, Ignore]
+        [TestMethod]
         public void InlineMethodDefinitions ()
         {
             Run (@"
@@ -180,7 +180,7 @@ public:
 ");
         }
 
-        [TestMethod, Ignore]
+        [TestMethod]
         public void ExternalMethodDefinitions ()
         {
             Run (@"
@@ -196,6 +196,63 @@ void main() {
     C c;
     c.setX(101);
     assertAreEqual(101, c.getX());
+}
+");
+        }
+
+        [TestMethod]
+        public void InlineInstanceMethodCallsOtherInstanceMethod ()
+        {
+            Run (@"
+class Vec {
+    int x;
+    int y;
+public:
+    void set(int ax, int ay) { this->x = ax; this->y = ay; }
+    int getX() { return this->x; }
+    int getY() { return this->y; }
+    int sum() { return this->getX() + this->getY(); }
+};
+void main() {
+    Vec v;
+    v.set(3, 4);
+    assertAreEqual(7, v.sum());
+}
+");
+        }
+
+        [TestMethod]
+        public void InlineStaticMethodDefinition ()
+        {
+            Run (@"
+class MathHelper {
+public:
+    static int add(int a, int b) { return a + b; }
+    static int square(int x) { return x * x; }
+};
+void main() {
+    assertAreEqual(7, MathHelper::add(3, 4));
+    assertAreEqual(25, MathHelper::square(5));
+}
+");
+        }
+
+        [TestMethod]
+        public void InlineStructMethodDefinition ()
+        {
+            Run (@"
+struct Point {
+    int x;
+    int y;
+    void set(int ax, int ay) { this->x = ax; this->y = ay; }
+    int getX() { return this->x; }
+    int getY() { return this->y; }
+};
+void main() {
+    Point p;
+    p.set(10, 20);
+    assertAreEqual(10, p.getX());
+    assertAreEqual(20, p.getY());
 }
 ");
         }
