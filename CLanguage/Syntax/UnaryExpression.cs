@@ -31,11 +31,20 @@ namespace CLanguage.Syntax
 
 		public override CType GetEvaluatedCType (EmitContext ec)
 		{
+			var rightType = Right.GetEvaluatedCType (ec);
+			var ft = TryResolveUnaryOperatorType (ec, rightType, UnopToOperatorName (Op));
+			if (ft != null)
+				return ft.ReturnType;
 			return (Op == Unop.Not) ? CBasicType.SignedInt : GetPromotedType (Right, Op.ToString (), ec);
         }
 
         protected override void DoEmit(EmitContext ec)
         {
+            var rightType = Right.GetEvaluatedCType (ec);
+            var opName = UnopToOperatorName (Op);
+            if (opName != null && TryEmitUnaryOperatorCall (ec, rightType, Right, opName))
+                return;
+
             switch (Op) {
                 case Unop.PreIncrement: {
                         var ie = new AssignExpression (Right, new BinaryExpression (Right, Binop.Add, ConstantExpression.One));

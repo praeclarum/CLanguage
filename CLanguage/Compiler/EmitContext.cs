@@ -85,6 +85,11 @@ namespace CLanguage.Compiler
             throw new Exception ("Cannot resolve method function");
         }
 
+        public virtual ResolvedVariable? TryResolveOperatorFunction (string structName, string operatorName, CType[]? argTypes)
+        {
+            return ParentContext?.TryResolveOperatorFunction (structName, operatorName, argTypes);
+        }
+
         public virtual void BeginBlock (Block b)
         {
             ParentContext?.BeginBlock (b);
