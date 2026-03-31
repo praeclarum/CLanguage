@@ -54,7 +54,12 @@ namespace CLanguage.Syntax
                 return;
             }
             DoEmitPointer (ec);
-            ec.Emit (OpCode.LoadPointer);
+            if (GetEvaluatedCType (ec) is CArrayType) {
+                // Element is itself an array: return pointer (array-to-pointer decay)
+            }
+            else {
+                ec.Emit (OpCode.LoadPointer);
+            }
         }
 
         public override string ToString ()

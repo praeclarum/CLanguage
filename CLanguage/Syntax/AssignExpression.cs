@@ -30,22 +30,35 @@ namespace CLanguage.Syntax
             var type = GetEvaluatedCType (ec);
 
             if (type is CArrayType arrayType) {
-
-                var numItemValues = arrayType.ElementType.NumValues;
-
-                var count = sexpr.Items.Count;
-                for (int i = 0; i < count; i++) {
-                    var item = sexpr.Items[i];
-                    item.Expression.Emit (ec);
-                    Left.EmitPointer (ec);
-                    ec.Emit (OpCode.LoadConstant, i * numItemValues);
-                    ec.Emit (OpCode.OffsetPointer);
-                    ec.Emit (OpCode.StorePointer);
-                }
+                EmitArrayStructuredInit (sexpr, arrayType, 0, ec);
                 Left.EmitPointer (ec);
             }
             else {
                 throw new NotSupportedException ($"Structured assignment of '{GetEvaluatedCType (ec)}' not supported");
+            }
+        }
+
+        void EmitArrayStructuredInit (StructureExpression sexpr, CArrayType arrayType, int baseOffset, EmitContext ec)
+        {
+            var elementType = arrayType.ElementType;
+            var numItemValues = elementType.NumValues;
+
+            var count = sexpr.Items.Count;
+            for (int i = 0; i < count; i++) {
+                var item = sexpr.Items[i];
+                var itemOffset = baseOffset + i * numItemValues;
+
+                if (item.Expression is StructureExpression subExpr && elementType is CArrayType subArrayType) {
+                    EmitArrayStructuredInit (subExpr, subArrayType, itemOffset, ec);
+                }
+                else {
+                    item.Expression.Emit (ec);
+                    ec.EmitCast (item.Expression.GetEvaluatedCType (ec), elementType);
+                    Left.EmitPointer (ec);
+                    ec.Emit (OpCode.LoadConstant, itemOffset);
+                    ec.Emit (OpCode.OffsetPointer);
+                    ec.Emit (OpCode.StorePointer);
+                }
             }
         }
 
