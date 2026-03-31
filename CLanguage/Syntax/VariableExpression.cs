@@ -20,6 +20,26 @@ namespace CLanguage.Syntax
             EndLocation = endLoc;
         }
 
+        /// <summary>
+        /// Emit a load of the raw slot value for a reference variable (the stored pointer).
+        /// Used by DoEmit, DoEmitPointer, and AssignExpression for reference variable handling.
+        /// </summary>
+        internal static void EmitLoadReferenceSlot (EmitContext ec, ResolvedVariable variable)
+        {
+            if (variable.Scope == VariableScope.Arg) {
+                ec.Emit (OpCode.LoadArg, variable.Address);
+            }
+            else if (variable.Scope == VariableScope.Local) {
+                ec.Emit (OpCode.LoadLocal, variable.Address);
+            }
+            else if (variable.Scope == VariableScope.Global) {
+                ec.Emit (OpCode.LoadGlobal, variable.Address);
+            }
+            else {
+                throw new NotSupportedException ("Cannot access reference variable scope '" + variable.Scope + "'");
+            }
+        }
+
 		public override CType GetEvaluatedCType (EmitContext ec)
 		{
 			var type = ec.ResolveVariable (this, null).VariableType;
@@ -39,19 +59,7 @@ namespace CLanguage.Syntax
 				}
 				else if (variable.VariableType is CReferenceType refType) {
                     // Reference variable holds a pointer; load it then dereference
-                    if (variable.Scope == VariableScope.Arg) {
-                        ec.Emit (OpCode.LoadArg, variable.Address);
-                    }
-                    else if (variable.Scope == VariableScope.Local) {
-                        ec.Emit (OpCode.LoadLocal, variable.Address);
-                    }
-                    else if (variable.Scope == VariableScope.Global) {
-                        ec.Emit (OpCode.LoadGlobal, variable.Address);
-                    }
-                    else {
-                        throw new NotSupportedException ("Cannot evaluate reference variable scope '" + variable.Scope + "'");
-                    }
-                    // Now we have the pointer on the stack; dereference to get the value
+                    EmitLoadReferenceSlot (ec, variable);
                     ec.Emit (OpCode.LoadPointer);
                 }
 				else {
@@ -113,18 +121,7 @@ namespace CLanguage.Syntax
             if (res != null) {
                 if (res.VariableType is CReferenceType) {
                     // Reference variable holds a pointer; return that pointer directly
-                    if (res.Scope == VariableScope.Arg) {
-                        ec.Emit (OpCode.LoadArg, res.Address);
-                    }
-                    else if (res.Scope == VariableScope.Local) {
-                        ec.Emit (OpCode.LoadLocal, res.Address);
-                    }
-                    else if (res.Scope == VariableScope.Global) {
-                        ec.Emit (OpCode.LoadGlobal, res.Address);
-                    }
-                    else {
-                        throw new NotSupportedException ("Cannot get address of reference variable scope '" + res.Scope + "'");
-                    }
+                    EmitLoadReferenceSlot (ec, res);
                 }
                 else {
                     res.EmitPointer (ec);

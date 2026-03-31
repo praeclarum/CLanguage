@@ -166,7 +166,9 @@ namespace CLanguage.Compiler
                 }
             }
             else if (toType is CReferenceType toRef && fromType.Equals (toRef.InnerType)) {
-                // Value to reference: no-op at the cast level (caller handles address-of)
+                // Value to reference: no-op at cast level. FuncallExpression.DoEmit()
+                // handles the address-of emission (EmitPointer for lvalues, or
+                // AllocateTemp for rvalues) before this cast is reached.
             }
             else {
                 Report.Error (30, "Cannot convert type '" + fromType + "' to '" + toType + "'");

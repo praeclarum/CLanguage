@@ -67,18 +67,7 @@ namespace CLanguage.Syntax
                     ec.EmitCast (Right.GetEvaluatedCType (ec), refType.InnerType);
                     ec.Emit (OpCode.Dup);
                     // Load the pointer that the reference holds
-                    if (v.Scope == VariableScope.Arg) {
-                        ec.Emit (OpCode.LoadArg, v.Address);
-                    }
-                    else if (v.Scope == VariableScope.Local) {
-                        ec.Emit (OpCode.LoadLocal, v.Address);
-                    }
-                    else if (v.Scope == VariableScope.Global) {
-                        ec.Emit (OpCode.LoadGlobal, v.Address);
-                    }
-                    else {
-                        throw new NotSupportedException ("Assigning to reference scope '" + v.Scope + "'");
-                    }
+                    VariableExpression.EmitLoadReferenceSlot (ec, v);
                     ec.Emit (OpCode.StorePointer);
                 }
                 else {

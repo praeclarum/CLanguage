@@ -20,7 +20,7 @@ namespace CLanguage.Types
             // Reference to same type: perfect match
             if (otherType is CReferenceType otherRef && InnerType.Equals (otherRef.InnerType))
                 return 1000;
-            // Reference can implicitly convert to the inner type (copy out)
+            // Reference can implicitly convert to the inner type (deref)
             if (InnerType.Equals (otherType))
                 return 900;
             // Reference can convert to pointer to same type
