@@ -135,5 +135,41 @@ void f () {
         {
             CompileWithErrors ("int foo() {return 1;} int main() { foo = 42; return 0; }", 30, 1656);
         }
+
+        [TestMethod]
+        public void ErrorOnVariableRedeclarationSameScope ()
+        {
+            CompileWithErrors (@"void f () { int x = 1; int x = 2; }", 2086);
+        }
+
+        [TestMethod]
+        public void ErrorOnVariableRedeclarationSameScopeNoInit ()
+        {
+            CompileWithErrors (@"void f () { int x; int x; }", 2086);
+        }
+
+        [TestMethod]
+        public void ErrorOnVariableRedeclarationDifferentTypes ()
+        {
+            CompileWithErrors (@"void f () { int x = 1; float x = 2.0; }", 2086);
+        }
+
+        [TestMethod]
+        public void NoErrorOnVariableShadowingNestedScope ()
+        {
+            Compile (@"void f () { int x = 1; { int x = 2; } }");
+        }
+
+        [TestMethod]
+        public void NoErrorOnDistinctVariablesSameScope ()
+        {
+            Compile (@"void f () { int x = 1; int y = 2; }");
+        }
+
+        [TestMethod]
+        public void ErrorOnMultipleRedeclarationsSameScope ()
+        {
+            CompileWithErrors (@"void f () { int x; int x; int x; }", 2086);
+        }
 	}
 }
