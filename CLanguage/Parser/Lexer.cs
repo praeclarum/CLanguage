@@ -585,7 +585,7 @@ namespace CLanguage.Parser
                                         var hex = 0;
                                         r = Read ();
                                         ch = (char)r;
-                                        while (r >= 0 && ch != '\"' && (char.IsDigit (ch) || IsHex (ch))) {
+                                        while (r >= 0 && (char.IsDigit (ch) || IsHex (ch))) {
                                             hex = hex * 16 + HexVal (ch);
                                             r = Read ();
                                             ch = (char)r;
@@ -667,7 +667,7 @@ namespace CLanguage.Parser
                                         var hex = 0;
                                         r = Read ();
                                         ch = (char)r;
-                                        while (r >= 0 && ch != '\'' && (char.IsDigit (ch) || IsHex (ch))) {
+                                        while (r >= 0 && (char.IsDigit (ch) || IsHex (ch))) {
                                             hex = hex * 16 + HexVal (ch);
                                             r = Read ();
                                             ch = (char)r;
