@@ -117,7 +117,13 @@ namespace CLanguage.Types
             for (var i = 0; i < argTypes.Length; i++) {
                 var ft = argTypes[i];
                 var tt = Parameters[i].ParameterType;
-                score += ft.ScoreCastTo (tt);
+                // If the parameter is a reference type, score against the inner type
+                if (tt is CReferenceType refTt) {
+                    score += ft.ScoreCastTo (refTt.InnerType);
+                }
+                else {
+                    score += ft.ScoreCastTo (tt);
+                }
             }
 
             return score;

@@ -20,9 +20,32 @@ namespace CLanguage.Syntax
             EndLocation = endLoc;
         }
 
+        /// <summary>
+        /// Emit a load of the raw slot value for a reference variable (the stored pointer).
+        /// Used by DoEmit, DoEmitPointer, and AssignExpression for reference variable handling.
+        /// </summary>
+        internal static void EmitLoadReferenceSlot (EmitContext ec, ResolvedVariable variable)
+        {
+            if (variable.Scope == VariableScope.Arg) {
+                ec.Emit (OpCode.LoadArg, variable.Address);
+            }
+            else if (variable.Scope == VariableScope.Local) {
+                ec.Emit (OpCode.LoadLocal, variable.Address);
+            }
+            else if (variable.Scope == VariableScope.Global) {
+                ec.Emit (OpCode.LoadGlobal, variable.Address);
+            }
+            else {
+                throw new NotSupportedException ("Cannot access reference variable scope '" + variable.Scope + "'");
+            }
+        }
+
 		public override CType GetEvaluatedCType (EmitContext ec)
 		{
-			return ec.ResolveVariable (this, null).VariableType;
+			var type = ec.ResolveVariable (this, null).VariableType;
+			if (type is CReferenceType refType)
+				return refType.InnerType;
+			return type;
         }
 
         protected override void DoEmit(EmitContext ec)
@@ -34,6 +57,11 @@ namespace CLanguage.Syntax
 				if (variable.Scope == VariableScope.Function) {
                     ec.Emit (OpCode.LoadConstant, Value.Pointer (variable.Address));
 				}
+				else if (variable.VariableType is CReferenceType refType) {
+                    // Reference variable holds a pointer; load it then dereference
+                    EmitLoadReferenceSlot (ec, variable);
+                    ec.Emit (OpCode.LoadPointer);
+                }
 				else {
                     if (variable.VariableType is CBasicType ||
                         variable.VariableType is CPointerType ||
@@ -91,7 +119,13 @@ namespace CLanguage.Syntax
             var res = ec.ResolveVariable (this, null);
 
             if (res != null) {
-                res.EmitPointer (ec);
+                if (res.VariableType is CReferenceType) {
+                    // Reference variable holds a pointer; return that pointer directly
+                    EmitLoadReferenceSlot (ec, res);
+                }
+                else {
+                    res.EmitPointer (ec);
+                }
             }
             else {
                 ec.Emit (OpCode.LoadConstant, 0);
