@@ -78,9 +78,11 @@ namespace CLanguage.Syntax
                                 if (block.Variables.Any (v => v.Name == name)) {
                                     context.Report.Error (2086, "Redefinition of '{0}'", name);
                                 }
-                                block.AddVariable (name, ctorDeclType);
-                                var callStmt = GetCtorInitializerStatement (name, ctorDeclType, ctorDecl);
-                                block.InitStatements.Add (callStmt);
+                                else {
+                                    block.AddVariable (name, ctorDeclType);
+                                    var callStmt = GetCtorInitializerStatement (name, ctorDeclType, ctorDecl);
+                                    block.InitStatements.Add (callStmt);
+                                }
                             }
                             else {
 
@@ -117,7 +119,9 @@ namespace CLanguage.Syntax
                             if (block.Variables.Any (v => v.Name == name)) {
                                 context.Report.Error (2086, "Redefinition of '{0}'", name);
                             }
-                            block.AddVariable (name, ctype ?? CBasicType.SignedInt);
+                            else {
+                                block.AddVariable (name, ctype ?? CBasicType.SignedInt);
+                            }
                         }
 
                         if (idecl.Initializer != null) {
