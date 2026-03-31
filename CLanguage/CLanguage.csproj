@@ -6,6 +6,7 @@
     <Description>C parser, compiler, and interpreter.</Description>
     <PackageTags>C;Compiler;Interpreter;Language</PackageTags>
     <PackageIcon>Icon.png</PackageIcon>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageProjectUrl>https://github.com/praeclarum/CLanguage</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
@@ -29,6 +30,7 @@
     <Content Include="..\Documentation\Icon.png" Link="Icon.png" Pack="true" PackagePath="\">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
   <ItemGroup>
