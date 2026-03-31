@@ -47,6 +47,25 @@ namespace CLanguage.Syntax
 			if (TryEmitBinaryOperatorCall (ec, leftType, rightType, Left, Right, BinopToOperatorName (Op)))
 				return;
 
+			if (Op == Binop.ShiftLeft || Op == Binop.ShiftRight) {
+				// C11 §6.5.7: The integer promotions are performed on each of the operands.
+				// The type of the result is that of the promoted left operand.
+				var promotedLeft = GetShiftPromotedType (leftType, ec);
+
+				Left.Emit (ec);
+				ec.EmitCast (leftType, promotedLeft);
+				Right.Emit (ec);
+				ec.EmitCast (rightType, promotedLeft);
+
+				var shiftOff = ec.GetInstructionOffset (promotedLeft);
+
+				if (Op == Binop.ShiftLeft)
+					ec.Emit ((OpCode)(OpCode.ShiftLeftInt8 + shiftOff));
+				else
+					ec.Emit ((OpCode)(OpCode.ShiftRightInt8 + shiftOff));
+				return;
+			}
+
 			var aType = GetArithmeticType (Left, Right, Op.ToString (), ec);
 
 			Left.Emit (ec);
@@ -81,12 +100,6 @@ namespace CLanguage.Syntax
                 case Binop.BinaryXor:
                     ec.Emit ((OpCode)(OpCode.BinaryXorInt8 + ioff));
                     break;
-                case Binop.ShiftLeft:
-                    ec.Emit ((OpCode)(OpCode.ShiftLeftInt8 + ioff));
-                    break;
-                case Binop.ShiftRight:
-                    ec.Emit ((OpCode)(OpCode.ShiftRightInt8 + ioff));
-                    break;
                 default:
                     throw new NotSupportedException ("Unsupported binary operator '" + Op + "'");
             }
@@ -99,7 +112,20 @@ namespace CLanguage.Syntax
 			var ft = TryResolveBinaryOperatorType (ec, leftType, rightType, BinopToOperatorName (Op));
 			if (ft != null)
 				return ft.ReturnType;
+			if (Op == Binop.ShiftLeft || Op == Binop.ShiftRight)
+				return GetShiftPromotedType (leftType, ec);
 			return GetArithmeticType (Left, Right, Op.ToString (), ec);
+		}
+
+		/// <summary>
+		/// C11 §6.5.7: For shift operators, each operand is independently integer-promoted.
+		/// The type of the result is that of the promoted left operand.
+		/// </summary>
+		static CType GetShiftPromotedType (CType type, EmitContext ec)
+		{
+			if (type is CBasicType basicType)
+				return basicType.IntegerPromote (ec);
+			return type;
 		}
 
         public override string ToString()

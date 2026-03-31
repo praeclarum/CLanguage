@@ -369,6 +369,136 @@ void main () {
         }
 
 		[TestMethod]
+		public void ShiftLeftIssue41PressureSensor ()
+		{
+			// Exact reproduction of issue #41:
+			// On Arduino (16-bit int), combining byte and unsigned int
+			// via shifts to build a 19-bit pressure value.
+			// The left operand must be cast to long to avoid overflow.
+			Run (@"
+void main () {
+    byte pressure_data_high = 5;
+    pressure_data_high &= 0x07;
+    unsigned int pressure_data_low = 0x1234;
+
+    // With long cast on left operand, shift happens at 32-bit precision
+    long pressure = (((long)pressure_data_high << 16) | pressure_data_low) / 4;
+    assert32AreEqual (83085L, pressure);
+}");
+			// Verify the full range: high=7 (max 3 bits), low=0xFFFF
+			Run (@"
+void main () {
+    byte pressure_data_high = 7;
+    unsigned int pressure_data_low = 0xFFFF;
+    long pressure = (((long)pressure_data_high << 16) | pressure_data_low) / 4;
+    assert32AreEqual (131071L, pressure);
+}");
+		}
+
+		[TestMethod]
+		public void ShiftLeftByteOverflowsOn16BitInt ()
+		{
+			// On Arduino (16-bit int), byte promotes to int (16-bit).
+			// Shifting a 16-bit value left by >= 16 overflows.
+			// Casting to long first preserves the value.
+			Run (@"
+void main () {
+    byte b = 7;
+    // Without cast: byte promotes to 16-bit int, shift by 16 overflows
+    long result_no_cast = b << 16;
+    assert32AreEqual (0L, result_no_cast);
+
+    // With cast to long: shift happens at 32-bit, no overflow
+    long result_cast = (long)b << 16;
+    assert32AreEqual (458752L, result_cast);
+}");
+		}
+
+		[TestMethod]
+		public void ShiftLeftBitBoundary16BitInt ()
+		{
+			// Edge cases at the 16-bit int boundary on Arduino
+			Run (@"
+void main () {
+    byte b = 1;
+
+    // Shift by 15: sets the sign bit of a 16-bit signed int
+    assertAreEqual (-32768, b << 15);
+
+    // Shift by 14: highest positive power of 2 in signed 16-bit
+    assertAreEqual (16384, b << 14);
+
+    // Unsigned int shift by 15: sets MSB, stays positive
+    unsigned int u = 1;
+    assertU16AreEqual (32768, u << 15);
+
+    // Building a 16-bit value from two bytes via shift
+    byte high = 0xAB;
+    byte low = 0xCD;
+    assertU16AreEqual (0xABCD, ((unsigned int)high << 8) | low);
+}");
+		}
+
+		[TestMethod]
+		public void ShiftResultTypeDependsOnlyOnLeftOperand ()
+		{
+			// C11 §6.5.7: The type of the result is the promoted left operand.
+			// The right operand's type must NOT widen the result.
+			Run (@"
+void main () {
+    // Left=byte, right=long: result is int (promoted byte), NOT long.
+    // The long right operand must not pull the shift type up.
+    byte b = 1;
+    long shift = 8;
+    assertAreEqual (256, b << shift);
+
+    // Left=long, right=byte: result is long (promoted long).
+    long l = 1;
+    byte s = 20;
+    assert32AreEqual (1048576L, l << s);
+
+    // Left=unsigned long, right=char: result is unsigned long.
+    unsigned long ul = 0xFF;
+    char sc = 16;
+    assertU32AreEqual (16711680, ul << sc);
+
+    // Left=int, right=long: result is int, not long.
+    // Shift by 12 fits in 16-bit int.
+    int i = 1;
+    long sl = 12;
+    assertAreEqual (4096, i << sl);
+}");
+		}
+
+		[TestMethod]
+		public void ShiftRightSignedUnsignedBehavior ()
+		{
+			// Signed right shift is arithmetic (preserves sign bit),
+			// unsigned right shift is logical (fills with zeros).
+			Run (@"
+void main () {
+    // Signed: right shift preserves sign
+    int neg = -1024;
+    assertAreEqual (-128, neg >> 3);
+
+    // Unsigned: right shift fills with zeros
+    unsigned int uneg = 0xFC00;
+    assertU16AreEqual (0x1F80, uneg >> 3);
+
+    // Long signed right shift
+    long lneg = -262144L;
+    assert32AreEqual (-32768L, lneg >> 3);
+
+    // Decomposing a 32-bit long back into bytes via right shift
+    unsigned long val = 0x00051234;
+    byte high = (byte)(val >> 16);
+    unsigned int low = (unsigned int)(val & 0xFFFF);
+    assertAreEqual (5, high);
+    assertU16AreEqual (0x1234, low);
+}");
+		}
+
+		[TestMethod]
 		public void StdInts ()
 		{
 			Run (@"
