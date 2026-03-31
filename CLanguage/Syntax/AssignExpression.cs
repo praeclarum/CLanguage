@@ -99,6 +99,9 @@ namespace CLanguage.Syntax
                         else if (v.Scope == VariableScope.Arg) {
                             ec.Emit (OpCode.LoadArg, v.Address + i);
                         }
+                        else {
+                            throw new NotSupportedException ("Loading struct from scope '" + v.Scope + "'");
+                        }
                     }
                 }
                 else {
