@@ -20,6 +20,8 @@ namespace CLanguage.Compiler
         List<Block> blocks;
         Dictionary<Block, BlockLocals> blockLocals;
         List<CompiledVariable> allLocals;
+        readonly Dictionary<string, Label> gotoLabels = new Dictionary<string, Label> ();
+        readonly HashSet<string> definedGotoLabels = new HashSet<string> ();
 
         public IEnumerable<CompiledVariable> LocalVariables { get { return allLocals; } }
 
@@ -139,6 +141,38 @@ namespace CLanguage.Compiler
         public override void EmitLabel (Label l)
         {
             l.Index = fexe.Instructions.Count;
+        }
+
+        public override Label? ResolveGotoLabel (string name)
+        {
+            if (!gotoLabels.TryGetValue (name, out var label)) {
+                label = new Label ();
+                gotoLabels[name] = label;
+            }
+            return label;
+        }
+
+        public override Label? DefineGotoLabel (string name)
+        {
+            if (definedGotoLabels.Contains (name)) {
+                Report.Error (140, $"Label '{name}' is already defined");
+                return null;
+            }
+            definedGotoLabels.Add (name);
+            if (!gotoLabels.TryGetValue (name, out var label)) {
+                label = new Label ();
+                gotoLabels[name] = label;
+            }
+            return label;
+        }
+
+        public void CheckLabels ()
+        {
+            foreach (var kv in gotoLabels) {
+                if (!definedGotoLabels.Contains (kv.Key)) {
+                    Report.Error (9999, $"Label '{kv.Key}' is not defined");
+                }
+            }
         }
 
         public override void Emit (Instruction instruction)

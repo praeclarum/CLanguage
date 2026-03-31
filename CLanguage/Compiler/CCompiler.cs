@@ -235,6 +235,7 @@ namespace CLanguage.Compiler
                 var fc = new FunctionContext (exe, f, pc);
                 AddStatementDeclarations (fc);
 				body.Emit (fc);
+				fc.CheckLabels ();
 				f.LocalVariables.AddRange (fc.LocalVariables);
 
 				// Make sure it returns

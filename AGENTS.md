@@ -325,7 +325,6 @@ Tests write C code as strings, compile and execute, then check results or expect
 
 ## Known Limitations
 
-- No `goto`
 - No variadic functions
 - No full heap/malloc (all memory is stack-based)
 - `volatile`/`restrict` parsed but ignored

@@ -924,6 +924,9 @@ statement
     
 labeled_statement
 	: IDENTIFIER ':' statement
+	{
+		$$ = new LabeledStatement ((string)$1, (Statement)$3, GetLocation($1));
+	}
 	;
 
 compound_statement
@@ -1129,6 +1132,9 @@ iteration_statement
 
 jump_statement
 	: GOTO IDENTIFIER ';'
+	{
+		$$ = new GotoStatement ((string)$2, GetLocation($1));
+	}
 	| CONTINUE ';'
     {
         $$ = new ContinueStatement ();
