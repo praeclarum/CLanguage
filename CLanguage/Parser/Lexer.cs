@@ -558,6 +558,7 @@ namespace CLanguage.Parser
                         r = Read ();
                         ch = (char)r;
                         if (r >= 0) {
+                            var advanceAfterEscape = true;
                             switch (ch) {
                                 case '\\':
                                     _chbuf[_chbuflen++] = '\\';
@@ -580,6 +581,19 @@ namespace CLanguage.Parser
                                 case '0':
                                     _chbuf[_chbuflen++] = '\0';
                                     break;
+                                case 'x': {
+                                        var hex = 0;
+                                        r = Read ();
+                                        ch = (char)r;
+                                        while (r >= 0 && ch != '\"' && (char.IsDigit (ch) || IsHex (ch))) {
+                                            hex = hex * 16 + HexVal (ch);
+                                            r = Read ();
+                                            ch = (char)r;
+                                        }
+                                        _chbuf[_chbuflen++] = (char)hex;
+                                        advanceAfterEscape = false;
+                                    }
+                                    break;
                                 default: {
                                         if (char.IsWhiteSpace ((char)r)) {
                                             while (r > 0 && r != '\n' && r != 8232) {
@@ -592,8 +606,10 @@ namespace CLanguage.Parser
                                     }
                                     break;
                             }
-                            r = Read ();
-                            ch = (char)r;
+                            if (advanceAfterEscape) {
+                                r = Read ();
+                                ch = (char)r;
+                            }
                         }
                     }
                     else if (ch == '\n' || ch == 8232) {
@@ -620,45 +636,61 @@ namespace CLanguage.Parser
                 ch = (char)r;
                 var done = r < 0 || ch == '\'';
                 while (!done && _chbuflen + 1 < _chbuf.Length) {
-                    _chbuf[_chbuflen++] = ch;
-                    r = Read ();
-                    ch = (char)r;
-                    done = r < 0 || ch == '\'';
-                }
-
-                if (_chbuflen > 1 && _chbuf[0] == '\\') {
-                    switch (_chbuf[1]) {
-                        case '\\':
-                            _chbuf[0] = '\\';
-                            _chbuflen = 1;
-                            break;
-                        case 'r':
-                            _chbuf[0] = '\r';
-                            _chbuflen = 1;
-                            break;
-                        case 'n':
-                            _chbuf[0] = '\n';
-                            _chbuflen = 1;
-                            break;
-                        case 't':
-                            _chbuf[0] = '\t';
-                            _chbuflen = 1;
-                            break;
-                        case '\'':
-                            _chbuf[0] = '\'';
-                            _chbuflen = 1;
-                            break;
-                        case '\"':
-                            _chbuf[0] = '\"';
-                            _chbuflen = 1;
-                            break;
-                        case '0':
-                            _chbuf[0] = '\0';
-                            _chbuflen = 1;
-                            break;
-                        default:
-                            throw new NotSupportedException ("Unrecognized char escape sequence");
+                    if (ch == '\\') {
+                        r = Read ();
+                        ch = (char)r;
+                        if (r >= 0) {
+                            var advanceAfterEscape = true;
+                            switch (ch) {
+                                case '\\':
+                                    _chbuf[_chbuflen++] = '\\';
+                                    break;
+                                case 'r':
+                                    _chbuf[_chbuflen++] = '\r';
+                                    break;
+                                case 'n':
+                                    _chbuf[_chbuflen++] = '\n';
+                                    break;
+                                case 't':
+                                    _chbuf[_chbuflen++] = '\t';
+                                    break;
+                                case '\'':
+                                    _chbuf[_chbuflen++] = '\'';
+                                    break;
+                                case '\"':
+                                    _chbuf[_chbuflen++] = '\"';
+                                    break;
+                                case '0':
+                                    _chbuf[_chbuflen++] = '\0';
+                                    break;
+                                case 'x': {
+                                        var hex = 0;
+                                        r = Read ();
+                                        ch = (char)r;
+                                        while (r >= 0 && ch != '\'' && (char.IsDigit (ch) || IsHex (ch))) {
+                                            hex = hex * 16 + HexVal (ch);
+                                            r = Read ();
+                                            ch = (char)r;
+                                        }
+                                        _chbuf[_chbuflen++] = (char)hex;
+                                        advanceAfterEscape = false;
+                                    }
+                                    break;
+                                default:
+                                    throw new NotSupportedException ("Unrecognized char escape sequence");
+                            }
+                            if (advanceAfterEscape) {
+                                r = Read ();
+                                ch = (char)r;
+                            }
+                        }
                     }
+                    else {
+                        _chbuf[_chbuflen++] = ch;
+                        r = Read ();
+                        ch = (char)r;
+                    }
+                    done = r < 0 || ch == '\'';
                 }
 
                 _lastR = Read ();
@@ -719,6 +751,14 @@ namespace CLanguage.Parser
                     return true;
             }
             return false;
+        }
+
+        static int HexVal (char c)
+        {
+            if (c >= '0' && c <= '9') return c - '0';
+            if (c >= 'a' && c <= 'f') return c - 'a' + 10;
+            if (c >= 'A' && c <= 'F') return c - 'A' + 10;
+            return 0;
         }
     }
 }
