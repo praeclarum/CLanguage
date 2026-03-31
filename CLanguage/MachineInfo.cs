@@ -253,21 +253,17 @@ namespace CLanguage
         InternalFunctionAction MarshalStaticOperator (object target, MethodInfo method)
         {
             var ps = method.GetParameters ();
-            // Skip the first parameter (the declaring type, mapped to this)
-            var nargs = ps.Length - 1;
 
+            var targetE = Expression.Constant (target);
             var interpreterE = Expression.Parameter (typeof (CInterpreter), "interpreter");
 
             var argsE = new Expression[ps.Length];
-            // First argument: read this pointer's value (ReadArg for the 'this' is not available for static;
-            // use ReadArg(0..n-1) for the remaining params, skip the declaring type param)
-            // For static operators registered as member functions, the remaining params start at arg 0.
             for (var i = 0; i < ps.Length; i++) {
                 var pt = ps[i].ParameterType;
                 if (i == 0) {
-                    // First C# parameter corresponds to the declaring type (this pointer value).
-                    // For the interop struct, this is opaque — pass a default value.
-                    argsE[i] = Expression.Default (pt);
+                    // First C# parameter is the declaring type (maps to implicit this).
+                    // Pass the captured target object.
+                    argsE[i] = Expression.Convert (targetE, pt);
                 }
                 else if (ValueReflection.TypedFields.ContainsKey (pt)) {
                     var vargE = Expression.Call (interpreterE, miReadArg, Expression.Constant (i - 1));
