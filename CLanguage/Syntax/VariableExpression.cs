@@ -83,6 +83,23 @@ namespace CLanguage.Syntax
                             throw new NotSupportedException ("Cannot evaluate variable scope '" + variable.Scope + "'");
                         }
                     }
+                    else if (variable.VariableType is CStructType structType) {
+                        var numValues = structType.NumValues;
+                        for (int i = 0; i < numValues; i++) {
+                            if (variable.Scope == VariableScope.Arg) {
+                                ec.Emit (OpCode.LoadArg, variable.Address + i);
+                            }
+                            else if (variable.Scope == VariableScope.Global) {
+                                ec.Emit (OpCode.LoadGlobal, variable.Address + i);
+                            }
+                            else if (variable.Scope == VariableScope.Local) {
+                                ec.Emit (OpCode.LoadLocal, variable.Address + i);
+                            }
+                            else {
+                                throw new NotSupportedException ("Cannot evaluate struct variable scope '" + variable.Scope + "'");
+                            }
+                        }
+                    }
                     else if (variable.VariableType is CArrayType arrayType) {
 
                         if (variable.Scope == VariableScope.Arg) {

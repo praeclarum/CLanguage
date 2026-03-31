@@ -70,6 +70,37 @@ namespace CLanguage.Syntax
                     VariableExpression.EmitLoadReferenceSlot (ec, v);
                     ec.Emit (OpCode.StorePointer);
                 }
+                else if (v.VariableType is CStructType structType) {
+                    ec.EmitCast (Right.GetEvaluatedCType (ec), Left.GetEvaluatedCType (ec));
+                    var numValues = structType.NumValues;
+                    // Store N values in reverse order (top of stack = last field)
+                    for (int i = numValues - 1; i >= 0; i--) {
+                        if (v.Scope == VariableScope.Global) {
+                            ec.Emit (OpCode.StoreGlobal, v.Address + i);
+                        }
+                        else if (v.Scope == VariableScope.Local) {
+                            ec.Emit (OpCode.StoreLocal, v.Address + i);
+                        }
+                        else if (v.Scope == VariableScope.Arg) {
+                            ec.Emit (OpCode.StoreArg, v.Address + i);
+                        }
+                        else {
+                            throw new NotSupportedException ("Assigning struct to scope '" + v.Scope + "'");
+                        }
+                    }
+                    // Reload all values as the expression result
+                    for (int i = 0; i < numValues; i++) {
+                        if (v.Scope == VariableScope.Global) {
+                            ec.Emit (OpCode.LoadGlobal, v.Address + i);
+                        }
+                        else if (v.Scope == VariableScope.Local) {
+                            ec.Emit (OpCode.LoadLocal, v.Address + i);
+                        }
+                        else if (v.Scope == VariableScope.Arg) {
+                            ec.Emit (OpCode.LoadArg, v.Address + i);
+                        }
+                    }
+                }
                 else {
                     ec.EmitCast (Right.GetEvaluatedCType (ec), Left.GetEvaluatedCType (ec));
                     ec.Emit (OpCode.Dup);

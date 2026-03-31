@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using CLanguage.Types;
 using CLanguage.Interpreter;
 using CLanguage.Compiler;
 
@@ -21,7 +22,16 @@ namespace CLanguage.Syntax
 			if (Expression != null) {
 				Expression.Emit (ec);
 
-				ec.Emit (OpCode.Pop);
+				var exprType = Expression.GetEvaluatedCType (ec);
+				if (exprType is CStructType) {
+					var numValues = exprType.NumValues;
+					for (int i = 0; i < numValues; i++) {
+						ec.Emit (OpCode.Pop);
+					}
+				}
+				else {
+					ec.Emit (OpCode.Pop);
+				}
 			}
 		}
 
