@@ -27,7 +27,7 @@ namespace CLanguage.Syntax
             }
 
 			if (ReturnExpression != null) {
-				if (f.FunctionType.IsVoid) {
+				if (f.FunctionType.ReturnType.IsVoid) {
 					ec.Report.Error (127, "A return keyword must not be followed by any expression when the function returns void");
 				}
 				else {
@@ -37,7 +37,7 @@ namespace CLanguage.Syntax
 				}
 			}
 			else {
-				if (f.FunctionType.IsVoid) {
+				if (f.FunctionType.ReturnType.IsVoid) {
 					ec.Emit (OpCode.Return);
 				}
 				else {

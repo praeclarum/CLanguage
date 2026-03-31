@@ -86,6 +86,18 @@ void main () {
 		}
 
 		[TestMethod]
+		public void VoidReturnInVoidFunction ()
+		{
+			Compile (@"void foo() { return; } void main() { foo(); }");
+		}
+
+		[TestMethod]
+		public void VoidReturnInVoidFunctionWithCode ()
+		{
+			Compile (@"int x = 0; void foo() { x = 42; return; x = 99; } void main() { foo(); }");
+		}
+
+		[TestMethod]
 		public void LocalVariables ()
 		{
 			var exe = Compile (@"
