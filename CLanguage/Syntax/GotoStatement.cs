@@ -27,7 +27,7 @@ namespace CLanguage.Syntax
                 ec.Emit (OpCode.Jump, label);
             }
             else {
-                ec.Report.Error (9999, $"goto requires a function context");
+                ec.Report.Error (9999, $"goto statement used outside of function body");
             }
         }
     }
