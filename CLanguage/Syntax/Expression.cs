@@ -185,26 +185,32 @@ namespace CLanguage.Syntax
             if (operatorName == null)
                 return false;
 
+            var argTypes = new[] { rightType };
+            var args = new[] { right };
+
             if (leftType is CStructType structType) {
                 // Check struct members first (for operators declared in struct body)
-                var method = FindBestOperatorMethod (structType, operatorName, new[] { rightType });
+                var method = FindBestOperatorMethod (structType, operatorName, argTypes);
                 if (method != null) {
-                    EmitMemberOperatorCall (ec, structType, method, left, new[] { right }, new[] { rightType });
+                    var funcType = (CFunctionType)method.MemberType;
+                    var resolved = ec.ResolveMethodFunction (structType, method);
+                    EmitMemberOperatorCall (ec, structType, resolved, funcType, left, args, argTypes);
                     return true;
                 }
                 // Check externally defined member operators via executable function list
-                var resolved = ec.TryResolveOperatorFunction (structType.Name, operatorName, new[] { rightType });
-                if (resolved?.VariableType is CFunctionType funcType) {
-                    EmitResolvedMemberOperatorCall (ec, structType, resolved, funcType, left, new[] { right }, new[] { rightType });
+                var resolvedOp = ec.TryResolveOperatorFunction (structType.Name, operatorName, argTypes);
+                if (resolvedOp?.VariableType is CFunctionType rFuncType) {
+                    EmitMemberOperatorCall (ec, structType, resolvedOp, rFuncType, left, args, argTypes);
                     return true;
                 }
             }
 
             // Only check free-standing operators if at least one operand is a struct type
             if (leftType is CStructType || rightType is CStructType) {
-                var res = ec.TryResolveVariable (operatorName, new[] { leftType, rightType });
+                var freeArgTypes = new[] { leftType, rightType };
+                var res = ec.TryResolveVariable (operatorName, freeArgTypes);
                 if (res?.VariableType is CFunctionType) {
-                    EmitFreeStandingOperatorCall (ec, res, new[] { left, right }, new[] { leftType, rightType });
+                    EmitFreeStandingOperatorCall (ec, res, new[] { left, right }, freeArgTypes);
                     return true;
                 }
             }
@@ -218,20 +224,26 @@ namespace CLanguage.Syntax
                 return false;
 
             if (operandType is CStructType structType) {
-                var method = FindBestOperatorMethod (structType, operatorName, Array.Empty<CType> ());
+                var emptyTypes = Array.Empty<CType> ();
+                var emptyArgs = Array.Empty<Expression> ();
+
+                var method = FindBestOperatorMethod (structType, operatorName, emptyTypes);
                 if (method != null) {
-                    EmitMemberOperatorCall (ec, structType, method, operand, Array.Empty<Expression> (), Array.Empty<CType> ());
+                    var funcType = (CFunctionType)method.MemberType;
+                    var resolved = ec.ResolveMethodFunction (structType, method);
+                    EmitMemberOperatorCall (ec, structType, resolved, funcType, operand, emptyArgs, emptyTypes);
                     return true;
                 }
-                var resolved = ec.TryResolveOperatorFunction (structType.Name, operatorName, Array.Empty<CType> ());
-                if (resolved?.VariableType is CFunctionType funcType) {
-                    EmitResolvedMemberOperatorCall (ec, structType, resolved, funcType, operand, Array.Empty<Expression> (), Array.Empty<CType> ());
+                var resolvedOp = ec.TryResolveOperatorFunction (structType.Name, operatorName, emptyTypes);
+                if (resolvedOp?.VariableType is CFunctionType rFuncType) {
+                    EmitMemberOperatorCall (ec, structType, resolvedOp, rFuncType, operand, emptyArgs, emptyTypes);
                     return true;
                 }
                 // Check free-standing unary operator
-                var res = ec.TryResolveVariable (operatorName, new[] { operandType });
+                var argTypes = new[] { operandType };
+                var res = ec.TryResolveVariable (operatorName, argTypes);
                 if (res?.VariableType is CFunctionType) {
-                    EmitFreeStandingOperatorCall (ec, res, new[] { operand }, new[] { operandType });
+                    EmitFreeStandingOperatorCall (ec, res, new[] { operand }, argTypes);
                     return true;
                 }
             }
@@ -239,9 +251,8 @@ namespace CLanguage.Syntax
             return false;
         }
 
-        static void EmitMemberOperatorCall (EmitContext ec, CStructType structType, CStructMethod method, Expression thisExpr, Expression[] args, CType[] argTypes)
+        static void EmitMemberOperatorCall (EmitContext ec, CStructType structType, ResolvedVariable resolved, CFunctionType funcType, Expression thisExpr, Expression[] args, CType[] argTypes)
         {
-            var funcType = (CFunctionType)method.MemberType;
             var tempThisOffset = -1;
 
             // If thisExpr is an rvalue (e.g., intermediate result from chained operators),
@@ -271,40 +282,6 @@ namespace CLanguage.Syntax
             }
 
             // Push function address and call
-            var resolved = ec.ResolveMethodFunction (structType, method);
-            ec.Emit (OpCode.LoadConstant, Value.Pointer (resolved.Address));
-            ec.Emit (OpCode.Call, funcType.Parameters.Count);
-
-            if (funcType.ReturnType.IsVoid)
-                ec.Emit (OpCode.LoadConstant, 0);
-        }
-
-        static void EmitResolvedMemberOperatorCall (EmitContext ec, CStructType structType, ResolvedVariable resolved, CFunctionType funcType, Expression thisExpr, Expression[] args, CType[] argTypes)
-        {
-            var tempThisOffset = -1;
-
-            if (!thisExpr.CanEmitPointer) {
-                tempThisOffset = ec.AllocateTemp (structType);
-                thisExpr.Emit (ec);
-                var numValues = structType.NumValues;
-                for (var i = numValues - 1; i >= 0; i--)
-                    ec.Emit (OpCode.StoreLocal, tempThisOffset + i);
-            }
-
-            for (var i = 0; i < args.Length; i++) {
-                var paramType = funcType.Parameters[i].ParameterType;
-                EmitOperatorArgument (ec, args[i], argTypes[i], paramType);
-            }
-
-            if (tempThisOffset >= 0) {
-                ec.Emit (OpCode.LoadConstant, Value.Pointer (tempThisOffset));
-                ec.Emit (OpCode.LoadFramePointer);
-                ec.Emit (OpCode.OffsetPointer);
-            }
-            else {
-                thisExpr.EmitPointer (ec);
-            }
-
             ec.Emit (OpCode.LoadConstant, Value.Pointer (resolved.Address));
             ec.Emit (OpCode.Call, funcType.Parameters.Count);
 
