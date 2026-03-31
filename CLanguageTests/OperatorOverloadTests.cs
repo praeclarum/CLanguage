@@ -233,7 +233,6 @@ void main() {}
         public void MemberOperatorPlus ()
         {
             var code = @"
-struct V;
 struct V {
     int x;
     V operator+(V other);
@@ -256,7 +255,6 @@ void main() {
         public void OperatorEquals ()
         {
             var code = @"
-struct V;
 struct V {
     int x;
     bool operator==(V other);
@@ -276,7 +274,6 @@ void main() {
         public void ChainedOperators ()
         {
             var code = @"
-struct V;
 struct V {
     int x;
     V operator+(V other);
@@ -319,7 +316,6 @@ void main() {
         public void MixedTypeOperator ()
         {
             var code = @"
-struct V;
 struct V {
     int x;
     V operator+(int n);
@@ -341,7 +337,6 @@ void main() {
         public void OperatorSubscriptExecution ()
         {
             var code = @"
-struct Vec;
 struct Vec {
     int data[3];
     int operator[](int i);
@@ -363,7 +358,6 @@ void main() {
         public void ComparisonOperatorsExecution ()
         {
             var code = @"
-struct V;
 struct V {
     int x;
     bool operator<(V other);
@@ -387,7 +381,6 @@ void main() {
         public void UnaryOperatorMinus ()
         {
             var code = @"
-struct V;
 struct V {
     int x;
     V operator-();
@@ -424,7 +417,6 @@ void main() {
         public void AllArithmeticOperators ()
         {
             var code = @"
-struct V;
 struct V {
     int x;
     V operator+(V o);
@@ -454,7 +446,6 @@ void main() {
         public void ConstRefOperator ()
         {
             var code = @"
-struct V;
 struct V {
     int x;
     V operator+(const V& other);
@@ -477,7 +468,6 @@ void main() {
         public void ConstRefComparisonOperator ()
         {
             var code = @"
-struct V;
 struct V {
     int x;
     bool operator==(const V& other);
@@ -493,6 +483,31 @@ void main() {
     assertAreEqual(0, a == c);
     assertAreEqual(1, a < c);
     assertAreEqual(0, c < a);
+}";
+            Run (code);
+        }
+
+        [TestMethod]
+        public void ClassWithCtorAndOperator ()
+        {
+            // Class with constructor and operator declared in body, defined externally
+            var code = @"
+class C {
+public:
+    int x;
+    C(int x);
+    C operator+(C other);
+};
+C::C(int x) { this->x = x; }
+C C::operator+(C other) {
+    C r(this->x + other.x);
+    return r;
+}
+void main() {
+    C a(3);
+    C b(4);
+    C c = a + b;
+    assertAreEqual(7, c.x);
 }";
             Run (code);
         }

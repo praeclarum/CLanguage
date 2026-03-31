@@ -1011,6 +1011,18 @@ ctor_declarator
 	{
 		$$ = new FunctionDeclarator(innerDeclarator: (Declarator)$1, parameters: new List<ParameterDeclaration>());
 	}
+	| TYPE_NAME '(' parameter_type_list ')'
+	{
+		$$ = new FunctionDeclarator(innerDeclarator: new IdentifierDeclarator(($1).ToString()), parameters: (List<ParameterDeclaration>)$3);
+	}
+	| TYPE_NAME '(' ')'
+	{
+		$$ = new FunctionDeclarator(innerDeclarator: new IdentifierDeclarator(($1).ToString()), parameters: new List<ParameterDeclaration>());
+	}
+	| '~' TYPE_NAME '(' ')'
+	{
+		$$ = new FunctionDeclarator(innerDeclarator: new IdentifierDeclarator("~" + ($2).ToString()), parameters: new List<ParameterDeclaration>());
+	}
 	;
 
 ctor_declaration

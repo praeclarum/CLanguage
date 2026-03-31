@@ -20,9 +20,30 @@ namespace CLanguage.Parser
         {
             if (index + 1 < Tokens.Length) {
                 index++;
+                // When we advance past a struct/class/union keyword followed by
+                // IDENTIFIER '{' or IDENTIFIER ':', register the identifier as a
+                // TYPE_NAME immediately. This allows the struct's own name to be
+                // recognized inside its body (e.g., `struct V { V operator+(V o); };`)
+                // without requiring a forward declaration.
+                TryRegisterStructName ();
                 return true;
             }
             return false;
+        }
+
+        void TryRegisterStructName ()
+        {
+            var tok = Tokens[index];
+            if (tok.Kind == TokenKind.STRUCT || tok.Kind == TokenKind.CLASS || tok.Kind == TokenKind.UNION) {
+                if (index + 2 < Tokens.Length) {
+                    var nameTok = Tokens[index + 1];
+                    var afterName = Tokens[index + 2];
+                    if (nameTok.Kind == TokenKind.IDENTIFIER &&
+                        (afterName.Kind == '{' || afterName.Kind == ':')) {
+                        typedefs.Add (nameTok.StringValue);
+                    }
+                }
+            }
         }
 
         public int token () => CurrentToken.Kind;
