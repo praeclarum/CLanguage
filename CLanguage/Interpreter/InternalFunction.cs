@@ -1,5 +1,6 @@
 using System;
 using CLanguage.Parser;
+using CLanguage.Syntax;
 using CLanguage.Types;
 
 namespace CLanguage.Interpreter
@@ -27,9 +28,23 @@ namespace CLanguage.Interpreter
             compiler.Add (tu);
             var exe = compiler.Compile ();
             if (tu.Functions.Count == 0) {
-                throw new Exception ("Failed to parse function prototype: " + prototype);
+                // Retry with machine headers so the prototype can reference
+                // struct types defined in HeaderCode (needed for operators
+                // with struct parameters/return types).
+                report = new Report ();
+                parser = new CParser ();
+                var headerDoc = new LexedDocument (new Document ("_machine.h", machineInfo.GeneratedHeaderCode), report);
+                var protoDoc = new LexedDocument (new Document ("_internal.h", prototype + ";"), report);
+                tu = parser.ParseTranslationUnit (report, "_internal",
+                    ((_, __) => null), headerDoc.Tokens, protoDoc.Tokens);
+                compiler = new Compiler.CCompiler (machineInfo, report);
+                compiler.Add (tu);
+                exe = compiler.Compile ();
+                if (tu.Functions.Count == 0) {
+                    throw new Exception ("Failed to parse function prototype: " + prototype);
+                }
             }
-			var f = tu.Functions[0];
+			var f = tu.Functions[tu.Functions.Count - 1];
 
 			Name = f.Name;
             NameContext = f.NameContext;

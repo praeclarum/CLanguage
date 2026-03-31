@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using CLanguage.Compiler;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,6 +26,17 @@ namespace CLanguage.Types
         public CStructType (string name)
         {
             Name = name;
+        }
+
+        public override bool Equals (object? obj)
+        {
+            if (ReferenceEquals (this, obj)) return true;
+            return obj is CStructType other && !string.IsNullOrEmpty (Name) && Name == other.Name;
+        }
+
+        public override int GetHashCode ()
+        {
+            return string.IsNullOrEmpty (Name) ? RuntimeHelpers.GetHashCode (this) : Name.GetHashCode ();
         }
 
         /// <summary>
