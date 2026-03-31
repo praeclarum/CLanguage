@@ -170,6 +170,10 @@ namespace CLanguage.Compiler
                 // handles the address-of emission (EmitPointer for lvalues, or
                 // AllocateTemp for rvalues) before this cast is reached.
             }
+            else if (fromType is CStructType && toType is CStructType) {
+                // Struct to same struct type: no conversion needed.
+                // Different struct types cannot be cast to each other.
+            }
             else {
                 Report.Error (30, "Cannot convert type '" + fromType + "' to '" + toType + "'");
             }

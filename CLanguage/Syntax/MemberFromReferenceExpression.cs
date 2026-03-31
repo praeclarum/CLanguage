@@ -77,7 +77,22 @@ namespace CLanguage.Syntax
                         }
                     }
                     else {
-                        Left.EmitPointer (ec);
+                        if (Left.CanEmitPointer) {
+                            Left.EmitPointer (ec);
+                        }
+                        else {
+                            // Left is an rvalue (e.g., function call returning struct).
+                            // Allocate a temp, store the struct there, then use its address.
+                            var tempOffset = ec.AllocateTemp (structType);
+                            Left.Emit (ec);
+                            var numValues = structType.NumValues;
+                            for (int i = numValues - 1; i >= 0; i--) {
+                                ec.Emit (OpCode.StoreLocal, tempOffset + i);
+                            }
+                            ec.Emit (OpCode.LoadConstant, Value.Pointer (tempOffset));
+                            ec.Emit (OpCode.LoadFramePointer);
+                            ec.Emit (OpCode.OffsetPointer);
+                        }
                         ec.Emit (OpCode.LoadConstant, Value.Pointer (structType.GetFieldValueOffset(member, ec)));
                         ec.Emit (OpCode.OffsetPointer);
                         ec.Emit (OpCode.LoadPointer);
