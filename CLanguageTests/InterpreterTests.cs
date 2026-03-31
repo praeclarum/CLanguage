@@ -247,6 +247,58 @@ void main () {
 		}
 
 		[TestMethod]
+		public void ForLoopInfinite ()
+		{
+			Run (@"
+void main () {
+	int i = 0;
+	for (;;) {
+		i++;
+		if (i >= 10) break;
+	}
+	assertAreEqual (10, i);
+}");
+		}
+
+		[TestMethod]
+		public void ForLoopEmptyCondition ()
+		{
+			Run (@"
+void main () {
+	int i;
+	for (i = 0; ; i++) {
+		if (i >= 5) break;
+	}
+	assertAreEqual (5, i);
+}");
+		}
+
+		[TestMethod]
+		public void ForLoopEmptyIncrement ()
+		{
+			Run (@"
+void main () {
+	int i;
+	for (i = 0; i < 10;) {
+		i++;
+	}
+	assertAreEqual (10, i);
+}");
+		}
+
+		[TestMethod]
+		public void ForLoopEmptyInit ()
+		{
+			Run (@"
+void main () {
+	int i = 0;
+	for (; i < 5; i++) {
+	}
+	assertAreEqual (5, i);
+}");
+		}
+
+		[TestMethod]
 		public void WhileLoopWithBreak ()
 		{
 			var i = Run (@"
