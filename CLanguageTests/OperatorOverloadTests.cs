@@ -233,8 +233,10 @@ void main() {}
         public void MemberOperatorPlus ()
         {
             var code = @"
+struct V;
 struct V {
     int x;
+    V operator+(V other);
 };
 V V::operator+(V other) {
     V r;
@@ -254,7 +256,11 @@ void main() {
         public void OperatorEquals ()
         {
             var code = @"
-struct V { int x; };
+struct V;
+struct V {
+    int x;
+    bool operator==(V other);
+};
 bool V::operator==(V other) { return this->x == other.x; }
 void main() {
     V a; a.x = 5;
@@ -270,7 +276,11 @@ void main() {
         public void ChainedOperators ()
         {
             var code = @"
-struct V { int x; };
+struct V;
+struct V {
+    int x;
+    V operator+(V other);
+};
 V V::operator+(V other) {
     V r;
     r.x = this->x + other.x;
@@ -309,7 +319,11 @@ void main() {
         public void MixedTypeOperator ()
         {
             var code = @"
-struct V { int x; };
+struct V;
+struct V {
+    int x;
+    V operator+(int n);
+};
 V V::operator+(int n) {
     V r;
     r.x = this->x + n;
@@ -327,8 +341,10 @@ void main() {
         public void OperatorSubscriptExecution ()
         {
             var code = @"
+struct Vec;
 struct Vec {
     int data[3];
+    int operator[](int i);
 };
 int Vec::operator[](int i) {
     return this->data[i];
@@ -347,7 +363,13 @@ void main() {
         public void ComparisonOperatorsExecution ()
         {
             var code = @"
-struct V { int x; };
+struct V;
+struct V {
+    int x;
+    bool operator<(V other);
+    bool operator>(V other);
+    bool operator!=(V other);
+};
 bool V::operator<(V other) { return this->x < other.x; }
 bool V::operator>(V other) { return this->x > other.x; }
 bool V::operator!=(V other) { return this->x != other.x; }
@@ -365,7 +387,11 @@ void main() {
         public void UnaryOperatorMinus ()
         {
             var code = @"
-struct V { int x; };
+struct V;
+struct V {
+    int x;
+    V operator-();
+};
 V V::operator-() {
     V r;
     r.x = -(this->x);
@@ -398,7 +424,15 @@ void main() {
         public void AllArithmeticOperators ()
         {
             var code = @"
-struct V { int x; };
+struct V;
+struct V {
+    int x;
+    V operator+(V o);
+    V operator-(V o);
+    V operator*(V o);
+    V operator/(V o);
+    V operator%(V o);
+};
 V V::operator+(V o) { V r; r.x = this->x + o.x; return r; }
 V V::operator-(V o) { V r; r.x = this->x - o.x; return r; }
 V V::operator*(V o) { V r; r.x = this->x * o.x; return r; }
@@ -412,6 +446,53 @@ void main() {
     V r3 = a * b; assertAreEqual(60, r3.x);
     V r4 = a / b; assertAreEqual(6, r4.x);
     V r5 = a % b; assertAreEqual(2, r5.x);
+}";
+            Run (code);
+        }
+
+        [TestMethod]
+        public void ConstRefOperator ()
+        {
+            var code = @"
+struct V;
+struct V {
+    int x;
+    V operator+(const V& other);
+};
+V V::operator+(const V& other) {
+    V r;
+    r.x = this->x + other.x;
+    return r;
+}
+void main() {
+    V a; a.x = 3;
+    V b; b.x = 4;
+    V c = a + b;
+    assertAreEqual(7, c.x);
+}";
+            Run (code);
+        }
+
+        [TestMethod]
+        public void ConstRefComparisonOperator ()
+        {
+            var code = @"
+struct V;
+struct V {
+    int x;
+    bool operator==(const V& other);
+    bool operator<(const V& other);
+};
+bool V::operator==(const V& other) { return this->x == other.x; }
+bool V::operator<(const V& other) { return this->x < other.x; }
+void main() {
+    V a; a.x = 5;
+    V b; b.x = 5;
+    V c; c.x = 10;
+    assertAreEqual(1, a == b);
+    assertAreEqual(0, a == c);
+    assertAreEqual(1, a < c);
+    assertAreEqual(0, c < a);
 }";
             Run (code);
         }
