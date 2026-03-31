@@ -60,26 +60,47 @@ namespace CLanguage.Syntax
 
             if (Left is VariableExpression variable) {
 
-                ec.EmitCast (Right.GetEvaluatedCType (ec), Left.GetEvaluatedCType (ec));
-                ec.Emit (OpCode.Dup);
-
                 var v = ec.ResolveVariable (variable, null);
 
-                if (v.Scope == VariableScope.Global) {
-                    ec.Emit (OpCode.StoreGlobal, v.Address);
-                }
-                else if (v.Scope == VariableScope.Local) {
-                    ec.Emit (OpCode.StoreLocal, v.Address);
-                }
-                else if (v.Scope == VariableScope.Arg) {
-                    ec.Emit (OpCode.StoreArg, v.Address);
-                }
-                else if (v.Scope == VariableScope.Function) {
-                    ec.Emit (OpCode.Pop);
-                    ec.Report.Error (1656, $"Cannot assign to `{variable.VariableName}` because it is a function");
+                if (v.VariableType is CReferenceType refType) {
+                    // Assigning to a reference: write through the pointer
+                    ec.EmitCast (Right.GetEvaluatedCType (ec), refType.InnerType);
+                    ec.Emit (OpCode.Dup);
+                    // Load the pointer that the reference holds
+                    if (v.Scope == VariableScope.Arg) {
+                        ec.Emit (OpCode.LoadArg, v.Address);
+                    }
+                    else if (v.Scope == VariableScope.Local) {
+                        ec.Emit (OpCode.LoadLocal, v.Address);
+                    }
+                    else if (v.Scope == VariableScope.Global) {
+                        ec.Emit (OpCode.LoadGlobal, v.Address);
+                    }
+                    else {
+                        throw new NotSupportedException ("Assigning to reference scope '" + v.Scope + "'");
+                    }
+                    ec.Emit (OpCode.StorePointer);
                 }
                 else {
-                    throw new NotSupportedException ("Assigning to scope '" + v.Scope + "'");
+                    ec.EmitCast (Right.GetEvaluatedCType (ec), Left.GetEvaluatedCType (ec));
+                    ec.Emit (OpCode.Dup);
+
+                    if (v.Scope == VariableScope.Global) {
+                        ec.Emit (OpCode.StoreGlobal, v.Address);
+                    }
+                    else if (v.Scope == VariableScope.Local) {
+                        ec.Emit (OpCode.StoreLocal, v.Address);
+                    }
+                    else if (v.Scope == VariableScope.Arg) {
+                        ec.Emit (OpCode.StoreArg, v.Address);
+                    }
+                    else if (v.Scope == VariableScope.Function) {
+                        ec.Emit (OpCode.Pop);
+                        ec.Report.Error (1656, $"Cannot assign to `{variable.VariableName}` because it is a function");
+                    }
+                    else {
+                        throw new NotSupportedException ("Assigning to scope '" + v.Scope + "'");
+                    }
                 }
             }
             else if (Left.CanEmitPointer) {

@@ -78,8 +78,29 @@ namespace CLanguage.Syntax
             }
             for (var i = 0; i < Arguments.Count; i++)
 			{
-				Arguments[i].Emit (ec);
-                ec.EmitCast (argTypes[i], type.Parameters[i].ParameterType);
+                var paramType = type.Parameters[i].ParameterType;
+                if (paramType is CReferenceType refType) {
+                    // Pass by reference: push address of the argument
+                    if (Arguments[i].CanEmitPointer) {
+                        Arguments[i].EmitPointer (ec);
+                    }
+                    else {
+                        // For rvalues/temporaries: emit value to a temp local, then take its address
+                        var tempOffset = ec.AllocateTemp (refType.InnerType);
+                        Arguments[i].Emit (ec);
+                        ec.EmitCast (argTypes[i], refType.InnerType);
+                        // Store the value in the temp local
+                        ec.Emit (OpCode.StoreLocal, tempOffset);
+                        // Push the address of the temp local
+                        ec.Emit (OpCode.LoadConstant, Value.Pointer (tempOffset));
+                        ec.Emit (OpCode.LoadFramePointer);
+                        ec.Emit (OpCode.OffsetPointer);
+                    }
+                }
+                else {
+                    Arguments[i].Emit (ec);
+                    ec.EmitCast (argTypes[i], paramType);
+                }
 			}
             for (var i = Arguments.Count; i < type.Parameters.Count; i++) {
                 var v = type.Parameters[i].DefaultValue ?? (Value)0;

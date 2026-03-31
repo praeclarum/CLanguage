@@ -568,6 +568,14 @@ declarator
 	{
 		$$ = new PointerDeclarator((Pointer)$1, (Declarator)$2);
 	}
+	| '&' direct_declarator
+	{
+		$$ = new ReferenceDeclarator((Declarator)$2);
+	}
+	| '&' type_qualifier_list direct_declarator
+	{
+		$$ = new ReferenceDeclarator((Declarator)$3, (TypeQualifiers)$2);
+	}
 	| direct_declarator		{ $$ = $1; }
 	;
 
@@ -772,6 +780,10 @@ abstract_declarator
 	: pointer
 	{
 		$$ = new PointerDeclarator((Pointer)$1, null);
+	}
+	| '&'
+	{
+		$$ = new ReferenceDeclarator(null);
 	}
 	| direct_abstract_declarator
 	| pointer direct_abstract_declarator

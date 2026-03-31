@@ -132,4 +132,20 @@ namespace CLanguage.Syntax
             Pointer = pointer;
         }
     }
+
+    public class ReferenceDeclarator : Declarator
+    {
+        public TypeQualifiers Qualifiers { get; }
+
+        public override string DeclaredIdentifier {
+            get {
+                return (InnerDeclarator != null) ? InnerDeclarator.DeclaredIdentifier : "";
+            }
+        }
+
+        public ReferenceDeclarator (Declarator? inner, TypeQualifiers qualifiers = TypeQualifiers.None) : base (inner)
+        {
+            Qualifiers = qualifiers;
+        }
+    }
 }

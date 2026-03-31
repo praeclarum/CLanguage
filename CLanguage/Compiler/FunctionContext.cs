@@ -119,6 +119,18 @@ namespace CLanguage.Compiler
             blocks.RemoveAt (blocks.Count - 1);
         }
 
+        public override int AllocateTemp (CType type)
+        {
+            var offset = 0;
+            if (allLocals.Count > 0) {
+                var last = allLocals[allLocals.Count - 1];
+                offset = last.StackOffset + last.VariableType.NumValues;
+            }
+            var temp = new CompiledVariable ($"__ref_temp_{allLocals.Count}", offset, type);
+            allLocals.Add (temp);
+            return offset;
+        }
+
         public override Label DefineLabel ()
         {
             return new Label ();

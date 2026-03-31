@@ -95,6 +95,13 @@ namespace CLanguage.Compiler
             ParentContext?.EndBlock ();
         }
 
+        public virtual int AllocateTemp (CType type)
+        {
+            if (ParentContext != null)
+                return ParentContext.AllocateTemp (type);
+            throw new NotSupportedException ("Cannot allocate temp outside of a function");
+        }
+
         public virtual Label DefineLabel ()
         {
             if (ParentContext != null)
@@ -146,6 +153,20 @@ namespace CLanguage.Compiler
                      && derivedStruct.IsDerivedFrom (baseStruct)) {
                 // Derived pointer to base pointer (implicit upcast) — no code needed,
                 // the pointer value is the same since base is at the start of the object.
+            }
+            else if (fromType is CReferenceType fromRef) {
+                // Reference to inner type: dereference
+                if (fromRef.InnerType.Equals (toType)) {
+                    Emit (OpCode.LoadPointer);
+                }
+                else {
+                    // Dereference then cast
+                    Emit (OpCode.LoadPointer);
+                    EmitCast (fromRef.InnerType, toType);
+                }
+            }
+            else if (toType is CReferenceType toRef && fromType.Equals (toRef.InnerType)) {
+                // Value to reference: no-op at the cast level (caller handles address-of)
             }
             else {
                 Report.Error (30, "Cannot convert type '" + fromType + "' to '" + toType + "'");
@@ -300,6 +321,11 @@ namespace CLanguage.Compiler
             }
             else if (decl is FunctionDeclarator) {
                 type = MakeCFunctionType (type, decl, block);
+            }
+            else if (decl is ReferenceDeclarator rdecl) {
+                type = new CReferenceType (type);
+                type.TypeQualifiers = rdecl.Qualifiers;
+                type = MakeCType (type, rdecl.InnerDeclarator, null, block);
             }
 
             return type;
