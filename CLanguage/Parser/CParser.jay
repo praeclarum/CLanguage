@@ -51,6 +51,7 @@ primary_expression
     | TRUE                  { $$ = ConstantExpression.True; }
     | FALSE                 { $$ = ConstantExpression.False; }
 	| '(' expression ')'	{ $$ = $2; }
+	| IDENTIFIER COLONCOLON IDENTIFIER	{ $$ = new ScopeResolutionExpression(($1).ToString(), ($3).ToString()); }
 	;
 
 postfix_expression

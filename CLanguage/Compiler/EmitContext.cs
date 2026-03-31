@@ -90,6 +90,11 @@ namespace CLanguage.Compiler
             return ParentContext?.TryResolveOperatorFunction (structName, operatorName, argTypes);
         }
 
+        public virtual ResolvedVariable? TryResolveQualifiedFunction (string nameContext, string name, CType[]? argTypes)
+        {
+            return ParentContext?.TryResolveQualifiedFunction (nameContext, name, argTypes);
+        }
+
         public virtual void BeginBlock (Block b)
         {
             ParentContext?.BeginBlock (b);

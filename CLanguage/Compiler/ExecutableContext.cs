@@ -97,5 +97,26 @@ namespace CLanguage.Compiler
                 return new ResolvedVariable (best, bestIndex);
             return base.TryResolveOperatorFunction (structName, operatorName, argTypes);
         }
+
+        public override ResolvedVariable? TryResolveQualifiedFunction (string nameContext, string name, CType[]? argTypes)
+        {
+            BaseFunction? best = null;
+            var bestIndex = -1;
+            var bestScore = 0;
+            for (var i = 0; i < Executable.Functions.Count; i++) {
+                var f = Executable.Functions[i];
+                if (f.Name == name && f.NameContext == nameContext) {
+                    var score = f.FunctionType.ScoreParameterTypeMatches (argTypes);
+                    if (score > bestScore) {
+                        best = f;
+                        bestIndex = i;
+                        bestScore = score;
+                    }
+                }
+            }
+            if (best != null)
+                return new ResolvedVariable (best, bestIndex);
+            return base.TryResolveQualifiedFunction (nameContext, name, argTypes);
+        }
     }
 }

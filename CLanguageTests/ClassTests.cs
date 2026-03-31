@@ -225,19 +225,14 @@ void main() {
         public void InlineStaticMethodDefinition ()
         {
             Run (@"
-class Counter {
-    int n;
+class MathHelper {
 public:
-    void inc() { this->n = this->n + 1; }
-    int get() { return this->n; }
-    static int zero() { return 0; }
+    static int add(int a, int b) { return a + b; }
+    static int square(int x) { return x * x; }
 };
 void main() {
-    Counter c;
-    c.n = 0;
-    c.inc();
-    c.inc();
-    assertAreEqual(2, c.get());
+    assertAreEqual(7, MathHelper::add(3, 4));
+    assertAreEqual(25, MathHelper::square(5));
 }
 ");
         }
