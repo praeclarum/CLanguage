@@ -102,12 +102,17 @@ namespace CLanguage.Parser
                             }
                             tokens.RemoveRange (i, len + 1);
                             tokens.InsertRange (i, newBody);
+                            anotherIterationNeeded = true;
                         }
                         else {
+                            var newBody = define.Body.ToList ();
+                            var newDefines = new Dictionary<string, Define> (defines);
+                            newDefines.Remove (define.Name);
+                            while (PreprocessIteration (newDefines, include, newBody, report)) { }
                             tokens.RemoveAt (i);
-                            tokens.InsertRange (i, define.Body);
+                            tokens.InsertRange (i, newBody);
+                            i += newBody.Count;
                         }
-                        anotherIterationNeeded = true;
                     }
                     else {
                         i++;

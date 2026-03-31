@@ -472,6 +472,70 @@ void main() {
 ");
         }
 
+        [TestMethod]
+        public void SelfReferencingDefine ()
+        {
+            Run (@"
+#define FOO FOO
+void main() {
+    int FOO = 42;
+    assertAreEqual(42, FOO);
+}
+");
+        }
+
+        [TestMethod]
+        public void SelfReferencingDefineInExpression ()
+        {
+            Run (@"
+#define X X
+void main() {
+    int X = 10;
+    int y = X + 5;
+    assertAreEqual(15, y);
+}
+");
+        }
+
+        [TestMethod]
+        public void MutuallyRecursiveDefines ()
+        {
+            Run (@"
+#define A B
+#define B A
+void main() {
+    int A = 1;
+    int B = 2;
+    assertAreEqual(1, A);
+    assertAreEqual(2, B);
+}
+");
+        }
+
+        [TestMethod]
+        public void DefineChainExpansion ()
+        {
+            Run (@"
+#define X Y
+#define Y 42
+void main() {
+    assertAreEqual(42, X);
+}
+");
+        }
+
+        [TestMethod]
+        public void SelfReferencingDefineWithOtherTokens ()
+        {
+            Run (@"
+#define SIZE SIZE
+void main() {
+    int SIZE = 100;
+    assertAreEqual(100, SIZE);
+}
+");
+        }
+
     }
 }
 
