@@ -52,8 +52,8 @@ typedef unsigned char byte;
 typedef unsigned short word;
 struct SerialClass {
     void begin(int baud);
-    //void print(char value);
-    //void print(int value);
+    void print(char value);
+    void print(int value);
     void print(const char *value);
     void println();
     void println(int value, int bas);
@@ -97,8 +97,8 @@ struct WireClass Wire;
             AddInternalFunction ("void noTone (int pin)");
             AddInternalFunction ("long millis ()", Arduino.Millis);
             AddInternalFunction ("void SerialClass::begin (int baud)", Arduino.SerialBegin);
-            //AddInternalFunction ("void SerialClass::print (char value)", Arduino.SerialPrintC);
-            //AddInternalFunction ("void SerialClass::print (int value)", Arduino.SerialPrintI);
+            AddInternalFunction ("void SerialClass::print (char value)", Arduino.SerialPrintC);
+            AddInternalFunction ("void SerialClass::print (int value)", Arduino.SerialPrintI);
             AddInternalFunction ("void SerialClass::print (const char *value)", Arduino.SerialPrintS);
             AddInternalFunction ("void SerialClass::println ()", Arduino.SerialPrintln);
             AddInternalFunction ("void SerialClass::println (int value, int bas)", Arduino.SerialPrintlnBas);
@@ -269,6 +269,18 @@ struct WireClass Wire;
             {
                 var p = state.ReadArg (0).PointerValue;
                 SerialOut.Write (state.ReadString (p));
+            }
+
+            public void SerialPrintC (CInterpreter state)
+            {
+                var v = state.ReadArg(0).CharValue;
+                SerialOut.Write (v);
+            }
+
+            public void SerialPrintI (CInterpreter state)
+            {
+                var v = state.ReadArg(0).Int16Value;
+                SerialOut.Write (v);
             }
 
             public void SerialPrintln (CInterpreter state)

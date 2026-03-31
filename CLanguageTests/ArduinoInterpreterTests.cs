@@ -191,6 +191,36 @@ void loop() {
         }
 
         [TestMethod]
+        public void SerialPrintCharCast ()
+        {
+            var code = @"
+void setup() {
+  Serial.begin(9600);
+  int value = 65;
+  Serial.print((char)value);
+}
+void loop() {
+}";
+            var arduino = Run (code);
+            Assert.AreEqual ("A", arduino.SerialOut.ToString ());
+        }
+
+        [TestMethod]
+        public void SerialPrintlnCharCast ()
+        {
+            var code = @"
+void setup() {
+  Serial.begin(9600);
+  int value = 72;
+  Serial.println((char)value);
+}
+void loop() {
+}";
+            var arduino = Run (code);
+            Assert.AreEqual ("H", arduino.SerialOut.ToString ().Split ("\n").First ().Trim ());
+        }
+
+        [TestMethod]
         public void AnalogReadSerial ()
         {
             var code = @"
