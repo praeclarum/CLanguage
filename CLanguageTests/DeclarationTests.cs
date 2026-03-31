@@ -489,5 +489,65 @@ void main() {
 }
 ");
         }
+
+        [TestMethod]
+        public void LongShortIntIsError ()
+        {
+            Run (@"void main() { long short int x = 0; }", 2078);
+        }
+
+        [TestMethod]
+        public void ShortLongIntIsError ()
+        {
+            Run (@"void main() { short long int x = 0; }", 2078);
+        }
+
+        [TestMethod]
+        public void ShortShortIntIsError ()
+        {
+            Run (@"void main() { short short int x = 0; }", 2078);
+        }
+
+        [TestMethod]
+        public void LongFloatIsError ()
+        {
+            Run (@"void main() { long float x = 0; }", 2078);
+        }
+
+        [TestMethod]
+        public void ShortFloatIsError ()
+        {
+            Run (@"void main() { short float x = 0; }", 2078);
+        }
+
+        [TestMethod]
+        public void ShortDoubleIsError ()
+        {
+            Run (@"void main() { short double x = 0; }", 2078);
+        }
+
+        [TestMethod]
+        public void LongBoolIsError ()
+        {
+            Run (@"void main() { long bool x = 0; }", 2078);
+        }
+
+        [TestMethod]
+        public void ShortBoolIsError ()
+        {
+            Run (@"void main() { short bool x = 0; }", 2078);
+        }
+
+        [TestMethod]
+        public void ValidLongDoubleIsOk ()
+        {
+            Run (@"void main() { long double x = 1.0; }");
+        }
+
+        [TestMethod]
+        public void ValidLongLongIntIsOk ()
+        {
+            Run (@"void main() { long long int x = 0; }");
+        }
     }
 }
