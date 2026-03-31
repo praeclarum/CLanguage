@@ -75,6 +75,9 @@ namespace CLanguage.Syntax
 
                             // Ctors look like function declarations
                             if (ftype.ReturnType is CStructType ctorDeclType && idecl.Initializer == null && idecl.Declarator is FunctionDeclarator ctorDecl && ctorDecl.CouldBeCtorCall) {
+                                if (block.Variables.Any (v => v.Name == name)) {
+                                    context.Report.Error (2086, "Redefinition of '{0}'", name);
+                                }
                                 block.AddVariable (name, ctorDeclType);
                                 var callStmt = GetCtorInitializerStatement (name, ctorDeclType, ctorDecl);
                                 block.InitStatements.Add (callStmt);
@@ -111,6 +114,9 @@ namespace CLanguage.Syntax
                                 }
                             }
                             //var init = GetInitExpression(idecl.Initializer);
+                            if (block.Variables.Any (v => v.Name == name)) {
+                                context.Report.Error (2086, "Redefinition of '{0}'", name);
+                            }
                             block.AddVariable (name, ctype ?? CBasicType.SignedInt);
                         }
 
