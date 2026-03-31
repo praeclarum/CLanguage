@@ -563,9 +563,9 @@ namespace CLanguage.Compiler
                 }
             }
             else if (s is FunctionDefinition fdef) {
-                var type = MakeCType (fdef.Specifiers, fdef.Declarator, null, block);
+                var methodType = MakeCType (fdef.Specifiers, fdef.Declarator, null, block);
                 var name = fdef.Declarator.DeclaredIdentifier;
-                if (type is CFunctionType ftype) {
+                if (methodType is CFunctionType ftype) {
                     var isStatic = fdef.Specifiers.StorageClassSpecifier == StorageClassSpecifier.Static;
                     // For inline method definitions, the function type won't have
                     // declaring type info since the declarator has no namespace context.
