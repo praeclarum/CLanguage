@@ -92,6 +92,7 @@ namespace CLanguage.Parser
             { "volatile", TokenKind.VOLATILE },
             { "while", TokenKind.WHILE },
             { "override", TokenKind.OVERRIDE },
+            { "operator", TokenKind.OPERATOR },
         };
 
         public static readonly HashSet<int> KeywordTokens = new HashSet<int> (_kwTokens.Values);
