@@ -22,9 +22,7 @@
     <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'macos'">12.0</SupportedOSPlatformVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Content Include="..\Documentation\Icon.png" Link="Icon.png" Pack="true" PackagePath="\">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <None Include="..\Documentation\Icon.png" Link="Icon.png" Pack="true" PackagePath="\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CLanguage\CLanguage.csproj" />
