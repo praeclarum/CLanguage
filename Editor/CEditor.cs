@@ -148,7 +148,13 @@ namespace CLanguage.Editor
             eframe.Height = errorHeight;
 
             textView.Font = theme.CodeFont;
+
+#if __MACOS__
             textView.TypingAttributes = theme.TypingAttributes;
+#elif __IOS__ || __MACCATALYST__
+            // TODO: This should be set whenever the editor changes to editing mode
+            textView.TypingAttributes2 = theme.TypingAttributes;
+#endif
 
             textView.Delegate = this;
             textView.TextStorage.Delegate = this;
