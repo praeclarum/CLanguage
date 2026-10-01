@@ -90,8 +90,6 @@ namespace CLanguage.Editor
         NSObject? keyboardShowObserver;
         NSObject? keyboardHideObserver;
 #elif __MACOS__
-        readonly bool Is1010 = false;
-        readonly bool Is1011 = false;
         readonly NSScrollView scroll;
         IDisposable? scrolledSubscription;
         IDisposable? appearanceObserver;
@@ -172,9 +170,7 @@ namespace CLanguage.Editor
             textView.SmartInsertDeleteEnabled = false;
             textView.TextContainer.Size = new CGSize (nfloat.MaxValue, nfloat.MaxValue);
             textView.TextContainer.WidthTracksTextView = false;
-            if (Is1011) {
-                textView.TextContainer.LineBreakMode = NSLineBreakMode.Clipping;
-            }
+            textView.TextContainer.LineBreakMode = NSLineBreakMode.Clipping;
             textView.AllowsUndo = true;
             textView.SelectedTextAttributes = theme.SelectedAttributes;
             NSUserDefaults.StandardUserDefaults.SetInt (50, "NSInitialToolTipDelay");
@@ -187,9 +183,10 @@ namespace CLanguage.Editor
             scroll.DocumentView = textView;
             scroll.BackgroundColor = textView.BackgroundColor;
             scroll.DrawsBackground = true;
-            if (Is1010) {
-                scroll.AutomaticallyAdjustsContentInsets = true;
-            }
+            // When AutomaticallyAdjustsContentInsets = true, macOS actively modifies the top and bottom contentInsets of your scroll view
+            // to dynamically push content down so it doesn't get clipped by overlapping system UI elements
+            // (like a translucent NSWindow titlebar toolbar or a unified toolbar wrapper).
+            // scroll.AutomaticallyAdjustsContentInsets = true;
 
             scroll.ContentView.PostsBoundsChangedNotifications = true;
             scrolledSubscription = NativeView.Notifications.ObserveBoundsChanged (scroll.ContentView, (sender, e) => {
