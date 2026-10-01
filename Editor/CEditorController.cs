@@ -17,12 +17,14 @@ namespace CLanguage.Editor
 
         public CEditorController ()
         {
+#pragma warning disable CA1422 // Obsolete on 13 but we use 12
             AddKeyCommand (UIKeyCommand.Create (new NSString ("]"), UIKeyModifierFlags.Command, new ObjCRuntime.Selector ("indent:"), new NSString ("Indent".Localize ())));
             AddKeyCommand (UIKeyCommand.Create (new NSString ("["), UIKeyModifierFlags.Command, new ObjCRuntime.Selector ("outdent:"), new NSString ("Outdent".Localize ())));
             AddKeyCommand (UIKeyCommand.Create (new NSString ("/"), UIKeyModifierFlags.Command, new ObjCRuntime.Selector ("toggleComment:"), new NSString ("Toggle Comment".Localize ())));
             AddKeyCommand (UIKeyCommand.Create (new NSString ("="), UIKeyModifierFlags.Command, new ObjCRuntime.Selector ("increaseFontSize:"), new NSString ("Increase Font Size".Localize ())));
             AddKeyCommand (UIKeyCommand.Create (new NSString ("-"), UIKeyModifierFlags.Command, new ObjCRuntime.Selector ("decreaseFontSize:"), new NSString ("Decrease Font Size".Localize ())));
             AddKeyCommand (UIKeyCommand.Create (new NSString ("0"), UIKeyModifierFlags.Command, new ObjCRuntime.Selector ("restoreFontSize:"), new NSString ("Restore Font Size".Localize ())));
+#pragma warning restore CA1422
         }
 
         public override void ViewDidLoad ()
