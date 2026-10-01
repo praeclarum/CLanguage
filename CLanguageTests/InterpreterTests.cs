@@ -36,11 +36,11 @@ void main () {
 			Assert.IsTrue (hit[0]);
 			Assert.IsFalse (hit[1]);
 			Assert.IsFalse (hit[2]);
-			it.Step ();
+			it.Run ();
 			Assert.IsTrue (hit[0]);
 			Assert.IsTrue (hit[1]);
 			Assert.IsFalse (hit[2]);
-			it.Step ();
+			it.Run ();
 			Assert.IsTrue (hit[0]);
 			Assert.IsTrue (hit[1]);
 			Assert.IsTrue (hit[2]);
