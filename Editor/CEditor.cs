@@ -170,7 +170,7 @@ namespace CLanguage.Editor
             textView.AutomaticQuoteSubstitutionEnabled = false;
             textView.AutomaticSpellingCorrectionEnabled = false;
             textView.SmartInsertDeleteEnabled = false;
-            textView.TextContainer.ContainerSize = new CGSize (nfloat.MaxValue, nfloat.MaxValue);
+            textView.TextContainer.Size = new CGSize (nfloat.MaxValue, nfloat.MaxValue);
             textView.TextContainer.WidthTracksTextView = false;
             if (Is1011) {
                 textView.TextContainer.LineBreakMode = NSLineBreakMode.Clipping;
